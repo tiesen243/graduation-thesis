@@ -35,7 +35,7 @@ The system automatically opens the designated pill compartment at scheduled time
 | **ID**   | **Name**    | **Role** |
 | -------- | ----------- | -------- |
 | 22653991 | Tran Tien   | Software |
-| \_       | Dao Anh Huy | Hardware |
+| 22637811 | Dao Anh Huy | Hardware |
 
 ## System Architecture
 
