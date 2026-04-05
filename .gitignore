@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# production
+build/
+dist/
+
+# environment variables
+.env*
+!.env.example
+
+# logs
+logs/
+*.log
+
+# misc
+.vscode/
+.DS_Store
+
+# infrastructure
+.alchemy/
+.wrangler/
