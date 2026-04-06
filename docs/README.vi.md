@@ -32,10 +32,10 @@ Hệ thống tự động mở ngăn thuốc được chỉ định theo lịch,
 
 **Thành viên:**
 
-| **MSSV** | **Họ và tên** | **Email**           | **Vai trò** |
-| -------- | ------------- | ------------------- | ----------- |
-| 22653991 | Trần Tiên     | tiesen243@gmail.com | Phần mềm    |
-| 22637811 | Đào Anh Huy   |                     | Phần cứng   |
+| **MSSV** | **Họ và tên** | **Email**                | **Vai trò** |
+| -------- | ------------- | ------------------------ | ----------- |
+| 22653991 | Trần Tiên     | tiesen243@tiesen.id.vn   | Phần mềm    |
+| 22637811 | Đào Anh Huy   | ninjahuykunfbi@gmail.com | Phần cứng   |
 
 ## Kiến trúc hệ thống
 
