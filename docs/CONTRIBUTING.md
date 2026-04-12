@@ -1,4 +1,4 @@
-[English](https://github.com/tiesen243/graduation-thesis/blob/main/docs/CONTRIBUTING.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/main/docs/CONTRIBUTING.vi.md)
+[English](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/CONTRIBUTING.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/CONTRIBUTING.vi.md)
 
 # Contributing to project
 

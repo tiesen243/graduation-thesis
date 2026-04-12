@@ -1,4 +1,4 @@
-[English](https://github.com/tiesen243/graduation-thesis/blob/main/docs/README.en.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/main/docs/README.vi.md)
+[English](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.en.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.vi.md)
 
 # Graduation Thesis: Design of a Smart Pillbox for Seniors
 
@@ -73,4 +73,4 @@ This smart pillbox system aims to improve medication adherence among seniors, pr
 
 ## License
 
-This project is open-source and available under the Apache License 2.0. See the [LICENSE](./LICENSE) file for more details.
+This project is open-source and available under the Apache License 2.0. See the [LICENSE](https://github.com/tiesen243/graduation-thesis/blob/dev/LICENSE) file for more details.

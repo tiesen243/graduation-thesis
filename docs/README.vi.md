@@ -1,4 +1,4 @@
-[English](https://github.com/tiesen243/graduation-thesis/blob/main/docs/README.en.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/main/docs/README.vi.md)
+[English](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.en.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.vi.md)
 
 # Đồ án Tốt nghiệp: Thiết kế hộp thuốc thông minh cho người cao tuổi
 
@@ -73,4 +73,4 @@ Hệ thống hộp thuốc thông minh này hướng đến việc cải thiện
 
 ## Giấy phép
 
-Dự án này là mã nguồn mở và được phát hành theo Apache License 2.0. Xem file [LICENSE](./LICENSE) để biết thêm chi tiết.
+Dự án này là mã nguồn mở và được phát hành theo Apache License 2.0. Xem file [LICENSE](https://github.com/tiesen243/graduation-thesis/blob/dev/LICENSE) để biết thêm chi tiết.
