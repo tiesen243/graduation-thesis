@@ -1,5 +1,16 @@
 {
-  "name": "api",
+  "name": "@workspace/api",
   "version": "0.0.0",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:dev",
+    "@workspace/oxlint": "workspace:*",
+    "@workspace/tsconfig": "workspace:*",
+    "drizzle-kit": "^0.31.10",
+    "typescript": "catalog:dev"
+  }
 }
