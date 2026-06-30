@@ -1,4 +1,6 @@
 import {
+  date,
+  index,
   integer,
   numeric,
   pgEnum,
@@ -83,20 +85,24 @@ export const sessions = pgTable(
   (t) => [uniqueIndex('sessions_token_uq_idx').on(t.token)]
 )
 
-export const devices = pgTable('devices', {
-  id,
-  factoryModel: varchar({ length: 255 }).notNull(),
-  status: deviceStatuses().default('UNLINKED').notNull(),
-  name: varchar({ length: 255 }),
-  position: varchar({ length: 255 }),
-  activatedAt: timestamp({ mode: 'date' }),
-  createdAt,
-  updatedAt,
+export const devices = pgTable(
+  'devices',
+  {
+    id,
+    factoryModel: varchar({ length: 255 }).notNull(),
+    status: deviceStatuses().default('UNLINKED').notNull(),
+    name: varchar({ length: 255 }),
+    position: varchar({ length: 255 }),
+    activatedAt: timestamp({ mode: 'date' }),
+    createdAt,
+    updatedAt,
 
-  userId: varchar({ length: 24 }).references(() => users.id, {
-    onDelete: 'set null',
-  }),
-})
+    userId: varchar({ length: 24 }).references(() => users.id, {
+      onDelete: 'set null',
+    }),
+  },
+  (t) => [index('devices_user_id_idx').on(t.userId)]
+)
 
 export const compartments = pgTable(
   'compartments',
@@ -117,81 +123,114 @@ export const compartments = pgTable(
   ]
 )
 
-export const patients = pgTable('patients', {
-  id,
-  name: varchar({ length: 255 }).notNull(),
-  dateOfBirth: timestamp({ mode: 'date' }),
-  gender: varchar({ length: 10 }),
-  medicalHistory: text(),
-  note: text(),
-  createdAt,
-  updatedAt,
+export const patients = pgTable(
+  'patients',
+  {
+    id,
+    name: varchar({ length: 255 }).notNull(),
+    dateOfBirth: timestamp({ mode: 'date' }),
+    gender: varchar({ length: 10 }),
+    medicalHistory: text(),
+    note: text(),
+    createdAt,
+    updatedAt,
 
-  userId: varchar({ length: 24 })
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  deviceId: varchar({ length: 24 }).references(() => devices.id, {
-    onDelete: 'set null',
-  }),
-})
+    userId: varchar({ length: 24 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    deviceId: varchar({ length: 24 }).references(() => devices.id, {
+      onDelete: 'set null',
+    }),
+  },
+  (t) => [
+    index('patients_user_id_idx').on(t.userId),
+    index('patients_device_id_idx').on(t.deviceId),
+  ]
+)
 
-export const schedules = pgTable('schedules', {
-  id,
-  title: varchar({ length: 255 }).notNull(),
-  description: text(),
+export const schedules = pgTable(
+  'schedules',
+  {
+    id,
+    title: varchar({ length: 255 }).notNull(),
+    description: text(),
 
-  startedAt: timestamp({ mode: 'date' }).notNull(),
-  endedAt: timestamp({ mode: 'date' }).notNull(),
-  daysOfWeek: varchar({ length: 7 }).notNull(), // e.g. "1111100" for Mon-Fri
-  timeOfDay: varchar({ length: 5 }).notNull(), // e.g. "08:00" for 8 AM, "20:30" for 8:30 PM
-  dosage: integer().default(1).notNull(),
+    startedAt: timestamp({ mode: 'date' }).notNull(),
+    endedAt: timestamp({ mode: 'date' }).notNull(),
+    daysOfWeek: varchar({ length: 7 }).notNull(), // e.g. "1111100" for Mon-Fri
+    timeOfDay: varchar({ length: 5 }).notNull(), // e.g. "08:00" for 8 AM, "20:30" for 8:30 PM
+    dosage: integer().default(1).notNull(),
 
-  patientId: varchar({ length: 24 })
-    .notNull()
-    .references(() => patients.id, { onDelete: 'cascade' }),
-  compartmentId: varchar({ length: 24 })
-    .notNull()
-    .references(() => compartments.id, { onDelete: 'cascade' }),
-})
+    patientId: varchar({ length: 24 })
+      .notNull()
+      .references(() => patients.id, { onDelete: 'cascade' }),
+    compartmentId: varchar({ length: 24 })
+      .notNull()
+      .references(() => compartments.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    index('schedules_patient_id_idx').on(t.patientId),
+    index('schedules_duration_idx').on(t.startedAt, t.endedAt),
+  ]
+)
 
-export const trackings = pgTable('trackings', {
-  id,
-  status: trackingStatuses().default('PENDING').notNull(),
-  takenAt: timestamp({ mode: 'date' }),
+export const trackings = pgTable(
+  'trackings',
+  {
+    id,
+    date: date().notNull(),
+    status: trackingStatuses().default('PENDING').notNull(),
+    takenAt: timestamp({ mode: 'date' }),
 
-  scheduleId: varchar({ length: 24 })
-    .notNull()
-    .references(() => schedules.id, { onDelete: 'cascade' }),
-})
+    scheduleId: varchar({ length: 24 })
+      .notNull()
+      .references(() => schedules.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    uniqueIndex('trackings_schedule_id_date_uq_idx').on(t.scheduleId, t.date),
+    index('trackings_date_idx').on(t.date),
+  ]
+)
 
-export const notifications = pgTable('notifications', {
-  id,
-  title: varchar({ length: 255 }).notNull(),
-  message: text().notNull(),
-  isRead: integer().default(0).notNull(), // 0 = unread, 1 = read
-  createdAt,
+export const notifications = pgTable(
+  'notifications',
+  {
+    id,
+    title: varchar({ length: 255 }).notNull(),
+    message: text().notNull(),
+    isRead: integer().default(0).notNull(), // 0 = unread, 1 = read
+    createdAt,
 
-  userId: varchar({ length: 24 })
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-})
+    userId: varchar({ length: 24 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+  },
+  (t) => [index('notifications_user_id_idx').on(t.userId)]
+)
 
-export const subscriptions = pgTable('subscriptions', {
-  id,
-  plan: varchar({ length: 255 }).notNull(),
-  status: subscriptionStatuses().default('ACTIVE').notNull(),
-  startedAt: timestamp({ mode: 'date' }).notNull(),
-  nextBillingDate: timestamp({ mode: 'date' }).notNull(),
-  createdAt,
-  updatedAt,
+export const subscriptions = pgTable(
+  'subscriptions',
+  {
+    id,
+    plan: varchar({ length: 255 }).notNull(),
+    status: subscriptionStatuses().default('ACTIVE').notNull(),
+    startedAt: timestamp({ mode: 'date' }).notNull(),
+    nextBillingDate: timestamp({ mode: 'date' }).notNull(),
+    createdAt,
+    updatedAt,
 
-  userId: varchar({ length: 24 })
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  deviceId: varchar({ length: 24 })
-    .notNull()
-    .references(() => devices.id, { onDelete: 'cascade' }),
-})
+    userId: varchar({ length: 24 })
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    deviceId: varchar({ length: 24 })
+      .notNull()
+      .references(() => devices.id, { onDelete: 'cascade' }),
+  },
+  (t) => [
+    index('subscriptions_next_billing_date_idx').on(t.nextBillingDate),
+    index('subscriptions_user_id_device_id_idx').on(t.userId, t.deviceId),
+  ]
+)
 
 export const invoices = pgTable(
   'invoices',
@@ -207,22 +246,29 @@ export const invoices = pgTable(
       onDelete: 'set null',
     }),
   },
-  (t) => [uniqueIndex('invoices_code_uq_idx').on(t.code)]
+  (t) => [
+    uniqueIndex('invoices_code_uq_idx').on(t.code),
+    index('invoices_subscription_id_idx').on(t.subscriptionId),
+  ]
 )
 
-export const transactions = pgTable('transactions', {
-  id: integer().primaryKey(),
-  gateway: varchar({ length: 100 }).notNull(),
-  transactionDate: timestamp({ mode: 'date' }).notNull(),
-  accountNumber: varchar({ length: 20 }).notNull(),
-  code: varchar({ length: 20 }),
-  content: text(),
-  transferType: varchar({ length: 4 }).notNull(),
-  description: text(),
-  transferAmount: numeric({ precision: 10, scale: 2 }).notNull(),
-  referenceCode: varchar({ length: 20 }),
+export const transactions = pgTable(
+  'transactions',
+  {
+    id: integer().primaryKey(),
+    gateway: varchar({ length: 100 }).notNull(),
+    transactionDate: timestamp({ mode: 'date' }).notNull(),
+    accountNumber: varchar({ length: 20 }).notNull(),
+    code: varchar({ length: 20 }),
+    content: text(),
+    transferType: varchar({ length: 4 }).notNull(),
+    description: text(),
+    transferAmount: numeric({ precision: 10, scale: 2 }).notNull(),
+    referenceCode: varchar({ length: 20 }),
 
-  invoiceId: varchar({ length: 24 }).references(() => invoices.id, {
-    onDelete: 'set null',
-  }),
-})
+    invoiceId: varchar({ length: 24 }).references(() => invoices.id, {
+      onDelete: 'set null',
+    }),
+  },
+  (t) => [index('transactions_invoice_id_idx').on(t.invoiceId)]
+)
