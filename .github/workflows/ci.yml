@@ -28,10 +28,10 @@ jobs:
       - name: Lint
         run: bun lint
 
-  # typecheck:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - uses: ./tools/github/actions/setup
-  #     - name: Typecheck
-  #       run: bun typecheck
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./tools/github/actions/setup
+      - name: Typecheck
+        run: bun typecheck
