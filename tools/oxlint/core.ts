@@ -85,6 +85,7 @@ export default defineConfig({
     'typescript/explicit-module-boundary-types': 'off',
     'typescript/no-require-imports': 'off',
     'typescript/no-var-requires': 'off',
+    'typescript/no-namespace': 'off',
     'typescript/require-await': 'off',
 
     'node/no-process-env': 'off',
