@@ -5,13 +5,29 @@
   "type": "module",
   "main": "dist/main.mjs",
   "types": "dist/main.d.mts",
+  "exports": {
+    "./auth/*": {
+      "types": "./dist/modules/auth/application/dto/*.d.mts",
+      "default": "./dist/modules/auth/application/dto/*.mjs"
+    },
+    "./user/*": {
+      "types": "./dist/modules/user/application/dto/*.d.mts",
+      "default": "./dist/modules/user/application/dto/*.mjs"
+    }
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "bun run --hot src/main.ts",
-    "start": "bun run --hot dist/main.mjs"
+    "drizzle:generate": "drizzle-kit generate --config ./src/shared/infrastructure/persistence/drizzle/drizzle.config.ts",
+    "drizzle:migrate": "drizzle-kit migrate --config ./src/shared/infrastructure/persistence/drizzle/drizzle.config.ts",
+    "drizzle:studio": "drizzle-kit studio --config ./src/shared/infrastructure/persistence/drizzle/drizzle.config.ts",
+    "start": "bun run --hot dist/main.mjs",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@workspace/lib": "workspace:*",
     "drizzle-orm": "^1.0.0-rc.4",
+    "effect": "^3.21.4",
     "elysia": "^2.0.0-exp.42",
     "postgres": "^3.4.9",
     "zod": "^4.4.3"

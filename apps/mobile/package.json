@@ -1,5 +1,9 @@
 {
-  "name": "mobile",
+  "name": "@workspace/mobile",
   "version": "0.0.0",
-  "private": false
+  "private": false,
+  "type": "module",
+  "dependencies": {
+    "@workspace/api": "workspace:*"
+  }
 }
