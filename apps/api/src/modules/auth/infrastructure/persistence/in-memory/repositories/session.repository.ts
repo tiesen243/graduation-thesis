@@ -1,5 +1,6 @@
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
+import * as Ref from 'effect/Ref'
 
 import type { ISessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 
@@ -11,10 +12,26 @@ import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in
 export const InMemorySessionRepository = Layer.effect(
   SessionRepository,
   Effect.gen(function* InMemorySessionRepositoryGen() {
-    const { sessions } = yield* InMemoryClient
+    const { sessions, users } = yield* InMemoryClient
     const baseRepo = (yield* BaseRepository) as ISessionRepository
 
     return {
+      findWithUser: (id) =>
+        Effect.gen(function* findWithUserGen() {
+          const session = yield* Ref.get(sessions).pipe(
+            Effect.map((dict) => dict.get(id))
+          )
+          if (!session) return null
+
+          const user = yield* Ref.get(users).pipe(
+            Effect.map((dict) => dict.get(session.userId))
+          )
+          if (!user) return null
+
+          session.user = user
+          return session
+        }),
+
       find: (...args) =>
         baseRepo.find(...args).pipe(Effect.provideService(StoreTag, sessions)),
       count: (...args) =>
