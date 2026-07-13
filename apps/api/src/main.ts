@@ -1,18 +1,23 @@
 import { Bootstrap } from '@/bootstrap'
-import { AuthController } from '@/modules/auth/presentation/auth.controller'
-import { UserController } from '@/modules/user/presentation/user.controller'
+import { cors } from '@/plugins/cors'
 import { errorHandle } from '@/plugins/error-handle'
+import { env } from '@/shared/lib/env'
 
-const server = Bootstrap.create({
+export const server = Bootstrap.create({
   persistenceDriver: 'drizzle',
+  plugins: [cors, errorHandle],
+
+  elysia: {
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: env.NODE_ENV === 'production',
+      partitioned: env.NODE_ENV === 'production',
+      secrets: env.AUTH_SECRET,
+    },
+  },
 })
-
-  .use(errorHandle)
-
-  .use(AuthController)
-  .use(UserController)
-
-  .compile()
 
 export default {
   fetch: server.fetch,

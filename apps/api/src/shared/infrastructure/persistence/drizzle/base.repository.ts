@@ -7,6 +7,7 @@ import * as Layer from 'effect/Layer'
 
 import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
+import type { Http } from '@/shared/http'
 
 import { BaseRepository } from '@/shared/domain/base.repository'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
@@ -43,7 +44,7 @@ export const DrizzleBaseRepository = Layer.effect(
               return query
             })
           )
-        ) as unknown as Effect.Effect<unknown[], Error, never>,
+        ) as unknown as Effect.Effect<unknown[], Http, never>,
 
       count: (criterias = []) =>
         TableTag.pipe(
@@ -54,7 +55,7 @@ export const DrizzleBaseRepository = Layer.effect(
               return client.$count(table)
             })
           )
-        ) as unknown as Effect.Effect<number, Error, never>,
+        ) as unknown as Effect.Effect<number, Http, never>,
 
       save: (entity) =>
         TableTag.pipe(
@@ -70,7 +71,7 @@ export const DrizzleBaseRepository = Layer.effect(
             )
           ),
           Effect.asVoid
-        ) as unknown as Effect.Effect<void, Error, never>,
+        ) as unknown as Effect.Effect<void, Http, never>,
 
       delete: (entity) =>
         TableTag.pipe(
@@ -82,7 +83,7 @@ export const DrizzleBaseRepository = Layer.effect(
             )
           ),
           Effect.asVoid
-        ) as unknown as Effect.Effect<void, Error, never>,
+        ) as unknown as Effect.Effect<void, Http, never>,
     }
   })
 )

@@ -51,6 +51,10 @@ export class Http extends Data.TaggedError('shared/Http')<IHttp> {
     return new Http({ status: 404, message, error: error ?? null })
   }
 
+  public static conflict(message: string, error?: unknown): Http {
+    return new Http({ status: 409, message, error: error ?? null })
+  }
+
   // --- 5xx Server Errors ---
 
   public static internalServerError(message: string, error?: unknown): Http {

@@ -8,6 +8,9 @@ export default defineConfig({
       files: ['**/*.ts'],
       rules: {
         'typescript/no-extraneous-class': 'off',
+        'typescript/parameter-properties': 'off',
+
+        'unicorn/no-static-only-class': 'off',
       },
     },
   ],

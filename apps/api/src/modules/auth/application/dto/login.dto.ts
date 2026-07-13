@@ -1,9 +1,11 @@
 import * as z from 'zod'
 
+import { passwordSchema } from '@/modules/auth/application/types'
+
 export namespace LoginDto {
   export const input = z.object({
     email: z.email(),
-    password: z.string().min(8),
+    password: passwordSchema,
   })
   export type Input = z.infer<typeof input>
 
