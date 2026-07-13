@@ -1,4 +1,3 @@
-import 'elysia'
 import { Bootstrap } from '@/bootstrap'
 import { cors } from '@/plugins/cors'
 import { errorHandle } from '@/plugins/error-handle'
@@ -29,6 +28,7 @@ export const server = Bootstrap.create({
   },
 })
 
+export type Server = typeof server
 export default {
   fetch: server.fetch,
 }

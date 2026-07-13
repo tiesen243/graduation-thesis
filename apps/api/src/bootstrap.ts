@@ -9,9 +9,9 @@ import { UserModule } from '@/modules/user/user.module'
 import { InfrastructureModule } from '@/shared/infrastructure/infratructure.module'
 
 export class Bootstrap {
-  public static create<TPrefix extends string, TScope extends EventScope>(
+  public static create<TPrefix extends string = ''>(
     config: Bootstrap.Config & {
-      elysia: ElysiaConfig<TPrefix, TScope>
+      elysia: ElysiaConfig<TPrefix, EventScope>
     }
   ) {
     const infrastructureModule = InfrastructureModule.create(
