@@ -5,6 +5,7 @@ import * as Ref from 'effect/Ref'
 
 import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
+import type { Http } from '@/shared/http'
 
 import { BaseRepository } from '@/shared/domain/base.repository'
 
@@ -27,7 +28,7 @@ export const InMemoryBaseRepository = Layer.succeed(BaseRepository, {
         const limit = options.limit ?? items.length
         return [...items].slice(offset, offset + limit)
       })
-    ) as unknown as Effect.Effect<unknown[], Error, never>,
+    ) as unknown as Effect.Effect<unknown[], Http, never>,
 
   count: (criterias = []) =>
     StoreTag.pipe(
@@ -38,7 +39,7 @@ export const InMemoryBaseRepository = Layer.succeed(BaseRepository, {
           : [...dict.values()].filter((item) => matchCriterias(item, criterias))
               .length
       )
-    ) as unknown as Effect.Effect<number, Error, never>,
+    ) as unknown as Effect.Effect<number, Http, never>,
 
   save: (entity) =>
     StoreTag.pipe(
@@ -49,7 +50,7 @@ export const InMemoryBaseRepository = Layer.succeed(BaseRepository, {
         })
       ),
       Effect.asVoid
-    ) as unknown as Effect.Effect<void, Error, never>,
+    ) as unknown as Effect.Effect<void, Http, never>,
 
   delete: (entity) =>
     StoreTag.pipe(
@@ -60,7 +61,7 @@ export const InMemoryBaseRepository = Layer.succeed(BaseRepository, {
         })
       ),
       Effect.asVoid
-    ) as unknown as Effect.Effect<void, Error, never>,
+    ) as unknown as Effect.Effect<void, Http, never>,
 })
 
 function getRecordFromItem(item: unknown): Record<string, unknown> {

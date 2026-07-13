@@ -35,7 +35,7 @@ export abstract class BaseEntity extends Schema.Class<BaseEntity>(
     })
   }
 
-  public toPersistence(): Record<string, unknown> {
+  public toPersistence(): this {
     return structuredClone(this as never)
   }
 }

@@ -2,22 +2,24 @@ import type * as Effect from 'effect/Effect'
 
 import * as Context from 'effect/Context'
 
+import type { Http } from '@/shared/http'
+
 export const TableName = Context.GenericTag('shared/domain/TableName')
 
 export interface IBaseRepository<TEntity> {
-  find: (
+  readonly find: (
     criterias?: IBaseRepository.Criteria<TEntity>[],
     orderBy?: Partial<Record<keyof TEntity, 'asc' | 'desc'>>,
     options?: { limit?: number; offset?: number }
-  ) => Effect.Effect<TEntity[], Error, never>
+  ) => Effect.Effect<TEntity[], Http, never>
 
-  count: (
+  readonly count: (
     criterias?: IBaseRepository.Criteria<TEntity>[]
-  ) => Effect.Effect<number, Error, never>
+  ) => Effect.Effect<number, Http, never>
 
-  save: (entity: TEntity) => Effect.Effect<void, Error, never>
+  readonly save: (entity: TEntity) => Effect.Effect<void, Http, never>
 
-  delete: (entity: TEntity) => Effect.Effect<void, Error, never>
+  readonly delete: (entity: TEntity) => Effect.Effect<void, Http, never>
 }
 
 export class BaseRepository extends Context.Tag('shared/domain/BaseRepository')<

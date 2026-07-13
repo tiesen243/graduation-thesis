@@ -10,6 +10,7 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import postgres from 'postgres'
 
+import { Http } from '@/shared/http'
 import { env } from '@/shared/lib/env'
 
 const createDrizzleClient = () => {
@@ -26,7 +27,7 @@ if (process.env.NODE_ENV !== 'production') globalForDrizzleClient.client = db
 type Client = PostgresJsDatabase | PgAsyncTransaction<PostgresJsQueryResultHKT>
 type DrizzleClientReturn = <A>(
   query: (client: Client) => PromiseLike<A>
-) => Effect.Effect<A, Error>
+) => Effect.Effect<A, Http>
 
 export class DrizzleClient extends Context.Tag(
   'shared/infrastructure/persistence/drizzle/DrizzleClient'
@@ -36,7 +37,8 @@ export class DrizzleClient extends Context.Tag(
     <A>(query: (client: Client) => PromiseLike<A>) =>
       Effect.tryPromise({
         try: () => query(client),
-        catch: (error) => new Error(`DrizzleClient error: ${error}`),
+        catch: (error) =>
+          Http.internalServerError(`DrizzleClient error: ${error}`),
       })
 
   public static live = Layer.succeed(this, this.make())
