@@ -42,7 +42,7 @@ export const AuthController = new Elysia({
 
       const user = yield* userService.findByIidentifier({ id: userId })
       if (!user)
-        return yield* Effect.fail(Http.unauthorized('Token is invalid'))
+        return yield* Effect.fail(Http.unauthorized('Invalid access token'))
 
       return user
     })

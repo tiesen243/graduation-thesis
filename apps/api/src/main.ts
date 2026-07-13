@@ -8,6 +8,16 @@ export const server = Bootstrap.create({
   plugins: [cors, errorHandle],
 
   elysia: {
+    name: '@worspace/api',
+    serve: {
+      development: env.NODE_ENV !== 'production' && {
+        hmr: true,
+        console: true,
+      },
+    },
+
+    precompile: true,
+
     cookie: {
       path: '/',
       httpOnly: true,
