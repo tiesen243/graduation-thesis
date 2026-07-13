@@ -2,10 +2,10 @@ import * as Effect from 'effect/Effect'
 
 import type { RegisterDto } from '@/modules/auth/application/dto/register.dto'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
+import { AuthService } from '@/modules/auth/application/service'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { UserService } from '@/modules/user/application/user.service'
+import { UserService } from '@/modules/user/application/service'
 import { Http } from '@/shared/http'
 import { createUseCase } from '@/shared/lib/utils'
 
@@ -15,7 +15,6 @@ export const RegisterUseCase = createUseCase<
 >(
   ({ username, email, password }) =>
     function* registerUseCaseGen() {
-      const authService = yield* AuthService
       const userService = yield* UserService
 
       const accountRepo = yield* AccountRepository
@@ -28,7 +27,7 @@ export const RegisterUseCase = createUseCase<
       const account = Account.make({
         provider: 'credentials',
         providerAccountId: user.id,
-        password: yield* authService.password.hash(password),
+        password: yield* AuthService.password.hash(password),
 
         userId: user.id,
       })

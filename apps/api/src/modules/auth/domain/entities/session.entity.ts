@@ -14,12 +14,12 @@ export class Session extends BaseEntity.extend<Session>(
 }) {
   #user: User | null = null
 
-  public get user(): User | null {
+  public get user(): User {
     if (!this.#user) throw new Error('User not loaded')
     return this.#user
   }
 
-  public set user(user: User | null) {
+  public set user(user: User) {
     this.#user = user
   }
 }

@@ -4,7 +4,8 @@ import crypto from 'node:crypto'
 import { decodeBase64Url, encodeBase64Url } from '@/modules/auth/lib/crypto'
 import { Http } from '@/shared/http'
 
-export class JWT<TValue extends Record<string, unknown>> {
+// oxlint-disable-next-line typescript/no-explicit-any
+export class JWT<TValue extends Record<string, any>> {
   public constructor(
     private readonly secret = '',
     private readonly algorithm: JWT.Algorithm = 'HS256'

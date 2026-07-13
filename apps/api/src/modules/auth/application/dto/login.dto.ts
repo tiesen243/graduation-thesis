@@ -1,6 +1,6 @@
 import * as z from 'zod'
 
-import { passwordSchema } from '@/modules/auth/application/types'
+import { passwordSchema, tokensSchema } from '@/modules/auth/application/types'
 
 export namespace LoginDto {
   export const input = z.object({
@@ -9,10 +9,6 @@ export namespace LoginDto {
   })
   export type Input = z.infer<typeof input>
 
-  export const output = z.object({
-    accessToken: z.string(),
-    refreshToken: z.string(),
-    expiresAt: z.date(),
-  })
+  export const output = tokensSchema
   export type Output = z.infer<typeof output>
 }
