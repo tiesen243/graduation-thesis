@@ -20,16 +20,14 @@ export class Bootstrap {
 
     const userModule = UserModule.create(
       config.persistenceDriver,
-      Layer.provide(infrastructureModule.persistenceModule as never)
+      infrastructureModule.persistenceModule
     )
 
     const authModule = AuthModule.create(
       config.persistenceDriver,
-      Layer.provideMerge(
-        Layer.merge(
-          infrastructureModule.persistenceModule as never,
-          userModule.exports.userService
-        )
+      Layer.mergeAll(
+        infrastructureModule.persistenceModule,
+        userModule.exports.userService
       )
     )
 
