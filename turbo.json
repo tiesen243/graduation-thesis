@@ -6,6 +6,9 @@
       "dependsOn": ["^build"],
       "outputs": [".cache/tsbuildinfo.json", "dist/**", "build/**"]
     },
+    "clean": {
+      "cache": false
+    },
     "dev": {
       "dependsOn": ["^build"],
       "persistent": true
