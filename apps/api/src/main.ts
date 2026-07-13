@@ -1,3 +1,4 @@
+import 'elysia'
 import { Bootstrap } from '@/bootstrap'
 import { cors } from '@/plugins/cors'
 import { errorHandle } from '@/plugins/error-handle'

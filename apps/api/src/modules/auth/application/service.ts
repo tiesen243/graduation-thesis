@@ -2,6 +2,9 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
+import type { TokensSchema } from '@/modules/auth/application/types'
+import type { User } from '@/modules/user/domain/entities/user.entity'
+
 import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
@@ -21,39 +24,20 @@ export class AuthService extends Context.Tag(
 )<
   AuthService,
   {
-    readonly password: Password
-
-    readonly createSession: (userId: string) => Effect.Effect<
-      {
-        accessToken: string
-        refreshToken: string
-        expiresAt: Date
-      },
-      Http,
-      SessionRepository
-    >
+    readonly createSession: (
+      payload: AuthService.JWTPayload
+    ) => Effect.Effect<TokensSchema, Http, SessionRepository>
 
     readonly verifyRefreshToken: (
       token: string
     ) => Effect.Effect<Session, Http, SessionRepository>
-
-    readonly verifyAccessToken: (
-      token: string
-    ) => Effect.Effect<{ userId: string }, Http>
   }
 >() {
-  private static jwt = new JWT<{ sub: string }>(env.AUTH_SECRET)
-
-  private static config = {
-    tokenExpiresIn: 60 * 60 * 24 * 7, // 7 days
-    tokenExpiresThreshold: 60 * 60 * 24, // 1 day
-    accessTokenExpiresIn: 60 * 15, // 15 minutes
-  }
+  public static password = new Password()
+  public static jwt = new JWT<AuthService.JWTPayload>(env.AUTH_SECRET)
 
   public static live = Layer.succeed(this, {
-    password: new Password(),
-
-    createSession: (userId: string) =>
+    createSession: ({ userId, role }: AuthService.JWTPayload) =>
       Effect.gen(this, function* createSessionGen() {
         const sessionRepo = yield* SessionRepository
 
@@ -70,7 +54,7 @@ export class AuthService extends Context.Tag(
         yield* sessionRepo.save(Session.make({ id, token, expiresAt, userId }))
 
         const accessToken = yield* this.jwt.sign(
-          { sub: userId },
+          { userId, role },
           { expiresIn: this.config.accessTokenExpiresIn }
         )
 
@@ -111,11 +95,18 @@ export class AuthService extends Context.Tag(
 
         return session
       }),
-
-    verifyAccessToken: (token: string) =>
-      Effect.gen(this, function* verifyAccessTokenGen() {
-        const { sub: userId } = yield* this.jwt.verify(token)
-        return { userId }
-      }),
   })
+
+  private static config = {
+    tokenExpiresIn: 60 * 60 * 24 * 7, // 7 days
+    tokenExpiresThreshold: 60 * 60 * 24, // 1 day
+    accessTokenExpiresIn: 60 * 15, // 15 minutes
+  }
+}
+
+export namespace AuthService {
+  export interface JWTPayload {
+    userId: string
+    role: User.Role
+  }
 }

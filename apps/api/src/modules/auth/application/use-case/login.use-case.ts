@@ -2,9 +2,9 @@ import * as Effect from 'effect/Effect'
 
 import type { LoginDto } from '@/modules/auth/application/dto/login.dto'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
+import { AuthService } from '@/modules/auth/application/service'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { UserService } from '@/modules/user/application/user.service'
+import { UserService } from '@/modules/user/application/service'
 import { Http } from '@/shared/http'
 import { createUseCase } from '@/shared/lib/utils'
 
@@ -28,13 +28,16 @@ export const loginUseCase = createUseCase<LoginDto.Input, LoginDto.Output>(
       if (!account || account.password === null)
         return yield* Effect.fail(Http.unauthorized('Invalid credentials'))
 
-      const isValid = yield* authService.password.verify(
+      const isValid = yield* AuthService.password.verify(
         account.password,
         input.password
       )
       if (!isValid)
         return yield* Effect.fail(Http.unauthorized('Invalid credentials'))
 
-      return yield* authService.createSession(user.id)
+      return yield* authService.createSession({
+        userId: user.id,
+        role: user.role,
+      })
     }
 )

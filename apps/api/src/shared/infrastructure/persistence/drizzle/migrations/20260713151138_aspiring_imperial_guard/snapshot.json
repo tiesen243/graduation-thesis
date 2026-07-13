@@ -1,11 +1,20 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "c27daef2-c03f-4a48-bb1b-42c040065d01",
+  "id": "a696a5da-8801-487a-9008-1b74bcdfdfb3",
   "prevIds": [
-    "3281dd8d-12d4-4ee1-bf84-42339b25adc5"
+    "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
+    {
+      "values": [
+        "user",
+        "admin"
+      ],
+      "name": "user_roles",
+      "entityType": "enums",
+      "schema": "public"
+    },
     {
       "isRlsEnabled": false,
       "name": "accounts",
@@ -176,6 +185,19 @@
       "generated": null,
       "identity": null,
       "name": "email",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "users"
+    },
+    {
+      "type": "user_roles",
+      "typeSchema": "public",
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "role",
       "entityType": "columns",
       "schema": "public",
       "table": "users"

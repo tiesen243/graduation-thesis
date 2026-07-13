@@ -42,3 +42,10 @@ export const authSchema = {
     authorization: t.Optional(t.String({ pattern: /^Bearer\s.+$/u })),
   }),
 }
+
+export const tokensSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string(),
+  expiresAt: z.date(),
+})
+export type TokensSchema = z.infer<typeof tokensSchema>

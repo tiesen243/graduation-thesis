@@ -5,7 +5,7 @@ import { Elysia } from 'elysia'
 
 import type { Bootstrap } from '@/bootstrap'
 
-import { UserService } from '@/modules/user/application/user.service'
+import { UserService } from '@/modules/user/application/service'
 import { UserInfrastructureModule } from '@/modules/user/infrastructure/infratructure.module'
 import { UserController } from '@/modules/user/presentation/user.controller'
 import { runEffect } from '@/shared/lib/utils'

@@ -5,7 +5,7 @@ import { Elysia } from 'elysia'
 
 import type { Bootstrap } from '@/bootstrap'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
+import { AuthService } from '@/modules/auth/application/service'
 import { AuthInfrastructureModule } from '@/modules/auth/infrastructure/infratructure.module'
 import { AuthController } from '@/modules/auth/presentation/auth.controller'
 import { runEffect } from '@/shared/lib/utils'

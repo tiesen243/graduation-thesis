@@ -1,3 +1,4 @@
+CREATE TYPE "user_roles" AS ENUM('user', 'admin');--> statement-breakpoint
 CREATE TABLE "accounts" (
 	"provider" varchar(24),
 	"provider_account_id" varchar(24),
@@ -12,6 +13,17 @@ CREATE TABLE "sessions" (
 	"expires_at" timestamp NOT NULL,
 	"created_at" timestamp NOT NULL,
 	"user_id" varchar(24) NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "users" (
+	"id" varchar(24) PRIMARY KEY,
+	"username" varchar(20) NOT NULL,
+	"email" varchar(255) NOT NULL,
+	"role" "user_roles" NOT NULL,
+	"image" varchar(255),
+	"created_at" timestamp NOT NULL,
+	"updated_at" timestamp NOT NULL,
+	"deleted_at" timestamp
 );
 --> statement-breakpoint
 CREATE INDEX "accounts_user_id_idx" ON "accounts" ("user_id");--> statement-breakpoint
