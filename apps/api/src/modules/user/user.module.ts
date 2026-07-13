@@ -14,12 +14,12 @@ export class UserModule {
   public static create(
     driver: Bootstrap.Config['persistenceDriver'],
     // oxlint-disable-next-line typescript/no-explicit-any
-    imports: (that: Layer.Layer<any, any, any>) => Layer.Layer<any, any, never>
+    imports: Layer.Layer<any, any, never>
   ) {
     const layer = Layer.provideMerge(
       UserService.live,
       UserInfrastructureModule[driver]
-    ).pipe(imports)
+    ).pipe(Layer.provideMerge(imports))
     const runtime = ManagedRuntime.make(layer)
 
     return {
