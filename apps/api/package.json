@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "@workspace/lib": "workspace:*",
-    "drizzle-orm": "^1.0.0-rc.4",
+    "drizzle-orm": "^1.0.0-rc.4-5d5b77c",
     "effect": "^3.21.4",
     "elysia": "^2.0.0-exp.42",
     "postgres": "^3.4.9",
@@ -36,7 +36,7 @@
     "@types/bun": "catalog:dev",
     "@workspace/oxlint": "workspace:*",
     "@workspace/tsconfig": "workspace:*",
-    "drizzle-kit": "^1.0.0-rc.4",
+    "drizzle-kit": "^1.0.0-rc.4-ca0f029",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   }
