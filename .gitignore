@@ -14,9 +14,11 @@ logs/
 *.log
 
 # misc
+.cache/
 .vscode/
 .DS_Store
 
 # infrastructure
 .alchemy/
 .wrangler/
+.turbo/
