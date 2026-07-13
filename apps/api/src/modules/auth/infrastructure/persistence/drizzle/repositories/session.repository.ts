@@ -30,8 +30,9 @@ export const DrizzleSessionRepository = Layer.effect(
             .limit(1)
         ).pipe(
           Effect.map(([row]) => {
-            if (!row) return null
+            if (!row?.sessions || !row.users) return null
             const session = new Session(row.sessions)
+
             session.user = new User(row.users)
             return session
           })
