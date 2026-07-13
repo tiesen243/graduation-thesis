@@ -33,7 +33,6 @@ export class Bootstrap {
 
     return new Elysia({
       name: 'bootstrap',
-      precompile: true,
       ...config.elysia,
     })
 

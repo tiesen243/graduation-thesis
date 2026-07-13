@@ -27,7 +27,7 @@ export const authMiddleware = new Elysia({
         ''
 
       if (!token)
-        return yield* Effect.fail(Http.unauthorized('Missing access token'))
+        return yield* Effect.fail(Http.unauthorized('Invalid access token'))
 
       const { userId } = yield* authService.verifyAccessToken(token)
       return yield* responseValue.pipe(
