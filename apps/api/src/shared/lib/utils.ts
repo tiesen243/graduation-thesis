@@ -35,6 +35,7 @@ export const runTransaction = <A, E, R>(
         client.transaction((tx) =>
           Effect.runPromise(
             program.pipe(
+              // oxlint-disable-next-line unicorn/max-nested-calls
               Effect.provideService(DrizzleClient, DrizzleClient.make(tx))
             )
           )
