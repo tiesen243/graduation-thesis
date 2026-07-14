@@ -34,16 +34,10 @@
     "apps/mobile": {
       "name": "@rozumari/mobile",
       "version": "0.0.0",
-      "dependencies": {
-        "@rozumari/api": "workspace:*",
-      },
     },
     "apps/web": {
       "name": "@rozumari/web",
       "version": "0.0.0",
-      "dependencies": {
-        "@rozumari/api": "workspace:*",
-      },
     },
     "packages/firmware": {
       "name": "@rozumari/firmware",
