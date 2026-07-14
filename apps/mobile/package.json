@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/mobile",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "type": "module",
   "scripts": {
