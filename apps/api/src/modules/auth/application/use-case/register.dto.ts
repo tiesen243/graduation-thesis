@@ -2,10 +2,10 @@ import * as Effect from 'effect/Effect'
 
 import type { RegisterDto } from '@/modules/auth/application/dto/register.dto'
 
-import { AuthService } from '@/modules/auth/application/service'
+import { AuthService } from '@/modules/auth/application/auth.service'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { UserService } from '@/modules/user/application/service'
+import { UserService } from '@/modules/user/application/user.service'
 import { Http } from '@/shared/http'
 import { createUseCase } from '@/shared/lib/utils'
 
@@ -22,7 +22,7 @@ export const RegisterUseCase = createUseCase<
       let user = yield* userService.findByIidentifier({ email, username })
       if (user) return yield* Effect.fail(Http.conflict('User already exists'))
 
-      user = yield* userService.create({ username, email })
+      user = yield* userService.create({ username, email, image: null })
 
       const account = Account.make({
         provider: 'credentials',

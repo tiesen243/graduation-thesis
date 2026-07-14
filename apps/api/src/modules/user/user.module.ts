@@ -5,21 +5,19 @@ import { Elysia } from 'elysia'
 
 import type { Bootstrap } from '@/bootstrap'
 
-import { UserService } from '@/modules/user/application/service'
+import { UserService } from '@/modules/user/application/user.service'
 import { UserInfrastructureModule } from '@/modules/user/infrastructure/infratructure.module'
 import { UserController } from '@/modules/user/presentation/user.controller'
 import { runEffect } from '@/shared/lib/utils'
 
 export class UserModule {
-  public static create(
-    driver: Bootstrap.Config['persistenceDriver'],
-    // oxlint-disable-next-line typescript/no-explicit-any
-    imports: Layer.Layer<any, any, never>
-  ) {
+  public static create(driver: Bootstrap.Config['persistenceDriver']) {
+    const userInfrastructureModule = UserInfrastructureModule.create(driver)
+
     const layer = Layer.provideMerge(
       UserService.live,
-      UserInfrastructureModule[driver]
-    ).pipe(Layer.provideMerge(imports))
+      userInfrastructureModule.persistenceModule
+    )
     const runtime = ManagedRuntime.make(layer)
 
     return {

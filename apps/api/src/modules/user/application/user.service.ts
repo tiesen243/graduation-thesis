@@ -17,7 +17,7 @@ export class UserService extends Context.Tag(
     ) => Effect.Effect<User | null, Http, UserRepository>
 
     readonly create: (
-      data: Pick<User, 'email' | 'username'>
+      data: Pick<User, 'email' | 'username' | 'image'>
     ) => Effect.Effect<User, Http, UserRepository>
   }
 >() {
@@ -37,9 +37,9 @@ export class UserService extends Context.Tag(
             return user ?? null
           }),
 
-        create: ({ email, username }) =>
+        create: ({ email, username, image }) =>
           Effect.gen(function* createUserGen() {
-            const user = User.make({ email, username })
+            const user = User.make({ email, username, image })
             yield* userRepo.save(user)
             return user
           }),

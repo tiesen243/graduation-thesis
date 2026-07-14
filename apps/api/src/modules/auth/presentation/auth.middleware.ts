@@ -4,7 +4,7 @@ import { Elysia } from 'elysia'
 
 import type { User } from '@/modules/user/domain/entities/user.entity'
 
-import { AuthService } from '@/modules/auth/application/service'
+import { AuthService } from '@/modules/auth/application/auth.service'
 import { authSchema } from '@/modules/auth/application/types'
 import { Http } from '@/shared/http'
 

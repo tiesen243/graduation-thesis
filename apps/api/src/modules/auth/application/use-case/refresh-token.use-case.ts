@@ -1,6 +1,6 @@
 import type { TokensSchema } from '@/modules/auth/application/types'
 
-import { AuthService } from '@/modules/auth/application/service'
+import { AuthService } from '@/modules/auth/application/auth.service'
 import { createUseCase } from '@/shared/lib/utils'
 
 export const refreshTokenUseCase = createUseCase<

@@ -11,7 +11,7 @@ import {
   AuthMiddleware,
   CurrentUser,
 } from '@/modules/auth/presentation/auth.middleware'
-import { UserService } from '@/modules/user/application/service'
+import { UserService } from '@/modules/user/application/user.service'
 import { Http } from '@/shared/http'
 
 export const AuthController = new Elysia({

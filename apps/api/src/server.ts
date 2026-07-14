@@ -1,10 +1,15 @@
 import { Bootstrap } from '@/bootstrap'
+import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { cors } from '@/plugins/cors'
 import { errorHandle } from '@/plugins/error-handle'
+import { Http } from '@/shared/http'
 import { env } from '@/shared/lib/env'
+
+import * as pkgJson from '../package.json' with { type: 'json' }
 
 export const server = Bootstrap.create({
   persistenceDriver: 'drizzle',
+  providers: [new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET)],
   plugins: [cors, errorHandle],
 
   elysia: {
@@ -27,6 +32,33 @@ export const server = Bootstrap.create({
     },
   },
 })
+
+  .get(
+    '/',
+    () =>
+      new Http({
+        data: {
+          name: pkgJson.name,
+          version: pkgJson.version,
+          environment: env.NODE_ENV,
+
+          memory: {
+            used:
+              Math.round((process.memoryUsage().heapUsed / 1024 / 1024) * 100) /
+              100,
+            total:
+              Math.round(
+                (process.memoryUsage().heapTotal / 1024 / 1024) * 100
+              ) / 100,
+            unit: 'MB',
+          },
+
+          cpu: process.cpuUsage(),
+
+          uptime: process.uptime(),
+        },
+      })
+  )
 
 export type Server = typeof server
 export default {
