@@ -1,14 +1,20 @@
 import { tegami } from 'tegami'
-import { runCli } from 'tegami/cli'
+import { createCli } from 'tegami/cli'
 import { github } from 'tegami/plugins/github'
 
 const paper = tegami({
+  npm: {
+    client: 'bun',
+    updateLockFile: true,
+  },
+
   plugins: [
     github({
       repo: 'tiesen243/graduation-thesis',
-      versionPr: { branch: 'dev' },
+      versionPr: { base: 'dev' },
     }),
   ],
+  ignore: ['docs'],
 })
 
-await runCli(paper)
+void createCli(paper).parseAsync()

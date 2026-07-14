@@ -12,6 +12,7 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "tegami": "bun run tegami.ts",
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {

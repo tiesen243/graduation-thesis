@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./tools/github/actions/setup
+
+      - name: Version & publish packages
+        run: bun tegami ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
