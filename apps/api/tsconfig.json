@@ -1,5 +1,5 @@
 {
-  "extends": "@workspace/tsconfig/base.json",
+  "extends": "@rozumari/tsconfig/base.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]

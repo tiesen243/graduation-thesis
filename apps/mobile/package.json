@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/mobile",
+  "name": "@rozumari/mobile",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -7,6 +7,6 @@
     "clean": "git clean -fdx .cache .turbo node_modules"
   },
   "dependencies": {
-    "@workspace/api": "workspace:*"
+    "@rozumari/api": "workspace:*"
   }
 }
