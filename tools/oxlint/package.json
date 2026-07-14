@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/oxlint",
+  "name": "@rozumari/oxlint",
   "version": "0.0.0",
   "private": true,
   "type": "module",

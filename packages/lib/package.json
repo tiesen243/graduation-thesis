@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/lib",
+  "name": "@rozumari/lib",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -15,8 +15,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@workspace/oxlint": "workspace:*",
-    "@workspace/tsconfig": "workspace:*",
+    "@rozumari/oxlint": "workspace:*",
+    "@rozumari/tsconfig": "workspace:*",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   }

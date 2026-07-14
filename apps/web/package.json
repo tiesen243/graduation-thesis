@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/web",
+  "name": "@rozumari/web",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -7,6 +7,6 @@
     "clean": "git clean -fdx .cache .react-router .turbo build node_modules"
   },
   "dependencies": {
-    "@workspace/api": "workspace:*"
+    "@rozumari/api": "workspace:*"
   }
 }

@@ -1,4 +1,4 @@
-import { createEnv } from '@workspace/lib/create-env'
+import { createEnv } from '@rozumari/lib/create-env'
 import * as z from 'zod'
 
 export const env = createEnv({

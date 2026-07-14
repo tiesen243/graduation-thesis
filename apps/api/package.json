@@ -1,5 +1,5 @@
 {
-  "name": "@workspace/api",
+  "name": "@rozumari/api",
   "version": "0.0.0",
   "private": false,
   "type": "module",
@@ -26,7 +26,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@workspace/lib": "workspace:*",
+    "@rozumari/lib": "workspace:*",
     "drizzle-orm": "^1.0.0-rc.4-5d5b77c",
     "effect": "^3.22.0",
     "elysia": "^2.0.0-exp.42",
@@ -34,9 +34,9 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@rozumari/oxlint": "workspace:*",
+    "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "@workspace/oxlint": "workspace:*",
-    "@workspace/tsconfig": "workspace:*",
     "drizzle-kit": "^1.0.0-rc.4-ca0f029",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
