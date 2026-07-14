@@ -1,0 +1,59 @@
+core:changelogs:
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n  npm:@rozumari/lib:\n    type: patch\n  npm:@rozumari/pcb:\n    type: patch\n  npm:@rozumari/proteus:\n    type: patch\n  npm:@rozumari/github:\n    type: patch\n  npm:@rozumari/oxlint:\n    type: patch\n  npm:@rozumari/tsconfig:\n    type: patch\n---\n\n## First release\n\n- Initialize monorepo workspace structure.\n- Configure automated versioning and changelogs using Tegami.\n"
+    filename: 2026-07-15-mrl1lrkx.md
+    v: 0.0.0
+core:packages:
+  - id: npm:graduation-thesis
+    updated: false
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/firmware
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/proteus
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/lib
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/pcb
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/github
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/oxlint
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/tsconfig
+    updated: true
+  - changelogIds:
+      - 2026-07-15-mrl1lrkx.md
+    id: npm:@rozumari/web
+    updated: true
+npm:packages:
+  - id: npm:graduation-thesis
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/web
