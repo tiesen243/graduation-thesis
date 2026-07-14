@@ -2,9 +2,9 @@ import * as Effect from 'effect/Effect'
 
 import type { LoginDto } from '@/modules/auth/application/dto/login.dto'
 
-import { AuthService } from '@/modules/auth/application/service'
+import { AuthService } from '@/modules/auth/application/auth.service'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { UserService } from '@/modules/user/application/service'
+import { UserService } from '@/modules/user/application/user.service'
 import { Http } from '@/shared/http'
 import { createUseCase } from '@/shared/lib/utils'
 

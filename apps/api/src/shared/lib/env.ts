@@ -6,6 +6,9 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .default('development'),
+
+    VERCEL_URL: z.string().optional(),
+    VERCEL_PROJECT_PRODUCTION_URL: z.string().optional(),
   },
 
   server: {
@@ -18,6 +21,8 @@ export const env = createEnv({
       .default('postgresql://postgres:secret@127.0.0.1:5432/db'),
 
     AUTH_SECRET: z.string().default('secret'),
+    AUTH_GOOGLE_ID: z.string(),
+    AUTH_GOOGLE_SECRET: z.string(),
   },
 
   clientPrefix: 'PUBLIC_',

@@ -15,8 +15,39 @@ export const createUseCase =
   (input: TInput) =>
     Effect.gen(useCase(input) as never) as Effect.Effect<TOutput, Http, never>
 
+export const effetch = <A>(
+  input: string | URL | Request,
+  init?: RequestInit
+): Effect.Effect<A, Http> =>
+  Effect.gen(function* effetchGen() {
+    const response = yield* Effect.promise(() => fetch(input, init))
+
+    if (!response.ok)
+      return yield* Effect.fail(
+        Http.internalServerError(`Fetch error: ${response.statusText}`)
+      )
+
+    return yield* Effect.tryPromise({
+      try: () => response.json() as Promise<A>,
+      catch: (error) => Http.internalServerError(`Fetch error: ${error}`),
+    })
+  })
+
+export const runEffect = <A, R>(
+  // oxlint-disable-next-line typescript/no-explicit-any
+  runtime: ManagedRuntime<R, any>,
+  effect: Effect.Effect<A, Http, R>
+) =>
+  runtime.runPromise(
+    effect.pipe(
+      Effect.map((data) => new Http({ data })),
+      Effect.catchTag('shared/Http', Effect.succeed),
+      Effect.map((http) => http.toResponse())
+    )
+  )
+
 export const runTransaction = <A, E, R>(
-  transactionGen: (_: Effect.Adapter) => Generator<YieldWrap<unknown>, A, never>
+  transactionGen: Effect.Effect<A, E, R>
 ): Effect.Effect<A, E, R> =>
   Effect.gen(function* runTransactionGen() {
     const context = yield* Effect.context<R>()
@@ -25,9 +56,7 @@ export const runTransaction = <A, E, R>(
       // maybePrisma: Effect.serviceOption(PrismaClient),
     })
 
-    const program = Effect.gen(transactionGen as never).pipe(
-      Effect.provide(context)
-    )
+    const program = transactionGen.pipe(Effect.provide(context))
 
     // oxlint-disable-next-line no-underscore-dangle
     if (maybeDrizzle._tag === 'Some')
@@ -44,16 +73,3 @@ export const runTransaction = <A, E, R>(
 
     return yield* program as Effect.Effect<A, E, R>
   })
-
-export const runEffect = <A, R>(
-  // oxlint-disable-next-line typescript/no-explicit-any
-  runtime: ManagedRuntime<R, any>,
-  effect: Effect.Effect<A, Http, R>
-) =>
-  runtime.runPromise(
-    effect.pipe(
-      Effect.map((data) => new Http({ data })),
-      Effect.catchTag('shared/Http', Effect.succeed),
-      Effect.map((http) => http.toResponse())
-    )
-  )
