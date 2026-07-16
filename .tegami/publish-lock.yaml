@@ -1,41 +1,41 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Patch Changes\n\n- Add Google OAuth support to API\n- Refactor dependency injection for storage infrastructure\n"
-    filename: 2026-07-15-mrl6izuw.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n### Added\n\n- **Security**: Added a secret key requirement to both password hashing and verification functions for enhanced security.\n- **Testing**: Added comprehensive unit tests for `encoding` helpers, `Password` utilities, and `JWT` handling.\n\n### Fixed\n\n- **Database**: Fixed a logical operator bug in the query builder where `OR` was incorrectly used instead of `AND` when constructing `WHERE` clauses.\n"
+    filename: 2026-07-16-mrnqtipk.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - id: npm:@rozumari/firmware
     updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
   - id: npm:@rozumari/proteus
     updated: false
-  - id: npm:@rozumari/mobile
-    updated: false
-  - changelogIds:
-      - 2026-07-15-mrl6izuw.md
-    id: npm:@rozumari/api
-    updated: true
   - id: npm:@rozumari/pcb
+    updated: false
+  - id: npm:@rozumari/lib
     updated: false
   - id: npm:@rozumari/github
     updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
   - id: npm:@rozumari/oxlint
+    updated: false
+  - changelogIds:
+      - 2026-07-16-mrnqtipk.md
+    id: npm:@rozumari/api
+    updated: true
+  - id: npm:@rozumari/web
+    updated: false
+  - id: npm:@rozumari/mobile
     updated: false
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/proteus
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/api
   - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/lib
   - id: npm:@rozumari/github
   - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/mobile
