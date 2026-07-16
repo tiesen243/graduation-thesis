@@ -25,8 +25,10 @@ export const env = createEnv({
     AUTH_GOOGLE_SECRET: z.string(),
   },
 
-  clientPrefix: 'PUBLIC_',
-  client: {},
+  clientPrefix: 'VITE_',
+  client: {
+    VITE_API_URL: z.string().optional(),
+  },
 
   runtimeEnv: process.env,
 
