@@ -1,5 +1,5 @@
 import * as Effect from 'effect/Effect'
-import crypto from 'node:crypto'
+import { subtle } from 'node:crypto'
 
 import { decodeBase64Url, encodeBase64Url } from '@/modules/auth/lib/crypto'
 import { Http } from '@/shared/http'
@@ -92,7 +92,7 @@ export class JWT<TValue extends Record<string, any>> {
       } as const
 
       const key = yield* Effect.promise(() =>
-        crypto.subtle.importKey(
+        subtle.importKey(
           'raw',
           new TextEncoder().encode(this.secret),
           { name: 'HMAC', hash: algMap[this.algorithm] },
@@ -102,7 +102,7 @@ export class JWT<TValue extends Record<string, any>> {
       )
 
       return yield* Effect.promise(() =>
-        crypto.subtle.sign('HMAC', key, data as Uint8Array<ArrayBuffer>)
+        subtle.sign('HMAC', key, data as Uint8Array<ArrayBuffer>)
       )
     })
 }

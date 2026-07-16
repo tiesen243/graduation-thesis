@@ -34,17 +34,15 @@ export const effetch = <A>(
   })
 
 export const runEffect = <A, R>(
-  // oxlint-disable-next-line typescript/no-explicit-any
-  runtime: ManagedRuntime<R, any>,
+  runtime: ManagedRuntime<R, never>,
   effect: Effect.Effect<A, Http, R>
 ) =>
   runtime.runPromise(
     effect.pipe(
       Effect.map((data) => new Http({ data })),
-      Effect.catchTag('shared/Http', Effect.succeed),
-      Effect.map((http) => http.toResponse())
+      Effect.catchTag('shared/Http', Effect.succeed)
     )
-  )
+  ) as unknown as Promise<Response>
 
 export const runTransaction = <A, E, R>(
   transactionGen: Effect.Effect<A, E, R>

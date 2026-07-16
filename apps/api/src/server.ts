@@ -2,6 +2,7 @@ import { Bootstrap } from '@/bootstrap'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { cors } from '@/plugins/cors'
 import { errorHandle } from '@/plugins/error-handle'
+import { logger } from '@/plugins/logger'
 import { Http } from '@/shared/http'
 import { env } from '@/shared/lib/env'
 
@@ -10,7 +11,7 @@ import * as pkgJson from '../package.json' with { type: 'json' }
 export const server = Bootstrap.create({
   persistenceDriver: 'drizzle',
   providers: [new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET)],
-  plugins: [cors, errorHandle],
+  plugins: [cors, errorHandle, logger],
 
   elysia: {
     precompile: true,

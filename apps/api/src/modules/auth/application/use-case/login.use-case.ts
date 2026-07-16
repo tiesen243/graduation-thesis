@@ -16,7 +16,7 @@ export const loginUseCase = createUseCase<LoginDto.Input, LoginDto.Output>(
 
       const authService = yield* AuthService
 
-      const user = yield* userService.findByIidentifier(input)
+      const user = yield* userService.findByIidentifier({ email: input.email })
       if (!user)
         return yield* Effect.fail(Http.unauthorized('Invalid credentials'))
 

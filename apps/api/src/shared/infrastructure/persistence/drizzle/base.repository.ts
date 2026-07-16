@@ -134,11 +134,11 @@ export function buildCriteria<TEntity>(
     }
 
     orClauses.push(
-      andClauses.length === 1 ? andClauses[0] : orm.or(...andClauses)
+      andClauses.length === 1 ? andClauses[0] : orm.and(...andClauses)
     )
   }
 
-  return orClauses.length === 1 ? orClauses[0] : orm.and(...orClauses)
+  return orClauses.length === 1 ? orClauses[0] : orm.or(...orClauses)
 }
 
 export function buildOrderBy<TEntity>(
