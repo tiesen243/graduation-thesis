@@ -23,11 +23,12 @@ export const RegisterUseCase = createUseCase<
       if (user) return yield* Effect.fail(Http.conflict('User already exists'))
 
       user = yield* userService.create({ username, email, image: null })
+      const hashedPassword = yield* AuthService.password.hash(password)
 
       const account = Account.make({
         provider: 'credentials',
         providerAccountId: user.id,
-        password: yield* AuthService.password.hash(password),
+        password: hashedPassword,
 
         userId: user.id,
       })

@@ -7,8 +7,6 @@ export const cors = new Elysia({
 })
 
   .headers({
-    'access-control-allow-headers':
-      'Content-Type, Authorization, X-Requested-With',
     'access-control-allow-credentials': 'true',
   })
 
@@ -25,6 +23,9 @@ export const cors = new Elysia({
 
     set.headers['access-control-allow-methods'] =
       'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    set.headers['access-control-allow-headers'] =
+      'Content-Type, Authorization, X-Requested-With'
+    set.headers['access-control-allow-credentials'] = 'true'
 
     if (request.method === 'OPTIONS') return new Response(null, { status: 204 })
   })

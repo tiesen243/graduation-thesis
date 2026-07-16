@@ -33,7 +33,7 @@ export class AuthService extends Context.Tag(
     ) => Effect.Effect<Session, Http, SessionRepository>
   }
 >() {
-  public static password = new Password()
+  public static password = new Password({ secret: env.AUTH_SECRET })
   public static jwt = new JWT<AuthService.JWTPayload>(env.AUTH_SECRET)
 
   public static live = Layer.succeed(this, {
