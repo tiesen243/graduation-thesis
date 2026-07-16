@@ -77,6 +77,7 @@ export default defineConfig({
     'unicorn/no-array-callback-reference': 'off',
     'unicorn/no-null': 'off',
     'unicorn/no-process-exit': 'off',
+    'unicorn/number-literal-case': 'off',
     'unicorn/prefer-global-this': 'off',
     'unicorn/prefer-string-raw': 'off',
     'unicorn/prefer-top-level-await': 'off',
