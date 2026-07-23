@@ -17,8 +17,10 @@ logs/
 .cache/
 .vscode/
 .DS_Store
+*.bak
 
 # infrastructure
 .alchemy/
-.wrangler/
 .turbo/
+.vercel/
+.wrangler/

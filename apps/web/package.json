@@ -4,6 +4,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "clean": "git clean -fdx .cache .react-router .turbo build node_modules"
+    "clean": "git clean -fdx .cache .react-router .turbo build node_modules",
+    "build": "echo 'Building web...'"
   }
 }
