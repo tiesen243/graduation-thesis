@@ -1,7 +1,6 @@
 {
   "extends": "@rozumari/tsconfig/react-package.json",
   "compilerOptions": {
-    "types": ["bun"],
     "paths": {
       "@/*": ["./src/*"]
     }

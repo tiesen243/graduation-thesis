@@ -4,11 +4,12 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "echo 'Building web...'",
-    "clean": "git clean -fdx .cache .react-router .turbo build node_modules"
+    "clean": "git clean -fdx .cache .react-router .turbo build node_modules",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@rozumari/api": "workspace:*",
+    "@rozumari/lib": "workspace:*",
     "@tanstack/react-query": "catalog:prod",
     "@tiesen/effect-tanstack-query": "^0.0.6",
     "effect": "catalog:effect",

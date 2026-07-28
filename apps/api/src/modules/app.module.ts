@@ -11,8 +11,8 @@ import { UserModule } from '@/modules/user/user.module'
 import { env } from '@/shared/env'
 import { Http } from '@/shared/http'
 
-export class Bootstrap {
-  public static create(config: Bootstrap.Config) {
+export class AppModule {
+  public static create(config: AppModule.Config) {
     const homeModule = HomeModule.create()
     const userModule = UserModule.create(config)
 
@@ -59,7 +59,7 @@ export class Bootstrap {
   }
 }
 
-export namespace Bootstrap {
+export namespace AppModule {
   export interface Config {
     persistentDriver: 'in-memory' | 'drizzle'
   }

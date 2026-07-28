@@ -9,14 +9,6 @@
     ".": {
       "types": "./dist/api.d.mts",
       "default": "./dist/api.mjs"
-    },
-    "./home/*": {
-      "types": "./dist/modules/home/application/dto/*.dto.d.mts",
-      "default": "./dist/modules/home/application/dto/*.dto.mjs"
-    },
-    "./user/*": {
-      "types": "./dist/modules/user/application/dto/*.dto.d.mts",
-      "default": "./dist/modules/user/application/dto/*.dto.mjs"
     }
   },
   "scripts": {

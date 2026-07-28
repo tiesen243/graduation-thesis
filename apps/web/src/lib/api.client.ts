@@ -8,18 +8,22 @@ import * as HttpClient from 'effect/unstable/http/HttpClient'
 import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
 import * as HttpApiClient from 'effect/unstable/httpapi/HttpApiClient'
 
-export class ApiClient extends Context.Service<
-  ApiClient,
-  HttpApiClient.ForApi<typeof Api>
->()('ApiClient') {
+import { env } from '@/lib/env'
+
+// oxlint-disable-next-line typescript/no-empty-interface typescript/no-empty-object-type
+interface IApiClient extends HttpApiClient.ForApi<typeof Api> {}
+
+export class ApiClient extends Context.Service<ApiClient, IApiClient>()(
+  'ApiClient'
+) {
   public static live = Layer.effect(
-    this,
+    ApiClient,
     HttpApiClient.make(Api, {
       transformClient: (client) =>
         client.pipe(
           HttpClient.mapRequest(
             Function.flow(
-              HttpClientRequest.prependUrl('http://localhost:3000'),
+              HttpClientRequest.prependUrl(env.PUBLIC_API_URL),
               HttpClientRequest.setHeader('x-requested-with', 'web'),
               HttpClientRequest.acceptJson
             )

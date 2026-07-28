@@ -2,10 +2,10 @@
 
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
 
-import { Bootstrap } from '@/bootstrap'
+import { AppModule } from '@/modules/app.module'
 
 const program = HttpRouter.toWebHandler(
-  Bootstrap.create({ persistentDriver: 'in-memory' })
+  AppModule.create({ persistentDriver: 'in-memory' })
 )
 
 export default {

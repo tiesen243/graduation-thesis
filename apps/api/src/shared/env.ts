@@ -13,7 +13,6 @@ export const env = createEnv({
     ),
 
     VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
-
     VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
