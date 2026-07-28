@@ -3,24 +3,28 @@
   "version": "0.0.3",
   "private": false,
   "type": "module",
-  "main": "./dist/server.mjs",
-  "types": "./dist/server.d.mts",
+  "main": "./dist/main.mjs",
+  "types": "./dist/main.d.mts",
   "exports": {
-    "./auth/*": {
-      "types": "./dist/modules/auth/application/dto/*.d.mts",
-      "default": "./dist/modules/auth/application/dto/*.mjs"
+    ".": {
+      "types": "./dist/api.d.mts",
+      "default": "./dist/api.mjs"
+    },
+    "./home/*": {
+      "types": "./dist/modules/home/application/dto/*.dto.d.mts",
+      "default": "./dist/modules/home/application/dto/*.dto.mjs"
     },
     "./user/*": {
-      "types": "./dist/modules/user/application/dto/*.d.mts",
-      "default": "./dist/modules/user/application/dto/*.mjs"
+      "types": "./dist/modules/user/application/dto/*.dto.d.mts",
+      "default": "./dist/modules/user/application/dto/*.dto.mjs"
     }
   },
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "dev": "bun run --hot src/server.ts",
+    "dev": "bun run --hot src/main.ts",
     "drizzle": "drizzle-kit --config ./src/shared/infrastructure/persistence/drizzle/drizzle.config.ts",
-    "start": "bun run --hot dist/server.mjs",
+    "start": "bun run dist/main.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -28,9 +32,7 @@
     "@rozumari/lib": "workspace:*",
     "drizzle-orm": "^1.0.0-rc.4-5d5b77c",
     "effect": "catalog:effect",
-    "elysia": "^2.0.0-exp.42",
-    "pg": "^8.22.0",
-    "zod": "^4.4.3"
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",

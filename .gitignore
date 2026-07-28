@@ -24,3 +24,4 @@ logs/
 .turbo/
 .vercel/
 .wrangler/
+.vercel

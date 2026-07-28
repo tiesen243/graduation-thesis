@@ -1,8 +1,11 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
-  entry: ['src/server.ts', 'src/modules/*/application/dto/*.ts'],
-  deps: { neverBundle: ['typebox'] },
+  entry: [
+    'src/api.ts',
+    'src/main.ts',
+    'src/modules/*/application/dto/*.dto.ts',
+  ],
   dts: true,
   minify: true,
   shims: true,

@@ -4,7 +4,23 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "clean": "git clean -fdx .cache .react-router .turbo build node_modules",
-    "build": "echo 'Building web...'"
+    "build": "echo 'Building web...'",
+    "clean": "git clean -fdx .cache .react-router .turbo build node_modules"
+  },
+  "dependencies": {
+    "@rozumari/api": "workspace:*",
+    "@tanstack/react-query": "catalog:prod",
+    "@tiesen/effect-tanstack-query": "^0.0.6",
+    "effect": "catalog:effect",
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
+  },
+  "devDependencies": {
+    "@rozumari/oxlint": "workspace:*",
+    "@rozumari/tsconfig": "workspace:*",
+    "@types/bun": "catalog:dev",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "typescript": "catalog:dev"
   }
 }
