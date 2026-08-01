@@ -9,7 +9,6 @@ import { Api } from '@/api'
 import { HomeModule } from '@/modules/home/home.module'
 import { UserModule } from '@/modules/user/user.module'
 import { env } from '@/shared/env'
-import { makeHttp } from '@/shared/http'
 
 export class AppModule {
   public static create(config: AppModule.Config) {
@@ -27,11 +26,13 @@ export class AppModule {
           '*',
           '*',
           HttpServerResponse.json(
-            makeHttp({
+            {
               status: 404,
               message: 'The requested resource was not found',
               data: null,
-            }),
+              error: null,
+              timestamp: new Date(),
+            },
             { status: 404 }
           )
         ),

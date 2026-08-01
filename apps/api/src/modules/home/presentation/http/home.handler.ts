@@ -3,23 +3,20 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { Api } from '@/api'
 import { HealthUseCase } from '@/modules/home/application/use-case/health.use-case'
-import { makeHttp } from '@/shared/http'
+import {
+  HealthSuccess,
+  HomeSuccess,
+} from '@/modules/home/presentation/http/home.group'
 
 export const HomeHandler = HttpApiBuilder.group(Api, 'home', (handlers) =>
   handlers
     .handle('index', () =>
-      Effect.succeed(makeHttp({ message: 'Welcome to the API' }))
+      Effect.succeed(HomeSuccess.make({ message: 'Welcome to the API' }))
     )
 
-    .handle(
-      'health',
-      Effect.fn(function* healthHandler() {
-        const output = yield* HealthUseCase.use((s) => s.execute())
-
-        return makeHttp({
-          message: 'API is healthy',
-          data: output,
-        })
-      })
+    .handle('health', () =>
+      HealthUseCase.use((s) => s.execute()).pipe(
+        Effect.map((data) => HealthSuccess.make({ data }))
+      )
     )
 )

@@ -7,12 +7,17 @@ export default defineConfig({
     {
       files: ['**/*.ts'],
       rules: {
-        'max-classes-per-file': ['error', { max: 2 }],
-
         'typescript/no-extraneous-class': 'off',
         'typescript/parameter-properties': 'off',
 
         'unicorn/no-static-only-class': 'off',
+      },
+    },
+
+    {
+      files: ['**/*.error.ts', '**/*.group.ts'],
+      rules: {
+        'max-classes-per-file': 'off',
       },
     },
   ],

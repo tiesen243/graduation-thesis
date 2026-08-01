@@ -4,32 +4,22 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 import { Api } from '@/api'
 import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case.ts'
 import { OneUserUseCase } from '@/modules/user/application/use-case/one-user.use-case'
-import { makeHttp } from '@/shared/http'
+import {
+  ListUsersSuccess,
+  OneUserSuccess,
+} from '@/modules/user/presentation/http/user.group'
 
 export const UserHandler = HttpApiBuilder.group(Api, 'user', (handlers) =>
   handlers
-    .handle(
-      'list',
-      Effect.fn(function* listUsersHandler({ query }) {
-        const output = yield* ListUsersUseCase.use((s) =>
-          s.execute(query)
-        ).pipe(Effect.orDie)
-
-        return makeHttp({
-          data: output,
-        })
-      })
+    .handle('list', ({ query }) =>
+      ListUsersUseCase.use((s) => s.execute(query)).pipe(
+        Effect.map((data) => ListUsersSuccess.make({ data }))
+      )
     )
-    .handle(
-      'show',
-      Effect.fn(function* showUserHandler({ params }) {
-        const output = yield* OneUserUseCase.use((s) => s.execute(params)).pipe(
-          Effect.orDie
-        )
 
-        return makeHttp({
-          data: output,
-        })
-      })
+    .handle('show', ({ params }) =>
+      OneUserUseCase.use((s) => s.execute(params)).pipe(
+        Effect.map((data) => OneUserSuccess.make({ data }))
+      )
     )
 )

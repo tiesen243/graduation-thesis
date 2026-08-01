@@ -1,25 +1,35 @@
+import * as Schema from 'effect/Schema'
 import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
-import * as HttpApiSchema from 'effect/unstable/httpapi/HttpApiSchema'
 
 import { ListUsersDto } from '@/modules/user/application/dto/list-users.dto'
 import { OneUserDto } from '@/modules/user/application/dto/one-user.dto'
 import { UserNotFound } from '@/modules/user/domain/entities/user.error'
-import { Http } from '@/shared/http'
+import { ApiResponseSchema } from '@/shared/schema'
+
+export class ListUsersSuccess extends Schema.TaggedClass<ListUsersSuccess>()(
+  'user/presentation/ListUsersSuccess',
+  ApiResponseSchema(ListUsersDto.Output)
+) {}
+
+export class OneUserSuccess extends Schema.TaggedClass<OneUserSuccess>()(
+  'user/presentation/OneUserSuccess',
+  ApiResponseSchema(OneUserDto.Output)
+) {}
 
 export class UserGroup extends HttpApiGroup.make('user')
   .add(
     HttpApiEndpoint.get('list', '/', {
       query: ListUsersDto.Input,
-      success: Http(ListUsersDto.Output),
+      success: ListUsersSuccess,
     })
   )
 
   .add(
     HttpApiEndpoint.get('show', '/:id', {
       params: OneUserDto.Input,
-      success: Http(OneUserDto.Output),
-      error: UserNotFound.pipe(HttpApiSchema.status(404)),
+      success: OneUserSuccess,
+      error: UserNotFound,
     })
   )
 
