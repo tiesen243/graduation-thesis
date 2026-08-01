@@ -12,11 +12,11 @@ export class ListUsersUseCase extends Context.Service<
     execute: (input: ListUsersDto.Input) => Effect.Effect<ListUsersDto.Output>
   }
 >()('user/application/ListUsersUseCase', {
-  make: Effect.gen(function* makeFn() {
+  make: Effect.gen(function* make() {
     const userRepository = yield* Effect.service(UserRepository)
 
     return {
-      execute: Effect.fn(function* make({ query, page, limit }) {
+      execute: Effect.fn(function* execute({ query, page, limit }) {
         const offset = (page - 1) * limit
         const where = query
           ? [

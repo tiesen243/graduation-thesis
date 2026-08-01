@@ -8,7 +8,7 @@ import { MakeDrizzleRepository } from '@/shared/infrastructure/persistence/drizz
 
 export const DrizzleUserRepository = Layer.effect(
   UserRepository,
-  Effect.gen(function* InMemoryUserRepository() {
+  Effect.gen(function* DrizzleUserRepository() {
     const baseRepository = yield* MakeDrizzleRepository(users, (row) =>
       User.make(row as unknown as User)
     )

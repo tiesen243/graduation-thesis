@@ -3,7 +3,7 @@ import * as Schema from 'effect/Schema'
 
 import { createId } from '@/shared/lib/create-id'
 
-export class BaseEntity extends Schema.TaggedClass<BaseEntity>()(
+export abstract class BaseEntity extends Schema.TaggedClass<BaseEntity>()(
   'shared/domain/BaseEntity',
   {
     id: Schema.String.pipe(

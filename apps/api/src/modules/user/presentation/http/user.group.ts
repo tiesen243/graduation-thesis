@@ -2,6 +2,7 @@ import * as Schema from 'effect/Schema'
 import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
+import { AuthMiddleware } from '@/modules/auth/presentation/http/auth.middleware'
 import { ListUsersDto } from '@/modules/user/application/dto/list-users.dto'
 import { OneUserDto } from '@/modules/user/application/dto/one-user.dto'
 import { UserNotFound } from '@/modules/user/domain/entities/user.error'
@@ -32,5 +33,7 @@ export class UserGroup extends HttpApiGroup.make('user')
       error: UserNotFound,
     })
   )
+
+  .middleware(AuthMiddleware)
 
   .prefix('/api/users') {}

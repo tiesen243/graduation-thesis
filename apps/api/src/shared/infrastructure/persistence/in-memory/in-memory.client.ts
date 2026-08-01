@@ -5,10 +5,11 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as Ref from 'effect/Ref'
 
+import type { Account } from '@/modules/auth/domain/entities/account.entity'
+import type { Session } from '@/modules/auth/domain/entities/session.entity'
+import type { User } from '@/modules/user/domain/entities/user.entity'
 import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
-
-import type { User } from '@/modules/user/domain/entities/user.entity'
 
 export type Predicate<T> = (item: T) => boolean
 export type Comparator<T> = (a: T, b: T) => number
@@ -16,7 +17,9 @@ export type Comparator<T> = (a: T, b: T) => number
 export class InMemoryClient extends Context.Service<
   InMemoryClient,
   {
+    accounts: Ref.Ref<Map<string, Account>>
     users: Ref.Ref<Map<User['id'], User>>
+    sessions: Ref.Ref<Map<Session['id'], Session>>
 
     buildCriteria: <TEntity extends BaseEntity>(
       criterias: IBaseRepository.Criteria<TEntity>[]
@@ -100,7 +103,9 @@ export class InMemoryClient extends Context.Service<
     })
 
     return {
+      accounts: yield* Ref.make(new Map<string, Account>()),
       users: yield* Ref.make(new Map<User['id'], User>()),
+      sessions: yield* Ref.make(new Map<Session['id'], Session>()),
 
       buildCriteria,
 

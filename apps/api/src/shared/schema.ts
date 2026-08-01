@@ -1,6 +1,8 @@
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
+import { createId } from '@/shared/lib/create-id'
+
 export const ApiResponseSchema = <T>(dataSchema: Schema.Schema<T>) =>
   Schema.Struct({
     status: Schema.Number.pipe(
@@ -34,3 +36,20 @@ export namespace PaginationSchema {
     totalPages: Schema.Number,
   })
 }
+
+export const IdSchema = Schema.String.pipe(
+  Schema.withConstructorDefault(Effect.sync(createId))
+).check(Schema.isPattern(/^[0-9a-z]+$/u))
+
+export const EmailSchema = Schema.String.check(
+  Schema.isPattern(
+    // oxlint-disable-next-line prefer-named-capture-group
+    /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9-]*\.)+[A-Za-z]{2,}$/u
+  ),
+  Schema.isMinLength(5),
+  Schema.isMaxLength(255)
+).pipe(Schema.brand('shared/schema/Email'))
+
+export const PasswordSchema = Schema.String.check(
+  Schema.isPattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/u)
+).pipe(Schema.brand('shared/schema/Password'))

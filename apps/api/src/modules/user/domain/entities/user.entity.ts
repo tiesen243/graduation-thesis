@@ -2,6 +2,7 @@ import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 import { BaseEntity } from '@/shared/domain/base.entity'
+import { EmailSchema } from '@/shared/schema'
 
 export const UserId = BaseEntity.fields.id.pipe(
   Schema.brand('user/domain/UserId')
@@ -22,14 +23,7 @@ export class User extends BaseEntity.extend<User>('user/domain/User')({
     Schema.isMinLength(4),
     Schema.isMaxLength(20)
   ),
-  email: Schema.String.check(
-    Schema.isPattern(
-      // oxlint-disable-next-line prefer-named-capture-group
-      /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9-]*\.)+[A-Za-z]{2,}$/u
-    ),
-    Schema.isMinLength(5),
-    Schema.isMaxLength(255)
-  ),
+  email: EmailSchema,
   image: Schema.NullOr(
     Schema.String.check(
       Schema.isPattern(

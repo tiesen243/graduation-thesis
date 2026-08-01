@@ -10,7 +10,7 @@ export class UserService extends Context.Service<
   UserService,
   {
     findByIdentifier: (
-      identifier: Pick<User, 'id' | 'username' | 'email'>
+      identifier: Partial<Pick<User, 'id' | 'username' | 'email'>>
     ) => Effect.Effect<User | null>
   }
 >()('user/application/UserService', {
@@ -21,10 +21,13 @@ export class UserService extends Context.Service<
       findByIdentifier: Effect.fn(function* make(identifier) {
         const { id, username, email } = identifier
 
-        const [user] = yield* userRepository.findMany(
-          [{ id }, { username }, { email }],
-          { limit: 1 }
-        )
+        const whereClause = []
+        if (id) whereClause.push({ id })
+        if (username) whereClause.push({ username })
+        if (email) whereClause.push({ email })
+        if (whereClause.length === 0) return null
+
+        const [user] = yield* userRepository.findMany(whereClause, { limit: 1 })
 
         return user ?? null
       }),

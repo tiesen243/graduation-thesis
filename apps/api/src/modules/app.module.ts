@@ -6,6 +6,7 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 import * as HttpApiScalar from 'effect/unstable/httpapi/HttpApiScalar'
 
 import { Api } from '@/api'
+import { AuthModule } from '@/modules/auth/auth.module'
 import { HomeModule } from '@/modules/home/home.module'
 import { UserModule } from '@/modules/user/user.module'
 import { env } from '@/shared/env'
@@ -16,11 +17,16 @@ export class AppModule {
 
     const userModule = UserModule.create(config)
 
+    const authModule = AuthModule.create(config, {
+      userService: userModule.exports.userService,
+    })
+
     const ApiLive = Layer.provide(
       HttpApiBuilder.layer(Api, { openapiPath: '/openapi.json' }),
       [
         homeModule.layer,
-        userModule.layer,
+        userModule.layer.pipe(Layer.provide(authModule.middleware)),
+        authModule.layer.pipe(Layer.provide(authModule.middleware)),
 
         HttpRouter.add(
           '*',
