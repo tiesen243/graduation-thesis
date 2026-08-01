@@ -1,9 +1,45 @@
+import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
-export const UserId = Schema.String.pipe(Schema.brand('user/domain/UserId'))
-export type UserId = Schema.Schema.Type<typeof UserId>
+import { BaseEntity } from '@/shared/domain/base.entity'
 
-export class User extends Schema.TaggedClass<User>()('user/domain/User', {
+export const UserId = BaseEntity.fields.id.pipe(
+  Schema.brand('user/domain/UserId')
+)
+export type UserId = typeof UserId.Type
+
+export const userRoles = ['user', 'admin'] as const
+export const UserRole = Schema.Literals(userRoles).pipe(
+  Schema.brand('user/domain/UserRole'),
+  Schema.withConstructorDefault(Effect.succeed('user' as const))
+)
+export type UserRole = typeof UserRole.Type
+
+export class User extends BaseEntity.extend<User>('user/domain/User')({
   id: UserId,
-  username: Schema.String,
+  username: Schema.String.check(
+    Schema.isPattern(/^[a-z0-9_]+$/u),
+    Schema.isMinLength(4),
+    Schema.isMaxLength(20)
+  ),
+  email: Schema.String.check(
+    Schema.isPattern(
+      // oxlint-disable-next-line prefer-named-capture-group
+      /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9-]*\.)+[A-Za-z]{2,}$/u
+    ),
+    Schema.isMinLength(5),
+    Schema.isMaxLength(255)
+  ),
+  image: Schema.NullOr(
+    Schema.String.check(
+      Schema.isPattern(
+        // oxlint-disable-next-line prefer-named-capture-group
+        /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-]*)*(\?.*)?(#.*)?$/u
+      )
+    )
+  ).pipe(Schema.withConstructorDefault(Effect.succeed(null))),
+  role: UserRole,
+  deletedAt: Schema.NullOr(Schema.Date).pipe(
+    Schema.withConstructorDefault(Effect.succeed(null))
+  ),
 }) {}

@@ -1,11 +1,10 @@
 import * as Schema from 'effect/Schema'
 
-import { Http } from '@/shared/http'
+export namespace HealthDto {
+  export const Input = Schema.Void
+  export type Input = typeof Input.Type
 
-export class HealthOutputDto extends Http.extend<HealthOutputDto>(
-  'home/application/HealthOutputDto'
-)({
-  data: Schema.Struct({
+  export const Output = Schema.Struct({
     status: Schema.String,
     uptime: Schema.Number,
     environment: Schema.String,
@@ -18,5 +17,6 @@ export class HealthOutputDto extends Http.extend<HealthOutputDto>(
       user: Schema.Number,
       system: Schema.Number,
     }),
-  }),
-}) {}
+  })
+  export type Output = typeof Output.Type
+}

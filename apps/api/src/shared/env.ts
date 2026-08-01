@@ -35,7 +35,6 @@ export const env = createEnv({
     ),
 
     DATABASE_URL: Schema.String.pipe(
-      Schema.optional,
       Schema.withDecodingDefault(
         Effect.succeed('postgresql://postgres:secret@127.0.0.1:5432/db')
       ),

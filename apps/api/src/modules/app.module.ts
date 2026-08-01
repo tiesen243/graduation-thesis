@@ -9,30 +9,33 @@ import { Api } from '@/api'
 import { HomeModule } from '@/modules/home/home.module'
 import { UserModule } from '@/modules/user/user.module'
 import { env } from '@/shared/env'
-import { Http } from '@/shared/http'
+import { makeHttp } from '@/shared/http'
 
 export class AppModule {
   public static create(config: AppModule.Config) {
     const homeModule = HomeModule.create()
+
     const userModule = UserModule.create(config)
 
-    const NotFoundLive = HttpRouter.add(
-      '*',
-      '*',
-      HttpServerResponse.json(
-        Http.make({
-          status: 404,
-          message: 'The requested resource was not found',
-        }),
-        { status: 404 }
-      )
-    )
+    const ApiLive = Layer.provide(
+      HttpApiBuilder.layer(Api, { openapiPath: '/openapi.json' }),
+      [
+        homeModule.layer,
+        userModule.layer,
 
-    const ApiLive = HttpApiBuilder.layer(Api, {
-      openapiPath: '/openapi.json',
-    }).pipe(
-      Layer.provide([homeModule.live, userModule.live, NotFoundLive]),
-      Layer.provide(
+        HttpRouter.add(
+          '*',
+          '*',
+          HttpServerResponse.json(
+            makeHttp({
+              status: 404,
+              message: 'The requested resource was not found',
+              data: null,
+            }),
+            { status: 404 }
+          )
+        ),
+
         HttpRouter.cors({
           allowedOrigins: env.CORS_ORIGIN,
           allowedHeaders: [
@@ -44,8 +47,8 @@ export class AppModule {
           ],
           allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
           credentials: true,
-        })
-      )
+        }),
+      ]
     )
 
     const DocsLive = HttpApiScalar.layer(Api, {
