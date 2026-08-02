@@ -26,11 +26,28 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
   handlers
     .handle('login', ({ payload }) =>
       LoginUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.map((data) =>
-          LoginSuccess.make({
-            message: 'Login successful',
-            data,
-          })
+        Effect.flatMap((data) =>
+          HttpServerResponse.json(
+            LoginSuccess.make({ message: 'Login successful', data })
+          ).pipe(
+            Effect.flatMap(
+              HttpServerResponse.setCookie(
+                COOKIE_KEYS.refreshToken,
+                data.refreshToken,
+                { ...COOKIE_OPTIONS, expires: data.expiresAt }
+              )
+            ),
+
+            Effect.flatMap(
+              HttpServerResponse.setCookie(
+                COOKIE_KEYS.accessToken,
+                data.accessToken,
+                { ...COOKIE_OPTIONS, maxAge: '15 minutes' }
+              )
+            ),
+
+            Effect.orDie
+          )
         )
       )
     )

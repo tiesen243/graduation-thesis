@@ -1,0 +1,19 @@
+import { Typography } from '@rozumari/ui/components/typography'
+import { useQuery } from '@tanstack/react-query'
+
+import { useRuntime } from '@/hooks/use-runtime'
+
+export default function IndexPage() {
+  const { api } = useRuntime()
+  const { data } = useQuery({
+    ...api.auth.whoami.queryOptions(),
+  })
+
+  return (
+    <main className='grid min-h-dvh place-items-center'>
+      <Typography variant='h1'>Welcome to Rozumari</Typography>
+
+      <Typography as='pre'>{JSON.stringify(data, null, 2)}</Typography>
+    </main>
+  )
+}

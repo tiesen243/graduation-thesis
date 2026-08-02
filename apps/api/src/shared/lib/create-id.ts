@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto'
-
 const createRandom = () => {
   if (
     typeof globalThis !== 'undefined' &&
@@ -26,16 +24,26 @@ const createEntropy = (length = 4, rand = random) => {
   return entropy
 }
 
-const bufToBigInt = (buf: Buffer) => {
-  let v = 0n
-  // oxlint-disable-next-line no-bitwise
-  for (const i of buf) v = (v << 8n) + BigInt(i)
-  return v
+const fnv1a128 = (str: string): bigint => {
+  let h1 = 0x81_1c_9d_c5n
+  let h2 = 0x81_1c_9d_c5n
+  let h3 = 0x81_1c_9d_c5n
+  let h4 = 0x81_1c_9d_c5n
+
+  for (let i = 0; i < str.length; i += 1) {
+    const code = BigInt(str.codePointAt(i) ?? 0)
+    h1 = (h1 ^ code) * 0x01_00_01_93n
+    h2 = (h2 ^ h1) * 0x01_00_01_93n
+    h3 = (h3 ^ h2) * 0x01_00_01_93n
+    h4 = (h4 ^ h3) * 0x01_00_01_93n
+  }
+
+  return (h1 << 96n) | (h2 << 64n) | (h3 << 32n) | h4
 }
 
 const hash = (input: string) => {
-  const hashBuf = createHash('sha3-512').update(input).digest()
-  return bufToBigInt(hashBuf).toString(36).slice(1)
+  const hashBuf = fnv1a128(input)
+  return hashBuf.toString(36).slice(1)
 }
 
 const createFingerprint = ({

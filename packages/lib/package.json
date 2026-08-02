@@ -19,5 +19,8 @@
     "@rozumari/tsconfig": "workspace:*",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "catalog:prod"
   }
 }

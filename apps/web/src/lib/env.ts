@@ -26,7 +26,7 @@ export const env = createEnv({
     ),
   },
 
-  runtimeEnv: process.env,
+  runtimeEnv: import.meta.env,
 
   emptyStringAsUndefined: true,
 

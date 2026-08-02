@@ -15,7 +15,8 @@
     "./hooks/*": {
       "types": "./dist/hooks/*.d.mts",
       "default": "./dist/hooks/*.mjs"
-    }
+    },
+    "./tailwind.css": "./dist/tailwind.css"
   },
   "scripts": {
     "build": "tsdown",
