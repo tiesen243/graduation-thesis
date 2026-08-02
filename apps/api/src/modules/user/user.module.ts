@@ -16,11 +16,12 @@ export class UserModule {
 
     const useCaseLayer = Layer.mergeAll(
       ListUsersUseCase.layer,
-      OneUserUseCase.layer,
-      UserService.layer
+      OneUserUseCase.layer
     )
 
-    const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)
+    const applicationLayer = Layer.provideMerge(useCaseLayer, UserService.layer)
+
+    const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
 
     return {
       layer: UserHandler.pipe(Layer.provide(layer)),

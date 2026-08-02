@@ -6,15 +6,24 @@ import { DrizzleAccountRepository } from '@/modules/auth/infrastructure/persiste
 import { DrizzleSessionRepository } from '@/modules/auth/infrastructure/persistence/drizzle/session.repository'
 import { InMemoryAccountRepository } from '@/modules/auth/infrastructure/persistence/in-memory/account.repository'
 import { InMemorySessionRepository } from '@/modules/auth/infrastructure/persistence/in-memory/session.repository'
+import { JwtLayer } from '@/modules/auth/infrastructure/security/jwt'
+import { PasswordLayer } from '@/modules/auth/infrastructure/security/password'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-memory.client'
 
 export class AuthInfrastructureModule {
-  public static create(driver: AppModule.Config['persistentDriver']) {
+  public static create(
+    driver: AppModule.Config['persistentDriver'],
+    auth: AppModule.Config['auth']
+  ) {
     const persistenceLayer =
       driver === 'in-memory' ? this.inMemory : this.drizzle
 
-    return Layer.mergeAll(persistenceLayer)
+    return Layer.mergeAll(
+      persistenceLayer,
+      JwtLayer(auth.secret),
+      PasswordLayer({ secret: auth.secret })
+    )
   }
 
   private static get inMemory() {

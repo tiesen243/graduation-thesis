@@ -1,3 +1,5 @@
+import type { Redacted } from 'effect/Redacted'
+
 import * as Layer from 'effect/Layer'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
 import * as HttpServer from 'effect/unstable/http/HttpServer'
@@ -72,5 +74,8 @@ export class AppModule {
 export namespace AppModule {
   export interface Config {
     persistentDriver: 'in-memory' | 'drizzle'
+    auth: {
+      secret: Redacted<string>
+    }
   }
 }

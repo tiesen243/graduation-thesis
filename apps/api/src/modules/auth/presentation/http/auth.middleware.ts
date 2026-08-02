@@ -5,13 +5,14 @@ import * as Redacted from 'effect/Redacted'
 import * as HttpApiMiddleware from 'effect/unstable/httpapi/HttpApiMiddleware'
 import * as HttpApiSecurity from 'effect/unstable/httpapi/HttpApiSecurity'
 
-import type { UserId } from '@/modules/user/domain/entities/user.entity'
+import type { Jwt } from '@/modules/auth/application/security/jwt'
 
+import { AuthService } from '@/modules/auth/application/auth.service'
+import { JwtError } from '@/modules/auth/application/security/jwt'
+import { AccessToken } from '@/modules/auth/application/types'
 import { Unauthorized } from '@/modules/auth/domain/entities/auth.error'
-import { UserService } from '@/modules/user/application/user.service'
-import { User } from '@/modules/user/domain/entities/user.entity'
 
-export class CurrentUser extends Context.Service<CurrentUser, User>()(
+export class CurrentUser extends Context.Service<CurrentUser, Jwt.Payload>()(
   'auth/presentation/middleware/CurrentUser'
 ) {}
 
@@ -37,19 +38,16 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
   // generate OpenAPI docs and decode credientials from incoming requests for
   // you.
   security: {
-    bearer: HttpApiSecurity.apiKey({
-      key: 'authorization',
-      in: 'header',
-    }),
+    bearer: HttpApiSecurity.bearer,
   },
 
   // Middlware can specify errors that it may raise
-  error: Unauthorized,
+  error: [Unauthorized, JwtError],
 }) {
   public static layer = Layer.effect(
     this,
     Effect.gen(function* AuthMiddlewareLayer() {
-      const userService = yield* UserService
+      const authService = yield* AuthService
 
       return {
         bearer: Effect.fn(function* bearer(httpEffect, { credential }) {
@@ -59,22 +57,15 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
               new Unauthorized({ message: 'Missing or invalid token' })
             )
 
-          if (token === 'Bearer dummy-token')
-            return yield* Effect.provideService(
-              httpEffect,
-              CurrentUser,
-              User.make({ username: 'dummy', email: 'dummy@example.com' })
-            )
-
-          const user = yield* userService.findByIdentifier({
-            id: token as UserId,
-          })
-          if (!user)
+          const payload = yield* authService.verifyAccessToken(
+            AccessToken.make(token)
+          )
+          if (!payload)
             return yield* Effect.fail(
               new Unauthorized({ message: 'Missing or invalid token' })
             )
 
-          return yield* Effect.provideService(httpEffect, CurrentUser, user)
+          return yield* Effect.provideService(httpEffect, CurrentUser, payload)
         }),
       }
     })

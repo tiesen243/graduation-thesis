@@ -7,7 +7,7 @@
       "devDependencies": {
         "oxfmt": "^0.61.0",
         "oxlint": "^1.75.0",
-        "tegami": "^1.2.8",
+        "tegami": "^1.3.0",
         "turbo": "^2.10.8",
       },
     },
@@ -567,7 +567,7 @@
 
     "split2": ["split2@4.2.0", "", {}, "sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg=="],
 
-    "tegami": ["tegami@1.2.8", "", { "dependencies": { "@clack/prompts": "^1.7.0", "@rainbowatcher/toml-edit-js": "^0.6.5", "semver": "^7.8.5", "tinyexec": "^1.2.4", "tinyglobby": "^0.2.17", "yaml": "^2.9.0" } }, "sha512-Hspu5bfY58TtCJc1/bconq9IaGI18U21lWkxW3jO5WfXf/NiKWtRonBI2kUHui1xt5aFwEmMtc4+kWvH1v+9dA=="],
+    "tegami": ["tegami@1.3.0", "", { "dependencies": { "@clack/prompts": "^1.7.0", "@rainbowatcher/toml-edit-js": "^0.6.5", "semver": "^7.8.5", "tinyexec": "^1.2.4", "tinyglobby": "^0.2.17", "yaml": "^2.9.0" } }, "sha512-ZaMJW4AQpiDNDNC/GvAeHX8fN6yAjYHQEZge5GT4ZQhSMJBSq5FANcH+RKSlkB8j3YpxxZz2Gb88n0JFoJZDzA=="],
 
     "tinyexec": ["tinyexec@1.2.4", "", {}, "sha512-SHf/r48b7vOrjve9PxJo3MN5v5yuyjHvdUcrQffT3WXMUfnGmHDVbC4k3sHJaJTgZCwpUplIaAo5ANtMyp3YHg=="],
 

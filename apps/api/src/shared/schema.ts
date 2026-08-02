@@ -3,7 +3,10 @@ import * as Schema from 'effect/Schema'
 
 import { createId } from '@/shared/lib/create-id'
 
-export const ApiResponseSchema = <T>(dataSchema: Schema.Schema<T>) =>
+export const ApiResponseSchema = <TData, TError>(
+  dataSchema: Schema.Schema<TData> = Schema.Any,
+  errorSchema: Schema.Schema<TError> = Schema.Any
+) =>
   Schema.Struct({
     status: Schema.Number.pipe(
       Schema.withConstructorDefault(Effect.succeed(200))
@@ -14,7 +17,7 @@ export const ApiResponseSchema = <T>(dataSchema: Schema.Schema<T>) =>
     data: Schema.NullOr(dataSchema).pipe(
       Schema.withConstructorDefault(Effect.succeed(null))
     ),
-    error: Schema.NullOr(Schema.Unknown).pipe(
+    error: Schema.NullOr(errorSchema).pipe(
       Schema.withConstructorDefault(Effect.succeed(null))
     ),
     timestamp: Schema.Date.pipe(

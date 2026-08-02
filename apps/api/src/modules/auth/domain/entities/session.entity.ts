@@ -8,7 +8,7 @@ import { UserId } from '@/modules/user/domain/entities/user.entity'
 import { createClone } from '@/shared/lib/utils'
 import { IdSchema } from '@/shared/schema'
 
-const SessionId = IdSchema.pipe(Schema.brand('auth/domain/SessionId'))
+export const SessionId = IdSchema.pipe(Schema.brand('auth/domain/SessionId'))
 export type SessionId = typeof SessionId.Type
 
 export const SessionToken = Schema.String.pipe(

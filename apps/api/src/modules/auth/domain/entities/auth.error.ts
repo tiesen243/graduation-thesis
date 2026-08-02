@@ -25,10 +25,19 @@ export class Unauthorized extends Schema.TaggedErrorClass<Unauthorized>()(
       status: Schema.Number.pipe(
         Schema.withConstructorDefault(Effect.succeed(401))
       ),
-      message: Schema.String.pipe(
-        Schema.withConstructorDefault(Effect.succeed('Unauthorized'))
-      ),
     })
   ),
   { httpApiStatus: 401 }
+) {}
+
+export class Conflict extends Schema.TaggedErrorClass<Conflict>()(
+  'account/domain/ConflictError',
+  ApiResponseSchema(Schema.Null).pipe(
+    Schema.fieldsAssign({
+      status: Schema.Number.pipe(
+        Schema.withConstructorDefault(Effect.succeed(409))
+      ),
+    })
+  ),
+  { httpApiStatus: 409 }
 ) {}

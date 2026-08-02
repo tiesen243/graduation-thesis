@@ -6,7 +6,6 @@ import type { EntityOverrides } from '@/shared/lib/utils'
 
 import { UserId } from '@/modules/user/domain/entities/user.entity'
 import { createClone } from '@/shared/lib/utils'
-import { PasswordSchema } from '@/shared/schema'
 
 export const AccountProvider = Schema.String.pipe(
   Schema.brand('auth/domain/AccountProvider')
@@ -23,7 +22,7 @@ export class Account extends Schema.TaggedClass<Account>()(
   {
     provider: AccountProvider,
     providerAccountId: AccountProviderAccountId,
-    password: Schema.NullOr(PasswordSchema).pipe(
+    password: Schema.NullOr(Schema.String).pipe(
       Schema.withConstructorDefault(Effect.succeed(null))
     ),
 
