@@ -11,12 +11,9 @@ export const createQueryClient = () =>
     defaultOptions: {
       queries: {
         staleTime: 10 * 60 * 1000, // 10 minutes
-        retry: false,
-        refetchOnWindowFocus: false,
       },
       mutations: {
         gcTime: 5 * 60 * 1000, // 5 minutes
-        retry: false,
       },
       dehydrate: {
         shouldDehydrateQuery: (query) =>

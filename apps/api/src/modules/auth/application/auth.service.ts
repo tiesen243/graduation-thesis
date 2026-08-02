@@ -11,6 +11,7 @@ import type {
 
 import { Jwt } from '@/modules/auth/application/security/jwt'
 import { AccessToken, RefreshToken } from '@/modules/auth/application/types'
+import { TOKEN_EXPIRATION } from '@/modules/auth/constants'
 import { Unauthorized } from '@/modules/auth/domain/entities/auth.error'
 import {
   Session,
@@ -67,7 +68,7 @@ export class AuthService extends Context.Service<
 
       const payload: Jwt.Payload = { userId, role: user.role }
       return yield* jwt.sign(payload, {
-        expiresIn: config.accessTokenExpiresIn,
+        expiresIn: TOKEN_EXPIRATION.accessToken,
       })
     })
 
@@ -86,7 +87,7 @@ export class AuthService extends Context.Service<
 
         const refreshToken = `${id}.${secret}`
         const expiresAt = new Date(
-          Date.now() + config.refreshTokenExpiresIn * 1000
+          Date.now() + TOKEN_EXPIRATION.refreshToken * 1000
         )
 
         const session = Session.make({
@@ -138,9 +139,9 @@ export class AuthService extends Context.Service<
           )
         }
 
-        if (now >= expiresTime - config.expiresThreshold * 1000) {
+        if (now >= expiresTime - TOKEN_EXPIRATION.threshold * 1000) {
           const updatedSession = session.clone({
-            expiresAt: new Date(now + config.refreshTokenExpiresIn * 1000),
+            expiresAt: new Date(now + TOKEN_EXPIRATION.refreshToken * 1000),
           })
           yield* sessionRepository.save(updatedSession)
         }
@@ -155,10 +156,4 @@ export class AuthService extends Context.Service<
   }),
 }) {
   public static readonly layer = Layer.effect(this, this.make)
-}
-
-const config = {
-  accessTokenExpiresIn: 15 * 60, // 15 minutes
-  refreshTokenExpiresIn: 7 * 24 * 60 * 60, // 7 days
-  expiresThreshold: 24 * 60 * 60, // 1 day
 }

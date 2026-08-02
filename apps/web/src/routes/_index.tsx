@@ -5,7 +5,7 @@ import { useRuntime } from '@/hooks/use-runtime'
 
 export default function IndexPage() {
   const { api } = useRuntime()
-  const { data } = useQuery({
+  const { data, error } = useQuery({
     ...api.auth.whoami.queryOptions(),
   })
 
@@ -13,7 +13,9 @@ export default function IndexPage() {
     <main className='grid min-h-dvh place-items-center'>
       <Typography variant='h1'>Welcome to Rozumari</Typography>
 
-      <Typography as='pre'>{JSON.stringify(data, null, 2)}</Typography>
+      <Typography as='pre'>
+        {JSON.stringify({ data, error }, null, 2)}
+      </Typography>
     </main>
   )
 }

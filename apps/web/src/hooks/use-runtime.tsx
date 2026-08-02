@@ -1,17 +1,16 @@
 // oxlint-disable react/hook-use-state
 
 import type { TanstackQueryOptionsProxy } from '@tiesen/effect-tanstack-query'
+import type * as Layer from 'effect/Layer'
 
 import { createTanstackQueryOptionsProxy } from '@tiesen/effect-tanstack-query'
-import * as Layer from 'effect/Layer'
 import * as ManagedRuntime from 'effect/ManagedRuntime'
 import * as React from 'react'
 
 import type { IApiClient } from '@/lib/api-client'
 
-import { ApiClient, ApiClientLayer } from '@/lib/api-client'
-
-const appLayer = Layer.mergeAll(ApiClientLayer)
+import { appLayer } from '@/lib/_app-layer'
+import { ApiClient } from '@/lib/api-client'
 
 interface RuntimeContextValue {
   runtime: ManagedRuntime.ManagedRuntime<Layer.Success<typeof appLayer>, never>
