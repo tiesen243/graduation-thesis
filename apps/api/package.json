@@ -3,6 +3,8 @@
   "version": "0.0.3",
   "private": false,
   "type": "module",
+  "main": "./dist/main.mjs",
+  "types": "./dist/main.d.mts",
   "exports": {
     ".": {
       "types": "./dist/api.d.mts",
