@@ -1,4 +1,4 @@
-import { index, primaryKey, snakeCase } from 'drizzle-orm/pg-core'
+import { index, primaryKey, snakeCase, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
 
@@ -34,7 +34,7 @@ export const sessions = snakeCase.table(
       .notNull(),
   }),
   (t) => [
-    index('sessions_token_idx').on(t.token),
+    uniqueIndex('sessions_token_uq_idx').on(t.token),
     index('sessions_user_id_idx').on(t.userId),
   ]
 )
