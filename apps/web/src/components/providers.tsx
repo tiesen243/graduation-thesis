@@ -1,8 +1,9 @@
+import type { QueryClient } from '@tanstack/react-query'
+
 import { createQueryClient } from '@rozumari/lib/create-query-client'
 import { ToastProvider } from '@rozumari/ui/components/toast'
 import { TooltipProvider } from '@rozumari/ui/components/tooltip'
-import { QueryClientProvider } from '@tanstack/react-query';
-import type { QueryClient } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
 
 import { RuntimeProvider } from '@/hooks/use-runtime'

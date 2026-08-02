@@ -1,3 +1,5 @@
+// oxlint-disable react/hook-use-state
+
 import type { TanstackQueryOptionsProxy } from '@tiesen/effect-tanstack-query'
 
 import { createTanstackQueryOptionsProxy } from '@tiesen/effect-tanstack-query'

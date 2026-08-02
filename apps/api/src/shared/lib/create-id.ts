@@ -1,3 +1,5 @@
+// oxlint-disable eslint/no-bitwise
+
 const createRandom = () => {
   if (
     typeof globalThis !== 'undefined' &&
