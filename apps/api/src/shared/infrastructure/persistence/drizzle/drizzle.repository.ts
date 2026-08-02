@@ -3,17 +3,16 @@ import type { PgColumn, PgTable } from 'drizzle-orm/pg-core'
 import { eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 
-import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
 export const MakeDrizzleRepository = Effect.fn(
   'shared/infrastructure/persistence/drizzle/MakeDrizzleRepository'
-)(function* MakeDrizzleRepositoryFn<TEntity extends BaseEntity>(
-  table: PgTable,
-  mapper: (row: Record<string, unknown>) => TEntity
-) {
+)(function* MakeDrizzleRepositoryFn<
+  TEntity extends { toJSON: () => Record<string, unknown> },
+  TId = TEntity extends { id: infer IdType } ? IdType : never,
+>(table: PgTable, mapper: (row: Record<string, unknown>) => TEntity) {
   const { db, buildCriteria, buildOrderBy } = yield* DrizzleClient
 
   return {
@@ -69,7 +68,12 @@ export const MakeDrizzleRepository = Effect.fn(
     delete: (entity: TEntity) =>
       db
         .delete(table)
-        .where(eq((table as unknown as { id: PgColumn }).id, entity.id))
+        .where(
+          eq(
+            (table as unknown as { id: PgColumn }).id,
+            (entity as unknown as { id: string }).id
+          )
+        )
         .pipe(Effect.asVoid, Effect.orDie),
-  } satisfies IBaseRepository<TEntity>
+  } satisfies IBaseRepository<TEntity, TId>
 })

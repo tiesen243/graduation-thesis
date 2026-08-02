@@ -1,16 +1,16 @@
 import * as Effect from 'effect/Effect'
 import * as Ref from 'effect/Ref'
 
-import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
 
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-memory.client'
 
 export const MakeInMemoryRepository = Effect.fn(
   'shared/infrastructure/persistence/in-memory/MakeInMemoryRepository'
-)(function* MakeInMemoryRepositoryFn<TEntity extends BaseEntity>(
-  entities: Ref.Ref<Map<TEntity['id'], TEntity>>
-) {
+)(function* MakeInMemoryRepositoryFn<
+  TEntity extends { toJSON: () => Record<string, unknown> },
+  TId = TEntity extends { id: infer IdType } ? IdType : never,
+>(entities: Ref.Ref<Map<TId, TEntity>>) {
   const { buildCriteria, buildOrderBy } = yield* InMemoryClient
 
   return {
@@ -31,8 +31,8 @@ export const MakeInMemoryRepository = Effect.fn(
       return dict.slice(offset, offset + limit)
     }),
 
-    findOne: (id: TEntity['id']) =>
-      Ref.get(entities).pipe(Effect.map((map) => map.get(id) ?? null)),
+    findOne: (id) =>
+      Ref.get(entities).pipe(Effect.map((map) => map.get(id as never) ?? null)),
 
     count: Effect.fn(function* count(criterias = []) {
       const criteriasFn = yield* buildCriteria(criterias)
@@ -47,14 +47,14 @@ export const MakeInMemoryRepository = Effect.fn(
     }),
 
     save: (entity: TEntity) =>
-      Ref.update(entities, (map) => map.set(entity.id, entity)).pipe(
-        Effect.asVoid
-      ),
+      Ref.update(entities, (map) =>
+        map.set((entity as unknown as { id: TId }).id, entity)
+      ).pipe(Effect.asVoid),
 
     delete: (entity: TEntity) =>
       Ref.update(entities, (map) => {
-        map.delete(entity.id)
+        map.delete((entity as unknown as { id: TId }).id)
         return map
       }).pipe(Effect.asVoid),
-  } satisfies IBaseRepository<TEntity>
+  } satisfies IBaseRepository<TEntity, TId>
 })

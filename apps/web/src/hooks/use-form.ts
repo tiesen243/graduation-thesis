@@ -1,4 +1,4 @@
-// oxlint-disable max-statements
+// oxlint-disable max-statements, react/rules-of-hooks
 import * as React from 'react'
 
 interface FormError {
@@ -138,7 +138,7 @@ export function useForm<
   )
 
   const Field = React.useCallback(
-    <TName extends keyof TValues,>({
+    <TName extends keyof TValues>({
       name,
       render,
     }: FormFieldProps<TName, TValues>) => {

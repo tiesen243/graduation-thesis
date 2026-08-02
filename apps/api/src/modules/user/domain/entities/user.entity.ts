@@ -1,12 +1,12 @@
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
-import { BaseEntity } from '@/shared/domain/base.entity'
-import { EmailSchema } from '@/shared/schema'
+import type { EntityOverrides } from '@/shared/lib/utils'
 
-export const UserId = BaseEntity.fields.id.pipe(
-  Schema.brand('user/domain/UserId')
-)
+import { createClone } from '@/shared/lib/utils'
+import { EmailSchema, IdSchema } from '@/shared/schema'
+
+export const UserId = IdSchema.pipe(Schema.brand('user/domain/UserId'))
 export type UserId = typeof UserId.Type
 
 export const userRoles = ['user', 'admin'] as const
@@ -16,7 +16,7 @@ export const UserRole = Schema.Literals(userRoles).pipe(
 )
 export type UserRole = typeof UserRole.Type
 
-export class User extends BaseEntity.extend<User>('user/domain/User')({
+export class User extends Schema.TaggedClass<User>()('user/domain/User', {
   id: UserId,
   username: Schema.String.check(
     Schema.isPattern(/^[a-z0-9_]+$/u),
@@ -36,4 +36,18 @@ export class User extends BaseEntity.extend<User>('user/domain/User')({
   deletedAt: Schema.NullOr(Schema.Date).pipe(
     Schema.withConstructorDefault(Effect.succeed(null))
   ),
-}) {}
+  createdAt: Schema.Date.pipe(
+    Schema.withConstructorDefault(Effect.sync(() => new Date()))
+  ),
+  updatedAt: Schema.Date.pipe(
+    Schema.withConstructorDefault(Effect.sync(() => new Date()))
+  ),
+}) {
+  public clone(overrides?: EntityOverrides<this>): this {
+    return createClone(this, overrides)
+  }
+
+  public toJSON(): Omit<this, 'clone' | 'toJSON' | '_tag'> {
+    return structuredClone(this)
+  }
+}

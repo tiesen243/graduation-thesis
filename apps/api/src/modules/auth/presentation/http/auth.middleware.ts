@@ -59,14 +59,11 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
               new Unauthorized({ message: 'Missing or invalid token' })
             )
 
-          if (token === 'abc')
+          if (token === 'Bearer dummy-token')
             return yield* Effect.provideService(
               httpEffect,
               CurrentUser,
-              User.make({
-                username: 'test',
-                email: 'test@example.com' as User['email'],
-              })
+              User.make({ username: 'dummy', email: 'dummy@example.com' })
             )
 
           const user = yield* userService.findByIdentifier({

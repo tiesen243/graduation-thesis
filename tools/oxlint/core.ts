@@ -74,6 +74,7 @@ export default defineConfig({
     'jsdoc/require-returns-type': 'off',
 
     'unicorn/explicit-length-check': 'off',
+    'unicorn/max-nested-calls': ['error', { max: 6 }],
     'unicorn/no-array-callback-reference': 'off',
     'unicorn/no-null': 'off',
     'unicorn/no-process-exit': 'off',

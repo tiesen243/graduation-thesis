@@ -1,8 +1,9 @@
 import type * as Effect from 'effect/Effect'
 
-import type { BaseEntity } from '@/shared/domain/base.entity'
-
-export interface IBaseRepository<TEntity extends BaseEntity> {
+export interface IBaseRepository<
+  TEntity,
+  TId = TEntity extends { id: infer IdType } ? IdType : never,
+> {
   readonly findMany: (
     criterias?: IBaseRepository.Criteria<TEntity>[],
     options?: {
@@ -12,7 +13,9 @@ export interface IBaseRepository<TEntity extends BaseEntity> {
     }
   ) => Effect.Effect<TEntity[]>
 
-  readonly findOne: (id: TEntity['id']) => Effect.Effect<TEntity | null>
+  readonly findOne: (
+    id: TId extends never ? IBaseRepository.Criteria<TEntity> : TId
+  ) => Effect.Effect<TEntity | null>
 
   readonly count: (
     criterias?: IBaseRepository.Criteria<TEntity>[]
@@ -24,7 +27,7 @@ export interface IBaseRepository<TEntity extends BaseEntity> {
 }
 
 export namespace IBaseRepository {
-  export type Criteria<TEntity extends BaseEntity> = {
+  export type Criteria<TEntity> = {
     [K in keyof TEntity]?: Operator<TEntity[K]> | TEntity[K]
   }
 
@@ -41,7 +44,7 @@ export namespace IBaseRepository {
     mode?: TEntityValue extends string ? 'insensitive' | 'sensitive' : never
   }
 
-  export type OrderBy<TEntity extends BaseEntity> = {
+  export type OrderBy<TEntity> = {
     [K in keyof TEntity]?: 'asc' | 'desc'
   }
 }

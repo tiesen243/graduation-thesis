@@ -12,7 +12,6 @@ import * as Layer from 'effect/Layer'
 import * as Redacted from 'effect/Redacted'
 import { types } from 'pg'
 
-import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
 
 import { env } from '@/shared/env'
@@ -36,12 +35,12 @@ export class DrizzleClient extends Context.Service<
   {
     db: PgDrizzle.EffectPgDatabase
 
-    buildCriteria: <TEntity extends BaseEntity>(
+    buildCriteria: <TEntity>(
       table: AnyPgTable,
       criterias: IBaseRepository.Criteria<TEntity>[]
     ) => Effect.Effect<SQL | undefined>
 
-    buildOrderBy: <TEntity extends BaseEntity>(
+    buildOrderBy: <TEntity>(
       table: AnyPgTable,
       orderBy: IBaseRepository.OrderBy<TEntity>
     ) => Effect.Effect<SQL[] | undefined>
@@ -49,9 +48,10 @@ export class DrizzleClient extends Context.Service<
 >()('shared/infrastructure/persistence/drizzle/DrizzleClient', {
   make: Effect.gen(function* DrizzleClientMake() {
     // oxlint-disable-next-line complexity
-    const buildCriteria = Effect.fn(function* buildCriteria<
-      TEntity extends BaseEntity,
-    >(table: AnyPgTable, criterias: IBaseRepository.Criteria<TEntity>[]) {
+    const buildCriteria = Effect.fn(function* buildCriteria<TEntity>(
+      table: AnyPgTable,
+      criterias: IBaseRepository.Criteria<TEntity>[]
+    ) {
       if (!criterias || criterias.length === 0) return
 
       const getColumn = (key: string): PgColumn | undefined =>
@@ -92,9 +92,10 @@ export class DrizzleClient extends Context.Service<
       return orm.or(...orConditions)
     })
 
-    const buildOrderBy = Effect.fn(function* buildOrderBy<
-      TEntity extends BaseEntity,
-    >(table: AnyPgTable, orderBy: IBaseRepository.OrderBy<TEntity>) {
+    const buildOrderBy = Effect.fn(function* buildOrderBy<TEntity>(
+      table: AnyPgTable,
+      orderBy: IBaseRepository.OrderBy<TEntity>
+    ) {
       const getColumn = (key: string): PgColumn | undefined =>
         (table as unknown as Record<string, unknown>)[key] as
           | PgColumn

@@ -8,7 +8,6 @@ import * as Ref from 'effect/Ref'
 import type { Account } from '@/modules/auth/domain/entities/account.entity'
 import type { Session } from '@/modules/auth/domain/entities/session.entity'
 import type { User } from '@/modules/user/domain/entities/user.entity'
-import type { BaseEntity } from '@/shared/domain/base.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
 
 export type Predicate<T> = (item: T) => boolean
@@ -21,19 +20,19 @@ export class InMemoryClient extends Context.Service<
     users: Ref.Ref<Map<User['id'], User>>
     sessions: Ref.Ref<Map<Session['id'], Session>>
 
-    buildCriteria: <TEntity extends BaseEntity>(
+    buildCriteria: <TEntity>(
       criterias: IBaseRepository.Criteria<TEntity>[]
     ) => Effect.Effect<Predicate<TEntity> | undefined>
 
-    buildOrderBy: <TEntity extends BaseEntity>(
+    buildOrderBy: <TEntity>(
       orderBy: IBaseRepository.OrderBy<TEntity>
     ) => Effect.Effect<Comparator<TEntity> | undefined>
   }
 >()('shared/infrastructure/persistence/in-memory/InMemoryClient', {
   make: Effect.gen(function* InMemoryClientMake() {
-    const buildCriteria = Effect.fn(function* buildCriteria<
-      TEntity extends BaseEntity,
-    >(criterias?: IBaseRepository.Criteria<TEntity>[]) {
+    const buildCriteria = Effect.fn(function* buildCriteria<TEntity>(
+      criterias?: IBaseRepository.Criteria<TEntity>[]
+    ) {
       if (!criterias || criterias.length === 0) return
 
       const orPredicates = yield* Effect.forEach(
@@ -72,9 +71,9 @@ export class InMemoryClient extends Context.Service<
         orPredicates.some((predicate) => predicate(entity))
     })
 
-    const buildOrderBy = Effect.fn(function* buildOrderBy<
-      TEntity extends BaseEntity,
-    >(orderBy?: IBaseRepository.OrderBy<TEntity>) {
+    const buildOrderBy = Effect.fn(function* buildOrderBy<TEntity>(
+      orderBy?: IBaseRepository.OrderBy<TEntity>
+    ) {
       if (!orderBy) return
 
       const comparators = yield* Effect.forEach(
@@ -82,7 +81,10 @@ export class InMemoryClient extends Context.Service<
         ([key, direction]) =>
           Effect.sync(() => {
             if (!direction) return
-            return parseOrderBy<TEntity>(key as keyof TEntity, direction)
+            return parseOrderBy<TEntity>(
+              key as keyof TEntity,
+              direction as 'asc' | 'desc'
+            )
           }),
         { concurrency: 'unbounded' }
       ).pipe(
@@ -117,7 +119,7 @@ export class InMemoryClient extends Context.Service<
 }
 
 // oxlint-disable-next-line complexity
-const parseCondition = <TEntity extends BaseEntity>(
+const parseCondition = <TEntity>(
   key: keyof TEntity,
   value: unknown
 ): Predicate<TEntity> | undefined => {
@@ -165,7 +167,7 @@ const parseCondition = <TEntity extends BaseEntity>(
   }
 }
 
-const parseOrderBy = <TEntity extends BaseEntity>(
+const parseOrderBy = <TEntity>(
   key: keyof TEntity,
   direction: 'asc' | 'desc'
 ): Comparator<TEntity> => {

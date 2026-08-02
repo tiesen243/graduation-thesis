@@ -22,3 +22,5 @@ export class Api extends HttpApi.make('Api')
       },
     })
   ) {}
+
+export { AuthMiddleware } from '@/modules/auth/presentation/http/auth.middleware'

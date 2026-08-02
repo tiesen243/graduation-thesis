@@ -48,8 +48,8 @@ export const EmailSchema = Schema.String.check(
   ),
   Schema.isMinLength(5),
   Schema.isMaxLength(255)
-).pipe(Schema.brand('shared/schema/Email'))
+)
 
 export const PasswordSchema = Schema.String.check(
   Schema.isPattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/u)
-).pipe(Schema.brand('shared/schema/Password'))
+)
