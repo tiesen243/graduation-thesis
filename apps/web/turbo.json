@@ -3,7 +3,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "outputs": [".react-router/**"]
+      "outputs": [".react-router/**", "build/**"]
     }
   }
 }
