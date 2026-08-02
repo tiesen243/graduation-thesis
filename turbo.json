@@ -24,12 +24,15 @@
     }
   },
   "globalEnv": [
+    "CORS_ORIGIN",
     "DATABASE_URL",
 
     "AUTH_SECRET",
 
     "AUTH_GOOGLE_ID",
-    "AUTH_GOOGLE_SECRET"
+    "AUTH_GOOGLE_SECRET",
+
+    "PUBLIC_API_URL"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",
