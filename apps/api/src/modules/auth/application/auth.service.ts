@@ -15,7 +15,6 @@ import { Unauthorized } from '@/modules/auth/domain/entities/auth.error'
 import {
   Session,
   SessionId,
-  SessionToken,
 } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
@@ -92,7 +91,7 @@ export class AuthService extends Context.Service<
 
         const session = Session.make({
           id: SessionId.make(id),
-          token: SessionToken.make(encodeHex(hashedSecret)),
+          token: RefreshToken.make(encodeHex(hashedSecret)),
           expiresAt,
 
           userId,
@@ -133,7 +132,7 @@ export class AuthService extends Context.Service<
         const expiresTime = new Date(session.expiresAt).getTime()
 
         if (!isValid || now >= expiresTime) {
-          yield* sessionRepository.delete(session)
+          yield* sessionRepository.delete({ id: session.id })
           return yield* Effect.fail(
             new Unauthorized({ message: 'Invalid refresh token' })
           )

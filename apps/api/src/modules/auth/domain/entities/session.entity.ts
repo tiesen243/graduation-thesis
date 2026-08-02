@@ -4,6 +4,7 @@ import * as Schema from 'effect/Schema'
 import type { User } from '@/modules/user/domain/entities/user.entity'
 import type { EntityOverrides } from '@/shared/lib/utils'
 
+import { RefreshToken } from '@/modules/auth/application/types'
 import { UserId } from '@/modules/user/domain/entities/user.entity'
 import { createClone } from '@/shared/lib/utils'
 import { IdSchema } from '@/shared/schema'
@@ -11,16 +12,11 @@ import { IdSchema } from '@/shared/schema'
 export const SessionId = IdSchema.pipe(Schema.brand('auth/domain/SessionId'))
 export type SessionId = typeof SessionId.Type
 
-export const SessionToken = Schema.String.pipe(
-  Schema.brand('auth/domain/SessionToken')
-)
-export type SessionToken = typeof SessionToken.Type
-
 export class Session extends Schema.TaggedClass<Session>()(
   'auth/domain/Account',
   {
     id: SessionId,
-    token: SessionToken,
+    token: RefreshToken,
     expiresAt: Schema.Date,
     createdAt: Schema.Date.pipe(
       Schema.withConstructorDefault(Effect.sync(() => new Date()))

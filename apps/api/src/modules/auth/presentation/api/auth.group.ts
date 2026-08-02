@@ -3,6 +3,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { LoginDto } from '@/modules/auth/application/dto/login.dto'
+import { RefreshTokenDto } from '@/modules/auth/application/dto/refresh-token.dto'
 import { RegisterDto } from '@/modules/auth/application/dto/register.dto'
 import { WhoamiDto } from '@/modules/auth/application/dto/whoami.dto'
 import { JwtError } from '@/modules/auth/application/security/jwt'
@@ -30,6 +31,16 @@ export class WhoamiSuccess extends Schema.TaggedClass<WhoamiSuccess>()(
   ApiResponseSchema(WhoamiDto.Output)
 ) {}
 
+export class LogoutSuccess extends Schema.TaggedClass<LogoutSuccess>()(
+  'auth/presentation/LogoutSuccess',
+  ApiResponseSchema()
+) {}
+
+export class RefreshTokenSuccess extends Schema.TaggedClass<RefreshTokenSuccess>()(
+  'auth/presentation/RefreshTokenSuccess',
+  ApiResponseSchema(RefreshTokenDto.Output)
+) {}
+
 export class AuthGroup extends HttpApiGroup.make('auth')
 
   .add(
@@ -53,6 +64,19 @@ export class AuthGroup extends HttpApiGroup.make('auth')
       success: WhoamiSuccess,
       error: Unauthorized,
     }).middleware(AuthMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.post('logout', '/logout', {
+      success: LogoutSuccess,
+    }).middleware(AuthMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.post('refresh-token', '/refresh-token', {
+      success: RefreshTokenSuccess,
+      error: [JwtError, Unauthorized],
+    })
   )
 
   .prefix('/api/auth') {}

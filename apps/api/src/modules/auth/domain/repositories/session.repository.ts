@@ -6,8 +6,15 @@ import type { Session } from '@/modules/auth/domain/entities/session.entity'
 import type { IBaseRepository } from '@/shared/domain/base.repository'
 
 // oxlint-disable-next-line typescript/no-empty-interface typescript/no-empty-object-type
-export interface ISessionRepository extends IBaseRepository<Session> {
+export interface ISessionRepository extends Omit<
+  IBaseRepository<Session>,
+  'delete'
+> {
   readonly findWithUser: (id: Session['id']) => Effect.Effect<Session | null>
+
+  readonly delete: (
+    session: Partial<Pick<Session, 'id' | 'token'>>
+  ) => Effect.Effect<void>
 }
 
 export class SessionRepository extends Context.Service<

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -36,6 +36,12 @@ export const DrizzleSessionRepository = Layer.effect(
 
         return session
       }),
+
+      delete: ({ id, token }) =>
+        db
+          .delete(sessions)
+          .where(or(eq(sessions.id, id ?? ''), eq(sessions.token, token ?? '')))
+          .pipe(Effect.asVoid, Effect.orDie),
     }
   })
 )

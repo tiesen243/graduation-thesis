@@ -4,8 +4,9 @@ export const COOKIE_OPTIONS = {
   path: '/',
   httpOnly: true,
   maxAge: '5 minutes',
-  sameSite: 'lax',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   secure: process.env.NODE_ENV === 'production',
+  partitioned: process.env.NODE_ENV === 'production',
 } satisfies Cookie['options']
 
 export const COOKIE_KEYS = {

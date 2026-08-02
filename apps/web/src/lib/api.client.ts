@@ -25,6 +25,12 @@ export const AuthMiddlewareClient = HttpApiMiddleware.layerClient(
 export class ApiClient extends Context.Service<ApiClient, IApiClient>()(
   'ApiClient'
 ) {
+  private static FetchHttpClient = FetchHttpClient.layer.pipe(
+    Layer.provide(
+      Layer.succeed(FetchHttpClient.RequestInit, { credentials: 'include' })
+    )
+  )
+
   public static live = Layer.effect(
     ApiClient,
     HttpApiClient.make(Api, {
@@ -39,13 +45,25 @@ export class ApiClient extends Context.Service<ApiClient, IApiClient>()(
           ),
 
           HttpClient.retryTransient({
-            schedule: Schedule.exponential(1000),
+            schedule: Schedule.exponential('1 second'),
             times: 3,
+            while(error) {
+              if (
+                error.reason._tag === 'StatusCodeError' &&
+                error.reason.response.status === 401
+              )
+                fetch(`${env.PUBLIC_API_URL}/api/auth/refresh-token`, {
+                  method: 'POST',
+                  credentials: 'include',
+                })
+
+              return true
+            },
           })
         ),
     })
   ).pipe(
     Layer.provide(AuthMiddlewareClient),
-    Layer.provide(FetchHttpClient.layer)
+    Layer.provide(this.FetchHttpClient)
   )
 }

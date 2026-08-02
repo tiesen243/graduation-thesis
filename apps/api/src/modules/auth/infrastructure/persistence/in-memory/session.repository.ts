@@ -29,6 +29,20 @@ export const InMemorySessionRepository = Layer.effect(
         session.user = user
         return session
       }),
+
+      delete: Effect.fn(function* deleteSession({ id, token }) {
+        const session = yield* Ref.get(sessions).pipe(
+          Effect.map((dict) =>
+            [...dict.values()].find((s) => s.id === id && s.token === token)
+          )
+        )
+
+        if (session)
+          yield* Ref.update(sessions, (dict) => {
+            dict.delete(session.id)
+            return dict
+          })
+      }),
     }
   })
 )

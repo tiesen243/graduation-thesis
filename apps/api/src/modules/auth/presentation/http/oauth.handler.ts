@@ -168,16 +168,27 @@ export const OAuthHandler = HttpApiBuilder.group(
                 { ...COOKIE_OPTIONS, maxAge: '15 minutes' }
               )
             ),
-            Effect.map((res) =>
-              res.pipe(
-                HttpServerResponse.removeCookie(COOKIE_KEYS.code),
-                HttpServerResponse.removeCookie(COOKIE_KEYS.state),
-                HttpServerResponse.removeCookie(COOKIE_KEYS.redirect)
-              )
+
+            Effect.flatMap(
+              HttpServerResponse.setCookie(COOKIE_KEYS.code, '', {
+                ...COOKIE_OPTIONS,
+                maxAge: 0,
+              })
             ),
-            Effect.catchTag('CookieError', (e) =>
-              Effect.fail(new ProviderError({ message: e.message }))
-            )
+            Effect.flatMap(
+              HttpServerResponse.setCookie(COOKIE_KEYS.state, '', {
+                ...COOKIE_OPTIONS,
+                maxAge: 0,
+              })
+            ),
+            Effect.flatMap(
+              HttpServerResponse.setCookie(COOKIE_KEYS.redirect, '', {
+                ...COOKIE_OPTIONS,
+                maxAge: 0,
+              })
+            ),
+
+            Effect.orDie
           )
 
           return response
