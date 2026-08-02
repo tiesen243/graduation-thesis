@@ -18,9 +18,9 @@ export const env = createEnv({
 
   server: {},
 
-  clientPrefix: 'PUBLIC_',
+  clientPrefix: 'VITE_',
   client: {
-    PUBLIC_API_URL: Schema.String.pipe(
+    VITE_API_URL: Schema.String.pipe(
       Schema.withDecodingDefault(Effect.succeed('http://localhost:3000')),
       Schema.toStandardSchemaV1
     ),

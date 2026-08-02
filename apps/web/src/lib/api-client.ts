@@ -27,7 +27,7 @@ export class ApiClient extends Context.Service<ApiClient, IApiClient>()(
         client.pipe(
           HttpClient.mapRequest(
             Function.flow(
-              HttpClientRequest.prependUrl(env.PUBLIC_API_URL),
+              HttpClientRequest.prependUrl(env.VITE_API_URL),
               HttpClientRequest.setHeader('x-requested-with', 'web'),
               HttpClientRequest.acceptJson
             )
