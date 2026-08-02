@@ -1,7 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "bunVersion": "1.x",
-  "framework": "node",
-  "buildCommand": "bun run build",
-  "outputDirectory": "dist"
+  "bunVersion": "1.x"
 }
