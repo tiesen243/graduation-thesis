@@ -9,8 +9,8 @@ import {
   LoginSuccess,
   RegisterSuccess,
   WhoamiSuccess,
-} from '@/modules/auth/presentation/http/auth.group'
-import { CurrentUser } from '@/modules/auth/presentation/http/auth.middleware'
+} from '@/modules/auth/presentation/api/auth.group'
+import { CurrentUser } from '@/modules/auth/presentation/api/auth.middleware'
 import { UserService } from '@/modules/user/application/user.service'
 
 export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>

@@ -7,7 +7,7 @@ import { OneUserUseCase } from '@/modules/user/application/use-case/one-user.use
 import {
   ListUsersSuccess,
   OneUserSuccess,
-} from '@/modules/user/presentation/http/user.group'
+} from '@/modules/user/presentation/api/user.group'
 
 export const UserHandler = HttpApiBuilder.group(Api, 'user', (handlers) =>
   handlers

@@ -8,7 +8,7 @@ import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { AuthInfrastructureModule } from '@/modules/auth/infrastructure/infrastructure.module'
 import { AuthHandler } from '@/modules/auth/presentation/http/auth.handler'
-import { AuthMiddleware } from '@/modules/auth/presentation/http/auth.middleware'
+import { AuthMiddlewareHandler } from '@/modules/auth/presentation/http/auth.middlware'
 import { OAuthHandler } from '@/modules/auth/presentation/http/oauth.handler'
 
 export class AuthModule {
@@ -40,7 +40,7 @@ export class AuthModule {
     return {
       layer: Layer.provide(handler, layer),
 
-      middleware: AuthMiddleware.layer.pipe(Layer.provide(layer)),
+      middleware: AuthMiddlewareHandler.pipe(Layer.provide(layer)),
     }
   }
 }

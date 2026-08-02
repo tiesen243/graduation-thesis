@@ -6,7 +6,7 @@ import { HealthUseCase } from '@/modules/home/application/use-case/health.use-ca
 import {
   HealthSuccess,
   HomeSuccess,
-} from '@/modules/home/presentation/http/home.group'
+} from '@/modules/home/presentation/api/home.group'
 
 export const HomeHandler = HttpApiBuilder.group(Api, 'home', (handlers) =>
   handlers
