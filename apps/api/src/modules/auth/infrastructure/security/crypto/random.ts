@@ -1,5 +1,7 @@
 // oxlint-disable eslint/no-bitwise
 
+import * as Effect from 'effect/Effect'
+
 export function generateSecureString(): string {
   const alphabet = 'abcdefghijklmnpqrstuvwxyz23456789'
 
@@ -21,15 +23,17 @@ export function generateStateOrCode(): string {
     .replaceAll(/[=]/gu, '')
 }
 
-export async function generateCodeChallenge(
+export const generateCodeChallenge = Effect.fn(function* generateCodeChallenge(
   codeVerifier: string
-): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(codeVerifier)
-  const digest = await crypto.subtle.digest('SHA-256', data)
-  const base64String = btoa(String.fromCodePoint(...new Uint8Array(digest)))
-  return base64String
+) {
+  const textEncoder = new TextEncoder()
+
+  const digest = yield* Effect.promise(() =>
+    crypto.subtle.digest('SHA-256', textEncoder.encode(codeVerifier))
+  )
+
+  return btoa(String.fromCodePoint(...new Uint8Array(digest)))
     .replaceAll('+', '-')
     .replaceAll('/', '_')
     .replaceAll(/[=]/gu, '')
-}
+})

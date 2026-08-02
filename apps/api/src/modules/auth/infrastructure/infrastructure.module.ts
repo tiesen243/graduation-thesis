@@ -2,6 +2,7 @@ import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
 
+import { OAuthLayer } from '@/modules/auth/infrastructure/oauth/oauth.layer'
 import { DrizzleAccountRepository } from '@/modules/auth/infrastructure/persistence/drizzle/account.repository'
 import { DrizzleSessionRepository } from '@/modules/auth/infrastructure/persistence/drizzle/session.repository'
 import { InMemoryAccountRepository } from '@/modules/auth/infrastructure/persistence/in-memory/account.repository'
@@ -22,6 +23,7 @@ export class AuthInfrastructureModule {
     return Layer.mergeAll(
       persistenceLayer,
       JwtLayer(auth.secret),
+      OAuthLayer(auth.providers),
       PasswordLayer({ secret: auth.secret })
     )
   }

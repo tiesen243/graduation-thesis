@@ -7,6 +7,8 @@ import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 import * as HttpApiScalar from 'effect/unstable/httpapi/HttpApiScalar'
 
+import type { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers/base.provider'
+
 import { Api } from '@/api'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { HomeModule } from '@/modules/home/home.module'
@@ -76,6 +78,7 @@ export namespace AppModule {
     persistentDriver: 'in-memory' | 'drizzle'
     auth: {
       secret: Redacted<string>
+      providers: BaseProvider[]
     }
   }
 }

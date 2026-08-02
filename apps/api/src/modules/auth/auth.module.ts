@@ -9,6 +9,7 @@ import { RegisterUseCase } from '@/modules/auth/application/use-case/register.us
 import { AuthInfrastructureModule } from '@/modules/auth/infrastructure/infrastructure.module'
 import { AuthHandler } from '@/modules/auth/presentation/http/auth.handler'
 import { AuthMiddleware } from '@/modules/auth/presentation/http/auth.middleware'
+import { OAuthHandler } from '@/modules/auth/presentation/http/oauth.handler'
 
 export class AuthModule {
   public static create(
@@ -34,8 +35,10 @@ export class AuthModule {
       Layer.mergeAll(infrastructureLayer, imports.userService)
     )
 
+    const handler = Layer.merge(AuthHandler, OAuthHandler)
+
     return {
-      layer: AuthHandler.pipe(Layer.provide(layer)),
+      layer: Layer.provide(handler, layer),
 
       middleware: AuthMiddleware.layer.pipe(Layer.provide(layer)),
     }

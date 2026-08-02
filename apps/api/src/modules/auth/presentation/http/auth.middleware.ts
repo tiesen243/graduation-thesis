@@ -1,3 +1,6 @@
+import type { unhandled } from 'effect/Types'
+import type { HttpServerResponse } from 'effect/unstable/http/HttpServerResponse'
+
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -10,6 +13,7 @@ import type { Jwt } from '@/modules/auth/application/security/jwt'
 import { AuthService } from '@/modules/auth/application/auth.service'
 import { JwtError } from '@/modules/auth/application/security/jwt'
 import { AccessToken } from '@/modules/auth/application/types'
+import { COOKIE_KEYS } from '@/modules/auth/constants'
 import { Unauthorized } from '@/modules/auth/domain/entities/auth.error'
 
 export class CurrentUser extends Context.Service<CurrentUser, Jwt.Payload>()(
@@ -39,6 +43,10 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
   // you.
   security: {
     bearer: HttpApiSecurity.bearer,
+    cookie: HttpApiSecurity.apiKey({
+      key: COOKIE_KEYS.accessToken,
+      in: 'cookie',
+    }),
   },
 
   // Middlware can specify errors that it may raise
@@ -49,24 +57,30 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
     Effect.gen(function* AuthMiddlewareLayer() {
       const authService = yield* AuthService
 
-      return {
-        bearer: Effect.fn(function* bearer(httpEffect, { credential }) {
-          const token = Redacted.value(credential)
-          if (!token)
-            return yield* Effect.fail(
-              new Unauthorized({ message: 'Missing or invalid token' })
-            )
-
-          const payload = yield* authService.verifyAccessToken(
-            AccessToken.make(token)
+      const handler = Effect.fn(function* handler(
+        httpEffect: Effect.Effect<HttpServerResponse, unhandled, CurrentUser>,
+        { credential }: { credential: Redacted.Redacted<string> }
+      ) {
+        const token = Redacted.value(credential)
+        if (!token)
+          return yield* Effect.fail(
+            new Unauthorized({ message: 'Missing or invalid token' })
           )
-          if (!payload)
-            return yield* Effect.fail(
-              new Unauthorized({ message: 'Missing or invalid token' })
-            )
 
-          return yield* Effect.provideService(httpEffect, CurrentUser, payload)
-        }),
+        const payload = yield* authService.verifyAccessToken(
+          AccessToken.make(token)
+        )
+        if (!payload)
+          return yield* Effect.fail(
+            new Unauthorized({ message: 'Missing or invalid token' })
+          )
+
+        return yield* Effect.provideService(httpEffect, CurrentUser, payload)
+      })
+
+      return {
+        bearer: handler,
+        cookie: handler,
       }
     })
   )

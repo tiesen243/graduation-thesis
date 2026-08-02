@@ -11,8 +11,8 @@ export const accounts = snakeCase.table(
 
     userId: t
       .varchar({ length: 24 })
-      .references(() => users.id)
-      .notNull(),
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
   }),
   (t) => [
     primaryKey({ columns: [t.provider, t.providerAccountId] }),
@@ -30,8 +30,8 @@ export const sessions = snakeCase.table(
 
     userId: t
       .varchar({ length: 24 })
-      .references(() => users.id)
-      .notNull(),
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
   }),
   (t) => [
     uniqueIndex('sessions_token_uq_idx').on(t.token),

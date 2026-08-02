@@ -27,8 +27,8 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
   image: Schema.NullOr(
     Schema.String.check(
       Schema.isPattern(
-        // oxlint-disable-next-line prefer-named-capture-group
-        /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-]*)*(\?.*)?(#.*)?$/u
+        // oxlint-disable-next-line eslint/prefer-named-capture-group
+        /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/u
       )
     )
   ).pipe(Schema.withConstructorDefault(Effect.succeed(null))),
