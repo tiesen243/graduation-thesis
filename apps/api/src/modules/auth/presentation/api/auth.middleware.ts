@@ -9,7 +9,7 @@ import { COOKIE_KEYS } from '@/modules/auth/constants'
 import { Unauthorized } from '@/modules/auth/domain/entities/auth.error'
 
 export class CurrentUser extends Context.Service<CurrentUser, Jwt.Payload>()(
-  'auth/presentation/middleware/CurrentUser'
+  'auth/presentation/api/CurrentUser'
 ) {}
 
 // oxlint-disable-next-line max-classes-per-file
@@ -25,7 +25,7 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
     // specify those as well.
     requires: never
   }
->()('auth/presentation/middleware/AuthMiddleware', {
+>()('auth/presentation/api/AuthMiddleware', {
   // This middleware requires clients to also provide an implementation, to
   // inject a api key
   requiredForClient: true,
