@@ -7,7 +7,7 @@ import { AppModule } from '@/modules/app.module'
 import { env } from '@/shared/env'
 
 const application = AppModule.create({
-  persistentDriver: 'drizzle',
+  persistentDriver: 'in-memory',
   auth: {
     secret: Redacted.make(env.AUTH_SECRET),
   },
