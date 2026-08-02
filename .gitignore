@@ -5,6 +5,9 @@ node_modules/
 build/
 dist/
 
+# react router
+.react-router/
+
 # environment variables
 .env*
 !.env.example
