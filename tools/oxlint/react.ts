@@ -3,10 +3,12 @@ import { defineConfig } from 'oxlint'
 export default defineConfig({
   plugins: ['react', 'react-perf', 'jsx-a11y'],
   rules: {
+    'react/forbid-component-props': 'off',
     'react/jsx-boolean-value': 'off',
     'react/jsx-filename-extension': 'off',
     'react/jsx-max-depth': 'off',
     'react/jsx-props-no-spreading': 'off',
+    'react/jsx-no-literals': 'off',
     'react/no-multi-comp': 'off',
     'react/no-unknown-property': 'off',
     'react/only-export-components': 'off',
