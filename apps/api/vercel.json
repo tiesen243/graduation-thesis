@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "bunVersion": "1.x",
-  "bulkRedirectsPath": "bun turbo build",
+  "buildCommand": "bun turbo build",
   "outputDirectory": "dist"
 }
