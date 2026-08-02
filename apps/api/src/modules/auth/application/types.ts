@@ -14,7 +14,7 @@ export const Tokens = Schema.Struct({
   accessToken: AccessToken,
   refreshToken: RefreshToken,
   expiresAt: Schema.Date,
-})
+}).pipe(Schema.annotate({ identifier: 'auth/application/Tokens' }))
 export type Tokens = typeof Tokens.Type
 
 export namespace OAuth {

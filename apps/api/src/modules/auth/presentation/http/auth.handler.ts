@@ -105,28 +105,28 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
       Effect.fn(function* refreshToken() {
         const token = yield* getRefreshToken
 
-        const { accessToken, refreshToken, expiresAt } =
-          yield* RefreshTokenUseCase.use((s) => s.execute({ token }))
+        const data = yield* RefreshTokenUseCase.use((s) => s.execute({ token }))
 
         const response = yield* HttpServerResponse.json(
           RefreshTokenSuccess.make({
             message: 'Refresh token successful',
-            data: { accessToken, refreshToken, expiresAt },
+            data,
           })
         ).pipe(
           Effect.flatMap(
             HttpServerResponse.setCookie(
               COOKIE_KEYS.refreshToken,
-              refreshToken,
-              { ...COOKIE_OPTIONS, expires: expiresAt }
+              data.refreshToken,
+              { ...COOKIE_OPTIONS, expires: data.expiresAt }
             )
           ),
 
           Effect.flatMap(
-            HttpServerResponse.setCookie(COOKIE_KEYS.accessToken, accessToken, {
-              ...COOKIE_OPTIONS,
-              maxAge: '15 minutes',
-            })
+            HttpServerResponse.setCookie(
+              COOKIE_KEYS.accessToken,
+              data.accessToken,
+              { ...COOKIE_OPTIONS, maxAge: '15 minutes' }
+            )
           ),
 
           Effect.orDie

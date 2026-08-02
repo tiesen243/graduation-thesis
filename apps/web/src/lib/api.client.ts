@@ -49,6 +49,7 @@ export class ApiClient extends Context.Service<ApiClient, IApiClient>()(
             times: 3,
             while(error) {
               if (
+                // oxlint-disable-next-line eslint/no-underscore-dangle
                 error.reason._tag === 'StatusCodeError' &&
                 error.reason.response.status === 401
               )
