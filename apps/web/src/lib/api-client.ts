@@ -51,9 +51,10 @@ export class ApiClient extends Context.Service<ApiClient, IApiClient>()(
 
         if (
           cause._tag === 'Some' &&
-          cause.value._tag === 'HttpClientError' &&
-          cause.value.reason._tag === 'StatusCodeError' &&
-          cause.value.reason.response.status === 401
+          ((cause.value._tag === 'HttpClientError' &&
+            cause.value.reason._tag === 'StatusCodeError' &&
+            cause.value.reason.response.status === 401) ||
+            cause.value.message.includes('invalid token'))
         )
           yield* Effect.promise((signal) =>
             fetch(`${env.VITE_API_URL}/api/auth/refresh-token`, {
