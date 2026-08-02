@@ -1,3 +1,5 @@
+// oxlint-disable eslint/no-underscore-dangle
+
 import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
 import type { HttpClientResponse } from 'effect/unstable/http/HttpClientResponse'
 
