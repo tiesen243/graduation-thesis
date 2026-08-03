@@ -8,7 +8,7 @@ import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/go
 import { env } from '@/shared/env'
 
 const application = AppModule.create({
-  persistentDriver: 'in-memory',
+  persistentDriver: 'drizzle',
   auth: {
     secret: Redacted.make(env.AUTH_SECRET),
     providers: [new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET)],
