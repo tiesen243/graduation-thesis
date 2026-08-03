@@ -157,20 +157,20 @@ const getRefreshToken = Effect.gen(function* getSessionToken() {
       [COOKIE_KEYS.refreshToken]: Schema.optional(Schema.String),
     })
   ).pipe(Effect.orDie)
-  yield* Effect.logDebug(`Cookies: ${JSON.stringify(cookies)}`)
+  yield* Effect.logInfo(`Cookies: ${JSON.stringify(cookies)}`)
 
   const headers = yield* HttpServerRequest.schemaHeaders(
     Schema.Struct({
       Authorization: Schema.optional(Schema.String),
     })
   ).pipe(Effect.orDie)
-  yield* Effect.logDebug(`Headers: ${JSON.stringify(headers)}`)
+  yield* Effect.logInfo(`Headers: ${JSON.stringify(headers)}`)
 
   const token =
     cookies[COOKIE_KEYS.refreshToken] ??
     headers.Authorization?.replace('Bearer ', '') ??
     ''
-  yield* Effect.logDebug(`Token: ${token}`)
+  yield* Effect.logInfo(`Token: ${token}`)
 
   if (!token)
     return yield* Effect.fail(
