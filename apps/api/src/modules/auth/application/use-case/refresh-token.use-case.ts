@@ -21,8 +21,14 @@ export class RefreshTokenUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute({ token }) {
-        const { user } = yield* authService.verifyRefreshToken(token)
-        return yield* authService.createRefreshToken(user.id)
+        const { user, expiresAt } = yield* authService.verifyRefreshToken(token)
+
+        const accessToken = yield* authService.createAccessToken(
+          user.id,
+          user.role
+        )
+
+        return { accessToken, refreshToken: token, expiresAt }
       }),
     }
   }),
