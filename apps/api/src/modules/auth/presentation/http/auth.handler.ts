@@ -85,8 +85,8 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
 
     .handle(
       'logout',
-      Effect.fn(function* logout() {
-        yield* getRefreshToken.pipe(
+      Effect.fn(function* logout({ headers }) {
+        yield* getRefreshToken(headers).pipe(
           Effect.flatMap((token) =>
             LogoutUseCase.use((s) => s.execute({ token }))
           )
@@ -116,8 +116,8 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
 
     .handle(
       'refresh-token',
-      Effect.fn(function* refreshToken() {
-        const data = yield* getRefreshToken.pipe(
+      Effect.fn(function* refreshToken({ headers }) {
+        const data = yield* getRefreshToken(headers).pipe(
           Effect.flatMap((token) =>
             RefreshTokenUseCase.use((s) => s.execute({ token }))
           )
@@ -151,24 +151,20 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
     )
 )
 
-const getRefreshToken = Effect.gen(function* getSessionToken() {
+const getRefreshToken = Effect.fn(function* getSessionToken(headers: {
+  authorization?: string
+}) {
   const cookies = yield* HttpServerRequest.schemaCookies(
     Schema.Struct({
       [COOKIE_KEYS.refreshToken]: Schema.optional(Schema.String),
     })
   ).pipe(Effect.orDie)
   yield* Effect.logInfo(`Cookies: ${JSON.stringify(cookies)}`)
-
-  const headers = yield* HttpServerRequest.schemaHeaders(
-    Schema.Struct({
-      Authorization: Schema.optional(Schema.String),
-    })
-  ).pipe(Effect.orDie)
   yield* Effect.logInfo(`Headers: ${JSON.stringify(headers)}`)
 
   const token =
     cookies[COOKIE_KEYS.refreshToken] ??
-    headers.Authorization?.replace('Bearer ', '') ??
+    headers.authorization?.replace('Bearer ', '') ??
     ''
   yield* Effect.logInfo(`Token: ${token}`)
 

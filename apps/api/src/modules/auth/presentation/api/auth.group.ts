@@ -68,12 +68,18 @@ export class AuthGroup extends HttpApiGroup.make('auth')
 
   .add(
     HttpApiEndpoint.post('logout', '/logout', {
+      headers: Schema.Struct({
+        authorization: Schema.optional(Schema.String),
+      }),
       success: LogoutSuccess,
     }).middleware(AuthMiddleware)
   )
 
   .add(
     HttpApiEndpoint.post('refresh-token', '/refresh-token', {
+      headers: Schema.Struct({
+        authorization: Schema.optional(Schema.String),
+      }),
       success: RefreshTokenSuccess,
       error: [JwtError, Unauthorized],
     })
