@@ -71,14 +71,9 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
         const { userId } = yield* CurrentUser
 
         const user = yield* userService.findByIdentifier({ id: userId })
-        if (!user)
+        if (!user || user.deletedAt !== null)
           return yield* Effect.fail(
-            new Unauthorized({ message: 'User not found' })
-          )
-
-        if (user.deletedAt !== null)
-          return yield* Effect.fail(
-            new Unauthorized({ message: 'User is deleted' })
+            new Unauthorized({ message: 'Missing or invalid token' })
           )
 
         return WhoamiSuccess.make({
@@ -91,9 +86,11 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
     .handle(
       'logout',
       Effect.fn(function* logout() {
-        const token = yield* getRefreshToken
-
-        yield* LogoutUseCase.use((s) => s.execute({ token }))
+        yield* getRefreshToken.pipe(
+          Effect.flatMap((token) =>
+            LogoutUseCase.use((s) => s.execute({ token }))
+          )
+        )
 
         return yield* HttpServerResponse.json(
           LogoutSuccess.make({ message: 'Logout successful' })
@@ -120,11 +117,13 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
     .handle(
       'refresh-token',
       Effect.fn(function* refreshToken() {
-        const token = yield* getRefreshToken
+        const data = yield* getRefreshToken.pipe(
+          Effect.flatMap((token) =>
+            RefreshTokenUseCase.use((s) => s.execute({ token }))
+          )
+        )
 
-        const data = yield* RefreshTokenUseCase.use((s) => s.execute({ token }))
-
-        const response = yield* HttpServerResponse.json(
+        return yield* HttpServerResponse.json(
           RefreshTokenSuccess.make({
             message: 'Refresh token successful',
             data,
@@ -148,8 +147,6 @@ export const AuthHandler = HttpApiBuilder.group(Api, 'auth', (handlers) =>
 
           Effect.orDie
         )
-
-        return response
       })
     )
 )
@@ -159,26 +156,22 @@ const getRefreshToken = Effect.gen(function* getSessionToken() {
     Schema.Struct({
       [COOKIE_KEYS.refreshToken]: Schema.optional(Schema.String),
     })
-  ).pipe(
-    Effect.catchTag('SchemaError', () =>
-      Effect.succeed({ [COOKIE_KEYS.refreshToken]: undefined })
-    )
-  )
+  ).pipe(Effect.orDie)
+  yield* Effect.logDebug(`Cookies: ${JSON.stringify(cookies)}`)
 
   const headers = yield* HttpServerRequest.schemaHeaders(
     Schema.Struct({
       Authorization: Schema.optional(Schema.String),
     })
-  ).pipe(
-    Effect.catchTag('SchemaError', () =>
-      Effect.succeed({ Authorization: undefined })
-    )
-  )
+  ).pipe(Effect.orDie)
+  yield* Effect.logDebug(`Headers: ${JSON.stringify(headers)}`)
 
   const token =
     cookies[COOKIE_KEYS.refreshToken] ??
     headers.Authorization?.replace('Bearer ', '') ??
     ''
+  yield* Effect.logDebug(`Token: ${token}`)
+
   if (!token)
     return yield* Effect.fail(
       new Unauthorized({ message: 'Missing or invalid token' })
