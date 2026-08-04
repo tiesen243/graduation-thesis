@@ -16,7 +16,7 @@
     "@rozumari/lib": "workspace:*",
     "@rozumari/ui": "workspace:*",
     "@tanstack/react-query": "catalog:prod",
-    "@tiesen/effect-tanstack-query": "^0.0.11",
+    "@tiesen/effect-tanstack-query": "link:@tiesen/effect-tanstack-query",
     "effect": "catalog:effect",
     "isbot": "^5.2.1",
     "next-themes": "^0.4.6",

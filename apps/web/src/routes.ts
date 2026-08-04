@@ -7,6 +7,7 @@ export default [
 
   layout('./routes/auth/__root.tsx', [
     route('/login', './routes/auth/login.tsx'),
+    route('/register', './routes/auth/register.tsx'),
   ]),
 
   // API routes

@@ -1,10 +1,9 @@
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 
-import { useRuntime } from '@/hooks/use-runtime'
+import { api } from '@/lib/effect'
 
 export default function IndexPage() {
-  const { api } = useRuntime()
   const { data, error } = useQuery({
     ...api.auth.whoami.queryOptions(),
   })
