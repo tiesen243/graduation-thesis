@@ -19,6 +19,9 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@rozumari/lib": "workspace:*"
+  },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
@@ -28,8 +31,5 @@
   },
   "peerDependencies": {
     "effect": "catalog:effect"
-  },
-  "dependencies": {
-    "@rozumari/lib": "workspace:*"
   }
 }

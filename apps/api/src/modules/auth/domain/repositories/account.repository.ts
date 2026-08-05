@@ -1,5 +1,3 @@
-import type { Effect } from 'effect/Effect'
-
 import * as Context from 'effect/Context'
 
 import type { Account } from '@/modules/auth/domain/entities/account.entity'

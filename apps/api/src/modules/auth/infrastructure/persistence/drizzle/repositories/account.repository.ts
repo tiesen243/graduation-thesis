@@ -4,14 +4,12 @@ import {
   AccountProvider,
   AccountProviderId,
 } from '@rozumari/contract/auth/schemas/account.schema'
-import { eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
 import { accounts } from '@/modules/auth/infrastructure/persistence/drizzle/schema'
-import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
 

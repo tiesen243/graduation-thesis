@@ -59,6 +59,7 @@
         "@rozumari/oxlint": "workspace:*",
         "@rozumari/tsconfig": "workspace:*",
         "@tailwindcss/vite": "catalog:tailwind",
+        "@types/bun": "catalog:dev",
         "@types/react": "catalog:react",
         "@types/react-dom": "catalog:react",
         "@vercel/react-router": "^1.3.2",

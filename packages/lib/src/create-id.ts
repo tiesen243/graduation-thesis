@@ -1,13 +1,19 @@
 // oxlint-disable eslint/no-bitwise
 
+const globalForCrypto = globalThis as typeof globalThis & {
+  crypto?: {
+    getRandomValues: (array: Uint32Array) => void
+  }
+}
+
 const createRandom = () => {
   if (
-    typeof globalThis !== 'undefined' &&
-    typeof globalThis.crypto.getRandomValues === 'function'
+    globalForCrypto !== undefined &&
+    typeof globalForCrypto.crypto?.getRandomValues === 'function'
   ) {
     return () => {
       const buffer = new Uint32Array(1)
-      globalThis.crypto.getRandomValues(buffer)
+      globalForCrypto.crypto?.getRandomValues(buffer)
       return (buffer.at(0) ?? 0) / 0x1_00_00_00_00
     }
   }

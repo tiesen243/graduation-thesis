@@ -52,9 +52,9 @@ export class DrizzleClient extends Context.Service<
     const logger = Layer.succeed(PgDrizzle.EffectLogger, {
       logQuery: (sql, params) => {
         const prettySql = sql
-          .replaceAll(/\s+/g, ' ')
+          .replaceAll(/\s+/gu, ' ')
           .replaceAll(
-            /\b(SELECT|FROM|WHERE|ORDER BY|LIMIT|GROUP BY|LEFT JOIN|RIGHT JOIN|INNER JOIN)\b/gi,
+            /\b(?<sql>SELECT|FROM|WHERE|ORDER BY|LIMIT|GROUP BY|LEFT JOIN|RIGHT JOIN|INNER JOIN)\b/giu,
             '\n  $1'
           )
 
@@ -136,11 +136,11 @@ const buildCriteria = <TEntity>(
         }
 
         if (key === 'OR') {
-          const orList = Array.isArray(value)
-            ? value
-            : (typeof value === 'object' && value !== null
-              ? Object.entries(value).map(([k, v]) => ({ [k]: v }))
-              : [value])
+          let orList: unknown[]
+          if (Array.isArray(value)) orList = value
+          else if (typeof value === 'object' && value !== null)
+            orList = Object.entries(value).map(([k, v]) => ({ [k]: v }))
+          else orList = [value]
 
           const orConditions = yield* Effect.forEach(
             orList,
@@ -170,7 +170,7 @@ const buildCriteria = <TEntity>(
           )
 
           if (notConditions.length > 0)
-            conditions.push(orm.not(orm.and(...notConditions)!))
+            conditions.push(orm.not(orm.and(...notConditions))!)
 
           return
         }

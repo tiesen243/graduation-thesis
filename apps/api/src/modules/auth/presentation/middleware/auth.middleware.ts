@@ -8,7 +8,7 @@ import { AuthService } from '@/modules/auth/application/auth.service'
 
 export const authMiddleware = Layer.effect(
   AuthMiddleware,
-  Effect.gen(function* authMiddlewareLayer() {
+  Effect.gen(function* authMiddlewareGen() {
     const authService = yield* AuthService
 
     const middlewareHandler = Effect.fn(function* handler(

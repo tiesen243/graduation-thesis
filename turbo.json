@@ -13,13 +13,7 @@
       "dependsOn": ["^build"],
       "persistent": true
     },
-    "deploy": {
-      "dependsOn": ["@rozumari/api#build", "@rozumari/web#build"],
-      "interactive": true,
-      "cache": false
-    },
     "typecheck": {
-      "dependsOn": ["^build"],
       "outputs": [".cache/tsbuildinfo.json"]
     }
   },

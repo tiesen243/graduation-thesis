@@ -10,7 +10,7 @@ import * as Layer from 'effect/Layer'
 export const adminMiddleware = Layer.succeed(
   AdminMiddleware,
   AdminMiddleware.of((httpEffect) =>
-    Effect.gen(function* adminMiddleware() {
+    Effect.gen(function* adminMiddlewareGen() {
       const { userRole } = yield* CurrentUser
 
       if (userRole !== UserRole.make('admin'))
