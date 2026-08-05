@@ -1,7 +1,7 @@
 {
   "extends": "@rozumari/tsconfig/react-package.json",
   "compilerOptions": {
-    "types": ["vite/client", "bun"],
+    "types": ["vite/client"],
     "rootDirs": [".", "./.react-router/types"],
 
     "paths": {

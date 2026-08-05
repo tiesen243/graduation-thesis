@@ -1,8 +1,9 @@
+import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
 import { Effect, Layer } from 'effect'
 
 import type { AppModule } from '@/modules/app.module'
 
-import { OAuth, ProviderError } from '@/modules/auth/application/security/oauth'
+import { OAuth } from '@/modules/auth/application/security/oauth'
 
 export const OAuthLayer = (providers: AppModule.Config['auth']['providers']) =>
   Layer.succeed(OAuth, {

@@ -2,32 +2,41 @@ import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
 
-import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case.ts'
-import { OneUserUseCase } from '@/modules/user/application/use-case/one-user.use-case'
+import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case'
+import { ShowUserUseCase } from '@/modules/user/application/use-case/show-user.use-case'
 import { UserService } from '@/modules/user/application/user.service'
 import { UserInfrastructureModule } from '@/modules/user/infrastructure/infrastructure.module'
-import { UserHandler } from '@/modules/user/presentation/http/user.handler'
+import { userCommand } from '@/modules/user/presentation/cli/user.command'
+import { userController } from '@/modules/user/presentation/http/user.controller'
 
 export class UserModule {
-  public static create(config: Pick<AppModule.Config, 'persistentDriver'>) {
+  public static create(config: Pick<AppModule.Config, 'persistence'>) {
     const infrastructureLayer = UserInfrastructureModule.create(
-      config.persistentDriver
+      config.persistence
     )
 
     const useCaseLayer = Layer.mergeAll(
       ListUsersUseCase.layer,
-      OneUserUseCase.layer
+      ShowUserUseCase.layer
     )
 
-    const applicationLayer = Layer.provideMerge(useCaseLayer, UserService.layer)
+    const serviceLayer = Layer.mergeAll(UserService.layer)
+
+    const applicationLayer = Layer.provideMerge(useCaseLayer, serviceLayer)
 
     const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
 
     return {
-      layer: UserHandler.pipe(Layer.provide(layer)),
+      controller: userController.pipe(Layer.provide(layer)),
+
+      command: userCommand,
 
       exports: {
-        userService: UserService.layer.pipe(Layer.provide(layer)),
+        layer,
+
+        services: {
+          userService: UserService.layer.pipe(Layer.provide(layer)),
+        },
       },
     }
   }

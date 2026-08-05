@@ -1,22 +1,25 @@
+import type { JwtPayload } from '@rozumari/contract/auth/middleware'
+import type {
+  InvalidToken,
+  TokenExpired,
+} from '@rozumari/contract/auth/schemas/auth.error'
+import type { Token } from '@rozumari/contract/auth/schemas/token.schema'
+import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
+
+import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
+import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
+import {
+  AccessToken,
+  RefreshToken,
+} from '@rozumari/contract/auth/schemas/token.schema'
+import { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import type { JwtError } from '@/modules/auth/application/security/jwt'
-import type { Tokens } from '@/modules/auth/application/types'
-import type {
-  UserId,
-  UserRole,
-} from '@/modules/user/domain/entities/user.entity'
-
 import { Jwt } from '@/modules/auth/application/security/jwt'
-import { AccessToken, RefreshToken } from '@/modules/auth/application/types'
 import { TOKEN_EXPIRATION } from '@/modules/auth/constants'
-import { Unauthorized } from '@/modules/auth/domain/entities/auth.error'
-import {
-  Session,
-  SessionId,
-} from '@/modules/auth/domain/entities/session.entity'
+import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
   constantTimeEqual,
@@ -33,23 +36,22 @@ export class AuthService extends Context.Service<
   AuthService,
   {
     readonly createAccessToken: (
-      userId: UserId,
-      role: UserRole
-    ) => Effect.Effect<AccessToken, Unauthorized | JwtError>
+      userId: UserId
+    ) => Effect.Effect<AccessToken, UserNotFound>
 
     readonly verifyAccessToken: (
       token: AccessToken
-    ) => Effect.Effect<Jwt.Payload, JwtError>
+    ) => Effect.Effect<JwtPayload, InvalidToken | TokenExpired>
 
     readonly createRefreshToken: (
       userId: UserId
-    ) => Effect.Effect<Tokens, Unauthorized | JwtError>
+    ) => Effect.Effect<Token, UserNotFound>
 
     readonly verifyRefreshToken: (
       token: RefreshToken
     ) => Effect.Effect<
-      Pick<Session, 'token' | 'user' | 'expiresAt'>,
-      Unauthorized | JwtError
+      Pick<Session, 'token' | 'expiresAt'>,
+      Unauthorized | InvalidToken | TokenExpired
     >
   }
 >()('auth/application/AuthService', {
@@ -62,22 +64,20 @@ export class AuthService extends Context.Service<
     const createAccessToken = Effect.fn(function* createAccessToken(userId) {
       const user = yield* userService.findByIdentifier({ id: userId })
       if (!user)
-        return yield* Effect.fail(
-          new Unauthorized({ message: 'User not found' })
-        )
+        return yield* Effect.fail(new UserNotFound({ error: { id: userId } }))
 
-      const payload: Jwt.Payload = { userId, role: user.role }
-      return yield* jwt.sign(payload, {
-        expiresIn: TOKEN_EXPIRATION.accessToken,
-      })
+      return yield* jwt.sign(
+        { userId: user.id, userRole: user.role },
+        { expiresIn: TOKEN_EXPIRATION.accessToken }
+      )
     })
 
     return {
       createAccessToken,
 
       verifyAccessToken: Effect.fn(function* verifyAccessToken(token) {
-        const { userId, role } = yield* jwt.verify(token)
-        return { userId, role }
+        const { userId, userRole } = yield* jwt.verify(token)
+        return { userId, userRole }
       }),
 
       createRefreshToken: Effect.fn(function* createRefreshToken(userId) {
@@ -94,7 +94,6 @@ export class AuthService extends Context.Service<
           id: SessionId.make(id),
           token: RefreshToken.make(encodeHex(hashedSecret)),
           expiresAt,
-
           userId,
         })
         yield* sessionRepository.save(session)
@@ -108,20 +107,19 @@ export class AuthService extends Context.Service<
         }
       }),
 
-      verifyRefreshToken: Effect.fn(function* verifyRefreshToken(token) {
-        const [id, secret] = token.split('.')
+      verifyRefreshToken: Effect.fn(function* verifyRefreshToken(refreshToken) {
+        const [id, secret] = refreshToken.split('.')
         if (!id || !secret)
           return yield* Effect.fail(
             new Unauthorized({ message: 'Invalid refresh token' })
           )
 
-        const session = yield* sessionRepository.findWithUser(
-          SessionId.make(id)
-        )
-        if (!session)
+        const agg = yield* sessionRepository.findWithUser(SessionId.make(id))
+        if (agg === null)
           return yield* Effect.fail(
             new Unauthorized({ message: 'Invalid refresh token' })
           )
+        const { session, user } = agg
 
         const hashedSecret = yield* hashSecret(secret)
         const isValid = constantTimeEqual(
@@ -133,24 +131,21 @@ export class AuthService extends Context.Service<
         const expiresTime = new Date(session.expiresAt).getTime()
 
         if (!isValid || now >= expiresTime) {
-          yield* sessionRepository.delete({ id: session.id })
+          yield* sessionRepository.delete(session)
           return yield* Effect.fail(
             new Unauthorized({ message: 'Invalid refresh token' })
           )
         }
 
         if (now >= expiresTime - TOKEN_EXPIRATION.threshold * 1000) {
-          const updatedSession = session.clone({
-            expiresAt: new Date(now + TOKEN_EXPIRATION.refreshToken * 1000),
-          })
+          const updatedSession = session.renew(
+            new Date(now + TOKEN_EXPIRATION.refreshToken * 1000)
+          )
           yield* sessionRepository.save(updatedSession)
         }
 
-        return {
-          token: session.token,
-          user: session.user,
-          expiresAt: session.expiresAt,
-        }
+        const { token, expiresAt } = session
+        return { token, user, expiresAt }
       }),
     }
   }),

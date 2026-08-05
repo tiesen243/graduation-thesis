@@ -1,60 +1,72 @@
+// oxlint-disable unicorn/no-array-for-each
+
 import * as Effect from 'effect/Effect'
 import * as Ref from 'effect/Ref'
 
-import type { IBaseRepository } from '@/shared/domain/base.repository'
+import type { IRepository } from '@/shared/domain/repository'
 
-import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-memory.client'
+import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 
-export const MakeInMemoryRepository = Effect.fn(
-  'shared/infrastructure/persistence/in-memory/MakeInMemoryRepository'
-)(function* MakeInMemoryRepositoryFn<
-  TEntity extends { toJSON: () => Record<string, unknown> },
-  TId = TEntity extends { id: infer IdType } ? IdType : never,
->(entities: Ref.Ref<Map<TId, TEntity>>) {
-  const { buildCriteria, buildOrderBy } = yield* InMemoryClient
+export const makeInMemoryRepository = Effect.fn(
+  function* makeInMemoryRepository<TEntity, TPkey>(
+    dictRef: Ref.Ref<Map<TPkey, TEntity>>,
+    primaryKey: (entity: TEntity) => TPkey
+  ) {
+    const { buildCriteria, buildOrderBy } = yield* InMemoryClient
 
-  return {
-    findMany: Effect.fn(function* find(criterias = [], options = {}) {
-      const criteriasFn = yield* buildCriteria(criterias)
-      const orderByFn = yield* buildOrderBy(options.orderBy ?? {})
+    return {
+      findMany: Effect.fn(function* findMany(options = {}) {
+        const dict = yield* Ref.get(dictRef)
+        let items = [...dict.values()]
 
-      let dict = yield* Ref.get(entities).pipe(
-        Effect.map((map) => [...map.values()])
-      )
+        if (options.where)
+          items = yield* Effect.forEach(
+            items,
+            (item) => buildCriteria(item, options.where),
+            { concurrency: 'unbounded' }
+          ).pipe(
+            Effect.map((results) => items.filter((_, index) => results[index]))
+          )
 
-      if (criteriasFn) dict = dict.filter(criteriasFn)
-      if (orderByFn) dict = dict.toSorted(orderByFn)
+        if (options.orderBy) items = yield* buildOrderBy(items, options.orderBy)
 
-      const offset = options.offset ?? 0
-      const limit = options.limit ?? dict.length
+        const offset = options.offset ?? 0
+        const limit = options.limit ? offset + options.limit : undefined
 
-      return dict.slice(offset, offset + limit)
-    }),
+        return items.slice(offset, limit)
+      }),
 
-    findOne: (id) =>
-      Ref.get(entities).pipe(Effect.map((map) => map.get(id as never) ?? null)),
+      count: Effect.fn(function* count(where) {
+        const dict = yield* Ref.get(dictRef)
+        if (!where) return dict.size
 
-    count: Effect.fn(function* count(criterias = []) {
-      const criteriasFn = yield* buildCriteria(criterias)
+        const items = yield* Effect.forEach(
+          [...dict.values()],
+          (item) => buildCriteria(item, where),
+          { concurrency: 'unbounded' }
+        ).pipe(
+          Effect.map((results) =>
+            [...dict.values()].filter((_, index) => results[index])
+          )
+        )
 
-      let dict = yield* Ref.get(entities).pipe(
-        Effect.map((map) => [...map.values()])
-      )
+        return items.length
+      }),
 
-      if (criteriasFn) dict = dict.filter(criteriasFn)
+      save: Effect.fn(function* save(entity) {
+        const key = primaryKey(entity)
+        yield* Ref.update(dictRef, (dict) => dict.set(key, entity))
+      }),
 
-      return dict.length
-    }),
+      delete: Effect.fn(function* deleteEntity(entity) {
+        const key = primaryKey(entity)
 
-    save: (entity: TEntity) =>
-      Ref.update(entities, (map) =>
-        map.set((entity as unknown as { id: TId }).id, entity)
-      ).pipe(Effect.asVoid),
-
-    delete: (entity: TEntity) =>
-      Ref.update(entities, (map) => {
-        map.delete((entity as unknown as { id: TId }).id)
-        return map
-      }).pipe(Effect.asVoid),
-  } satisfies IBaseRepository<TEntity, TId>
-})
+        yield* Ref.update(dictRef, (dict) => {
+          const next = new Map(dict)
+          next.delete(key)
+          return next
+        })
+      }),
+    } satisfies IRepository<TEntity>
+  }
+)

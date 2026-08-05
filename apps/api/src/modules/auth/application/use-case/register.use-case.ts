@@ -1,57 +1,63 @@
+import type { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
+
+import {
+  AccountProvider,
+  AccountProviderId,
+} from '@rozumari/contract/auth/schemas/account.schema'
+import { UserAlreadyExists } from '@rozumari/contract/user/schemas/user.error'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import type { RegisterDto } from '@/modules/auth/application/dto/register.dto'
-import type { PasswordError } from '@/modules/auth/application/security/password'
+import type { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
 import { Password } from '@/modules/auth/application/security/password'
-import {
-  Account,
-  AccountProvider,
-  AccountProviderAccountId,
-} from '@/modules/auth/domain/entities/account.entity'
-import { Conflict } from '@/modules/auth/domain/entities/auth.error'
+import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
 import { UserService } from '@/modules/user/application/user.service'
+import { withTransaction } from '@/shared/lib/utils'
 
 export class RegisterUseCase extends Context.Service<
   RegisterUseCase,
   {
     execute: (
       input: RegisterDto.Input
-    ) => Effect.Effect<RegisterDto.Output, Conflict | PasswordError>
+    ) => Effect.Effect<RegisterDto.Output, UserAlreadyExists, DrizzleClient>
   }
 >()('auth/application/RegisterUseCase', {
   make: Effect.gen(function* make() {
-    const userService = yield* UserService
     const accountRepository = yield* AccountRepository
+
+    const userService = yield* UserService
     const password = yield* Password
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const user = yield* userService.findByIdentifier({
-          username: input.username,
-          email: input.email,
-        })
-        if (user)
+        const { username, email, password: plainPassword } = input
+
+        const _user = yield* userService.findByIdentifier({ username, email })
+        if (_user)
           return yield* Effect.fail(
-            new Conflict({ message: 'User already exists' })
+            new UserAlreadyExists({ error: { username, email } })
           )
 
-        const newUser = yield* userService.create({
-          username: input.username,
-          email: input.email,
-          image: null,
-        })
+        const hashedPassword = yield* password.hash(plainPassword)
 
-        const account = Account.make({
-          provider: AccountProvider.make('credentials'),
-          providerAccountId: AccountProviderAccountId.make(newUser.id),
-          userId: newUser.id,
-          password: yield* password.hash(input.password),
-        })
-        yield* accountRepository.save(account)
+        return yield* withTransaction(
+          Effect.gen(function* executeTx() {
+            const user = yield* userService.create({ username, email })
+
+            const account = Account.make({
+              provider: AccountProvider.make('credentials'),
+              providerId: AccountProviderId.make(user.id),
+              password: hashedPassword,
+              userId: user.id,
+            })
+            yield* accountRepository.save(account)
+
+            return null
+          })
+        )
       }),
     }
   }),

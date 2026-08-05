@@ -1,24 +1,24 @@
+import type { JwtPayload } from '@rozumari/contract/auth/middleware'
+
+import {
+  InvalidToken,
+  TokenExpired,
+} from '@rozumari/contract/auth/schemas/auth.error'
+import { AccessToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import * as Redacted from 'effect/Redacted'
 import crypto from 'node:crypto'
 
-import { Jwt, JwtError } from '@/modules/auth/application/security/jwt'
-import { AccessToken } from '@/modules/auth/application/types'
+import { Jwt } from '@/modules/auth/application/security/jwt'
 import {
   decodeBase64Url,
   encodeBase64Url,
 } from '@/modules/auth/infrastructure/security/crypto/encoding'
 
-export const JwtLayer = (
-  secret: Redacted.Redacted<string>,
-  algorithm: Jwt.Algorithm = 'HS256'
-) =>
+export const JwtLayer = (secret: string, algorithm: Jwt.Algorithm = 'HS256') =>
   Layer.effect(
     Jwt,
     Effect.sync(() => {
-      const secretValue = Redacted.value(secret)
-
       const textEncoder = new TextEncoder()
       const textDecoder = new TextDecoder()
 
@@ -34,7 +34,7 @@ export const JwtLayer = (
         const key = yield* Effect.promise(() =>
           crypto.subtle.importKey(
             'raw',
-            textEncoder.encode(secretValue),
+            textEncoder.encode(secret),
             { name: 'HMAC', hash: algMap[algorithm] },
             false,
             ['sign']
@@ -47,7 +47,7 @@ export const JwtLayer = (
       })
 
       const sign = Effect.fn(function* hash(
-        payloadClaims: Jwt.Payload,
+        payloadClaims: JwtPayload & Record<string, unknown>,
         options: Jwt.Options = {}
       ) {
         const header = {
@@ -87,7 +87,7 @@ export const JwtLayer = (
         const [headerPart, payloadPart, signaturePart] = token.split('.')
         if (!headerPart || !payloadPart || !signaturePart)
           return yield* Effect.fail(
-            new JwtError({ message: 'Invalid token format' })
+            new InvalidToken({ message: 'Invalid token format' })
           )
 
         const data = textEncoder.encode(`${headerPart}.${payloadPart}`)
@@ -98,25 +98,23 @@ export const JwtLayer = (
         )
         if (expectedSignaturePart !== signaturePart)
           return yield* Effect.fail(
-            new JwtError({ message: 'Invalid token signature' })
+            new InvalidToken({ message: 'Invalid token signature' })
           )
 
         const payloadJson = textDecoder.decode(decodeBase64Url(payloadPart))
         const headerJson = textDecoder.decode(decodeBase64Url(headerPart))
 
-        const payload = JSON.parse(payloadJson) as Jwt.Payload & Jwt.Header
+        const payload = JSON.parse(payloadJson) as JwtPayload & Jwt.Header
         const header = JSON.parse(headerJson) as Jwt.Header
 
         const currentTime = Math.floor(Date.now() / 1000)
 
         if (payload.exp && currentTime >= payload.exp)
-          return yield* Effect.fail(
-            new JwtError({ message: 'Token has expired' })
-          )
+          return yield* Effect.fail(new TokenExpired())
 
         if (payload.nbf && currentTime < payload.nbf)
           return yield* Effect.fail(
-            new JwtError({ message: 'Token is not yet valid' })
+            new InvalidToken({ message: 'Token not yet valid' })
           )
 
         return { ...payload, ...header }

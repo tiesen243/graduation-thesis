@@ -1,23 +1,32 @@
-export type EntityOverrides<T> = Partial<Omit<T, 'clone' | 'toJSON' | '_tag'>>
+import * as Effect from 'effect/Effect'
 
-export const createClone = <T extends object>(
-  instance: T,
-  overrides?: EntityOverrides<T>
-): T => {
-  if (!overrides) return structuredClone(instance)
+import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
-  const cleanedOverrides = Object.fromEntries(
-    Object.entries(overrides).filter(
-      ([_, value]) => value !== undefined && value !== ''
-    )
+export const withTransaction = Effect.fn(function* transaction<A, E, R>(
+  effect: Effect.Effect<A, E, R>
+) {
+  const { maybeDrizzle } = yield* Effect.all(
+    {
+      maybeDrizzle: Effect.option(DrizzleClient),
+      // maybePrisma: Effect.option(PrismaClient),
+    },
+    { concurrency: 'unbounded' }
   )
 
-  // oxlint-disable-next-line typescript/no-explicit-any
-  const TargetConstructor = instance.constructor as new (args: any) => T
+  let effectToRun = effect
 
-  return new TargetConstructor({
-    ...structuredClone(instance),
-    ...cleanedOverrides,
-    updatedAt: new Date(),
-  })
-}
+  // oxlint-disable-next-line eslint/no-underscore-dangle
+  if (maybeDrizzle._tag === 'Some')
+    effectToRun = maybeDrizzle.value.db
+      .transaction((tx) =>
+        effect.pipe(
+          Effect.provideService(DrizzleClient, {
+            ...maybeDrizzle.value,
+            db: tx,
+          })
+        )
+      )
+      .pipe(Effect.orDie)
+
+  return yield* effectToRun
+})

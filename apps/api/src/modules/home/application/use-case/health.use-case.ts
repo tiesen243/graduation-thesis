@@ -1,8 +1,8 @@
+import type { HealthDto } from '@rozumari/contract/home/dto/health.dto'
+
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-
-import type { HealthDto } from '@/modules/home/application/dto/health.dto'
 
 export class HealthUseCase extends Context.Service<
   HealthUseCase,
@@ -13,7 +13,7 @@ export class HealthUseCase extends Context.Service<
   make: Effect.succeed({
     execute: () =>
       Effect.succeed({
-        status: 'healthy',
+        status: 'ok',
         environment: process.env.NODE_ENV ?? 'development',
         uptime: process.uptime(),
         memory: {

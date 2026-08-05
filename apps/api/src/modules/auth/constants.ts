@@ -8,15 +8,6 @@ export const COOKIE_OPTIONS = {
   partitioned: process.env.NODE_ENV === 'production',
 } satisfies Cookie['options']
 
-export const COOKIE_KEYS = {
-  code: 'auth:oauth_code',
-  state: 'auth:oauth_state',
-  redirect: 'auth:oauth_redirect',
-
-  accessToken: 'auth:access_token',
-  refreshToken: 'auth:refresh_token',
-} as const
-
 export const TOKEN_EXPIRATION = {
   accessToken: 15 * 60, // 15 minutes
   refreshToken: 7 * 24 * 60 * 60, // 7 days

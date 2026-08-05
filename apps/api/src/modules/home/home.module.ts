@@ -1,14 +1,18 @@
-import { Layer } from 'effect'
+import * as Layer from 'effect/Layer'
 
 import { HealthUseCase } from '@/modules/home/application/use-case/health.use-case'
-import { HomeHandler } from '@/modules/home/presentation/http/home.handler'
+import { homeController } from '@/modules/home/presentation/http/home.controller'
 
 export class HomeModule {
   public static create() {
-    const useCaseLayer = Layer.mergeAll(HealthUseCase.layer)
+    const layer = Layer.mergeAll(HealthUseCase.layer)
 
     return {
-      layer: HomeHandler.pipe(Layer.provide(useCaseLayer)),
+      controller: homeController.pipe(Layer.provide(layer)),
+
+      exports: {
+        layer,
+      },
     }
   }
 }

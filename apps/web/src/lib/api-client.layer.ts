@@ -1,4 +1,4 @@
-import { AuthMiddleware } from '@rozumari/api'
+import { AuthMiddleware } from '@rozumari/contract/auth/middleware'
 import * as Layer from 'effect/Layer'
 import * as FetchHttpClient from 'effect/unstable/http/FetchHttpClient'
 import * as HttpApiMiddleware from 'effect/unstable/httpapi/HttpApiMiddleware'

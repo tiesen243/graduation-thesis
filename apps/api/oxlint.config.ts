@@ -7,6 +7,8 @@ export default defineConfig({
     {
       files: ['**/*.ts'],
       rules: {
+        'eslint/no-underscore-dangle': 'off',
+
         'typescript/no-extraneous-class': 'off',
         'typescript/parameter-properties': 'off',
 
@@ -15,9 +17,10 @@ export default defineConfig({
     },
 
     {
-      files: ['**/*.error.ts', '**/*.group.ts'],
+      files: ['**/*.repository.ts'],
       rules: {
-        'max-classes-per-file': 'off',
+        'typescript/no-empty-interface': 'off',
+        'typescript/no-empty-object-type': 'off',
       },
     },
   ],

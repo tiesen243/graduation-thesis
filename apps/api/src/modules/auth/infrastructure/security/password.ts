@@ -1,12 +1,8 @@
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import * as Redacted from 'effect/Redacted'
 import { scrypt } from 'node:crypto'
 
-import {
-  Password,
-  PasswordError,
-} from '@/modules/auth/application/security/password'
+import { Password } from '@/modules/auth/application/security/password'
 import { constantTimeEqual } from '@/modules/auth/infrastructure/security/crypto'
 import {
   decodeHex,
@@ -14,15 +10,13 @@ import {
 } from '@/modules/auth/infrastructure/security/crypto/encoding'
 
 export const PasswordLayer = ({
-  secret = Redacted.make(''),
+  secret = '',
   dkLen = 64,
   ...config
 }: Password.Config) =>
   Layer.effect(
     Password,
     Effect.sync(() => {
-      const secretValue = Redacted.value(secret)
-
       const options = {
         N: 16_384,
         r: 8,
@@ -36,11 +30,10 @@ export const PasswordLayer = ({
       const scryptFn = (
         password: Uint8Array,
         salt: Uint8Array
-      ): Effect.Effect<Buffer, PasswordError> =>
+      ): Effect.Effect<Buffer> =>
         Effect.callback((resume) =>
           scrypt(password, salt, dkLen, options, (e, derivedKey) => {
-            if (e)
-              resume(Effect.fail(new PasswordError({ message: e.message })))
+            if (e) resume(Effect.die(e))
             else resume(Effect.succeed(derivedKey))
           })
         )
@@ -49,7 +42,7 @@ export const PasswordLayer = ({
         data: string,
         salt: string
       ) {
-        const password = textEncoder.encode(data + secretValue)
+        const password = textEncoder.encode(data + secret)
         const nonce = textEncoder.encode(salt)
 
         const key = yield* scryptFn(password, nonce)

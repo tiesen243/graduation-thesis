@@ -99,6 +99,19 @@ export default defineConfig({
 
     'promise/always-return': 'off',
     'promise/catch-or-return': 'off',
+
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['**/_internal/**'],
+            message:
+              'This is an internal module and should not be imported directly. Use the public API instead.',
+          },
+        ],
+      },
+    ],
   },
   overrides: [
     {

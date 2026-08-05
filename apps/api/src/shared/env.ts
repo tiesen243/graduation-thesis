@@ -7,6 +7,11 @@ import * as SchemaGetter from 'effect/SchemaGetter'
 
 export const env = createEnv({
   shared: {
+    PORT: Schema.Number.pipe(
+      Schema.withDecodingDefault(Effect.succeed(3000)),
+      Schema.toStandardSchemaV1
+    ),
+
     NODE_ENV: Schema.Literals(['development', 'production', 'test']).pipe(
       Schema.withDecodingDefault(Effect.succeed('development')),
       Schema.toStandardSchemaV1

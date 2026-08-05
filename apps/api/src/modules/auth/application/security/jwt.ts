@@ -1,44 +1,28 @@
+import type { JwtPayload } from '@rozumari/contract/auth/middleware'
+import type {
+  InvalidToken,
+  TokenExpired,
+} from '@rozumari/contract/auth/schemas/auth.error'
+import type { AccessToken } from '@rozumari/contract/auth/schemas/token.schema'
 import type * as Effect from 'effect/Effect'
 
 import * as Context from 'effect/Context'
-import * as Schema from 'effect/Schema'
 
-import type { AccessToken } from '@/modules/auth/application/types'
-import type {
-  UserId,
-  UserRole,
-} from '@/modules/user/domain/entities/user.entity'
-
-import { ApiResponseSchema } from '@/shared/schema'
-
-export class JwtError extends Schema.TaggedErrorClass<JwtError>()(
-  'auth/application/JwtError',
-  ApiResponseSchema(),
-  { httpApiStatus: 401 }
-) {}
-
-// oxlint-disable-next-line eslint/max-classes-per-file
 export class Jwt extends Context.Service<
   Jwt,
   {
     readonly sign: (
-      payloadClaims: Jwt.Payload,
+      payloadClaims: JwtPayload & Record<string, unknown>,
       options?: Jwt.Options
-    ) => Effect.Effect<AccessToken, JwtError>
+    ) => Effect.Effect<AccessToken>
 
     readonly verify: (
       token: AccessToken
-    ) => Effect.Effect<Jwt.Payload & Jwt.Header, JwtError>
+    ) => Effect.Effect<JwtPayload & Jwt.Header, InvalidToken | TokenExpired>
   }
 >()('auth/application/Jwt') {}
 
 export namespace Jwt {
-  export interface Payload {
-    userId: UserId
-    role: UserRole
-    [key: string]: unknown
-  }
-
   export type Algorithm = 'HS256' | 'HS384' | 'HS512'
 
   export interface Options {

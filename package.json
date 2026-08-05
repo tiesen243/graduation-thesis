@@ -19,7 +19,7 @@
   "devDependencies": {
     "oxfmt": "^0.62.0",
     "oxlint": "^1.75.0",
-    "tegami": "^1.3.1",
+    "tegami": "^1.3.2",
     "turbo": "^2.10.8"
   },
   "packageManager": "bun@1.3.0",
@@ -33,8 +33,9 @@
       "@tanstack/react-query": "^5.101.4"
     },
     "effect": {
-      "@effect/sql-pg": ">=4.0.0-beta.100 || >=4.0.0",
-      "effect": ">=4.0.0-beta.100 || >=4.0.0"
+      "@effect/platform-bun": ">=4.0.0-beta.103",
+      "@effect/sql-pg": ">=4.0.0-beta.103",
+      "effect": ">=4.0.0-beta.103"
     },
     "react": {
       "@types/react": "^19.2.18",

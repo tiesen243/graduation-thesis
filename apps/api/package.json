@@ -5,12 +5,6 @@
   "type": "module",
   "main": "./dist/main.mjs",
   "types": "./dist/main.d.mts",
-  "exports": {
-    ".": {
-      "types": "./dist/api.d.mts",
-      "default": "./dist/api.mjs"
-    }
-  },
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -20,9 +14,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@effect/platform-bun": "catalog:effect",
     "@effect/sql-pg": "catalog:effect",
+    "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
-    "drizzle-orm": "^1.0.0-rc.4-5d5b77c",
+    "drizzle-orm": "^1.0.0-rc.4-fb12281",
     "effect": "catalog:effect",
     "pg": "^8.22.0"
   },
@@ -30,7 +26,7 @@
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "@types/pg": "^8.20.3",
+    "@types/pg": "^8.20.4",
     "drizzle-kit": "^1.0.0-rc.4-ca0f029",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"

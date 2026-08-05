@@ -1,7 +1,6 @@
 {
   "extends": "@rozumari/tsconfig/base.json",
   "compilerOptions": {
-    "types": ["bun"],
     "paths": {
       "@/*": ["./src/*"]
     }

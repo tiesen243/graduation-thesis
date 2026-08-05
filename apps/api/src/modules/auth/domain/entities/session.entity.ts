@@ -1,46 +1,17 @@
-import * as Effect from 'effect/Effect'
+import { SessionSchema } from '@rozumari/contract/auth/schemas/session.schema'
 import * as Schema from 'effect/Schema'
 
-import type { User } from '@/modules/user/domain/entities/user.entity'
-import type { EntityOverrides } from '@/shared/lib/utils'
-
-import { RefreshToken } from '@/modules/auth/application/types'
-import { UserId } from '@/modules/user/domain/entities/user.entity'
-import { createClone } from '@/shared/lib/utils'
-import { IdSchema } from '@/shared/schema'
-
-export const SessionId = IdSchema.pipe(Schema.brand('auth/domain/SessionId'))
-export type SessionId = typeof SessionId.Type
-
 export class Session extends Schema.TaggedClass<Session>()(
-  'auth/domain/Account',
-  {
-    id: SessionId,
-    token: RefreshToken,
-    expiresAt: Schema.Date,
-    createdAt: Schema.Date.pipe(
-      Schema.withConstructorDefault(Effect.sync(() => new Date()))
-    ),
-
-    userId: UserId,
-  }
+  'auth/domain/Session',
+  SessionSchema
 ) {
-  #user: User | null = null
+  public renew(expiresAt = new Date()) {
+    if (expiresAt <= new Date())
+      throw new Error('Expiration date must be in the future')
 
-  public get user(): User {
-    if (!this.#user) throw new Error('User is not set')
-    return this.#user
-  }
-
-  public set user(user: User) {
-    this.#user = user
-  }
-
-  public clone(overrides?: EntityOverrides<this>): this {
-    return createClone(this, overrides)
-  }
-
-  public toJSON(): Omit<this, 'clone' | 'toJSON' | '_tag'> {
-    return structuredClone(this)
+    return new Session({
+      ...structuredClone(this),
+      expiresAt,
+    })
   }
 }
