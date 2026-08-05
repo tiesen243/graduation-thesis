@@ -1,9 +1,7 @@
-import * as BunHttpServer from '@effect/platform-bun/BunHttpServer'
-import * as BunRuntime from '@effect/platform-bun/BunRuntime'
-import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
+import * as HttpServer from 'effect/unstable/http/HttpServer'
 
 import { AppModule } from '@/modules/app.module'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
@@ -20,22 +18,23 @@ function bootstrap() {
     },
   })
 
-  routes.pipe(
-    Layer.provide(
+  const { handler } = HttpRouter.toWebHandler(
+    Layer.provide(routes, [
       HttpRouter.cors({
         allowedOrigins: env.CORS_ORIGIN,
+        allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
-      })
-    ),
-    HttpRouter.serve,
-    Layer.provide(BunHttpServer.layer({ port: env.PORT })),
-    Layer.launch as (self: Layer.Any) => Effect.Effect<never, unknown>,
-    Effect.provideService(
-      References.MinimumLogLevel,
-      env.NODE_ENV === 'production' ? 'Info' : 'Debug'
-    ),
-    BunRuntime.runMain
+      }),
+      Layer.succeed(
+        References.MinimumLogLevel,
+        env.NODE_ENV === 'production' ? 'Info' : 'Debug'
+      ),
+      HttpServer.layerServices,
+    ])
   )
+
+  return { fetch: handler }
 }
 
-bootstrap()
+export default bootstrap()
