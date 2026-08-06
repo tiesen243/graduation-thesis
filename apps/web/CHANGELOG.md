@@ -1,3 +1,9 @@
+## @rozumari/web@0.0.3
+
+### Fix base URL retrieval using Vercel environment variables
+
+- Applied the required `VITE_` prefix to Vercel environment variables so Vite can properly expose them to the client bundle.
+
 ## @rozumari/web@0.0.2
 
 ### Complete Auth features & UI
