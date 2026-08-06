@@ -8,12 +8,6 @@ export const env = createEnv({
       Schema.withDecodingDefault(Effect.succeed('development')),
       Schema.toStandardSchemaV1
     ),
-
-    VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
-    VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
-      Schema.optional,
-      Schema.toStandardSchemaV1
-    ),
   },
 
   server: {},
@@ -22,6 +16,15 @@ export const env = createEnv({
   client: {
     VITE_API_URL: Schema.String.pipe(
       Schema.withDecodingDefault(Effect.succeed('http://localhost:3000')),
+      Schema.toStandardSchemaV1
+    ),
+
+    VITE_VERCEL_URL: Schema.String.pipe(
+      Schema.optional,
+      Schema.toStandardSchemaV1
+    ),
+    VITE_VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
+      Schema.optional,
       Schema.toStandardSchemaV1
     ),
   },
