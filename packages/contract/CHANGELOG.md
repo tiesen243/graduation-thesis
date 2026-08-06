@@ -1,11 +1,6 @@
----
-packages:
-  npm:@rozumari/api: patch
-  npm:@rozumari/contract: patch
-  npm:@rozumari/web: patch
----
+## @rozumari/contract@0.0.1
 
-## Complete Auth features & UI
+### Complete Auth features & UI
 
 - **Authentication Core (`@rozumari/api`):**
   - Implemented core auth flow endpoints: `login`, `register`, `refresh`, and `whoami`.
