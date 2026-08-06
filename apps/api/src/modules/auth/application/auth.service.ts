@@ -1,77 +1,126 @@
+import type { JwtPayload } from '@rozumari/contract/auth/middleware'
+import type { TokenExpired } from '@rozumari/contract/auth/schemas/auth.error'
+import type { Token } from '@rozumari/contract/auth/schemas/token.schema'
+import type {
+  UserId,
+  UserRole,
+} from '@rozumari/contract/user/schemas/user.schema'
+
+import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
+import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
+import {
+  AccessToken,
+  RefreshToken,
+} from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import type { TokensSchema } from '@/modules/auth/application/types'
-import type { User } from '@/modules/user/domain/entities/user.entity'
+import type { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 
+import { Jwt } from '@/modules/auth/application/security/jwt'
+import { TOKEN_EXPIRATION } from '@/modules/auth/constants'
 import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
   constantTimeEqual,
+  hashSecret,
+} from '@/modules/auth/infrastructure/security/crypto'
+import {
   decodeHex,
   encodeHex,
-  generateSecureString,
-  hashSecret,
-} from '@/modules/auth/lib/crypto'
-import { JWT } from '@/modules/auth/lib/jwt'
-import { Password } from '@/modules/auth/lib/password'
-import { Http } from '@/shared/http'
-import { env } from '@/shared/lib/env'
+} from '@/modules/auth/infrastructure/security/crypto/encoding'
+import { generateSecureString } from '@/modules/auth/infrastructure/security/crypto/random'
 
-export class AuthService extends Context.Tag(
-  'modules/auth/application/AuthService'
-)<
+export class AuthService extends Context.Service<
   AuthService,
   {
-    readonly createSession: (
-      payload: AuthService.JWTPayload
-    ) => Effect.Effect<TokensSchema, Http, SessionRepository>
+    readonly createAccessToken: (
+      userId: UserId,
+      userRole: UserRole
+    ) => Effect.Effect<AccessToken>
 
-    readonly verifyRefreshToken: (
-      token: string
-    ) => Effect.Effect<Session, Http, SessionRepository>
+    readonly verifyAccessToken: (
+      token: AccessToken
+    ) => Effect.Effect<JwtPayload, InvalidToken | TokenExpired>
+
+    readonly createRefreshToken: (
+      userId: UserId,
+      userRole: UserRole
+    ) => Effect.Effect<Token>
+
+    readonly verifyRefreshToken: (token: RefreshToken) => Effect.Effect<
+      Pick<SessionUserAggregate['session'], 'token' | 'expiresAt'> & {
+        user: SessionUserAggregate['user']
+      },
+      InvalidToken
+    >
   }
->() {
-  public static password = new Password({ secret: env.AUTH_SECRET })
-  public static jwt = new JWT<AuthService.JWTPayload>(env.AUTH_SECRET)
+>()('auth/application/AuthService', {
+  make: Effect.gen(function* make() {
+    const sessionRepository = yield* SessionRepository
 
-  public static live = Layer.succeed(this, {
-    createSession: ({ userId, role }: AuthService.JWTPayload) =>
-      Effect.gen(this, function* createSessionGen() {
-        const sessionRepo = yield* SessionRepository
+    const jwt = yield* Jwt
 
-        const id = generateSecureString()
-        const secret = generateSecureString()
-        const hashedSecret = yield* hashSecret(secret)
-
-        const refreshToken = `${id}.${secret}`
-        const expiresAt = new Date(
-          Date.now() + this.config.tokenExpiresIn * 1000
+    const createAccessToken = Effect.fn(
+      function* createAccessToken(userId, userRole) {
+        return yield* jwt.sign(
+          { userId, userRole },
+          { expiresIn: TOKEN_EXPIRATION.accessToken }
         )
+      }
+    )
 
-        const token = encodeHex(hashedSecret)
-        yield* sessionRepo.save(Session.make({ id, token, expiresAt, userId }))
+    return {
+      createAccessToken,
 
-        const accessToken = yield* this.jwt.sign(
-          { userId, role },
-          { expiresIn: this.config.accessTokenExpiresIn }
-        )
-
-        return { accessToken, refreshToken, expiresAt }
+      verifyAccessToken: Effect.fn(function* verifyAccessToken(token) {
+        const { userId, userRole } = yield* jwt.verify(token)
+        return { userId, userRole }
       }),
 
-    verifyRefreshToken: (token: string) =>
-      Effect.gen(this, function* verifyRefreshTokenGen() {
-        const sessionRepo = yield* SessionRepository
+      createRefreshToken: Effect.fn(
+        function* createRefreshToken(userId, userRole) {
+          const id = generateSecureString()
+          const secret = generateSecureString()
+          const hashedSecret = yield* hashSecret(secret)
 
-        const [id, secret] = token.split('.')
+          const refreshToken = `${id}.${secret}`
+          const expiresAt = new Date(
+            Date.now() + TOKEN_EXPIRATION.refreshToken * 1000
+          )
+
+          const session = Session.make({
+            id: SessionId.make(id),
+            token: RefreshToken.make(encodeHex(hashedSecret)),
+            expiresAt,
+            userId,
+          })
+          yield* sessionRepository.save(session)
+
+          const accessToken = yield* createAccessToken(userId, userRole)
+
+          return {
+            accessToken: AccessToken.make(accessToken),
+            refreshToken: RefreshToken.make(refreshToken),
+            expiresAt,
+          }
+        }
+      ),
+
+      verifyRefreshToken: Effect.fn(function* verifyRefreshToken(refreshToken) {
+        const [id, secret] = refreshToken.split('.')
         if (!id || !secret)
-          return yield* Effect.fail(Http.unauthorized('Invalid token format'))
+          return yield* Effect.fail(
+            new InvalidToken({ message: 'Invalid refresh token' })
+          )
 
-        let session = yield* sessionRepo.findWithUser(id)
-        if (!session || !session.user)
-          return yield* Effect.fail(Http.unauthorized('Invalid token'))
+        const agg = yield* sessionRepository.findWithUser(SessionId.make(id))
+        if (agg === null)
+          return yield* Effect.fail(
+            new InvalidToken({ message: 'Invalid refresh token' })
+          )
+        const { session, user } = agg
 
         const hashedSecret = yield* hashSecret(secret)
         const isValid = constantTimeEqual(
@@ -83,30 +132,24 @@ export class AuthService extends Context.Tag(
         const expiresTime = new Date(session.expiresAt).getTime()
 
         if (!isValid || now >= expiresTime) {
-          yield* sessionRepo.delete(session)
-          return yield* Effect.fail(Http.unauthorized('Invalid token'))
+          yield* sessionRepository.delete(session)
+          return yield* Effect.fail(
+            new InvalidToken({ message: 'Invalid refresh token' })
+          )
         }
 
-        if (now >= expiresTime - this.config.tokenExpiresThreshold * 1000) {
-          const newExpiresAt = new Date(now + this.config.tokenExpiresIn * 1000)
-          session = session.clone({ expiresAt: newExpiresAt })
-          yield* sessionRepo.save(session)
+        if (now >= expiresTime - TOKEN_EXPIRATION.threshold * 1000) {
+          const updatedSession = session.renew(
+            new Date(now + TOKEN_EXPIRATION.refreshToken * 1000)
+          )
+          yield* sessionRepository.save(updatedSession)
         }
 
-        return session
+        const { token, expiresAt } = session
+        return { token, user, expiresAt }
       }),
-  })
-
-  private static config = {
-    tokenExpiresIn: 60 * 60 * 24 * 7, // 7 days
-    tokenExpiresThreshold: 60 * 60 * 24, // 1 day
-    accessTokenExpiresIn: 60 * 15, // 15 minutes
-  }
-}
-
-export namespace AuthService {
-  export interface JWTPayload {
-    userId: string
-    role: User.Role
-  }
+    }
+  }),
+}) {
+  public static readonly layer = Layer.effect(this, this.make)
 }

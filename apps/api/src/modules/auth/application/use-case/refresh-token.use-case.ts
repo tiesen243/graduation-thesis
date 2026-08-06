@@ -1,21 +1,62 @@
-import type { TokensSchema } from '@/modules/auth/application/types'
+import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
+import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
+import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
+import * as Context from 'effect/Context'
+import * as Effect from 'effect/Effect'
+import * as Layer from 'effect/Layer'
+import * as Schema from 'effect/Schema'
+import * as HttpServerRequest from 'effect/unstable/http/HttpServerRequest'
 
 import { AuthService } from '@/modules/auth/application/auth.service'
-import { createUseCase } from '@/shared/lib/utils'
+import { COOKIE_KEYS } from '@/modules/auth/constants'
 
-export const refreshTokenUseCase = createUseCase<
-  { token: string },
-  TokensSchema
->(
-  (input) =>
-    function* refreshTokenUseCaseGen() {
-      const authService = yield* AuthService
+export class RefreshTokenUseCase extends Context.Service<
+  RefreshTokenUseCase,
+  {
+    execute: (
+      input: RefreshTokenDto.Input
+    ) => Effect.Effect<
+      RefreshTokenDto.Output,
+      InvalidToken,
+      HttpServerRequest.HttpServerRequest
+    >
+  }
+>()('auth/application/RefreshTokenUseCase', {
+  make: Effect.gen(function* make() {
+    const authService = yield* AuthService
 
-      const session = yield* authService.verifyRefreshToken(input.token)
+    return {
+      execute: Effect.fn(function* execute(input) {
+        const { authorization } = input
 
-      return yield* authService.createSession({
-        userId: session.user.id,
-        role: session.user.role,
-      })
+        const cookies = yield* HttpServerRequest.schemaCookies(
+          Schema.Struct({
+            [COOKIE_KEYS.REFRESH_TOKEN]: Schema.optional(Schema.String),
+          })
+        ).pipe(Effect.orDie)
+
+        const token = cookies[COOKIE_KEYS.REFRESH_TOKEN] ?? authorization ?? ''
+        if (!token) return yield* Effect.fail(new InvalidToken())
+
+        const {
+          token: refreshToken,
+          user,
+          expiresAt,
+        } = yield* authService.verifyRefreshToken(RefreshToken.make(token))
+
+        const accessToken = yield* authService.createAccessToken(
+          user.id,
+          user.role
+        )
+
+        return RefreshTokenDto.Output.make({
+          refreshToken,
+          accessToken,
+          expiresAt,
+        })
+      }),
     }
-)
+  }),
+}) {
+  public static readonly layer = Layer.effect(this, this.make)
+}

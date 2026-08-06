@@ -74,6 +74,7 @@ export default defineConfig({
     'jsdoc/require-returns-type': 'off',
 
     'unicorn/explicit-length-check': 'off',
+    'unicorn/max-nested-calls': ['error', { max: 6 }],
     'unicorn/no-array-callback-reference': 'off',
     'unicorn/no-null': 'off',
     'unicorn/no-process-exit': 'off',
@@ -98,6 +99,19 @@ export default defineConfig({
 
     'promise/always-return': 'off',
     'promise/catch-or-return': 'off',
+
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            group: ['**/_internal/**'],
+            message:
+              'This is an internal module and should not be imported directly. Use the public API instead.',
+          },
+        ],
+      },
+    ],
   },
   overrides: [
     {

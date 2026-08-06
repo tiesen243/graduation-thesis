@@ -1,53 +1,59 @@
+import type { SessionSchema } from '@rozumari/contract/auth/schemas/session.schema'
+
+import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
+import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
 import { eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import type { ISessionRepository } from '@/modules/auth/domain/repositories/session.repository'
-
+import { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
-import { sessions } from '@/modules/auth/infrastructure/persistence/drizzle/drizzle.schema'
+import { sessions } from '@/modules/auth/infrastructure/persistence/drizzle/schema'
 import { User } from '@/modules/user/domain/entities/user.entity'
-import { users } from '@/modules/user/infrastructure/persistence/drizzle/drizzle.schema'
-import { BaseRepository } from '@/shared/domain/base.repository'
-import { TableTag } from '@/shared/infrastructure/persistence/drizzle/base.repository'
+import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
+import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
+
+export const DrizzleSessionMapper = {
+  toEntity: (entity: typeof SessionSchema.Type) =>
+    Session.make({
+      ...entity,
+      id: SessionId.make(entity.id),
+      token: RefreshToken.make(entity.token),
+    }),
+  toRow: structuredClone,
+}
 
 export const DrizzleSessionRepository = Layer.effect(
   SessionRepository,
-  Effect.gen(function* DrizzleSessionRepositoryGen() {
-    const baseRepo = (yield* BaseRepository) as ISessionRepository
-    const $ = yield* DrizzleClient
+  Effect.gen(function* DrizzleSessionRepository() {
+    const { db } = yield* DrizzleClient
+
+    const repository = yield* makeDrizzleRepository(
+      sessions,
+      sessions.id,
+      DrizzleSessionMapper
+    )
 
     return {
-      findWithUser: (id) =>
-        $((client) =>
-          client
-            .select()
-            .from(sessions)
-            .where(eq(sessions.id, id))
-            .innerJoin(users, eq(users.id, sessions.userId))
-            .limit(1)
-        ).pipe(
-          Effect.map(([row]) => {
-            if (!row?.sessions || !row.users) return null
-            const session = new Session(row.sessions)
+      ...repository,
 
-            session.user = new User(row.users)
-            return session
-          })
-        ),
+      findWithUser: Effect.fn(function* findWithUser(id) {
+        const [row] = yield* db
+          .select()
+          .from(sessions)
+          .innerJoin(users, eq(sessions.userId, users.id))
+          .where(eq(sessions.id, id))
+          .limit(1)
+          .pipe(Effect.orDie)
+        if (!row) return null
 
-      find: (...args) =>
-        baseRepo.find(...args).pipe(Effect.provideService(TableTag, sessions)),
-      count: (...args) =>
-        baseRepo.count(...args).pipe(Effect.provideService(TableTag, sessions)),
-      save: (...args) =>
-        baseRepo.save(...args).pipe(Effect.provideService(TableTag, sessions)),
-      delete: (...args) =>
-        baseRepo
-          .delete(...args)
-          .pipe(Effect.provideService(TableTag, sessions)),
+        const session = DrizzleSessionMapper.toEntity(row.sessions)
+        const user = User.make(row.users)
+
+        return SessionUserAggregate.make({ session, user })
+      }),
     }
   })
 )

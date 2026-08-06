@@ -1,25 +1,18 @@
+import { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
 import * as Schema from 'effect/Schema'
 
-import { BaseEntity } from '@/shared/domain/base.entity'
+export class User extends Schema.TaggedClass<User>()(
+  'user/domain/User',
+  UserSchema
+) {
+  public get isActive(): boolean {
+    return this.deletedAt === null
+  }
 
-export class User extends BaseEntity.extend<User>('modules/user/domain/User')({
-  username: Schema.String.pipe(Schema.minLength(4), Schema.maxLength(20)),
-  email: Schema.String.pipe(Schema.pattern(/^\S+@\S+\.\S+$/u)),
-  role: Schema.Literal('user', 'admin').pipe(
-    Schema.propertySignature,
-    Schema.withConstructorDefault(() => 'user')
-  ),
-  image: Schema.NullOr(Schema.String).pipe(
-    Schema.propertySignature,
-    Schema.withConstructorDefault(() => null)
-  ),
-  deletedAt: Schema.NullOr(Schema.DateFromSelf).pipe(
-    Schema.propertySignature,
-    Schema.withConstructorDefault(() => null)
-  ),
-}) {}
-
-export namespace User {
-  export const roles = ['user', 'admin'] as const
-  export type Role = (typeof roles)[number]
+  public markDeleted(now = new Date()): User {
+    return new User({
+      ...structuredClone(this),
+      deletedAt: now,
+    })
+  }
 }

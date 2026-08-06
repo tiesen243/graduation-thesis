@@ -1,11 +1,13 @@
+import type { SchemaError } from 'effect/SchemaError'
+import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
+
 import * as Effect from 'effect/Effect'
+import * as HttpClient from 'effect/unstable/http/HttpClient'
+import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
+import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
-import type { OAuthService } from '@/modules/auth/application/oauth.service'
-import type { Http } from '@/shared/http'
-
-import { generateCodeChallenge } from '@/modules/auth/lib/crypto'
-import { env } from '@/shared/lib/env'
-import { effetch } from '@/shared/lib/utils'
+import { OAuth } from '@/modules/auth/application/types'
+import { generateCodeChallenge } from '@/modules/auth/infrastructure/security/crypto/random'
 
 export abstract class BaseProvider {
   protected constructor(
@@ -25,25 +27,28 @@ export abstract class BaseProvider {
   public abstract fetchUserData(
     code: string,
     codeVerifier: string
-  ): Effect.Effect<OAuthService.Account, Http>
+  ): Effect.Effect<
+    OAuth.Account,
+    HttpClientError | SchemaError,
+    HttpClient.HttpClient
+  >
 
   protected createCallbackUrl() {
     let baseUrl = `http://localhost:${process.env.PORT ?? 3000}`
-
-    if (env.VITE_API_URL) baseUrl = env.VITE_API_URL
-    else if (env.VERCEL_PROJECT_PRODUCTION_URL)
-      baseUrl = `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
-    else if (env.VERCEL_URL) baseUrl = `https://${env.VERCEL_URL}`
+    if (process.env.APP_URL) baseUrl = `https://${process.env.APP_URL}`
+    else if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+      baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
 
     return `${baseUrl}/api/auth/${this.providerName}/callback`
   }
 
-  protected createAuthorizationUrlWithoutPKCE = (
-    endpoint: string,
-    state: string,
-    scopes: string[]
-  ): Effect.Effect<URL> =>
-    Effect.gen(this, function* createAuthorizationUrlWithoutPKCEGen() {
+  protected createAuthorizationUrlWithoutPKCE = Effect.fn(
+    { self: this },
+    function* createAuthorizationUrlWithoutPKCE(
+      endpoint: string,
+      state: string,
+      scopes: string[]
+    ) {
       const url = new URL(endpoint)
       url.searchParams.set('response_type', 'code')
       url.searchParams.set('client_id', this.clientId)
@@ -53,16 +58,18 @@ export abstract class BaseProvider {
       url.searchParams.set('redirect_uri', this.redirectUri)
 
       return yield* Effect.succeed(url)
-    })
+    }
+  )
 
-  protected createAuthorizationUrlWithPKCE = (
-    endpoint: string,
-    state: string,
-    scopes: string[],
-    codeVerifier: string,
-    codeChallengeMethod: 'S256' | 'plain' = 'S256'
-  ): Effect.Effect<URL> =>
-    Effect.gen(this, function* createAuthorizationUrlWithPKCEGen() {
+  protected createAuthorizationUrlWithPKCE = Effect.fn(
+    { self: this },
+    function* createAuthorizationUrlWithPKCE(
+      endpoint: string,
+      state: string,
+      scopes: string[],
+      codeVerifier: string,
+      codeChallengeMethod: 'S256' | 'plain' = 'S256'
+    ) {
       const url = yield* this.createAuthorizationUrlWithoutPKCE(
         endpoint,
         state,
@@ -79,14 +86,18 @@ export abstract class BaseProvider {
       }
 
       return url
-    })
+    }
+  )
 
-  protected validateAuthorizationCode = (
-    endpoint: string,
-    code: string,
-    codeVerifier: string | null = null
-  ): Effect.Effect<OAuthService.Token, Http> =>
-    Effect.gen(this, function* validateAuthorizationCodeGen() {
+  protected validateAuthorizationCode = Effect.fn(
+    { self: this },
+    function* validateAuthorizationCode(
+      endpoint: string,
+      code: string,
+      codeVerifier: string | null = null
+    ) {
+      const httpClient = yield* HttpClient.HttpClient
+
       const body = new URLSearchParams()
       body.set('grant_type', 'authorization_code')
       body.set('redirect_uri', this.redirectUri)
@@ -95,31 +106,29 @@ export abstract class BaseProvider {
 
       if (codeVerifier) body.set('code_verifier', codeVerifier)
 
-      const request = this.createRequest(endpoint, body)
-      request.headers.set(
-        'Authorization',
-        `Basic ${this.encodeCredentials(this.clientId, this.clientSecret)}`
+      const request = HttpClientRequest.post(endpoint).pipe(
+        HttpClientRequest.bodyUrlParams(body),
+        HttpClientRequest.setHeader(
+          'Authorization',
+          `Basic ${this.credentials}`
+        ),
+        HttpClientRequest.acceptJson
       )
 
-      return yield* effetch<OAuthService.Token>(request)
-    })
+      const response = yield* httpClient
+        .execute(request)
+        .pipe(
+          Effect.flatMap(HttpClientResponse.filterStatusOk),
+          Effect.flatMap(HttpClientResponse.schemaBodyJson(OAuth.Token)),
+          Effect.scoped
+        )
 
-  // oxlint-disable-next-line class-methods-use-this
-  private createRequest(enpoint: string, body: URLSearchParams) {
-    const bodyBytes = new TextEncoder().encode(body.toString())
-    const request = new Request(enpoint, { method: 'POST', body: bodyBytes })
+      return response
+    }
+  )
 
-    request.headers.set('Content-Type', 'application/x-www-form-urlencoded')
-    request.headers.set('Accept', 'application/json')
-    request.headers.set('User-Agent', 'yuki-auth')
-    request.headers.set('Content-Length', bodyBytes.byteLength.toString())
-
-    return request
-  }
-
-  // oxlint-disable-next-line class-methods-use-this
-  private encodeCredentials(clientId: string, clientSecret: string): string {
-    const credentials = `${clientId}:${clientSecret}`
+  private get credentials(): string {
+    const credentials = `${this.clientId}:${this.clientSecret}`
     const bytes = new TextEncoder().encode(credentials)
     return btoa(String.fromCodePoint(...bytes))
       .replaceAll('+', '-')

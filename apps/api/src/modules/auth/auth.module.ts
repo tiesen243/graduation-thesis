@@ -1,54 +1,62 @@
-import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import * as ManagedRuntime from 'effect/ManagedRuntime'
-import { Elysia } from 'elysia'
 
-import type { Bootstrap } from '@/bootstrap'
+import type { AppModule } from '@/modules/app.module'
 import type { UserService } from '@/modules/user/application/user.service'
 
 import { AuthService } from '@/modules/auth/application/auth.service'
-import { OAuthService } from '@/modules/auth/application/oauth.service'
-import { AuthInfrastructureModule } from '@/modules/auth/infrastructure/infratructure.module'
-import { OAuthInfrastructureModule } from '@/modules/auth/infrastructure/oauth/oauth.module'
-import { AuthController } from '@/modules/auth/presentation/auth.controller'
-import { OAuthController } from '@/modules/auth/presentation/oauth.controller'
-import { runEffect } from '@/shared/lib/utils'
+import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
+import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
+import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
+import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
+import { AuthInfrastructureModule } from '@/modules/auth/infrastructure/infrastructure.module'
+import { authController } from '@/modules/auth/presentation/http/auth.controller'
+import { oauthController } from '@/modules/auth/presentation/http/oauth.controller'
+import { adminMiddleware } from '@/modules/auth/presentation/middleware/admin.middlware'
+import { authMiddleware } from '@/modules/auth/presentation/middleware/auth.middleware'
 
 export class AuthModule {
   public static create(
-    driver: Bootstrap.Config['persistenceDriver'],
-    providers: Bootstrap.Config['providers'],
-    inports: Layer.Layer<UserService>
+    config: Pick<AppModule.Config, 'persistence' | 'auth'>,
+    imports: { userService: Layer.Layer<UserService, unknown> }
   ) {
-    const authInfrastructureModule = AuthInfrastructureModule.create(driver)
-    const oauthInfrastructureModule =
-      OAuthInfrastructureModule.create(providers)
-
-    const layer = Layer.merge(AuthService.live, OAuthService.live).pipe(
-      Layer.provideMerge(authInfrastructureModule.persistenceModule),
-      Layer.provideMerge(oauthInfrastructureModule),
-      Layer.provideMerge(inports)
+    const infrastructureLayer = AuthInfrastructureModule.create(
+      config.persistence,
+      config.auth
     )
-    const runtime = ManagedRuntime.make(layer)
+
+    const useCaseLayer = Layer.mergeAll(
+      LoginUseCase.layer,
+      RefreshTokenUseCase.layer,
+      RegisterUseCase.layer,
+      WhoAmIUseCase.layer
+    )
+
+    const serviceLayer = Layer.provideMerge(
+      AuthService.layer,
+      imports.userService
+    )
+
+    const applicationLayer = Layer.provideMerge(useCaseLayer, serviceLayer)
+
+    const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
 
     return {
+      controller: Layer.mergeAll(authController, oauthController).pipe(
+        Layer.provide(layer)
+      ),
+
       exports: {
-        authService: AuthService.live.pipe(Layer.provide(layer)),
-        oauthService: OAuthService.live.pipe(Layer.provide(layer)),
+        layer,
+
+        middlewares: {
+          auth: authMiddleware.pipe(Layer.provide(layer)),
+          admin: adminMiddleware.pipe(Layer.provide(layer)),
+        },
+
+        services: {
+          authService: AuthService.layer,
+        },
       },
-
-      controller: new Elysia({
-        name: 'modules/auth',
-      })
-
-        .mapResponse(({ responseValue }) =>
-          Effect.isEffect(responseValue)
-            ? runEffect(runtime, responseValue as never)
-            : Response.json(responseValue)
-        )
-
-        .use(AuthController)
-        .use(OAuthController),
     }
   }
 }

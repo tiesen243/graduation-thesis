@@ -5,6 +5,9 @@ node_modules/
 build/
 dist/
 
+# react router
+.react-router/
+
 # environment variables
 .env*
 !.env.example
@@ -17,8 +20,11 @@ logs/
 .cache/
 .vscode/
 .DS_Store
+*.bak
 
 # infrastructure
 .alchemy/
-.wrangler/
 .turbo/
+.vercel/
+.wrangler/
+.vercel

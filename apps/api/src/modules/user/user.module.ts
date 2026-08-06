@@ -1,41 +1,43 @@
-import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import * as ManagedRuntime from 'effect/ManagedRuntime'
-import { Elysia } from 'elysia'
 
-import type { Bootstrap } from '@/bootstrap'
+import type { AppModule } from '@/modules/app.module'
 
+import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case'
+import { ShowUserUseCase } from '@/modules/user/application/use-case/show-user.use-case'
 import { UserService } from '@/modules/user/application/user.service'
-import { UserInfrastructureModule } from '@/modules/user/infrastructure/infratructure.module'
-import { UserController } from '@/modules/user/presentation/user.controller'
-import { runEffect } from '@/shared/lib/utils'
+import { UserInfrastructureModule } from '@/modules/user/infrastructure/infrastructure.module'
+import { userCommand } from '@/modules/user/presentation/cli/user.command'
+import { userController } from '@/modules/user/presentation/http/user.controller'
 
 export class UserModule {
-  public static create(driver: Bootstrap.Config['persistenceDriver']) {
-    const userInfrastructureModule = UserInfrastructureModule.create(driver)
-
-    const layer = Layer.provideMerge(
-      UserService.live,
-      userInfrastructureModule.persistenceModule
+  public static create(config: Pick<AppModule.Config, 'persistence'>) {
+    const infrastructureLayer = UserInfrastructureModule.create(
+      config.persistence
     )
-    const runtime = ManagedRuntime.make(layer)
+
+    const useCaseLayer = Layer.mergeAll(
+      ListUsersUseCase.layer,
+      ShowUserUseCase.layer
+    )
+
+    const serviceLayer = Layer.mergeAll(UserService.layer)
+
+    const applicationLayer = Layer.provideMerge(useCaseLayer, serviceLayer)
+
+    const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
 
     return {
+      controller: userController.pipe(Layer.provide(layer)),
+
+      command: userCommand,
+
       exports: {
-        userService: UserService.live.pipe(Layer.provide(layer)),
+        layer,
+
+        services: {
+          userService: UserService.layer.pipe(Layer.provide(layer)),
+        },
       },
-
-      controller: new Elysia({
-        name: 'modules/user',
-      })
-
-        .mapResponse(({ responseValue }) =>
-          Effect.isEffect(responseValue)
-            ? runEffect(runtime, responseValue as never)
-            : Response.json(responseValue)
-        )
-
-        .use(UserController),
     }
   }
 }

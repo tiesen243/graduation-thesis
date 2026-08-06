@@ -1,10 +1,9 @@
 import * as Effect from 'effect/Effect'
-
-import type { OAuthService } from '@/modules/auth/application/oauth.service'
-import type { Http } from '@/shared/http'
+import * as Schema from 'effect/Schema'
+import * as HttpClient from 'effect/unstable/http/HttpClient'
+import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers/base.provider'
-import { effetch } from '@/shared/lib/utils'
 
 export class GoogleProvider extends BaseProvider {
   public constructor(clientId: string, clientSecret: string, redirectUri = '') {
@@ -26,33 +25,39 @@ export class GoogleProvider extends BaseProvider {
       codeVerifier
     )
 
-  public override fetchUserData = (
-    code: string,
-    codeVerifier: string
-  ): Effect.Effect<OAuthService.Account, Http> =>
-    Effect.gen(this, function* fetchUserDataGen() {
+  public override fetchUserData = Effect.fn(
+    { self: this },
+    function* fetchUserData(code: string, codeVerifier: string) {
+      const httpClient = yield* HttpClient.HttpClient
+
       const token = yield* this.validateAuthorizationCode(
         this.tokenEndpoint,
         code,
         codeVerifier
       )
 
-      const user = yield* effetch<GoogleUserResponse>(this.apiEndpoint, {
-        headers: { Authorization: `Bearer ${token.access_token}` },
-      })
+      const response = yield* httpClient
+        .get(this.apiEndpoint, {
+          headers: { Authorization: `Bearer ${token.access_token}` },
+        })
+        .pipe(
+          Effect.flatMap(HttpClientResponse.filterStatusOk),
+          Effect.flatMap(HttpClientResponse.schemaBodyJson(GoogleUserSchema))
+        )
 
       return {
-        id: user.sub,
-        name: user.name,
-        email: user.email,
-        image: user.picture,
+        id: response.sub,
+        name: response.name,
+        email: response.email,
+        image: response.picture,
       }
-    })
+    }
+  )
 }
 
-interface GoogleUserResponse {
-  sub: string
-  name: string
-  email: string
-  picture: string
-}
+const GoogleUserSchema = Schema.Struct({
+  sub: Schema.String,
+  name: Schema.String,
+  email: Schema.String,
+  picture: Schema.String,
+})

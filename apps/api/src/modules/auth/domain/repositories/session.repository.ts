@@ -1,18 +1,18 @@
-import type * as Effect from 'effect/Effect'
+import type { Effect } from 'effect/Effect'
 
 import * as Context from 'effect/Context'
 
+import type { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 import type { Session } from '@/modules/auth/domain/entities/session.entity'
-import type { IBaseRepository } from '@/shared/domain/base.repository'
-import type { Http } from '@/shared/http'
+import type { IRepository } from '@/shared/domain/repository'
 
-// oxlint-disable-next-line typescript/no-empty-interface typescript/no-empty-object-type
-export interface ISessionRepository extends IBaseRepository<Session> {
+interface ISessionRepository extends IRepository<Session> {
   readonly findWithUser: (
     id: Session['id']
-  ) => Effect.Effect<Session | null, Http>
+  ) => Effect<SessionUserAggregate | null>
 }
 
-export class SessionRepository extends Context.Tag(
-  'modules/user/domain/SessionRepository'
-)<SessionRepository, ISessionRepository>() {}
+export class SessionRepository extends Context.Service<
+  SessionRepository,
+  ISessionRepository
+>()('auth/domain/SessionRepository') {}

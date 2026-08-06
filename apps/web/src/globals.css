@@ -1,0 +1,11 @@
+@import '@rozumari/ui/tailwind.css';
+
+@source "../../../packages/ui/dist/components/*.mjs";
+
+@layer theme {
+  :root {
+    --font-sans: 'Geist', sans-serif;
+    --font-mono: 'Geist Mono', monospace;
+    --font-serif: 'Noto Serif Georgian', serif;
+  }
+}

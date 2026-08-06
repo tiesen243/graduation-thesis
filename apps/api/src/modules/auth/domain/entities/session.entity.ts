@@ -1,25 +1,17 @@
+import { SessionSchema } from '@rozumari/contract/auth/schemas/session.schema'
 import * as Schema from 'effect/Schema'
 
-import type { User } from '@/modules/user/domain/entities/user.entity'
+export class Session extends Schema.TaggedClass<Session>()(
+  'auth/domain/Session',
+  SessionSchema
+) {
+  public renew(expiresAt = new Date()) {
+    if (expiresAt <= new Date())
+      throw new Error('Expiration date must be in the future')
 
-import { BaseEntity } from '@/shared/domain/base.entity'
-
-export class Session extends BaseEntity.extend<Session>(
-  'modules/auth/domain/Session'
-)({
-  token: Schema.String,
-  expiresAt: Schema.DateFromSelf,
-
-  userId: Schema.String,
-}) {
-  #user: User | null = null
-
-  public get user(): User {
-    if (!this.#user) throw new Error('User not loaded')
-    return this.#user
-  }
-
-  public set user(user: User) {
-    this.#user = user
+    return new Session({
+      ...structuredClone(this),
+      expiresAt,
+    })
   }
 }

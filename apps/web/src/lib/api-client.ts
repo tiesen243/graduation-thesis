@@ -1,0 +1,59 @@
+// oxlint-disable eslint/no-underscore-dangle
+
+import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
+import type { HttpClientResponse } from 'effect/unstable/http/HttpClientResponse'
+
+import { Api } from '@rozumari/contract'
+import * as Cause from 'effect/Cause'
+import * as Context from 'effect/Context'
+import * as Effect from 'effect/Effect'
+import * as Function from 'effect/Function'
+import * as HttpClient from 'effect/unstable/http/HttpClient'
+import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
+import * as HttpApiClient from 'effect/unstable/httpapi/HttpApiClient'
+
+import { env } from '@/lib/env'
+
+export class ApiClient extends Context.Service<
+  ApiClient,
+  HttpApiClient.ForApi<typeof Api>
+>()('ApiClient', {
+  make: HttpApiClient.make(Api, {
+    transformClient: (client) =>
+      client.pipe(
+        HttpClient.mapRequest(
+          Function.flow(
+            HttpClientRequest.prependUrl(env.VITE_API_URL),
+            HttpClientRequest.setHeader('x-requested-with', 'web'),
+            HttpClientRequest.acceptJson
+          )
+        )
+      ),
+
+    transformResponse: Effect.fn(function* transformResponse(effect) {
+      const exit = yield* Effect.exit(
+        effect as Effect.Effect<HttpClientResponse, HttpClientError, never>
+      )
+      if (exit._tag === 'Success') return exit.value
+
+      const cause = Cause.findErrorOption(exit.cause)
+
+      if (
+        cause._tag === 'Some' &&
+        ((cause.value._tag === 'HttpClientError' &&
+          cause.value.reason._tag === 'StatusCodeError' &&
+          cause.value.reason.response.status === 401) ||
+          cause.value.message.includes('invalid token'))
+      )
+        yield* Effect.promise((signal) =>
+          fetch(`${env.VITE_API_URL}/api/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+            signal,
+          })
+        )
+
+      return yield* Effect.failCause(exit.cause)
+    }),
+  }),
+}) {}
