@@ -1,3 +1,27 @@
+## @rozumari/api@0.0.4
+
+### Core Authentication & Authorization System
+
+- Added `login`, `register`, and `whoami` API endpoints.
+- Introduced `authMiddleware` to secure protected routes and handle user sessions.
+
+### Complete Auth features & UI
+
+- **Authentication Core (`@rozumari/api`):**
+  - Implemented core auth flow endpoints: `login`, `register`, `refresh`, and `whoami`.
+  - Added OAuth support with **Google Sign-In**.
+
+- **User Interface (`@rozumari/web`):**
+  - Added interactive UI forms for **Login** and **Registration**.
+  - Integrated Google OAuth login button into the auth UI.
+  - Added auto token refresh mechanism on **401 Unauthorized** errors.
+
+### OAuth 2.0 Integration with Google
+
+- Added Google OAuth 2.0 authentication endpoints (`redirect` and `callback`).
+- Integrated secure PKCE/State validation using HttpOnly cookies with CSRF protection.
+- Handled dynamic user provisioning and automated Google account linking.
+
 ## @rozumari/api@0.0.3
 
 ### Added

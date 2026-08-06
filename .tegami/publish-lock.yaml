@@ -1,41 +1,69 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n### Added\n\n- **Security**: Added a secret key requirement to both password hashing and verification functions for enhanced security.\n- **Testing**: Added comprehensive unit tests for `encoding` helpers, `Password` utilities, and `JWT` handling.\n\n### Fixed\n\n- **Database**: Fixed a logical operator bug in the query builder where `OR` was incorrectly used instead of `AND` when constructing `WHERE` clauses.\n"
-    filename: 2026-07-16-mrnqtipk.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Complete Auth features & UI\n\n- **Authentication Core (`@rozumari/api`):**\n  - Implemented core auth flow endpoints: `login`, `register`, `refresh`, and `whoami`.\n  - Added OAuth support with **Google Sign-In**.\n\n- **User Interface (`@rozumari/web`):**\n  - Added interactive UI forms for **Login** and **Registration**.\n  - Integrated Google OAuth login button into the auth UI.\n  - Added auto token refresh mechanism on **401 Unauthorized** errors.\n"
+    filename: 2026-08-06-mshg901y.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Initialized Web Application Architecture\n\n- **Web App Structure:** Initialized core architecture powered by **React Router v8**, **Tailwind CSS**, and **shadcn/ui**.\n- **Monorepo Integration:** Established cross-package linkages across:\n  - `@rozumari/web`: Main web application routes and setup.\n  - `@rozumari/ui`: Shared component layer with Tailwind and shadcn styling.\n"
+    filename: 2026-08-03-msc6jqa7.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Core Authentication & Authorization System\n\n- Added `login`, `register`, and `whoami` API endpoints.\n- Introduced `authMiddleware` to secure protected routes and handle user sessions.\n"
+    filename: 2026-08-02-msbniubv.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## OAuth 2.0 Integration with Google\n\n- Added Google OAuth 2.0 authentication endpoints (`redirect` and `callback`).\n- Integrated secure PKCE/State validation using HttpOnly cookies with CSRF protection.\n- Handled dynamic user provisioning and automated Google account linking.\n"
+    filename: 2026-08-02-msbw2hjg.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/ui:\n    type: patch\n---\n\n### Introduced initial suite of 20 core UI components for `@rozumari/ui`:\n\n- **Form Controls:** `Button`, `Checkbox`, `Field`, `Input`, `Label`, `RadioGroup`, `Select`, `Switch`\n- **Overlays & Feedback:** `AlertDialog`, `Dialog`, `DropdownMenu`, `Sheet`, `Toast`, `Tooltip`\n- **Navigation & Layout:** `Card`, `Separator`, `Sidebar`, `Tabs`\n- **Data Display:** `Avatar`, `Skeleton`, `Table`, `Typography`\n"
+    filename: 2026-08-03-msc2u0z1.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
+  - changelogIds:
+      - 2026-08-06-mshg901y.md
+      - 2026-08-03-msc6jqa7.md
+    id: npm:@rozumari/web
+    updated: true
+  - changelogIds:
+      - 2026-08-02-msbniubv.md
+      - 2026-08-06-mshg901y.md
+      - 2026-08-02-msbw2hjg.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-08-03-msc6jqa7.md
+      - 2026-08-03-msc2u0z1.md
+    id: npm:@rozumari/ui
+    updated: true
   - id: npm:@rozumari/proteus
     updated: false
   - id: npm:@rozumari/pcb
     updated: false
+  - id: npm:@rozumari/mobile
+    updated: false
   - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/oxlint
     updated: false
   - id: npm:@rozumari/github
     updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
   - changelogIds:
-      - 2026-07-16-mrnqtipk.md
-    id: npm:@rozumari/api
+      - 2026-08-06-mshg901y.md
+    id: npm:@rozumari/contract
     updated: true
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/firmware
     updated: false
 npm:packages:
   - id: npm:graduation-thesis
-  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/proteus
   - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/mobile
   - id: npm:@rozumari/lib
+  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/github
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/firmware
