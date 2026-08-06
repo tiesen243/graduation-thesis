@@ -3,25 +3,16 @@ import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
 import { WhoAmIDto } from '@rozumari/contract/auth/dto/whoami.dto'
-import { COOKIE_KEYS } from '@rozumari/contract/auth/middleware'
-import {
-  AccessToken,
-  RefreshToken,
-} from '@rozumari/contract/auth/schemas/token.schema'
 import * as Effect from 'effect/Effect'
-import { HttpEffect, HttpServerResponse } from 'effect/unstable/http'
+import * as HttpEffect from 'effect/unstable/http/HttpEffect'
+import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
+import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
-import { COOKIE_OPTIONS } from '@/modules/auth/constants'
-
-const token = {
-  accessToken: AccessToken.make('accessToken'),
-  refreshToken: RefreshToken.make('refreshToken'),
-  expiresAt: new Date(),
-}
+import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/constants'
 
 export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
   handlers
@@ -36,20 +27,18 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
       LoginUseCase.use((s) => s.execute(payload)).pipe(
         Effect.tap((data) =>
           HttpEffect.appendPreResponseHandler((_req, res) =>
-            Effect.succeed(
-              HttpServerResponse.setCookiesUnsafe(res, [
-                [
-                  COOKIE_KEYS.REFRESH_TOKEN,
-                  data.refreshToken,
-                  { ...COOKIE_OPTIONS, expires: data.expiresAt },
-                ],
-                [
-                  COOKIE_KEYS.ACCESS_TOKEN,
-                  data.accessToken,
-                  { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
-                ],
-              ])
-            )
+            HttpServerResponse.setCookies(res, [
+              [
+                COOKIE_KEYS.REFRESH_TOKEN,
+                data.refreshToken,
+                { ...COOKIE_OPTIONS, expires: data.expiresAt },
+              ],
+              [
+                COOKIE_KEYS.ACCESS_TOKEN,
+                data.accessToken,
+                { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
+              ],
+            ]).pipe(Effect.orDie)
           )
         ),
 
@@ -63,7 +52,25 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
       )
     )
 
-    .handle('refresh', () =>
-      Effect.succeed(RefreshTokenDto.make({ data: token }))
+    .handle('refresh', ({ headers }) =>
+      RefreshTokenUseCase.use((s) => s.execute(headers)).pipe(
+        Effect.tap((data) =>
+          HttpEffect.appendPreResponseHandler((_req, res) =>
+            HttpServerResponse.setCookies(res, [
+              [
+                COOKIE_KEYS.REFRESH_TOKEN,
+                data.refreshToken,
+                { ...COOKIE_OPTIONS, expires: data.expiresAt },
+              ],
+              [
+                COOKIE_KEYS.ACCESS_TOKEN,
+                data.accessToken,
+                { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
+              ],
+            ]).pipe(Effect.orDie)
+          )
+        ),
+        Effect.map((data) => RefreshTokenDto.make({ data }))
+      )
     )
 )

@@ -6,7 +6,12 @@ import { RefreshTokenDto } from '@/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@/auth/dto/register.dto'
 import { WhoAmIDto } from '@/auth/dto/whoami.dto'
 import { AuthMiddleware } from '@/auth/middleware'
-import { InvalidCredentials, InvalidToken } from '@/auth/schemas/auth.error'
+import {
+  InvalidCredentials,
+  InvalidToken,
+  ProviderError,
+} from '@/auth/schemas/auth.error'
+import { OAuthSchema } from '@/auth/schemas/oauth.schema'
 import { UserAlreadyExists, UserNotFound } from '@/user/schemas/user.error'
 
 export class AuthGroup extends HttpApiGroup.make('auth')
@@ -39,6 +44,26 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.get('whoami', '/whoami', {
       success: WhoAmIDto,
     }).middleware(AuthMiddleware)
+  )
+
+  .prefix('/api/auth') {}
+
+export class OAuthGroup extends HttpApiGroup.make('oauth')
+
+  .add(
+    HttpApiEndpoint.get('authorize', '/:provider', {
+      params: OAuthSchema.Params,
+      query: OAuthSchema.Query,
+      error: [ProviderError],
+    })
+  )
+
+  .add(
+    HttpApiEndpoint.get('callback', '/:provider/callback', {
+      params: OAuthSchema.Params,
+      query: OAuthSchema.Query,
+      error: [ProviderError],
+    })
   )
 
   .prefix('/api/auth') {}

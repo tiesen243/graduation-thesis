@@ -1,3 +1,4 @@
+import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
 import { Button } from '@rozumari/ui/components/button'
 import {
   CardDescription,
@@ -6,6 +7,7 @@ import {
 } from '@rozumari/ui/components/card'
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldLabel,
   FieldSet,
@@ -14,18 +16,20 @@ import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { useForm } from '@rozumari/ui/hooks/use-form'
 import { useMutation } from '@tanstack/react-query'
+import { toStandardSchemaV1 } from 'effect/Schema'
+import { Link } from 'react-router'
 
-import { api } from '@/lib/effect'
+import { api } from '@/lib/runtime'
 
 export default function RegisterPage() {
   const login = useMutation({
     ...api.auth.register.mutationOptions(),
     onSuccess: ({ message }) => toast.add({ type: 'success', title: message }),
-    onError: ({ message, error }) =>
+    onError: ({ message }) =>
       toast.add({
         type: 'error',
         title: 'Registration failed',
-        description: JSON.stringify(error ?? message),
+        description: message,
       }),
   })
 
@@ -36,8 +40,8 @@ export default function RegisterPage() {
       password: '',
       confirmPassword: '',
     },
+    schema: toStandardSchemaV1(RegisterDto.Input),
     onSubmit: login.mutate,
-    onSuccess: () => console.log('Registration successful'),
   })
 
   return (
@@ -110,9 +114,11 @@ export default function RegisterPage() {
           />
 
           <Field>
-            <Button type='submit' form={form.formId}>
-              Register
-            </Button>
+            <Button type='submit'>Register</Button>
+
+            <FieldDescription>
+              Already have an account? <Link to='/login'>Login</Link>
+            </FieldDescription>
           </Field>
         </FieldSet>
       </form>

@@ -23,7 +23,13 @@ function bootstrap() {
       HttpRouter.cors({
         allowedOrigins: env.CORS_ORIGIN,
         allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
+        allowedHeaders: [
+          'Content-Type',
+          'Authorization',
+          'X-Requested-With',
+          'b3',
+          'traceparent',
+        ],
         credentials: true,
       }),
       Layer.succeed(

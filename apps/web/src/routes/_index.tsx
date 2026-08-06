@@ -1,7 +1,7 @@
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 
-import { api } from '@/lib/effect'
+import { api } from '@/lib/runtime'
 
 export default function IndexPage() {
   const { data, error } = useQuery({

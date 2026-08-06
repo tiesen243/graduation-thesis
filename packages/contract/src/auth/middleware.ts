@@ -18,14 +18,7 @@ export interface JwtPayload {
   userRole: UserRole
 }
 
-export const COOKIE_KEYS = {
-  ACCESS_TOKEN: 'auth.access_token',
-  REFRESH_TOKEN: 'auth.refresh_token',
-
-  OAUTH_CODE: 'auth.oauth_code',
-  OAUTH_STATE: 'auth.oauth_state',
-  OAUTH_REDIRECT: 'auth.oauth_redirect',
-} as const
+export const COOKIE_ACCESS_TOKEN_KEY = 'auth.access_token'
 
 export class CurrentUser extends Context.Service<CurrentUser, JwtPayload>()(
   'auth/middleware/CurrentUser'
@@ -54,7 +47,7 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
   security: {
     bearer: HttpApiSecurity.bearer,
     token: HttpApiSecurity.apiKey({
-      key: COOKIE_KEYS.ACCESS_TOKEN,
+      key: COOKIE_ACCESS_TOKEN_KEY,
       in: 'cookie',
     }),
   },

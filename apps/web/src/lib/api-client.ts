@@ -45,7 +45,13 @@ export class ApiClient extends Context.Service<
           cause.value.reason.response.status === 401) ||
           cause.value.message.includes('invalid token'))
       )
-        yield* HttpClient.post(`${env.VITE_API_URL}/api/auth/refresh-token`)
+        yield* Effect.promise((signal) =>
+          fetch(`${env.VITE_API_URL}/api/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+            signal,
+          })
+        )
 
       return yield* Effect.failCause(exit.cause)
     }),

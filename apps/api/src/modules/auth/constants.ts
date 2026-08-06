@@ -1,5 +1,16 @@
 import type { Cookie } from 'effect/unstable/http/Cookies'
 
+import { COOKIE_ACCESS_TOKEN_KEY } from '@rozumari/contract/auth/middleware'
+
+export const COOKIE_KEYS = {
+  ACCESS_TOKEN: COOKIE_ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN: 'auth.refresh_token',
+
+  OAUTH_CODE: 'auth.oauth_code',
+  OAUTH_STATE: 'auth.oauth_state',
+  OAUTH_REDIRECT: 'auth.oauth_redirect',
+} as const
+
 export const COOKIE_OPTIONS = {
   path: '/',
   httpOnly: true,

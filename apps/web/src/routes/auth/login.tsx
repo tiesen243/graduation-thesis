@@ -1,3 +1,4 @@
+import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
 import { Button } from '@rozumari/ui/components/button'
 import {
   CardDescription,
@@ -16,24 +17,24 @@ import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { useForm } from '@rozumari/ui/hooks/use-form'
 import { useMutation } from '@tanstack/react-query'
+import { toStandardSchemaV1 } from 'effect/Schema'
 import { Link } from 'react-router'
 
-import { api } from '@/lib/effect'
+import { env } from '@/lib/env'
+import { api } from '@/lib/runtime'
+import { getBaseUrl } from '@/lib/utils'
 
 export default function LoginPage() {
   const login = useMutation({
     ...api.auth.login.mutationOptions(),
     onSuccess: ({ message }) => toast.add({ type: 'success', title: message }),
-    onError: ({ message, error }) =>
-      toast.add({
-        type: 'error',
-        title: 'Login failed',
-        description: JSON.stringify(error ?? message),
-      }),
+    onError: ({ message }) =>
+      toast.add({ type: 'error', title: 'Login failed', description: message }),
   })
 
   const form = useForm({
     defaultValues: { email: '', password: '' },
+    schema: toStandardSchemaV1(LoginDto.Input),
     onSubmit: login.mutate,
   })
 
@@ -83,11 +84,25 @@ export default function LoginPage() {
             )}
           />
 
-          <Field>
-            <Button type='submit' form={form.formId}>
-              Login
+          <Field orientation='responsive'>
+            <Button type='submit'>Login</Button>
+
+            <Button
+              variant='outline'
+              nativeButton={false}
+              render={
+                <Link
+                  to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}`}
+                />
+              }
+            >
+              Login with Google
             </Button>
           </Field>
+
+          <FieldDescription>
+            Don&apos;t have an account? <Link to='/register'>Register</Link>
+          </FieldDescription>
         </FieldSet>
       </form>
     </>

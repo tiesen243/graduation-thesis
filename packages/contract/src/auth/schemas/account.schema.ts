@@ -1,3 +1,4 @@
+import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 import { UserId } from '@/user/schemas/user.schema'
@@ -17,7 +18,9 @@ export const AccountSchema = Schema.Struct({
 
   providerId: AccountProviderId,
 
-  password: Schema.NullOr(Schema.String.check(Schema.isMaxLength(255))),
+  password: Schema.NullOr(Schema.String.check(Schema.isMaxLength(255))).pipe(
+    Schema.withConstructorDefault(Effect.succeed(null))
+  ),
 
   userId: UserId,
 })

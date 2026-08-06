@@ -54,7 +54,7 @@ export class LoginUseCase extends Context.Service<
         if (!isPasswordValid)
           return yield* Effect.fail(new InvalidCredentials())
 
-        return yield* authService.createRefreshToken(user.id)
+        return yield* authService.createRefreshToken(user.id, user.role)
       }),
     }
   }),
