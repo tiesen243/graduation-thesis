@@ -104,18 +104,14 @@ export const oauthController = HttpApiBuilder.group(
               .pipe(Effect.map((u) => u?.role ?? UserRole.make('user')))
           } else {
             let user = yield* userService.findByIdentifier({ email })
-
-            if (user) {
-              userId = user.id
-              userRole = user.role
-            } else {
+            if (!user)
               user = yield* userService.create({
                 username: crypto.randomUUID().slice(0, 8),
                 email,
               })
-              userId = user.id
-              userRole = user.role
-            }
+
+            userId = user.id
+            userRole = user.role
 
             const newAccount = Account.make({
               provider: AccountProvider.make(params.provider),
