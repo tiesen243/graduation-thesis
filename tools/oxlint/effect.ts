@@ -1,6 +1,7 @@
 import { defineConfig } from 'oxlint'
 
 export default defineConfig({
+  plugins: ['typescript'],
   rules: {
     'typescript/no-restricted-imports': [
       'error',

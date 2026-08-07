@@ -34,15 +34,18 @@ export class ListUsersUseCase extends Context.Service<
             >['where'])
           : {}
 
-        const [users, total] = yield* Effect.all([
-          userRepository.findMany({
-            where,
-            orderBy: { createdAt: 'desc' },
-            limit,
-            offset,
-          }),
-          userRepository.count(where),
-        ])
+        const [users, total] = yield* Effect.all(
+          [
+            userRepository.findMany({
+              where,
+              orderBy: { createdAt: 'desc' },
+              limit,
+              offset,
+            }),
+            userRepository.count(where),
+          ],
+          { concurrency: 'unbounded' }
+        )
         const totalPages = Math.ceil(total / limit)
 
         return ListUsersDto.Output.make({

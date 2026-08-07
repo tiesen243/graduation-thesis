@@ -9,6 +9,7 @@ import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 import type { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers/base.provider'
 
 import { AuthModule } from '@/modules/auth/auth.module'
+import { DeviceModule } from '@/modules/device/device.module'
 import { HomeModule } from '@/modules/home/home.module'
 import { UserModule } from '@/modules/user/user.module'
 
@@ -25,10 +26,13 @@ export class AppModule {
       { userService: userModule.exports.services.userService }
     )
 
+    const deviceModule = DeviceModule.create({ persistence })
+
     const controllerLayer = Layer.mergeAll(
       homeModule.controller,
       userModule.controller,
-      authModule.controller
+      authModule.controller,
+      deviceModule.controller
     ).pipe(
       Layer.provide([
         authModule.exports.middlewares.auth,
