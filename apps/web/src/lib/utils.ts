@@ -1,3 +1,6 @@
+import { createQueryClient } from '@rozumari/lib/create-query-client'
+import { cache } from 'react'
+
 import { env } from '@/lib/env'
 
 export function getBaseUrl() {
@@ -7,3 +10,5 @@ export function getBaseUrl() {
   if (env.VITE_VERCEL_URL) return `https://${env.VITE_VERCEL_URL}`
   return `http://localhost:${process.env.PORT ?? 5173}`
 }
+
+export const getQueryClient = cache(createQueryClient)

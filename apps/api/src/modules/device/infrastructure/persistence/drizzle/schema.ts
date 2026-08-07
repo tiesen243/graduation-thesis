@@ -6,7 +6,7 @@ import type {
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
 import { deviceStatuses } from '@rozumari/contract/device/schemas/device.schema'
-import { index, pgEnum, snakeCase } from 'drizzle-orm/pg-core'
+import { index, pgEnum, snakeCase, uniqueIndex } from 'drizzle-orm/pg-core'
 
 import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
 
@@ -26,7 +26,10 @@ export const devices = snakeCase.table(
       .references(() => users.id, { onDelete: 'set null' })
       .$type<UserId>(),
   }),
-  (t) => [index('devices_user_id_index').on(t.userId)]
+  (t) => [
+    uniqueIndex('devices_factory_model_index').on(t.factoryModel),
+    index('devices_user_id_index').on(t.userId),
+  ]
 )
 
 export const compartments = snakeCase.table(
@@ -34,13 +37,14 @@ export const compartments = snakeCase.table(
   (t) => ({
     id: t.varchar({ length: 24 }).primaryKey().$type<CompartmentId>(),
     medicine: t.varchar({ length: 255 }),
-    capacity: t.integer(),
-    maxCapacity: t.integer(),
-    position: t.varchar({ length: 4 }),
+    capacity: t.integer().notNull(),
+    maxCapacity: t.integer().notNull(),
+    position: t.varchar({ length: 4 }).notNull(),
     lastRefillAt: t.timestamp(),
     deviceId: t
       .varchar({ length: 24 })
       .references(() => devices.id, { onDelete: 'cascade' })
+      .notNull()
       .$type<DeviceId>(),
   }),
   (t) => [index('compartments_device_id_index').on(t.deviceId)]

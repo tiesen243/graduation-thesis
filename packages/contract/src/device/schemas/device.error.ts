@@ -13,9 +13,36 @@ export class DeviceNotFound extends Schema.TaggedError<DeviceNotFound>()(
   { httpApiStatus: 404 }
 ) {}
 
+export class DeviceAlreadyExists extends Schema.TaggedError<DeviceAlreadyExists>()(
+  'device/domain/DeviceAlreadyExists',
+  ApiResponse({
+    status: 409,
+    message: 'Device already exists',
+    errorSchema: Schema.Struct({
+      id: Schema.NullOr(DeviceId),
+      factoryModel: Schema.NullOr(Schema.String),
+    }),
+  }),
+  { httpApiStatus: 409 }
+) {}
+
+export class DeviceAlreadyLinked extends Schema.TaggedError<DeviceAlreadyLinked>()(
+  'device/domain/DeviceAlreadyLinked',
+  ApiResponse({
+    status: 400,
+    message: 'Device already linked',
+    errorSchema: Schema.Struct({ id: DeviceId }),
+  }),
+  { httpApiStatus: 400 }
+) {}
+
 export class DeviceError extends Schema.TaggedError<DeviceError>()(
   'device/domain/DeviceError',
   {
-    reason: Schema.Union([DeviceNotFound]),
+    reason: Schema.Union([
+      DeviceNotFound,
+      DeviceAlreadyExists,
+      DeviceAlreadyLinked,
+    ]),
   }
 ) {}

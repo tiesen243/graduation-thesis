@@ -14,6 +14,11 @@ export const env = createEnv({
 
   clientPrefix: 'VITE_',
   client: {
+    VITE_APP_NAME: Schema.String.pipe(
+      Schema.withDecodingDefault(Effect.succeed('Rozumari')),
+      Schema.toStandardSchemaV1
+    ),
+
     VITE_API_URL: Schema.String.pipe(
       Schema.withDecodingDefault(Effect.succeed('http://localhost:3000')),
       Schema.toStandardSchemaV1

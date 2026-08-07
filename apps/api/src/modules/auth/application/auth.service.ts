@@ -13,6 +13,7 @@ import {
   RefreshToken,
 } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
+import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -62,6 +63,8 @@ export class AuthService extends Context.Service<
 
     const jwt = yield* Jwt
 
+    const now = yield* DateTime.nowInCurrentZone
+
     const createAccessToken = Effect.fn(
       function* createAccessToken(userId, userRole) {
         return yield* jwt.sign(
@@ -86,14 +89,14 @@ export class AuthService extends Context.Service<
           const hashedSecret = yield* hashSecret(secret)
 
           const refreshToken = `${id}.${secret}`
-          const expiresAt = new Date(
-            Date.now() + TOKEN_EXPIRATION.refreshToken * 1000
-          )
+          const expiresAt = DateTime.add(now, {
+            seconds: TOKEN_EXPIRATION.refreshToken,
+          })
 
           const session = Session.make({
             id: SessionId.make(id),
             token: RefreshToken.make(encodeHex(hashedSecret)),
-            expiresAt,
+            expiresAt: DateTime.toDate(expiresAt),
             userId,
           })
           yield* sessionRepository.save(session)
@@ -103,7 +106,7 @@ export class AuthService extends Context.Service<
           return {
             accessToken: AccessToken.make(accessToken),
             refreshToken: RefreshToken.make(refreshToken),
-            expiresAt,
+            expiresAt: DateTime.toDate(expiresAt),
           }
         }
       ),
@@ -128,25 +131,32 @@ export class AuthService extends Context.Service<
           decodeHex(session.token)
         )
 
-        const now = Date.now()
-        const expiresTime = new Date(session.expiresAt).getTime()
+        const expiresTime = DateTime.makeUnsafe(session.expiresAt)
 
-        if (!isValid || now >= expiresTime) {
+        if (!isValid || DateTime.isGreaterThanOrEqualTo(now, expiresTime)) {
           yield* sessionRepository.delete(session)
           return yield* Effect.fail(
             new InvalidToken({ message: 'Invalid refresh token' })
           )
         }
 
-        if (now >= expiresTime - TOKEN_EXPIRATION.threshold * 1000) {
-          session = session.renew(
-            new Date(now + TOKEN_EXPIRATION.refreshToken * 1000)
-          )
+        const renewThreshold = DateTime.subtract(expiresTime, {
+          seconds: TOKEN_EXPIRATION.threshold,
+        })
+
+        if (DateTime.isGreaterThanOrEqualTo(now, renewThreshold)) {
+          const extendedExpriesAt = DateTime.add(now, {
+            seconds: TOKEN_EXPIRATION.refreshToken,
+          })
+          session = session.renew(DateTime.toDate(extendedExpriesAt))
           yield* sessionRepository.save(session)
         }
 
-        const { expiresAt } = session
-        return { token: refreshToken, user: agg.user, expiresAt }
+        return {
+          token: refreshToken,
+          user: agg.user,
+          expiresAt: session.expiresAt,
+        }
       }),
     }
   }),

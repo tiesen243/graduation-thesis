@@ -1,4 +1,5 @@
 import type { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
+import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
@@ -13,7 +14,7 @@ export class ListDevicesUseCase extends Context.Service<
   ListDevicesUseCase,
   {
     readonly execute: (
-      input: ListDevicesDto.Input
+      input: ListDevicesDto.Input & { userId?: UserId }
     ) => Effect.Effect<ListDevicesDto.Output>
   }
 >()('device/application/ListDevicesUseCase', {
@@ -28,14 +29,14 @@ export class ListDevicesUseCase extends Context.Service<
         let where: NonNullable<
           Parameters<IRepository<Device>['findMany']>[0]
         >['where']
-        if (userId) where = { userId: { eq: userId } }
-        else if (query)
+        if (query)
           where = {
             OR: {
               factoryModel: { like: `%${query}%`, mode: 'insensitive' },
               name: { like: `%${query}%`, mode: 'insensitive' },
             },
           }
+        if (userId) where = { ...where, userId: { eq: userId } }
 
         const [devices, total] = yield* Effect.all(
           [

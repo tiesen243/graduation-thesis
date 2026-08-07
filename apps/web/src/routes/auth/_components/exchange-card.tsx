@@ -21,12 +21,10 @@ export const ExchangeCard: React.FC<{ token: string }> = ({ token }) => {
     ...api.oauth.exchange.mutationOptions(),
     onSuccess: () => {
       toast.add({ type: 'success', title: 'Login with Google successful' })
-      navigate('/', { replace: true })
+      navigate('/dashboard', { replace: true })
     },
-    onError: ({ message, ...rest }) => {
-      console.error('OAuth exchange failed', { message, ...rest })
-      toast.add({ type: 'error', title: 'OAuth failed', description: message })
-    },
+    onError: ({ message }) =>
+      toast.add({ type: 'error', title: 'OAuth failed', description: message }),
   })
 
   useEffect(() => {

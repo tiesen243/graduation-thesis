@@ -17,6 +17,11 @@ export const env = createEnv({
       Schema.toStandardSchemaV1
     ),
 
+    TIMEZONE: Schema.TimeZoneFromString.pipe(
+      Schema.withDecodingDefault(Effect.succeed('Asia/Ho_Chi_Minh')),
+      Schema.toStandardSchemaV1
+    ),
+
     VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
     VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
       Schema.optional,

@@ -27,7 +27,6 @@ export namespace ListDevicesDto {
   export const Input = Pagination.Input.pipe(
     Schema.fieldsAssign({
       query: Schema.optional(Schema.String),
-      userId: Schema.optional(DeviceSchema.fields.userId),
     })
   )
   export type Input = typeof Input.Type

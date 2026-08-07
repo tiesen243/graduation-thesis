@@ -38,7 +38,7 @@ export function LoginForm() {
     defaultValues: { email: '', password: '' },
     schema: toStandardSchemaV1(LoginDto.Input),
     onSubmit: login.mutateAsync,
-    onSuccess: () => navigate('/'),
+    onSuccess: () => navigate('/dashboard', { replace: true }),
   })
 
   return (

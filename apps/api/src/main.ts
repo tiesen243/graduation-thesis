@@ -1,3 +1,4 @@
+import * as DateTime from 'effect/DateTime'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
@@ -36,6 +37,7 @@ function bootstrap() {
         References.MinimumLogLevel,
         env.NODE_ENV === 'production' ? 'Info' : 'Debug'
       ),
+      Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
       HttpServer.layerServices,
     ])
   )
