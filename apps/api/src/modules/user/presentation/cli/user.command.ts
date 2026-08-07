@@ -1,7 +1,7 @@
 import { UserId } from '@rozumari/contract/user/schemas/user.schema'
 import * as Effect from 'effect/Effect'
-import { Flag } from 'effect/unstable/cli'
 import * as Command from 'effect/unstable/cli/Command'
+import * as Flag from 'effect/unstable/cli/Flag'
 
 import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case'
 import { ShowUserUseCase } from '@/modules/user/application/use-case/show-user.use-case'

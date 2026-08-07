@@ -120,7 +120,7 @@ export class AuthService extends Context.Service<
           return yield* Effect.fail(
             new InvalidToken({ message: 'Invalid refresh token' })
           )
-        const { session, user } = agg
+        let { session } = agg
 
         const hashedSecret = yield* hashSecret(secret)
         const isValid = constantTimeEqual(
@@ -139,14 +139,14 @@ export class AuthService extends Context.Service<
         }
 
         if (now >= expiresTime - TOKEN_EXPIRATION.threshold * 1000) {
-          const updatedSession = session.renew(
+          session = session.renew(
             new Date(now + TOKEN_EXPIRATION.refreshToken * 1000)
           )
-          yield* sessionRepository.save(updatedSession)
+          yield* sessionRepository.save(session)
         }
 
-        const { token, expiresAt } = session
-        return { token, user, expiresAt }
+        const { expiresAt } = session
+        return { token: refreshToken, user: agg.user, expiresAt }
       }),
     }
   }),

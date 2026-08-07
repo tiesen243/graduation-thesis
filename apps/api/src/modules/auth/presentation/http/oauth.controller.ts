@@ -1,4 +1,7 @@
-import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
+import type {
+  UserId,
+  UserRole,
+} from '@rozumari/contract/user/schemas/user.schema'
 
 import { Api } from '@rozumari/contract'
 import {
@@ -6,7 +9,6 @@ import {
   AccountProviderId,
 } from '@rozumari/contract/auth/schemas/account.schema'
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
-import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Effect from 'effect/Effect'
 import * as FetchHttpClient from 'effect/unstable/http/FetchHttpClient'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
@@ -86,32 +88,30 @@ export const oauthController = HttpApiBuilder.group(
             .pipe(Effect.provide(FetchHttpClient.layer))
             .pipe(Effect.orDie)
 
-          const [account] = yield* accountRepository.findMany({
-            where: {
-              provider: { eq: AccountProvider.make(params.provider) },
-              providerId: { eq: AccountProviderId.make(id) },
-            },
-            limit: 1,
-          })
+          const [[account], user] = yield* Effect.all([
+            accountRepository.findMany({
+              where: {
+                provider: { eq: AccountProvider.make(params.provider) },
+                providerId: { eq: AccountProviderId.make(id) },
+              },
+              limit: 1,
+            }),
+            userService.findByIdentifier({ email }),
+          ])
 
-          let userId: UserId
-          let userRole: UserRole
+          let userId: UserId, userRole: UserRole
 
-          if (account) {
+          if (account && user) {
             ;({ userId } = account)
-            userRole = yield* userService
-              .findByIdentifier({ id: userId })
-              .pipe(Effect.map((u) => u?.role ?? UserRole.make('user')))
-          } else {
-            let user = yield* userService.findByIdentifier({ email })
-            if (!user)
-              user = yield* userService.create({
-                username: crypto.randomUUID().slice(0, 8),
-                email,
-              })
-
-            userId = user.id
             userRole = user.role
+          } else {
+            const newUser = yield* userService.create({
+              username: crypto.randomUUID().slice(0, 8),
+              email,
+            })
+
+            userId = newUser.id
+            userRole = newUser.role
 
             const newAccount = Account.make({
               provider: AccountProvider.make(params.provider),
@@ -121,15 +121,15 @@ export const oauthController = HttpApiBuilder.group(
             yield* accountRepository.save(newAccount)
           }
 
-          const { refreshToken, accessToken, expiresAt } =
+          const { accessToken, refreshToken, expiresAt } =
             yield* authService.createRefreshToken(userId, userRole)
 
-          let redirectUri = request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/'
-          if (!redirectUri.startsWith('/')) {
-            const url = new URL(redirectUri)
-            url.searchParams.set('access_token', accessToken)
-            url.searchParams.set('refresh_token', refreshToken)
-            redirectUri = url.toString()
+          const redirectUri = new URL(
+            request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/'
+          )
+          if (redirectUri.origin !== request.originalUrl) {
+            redirectUri.searchParams.set('access_token', accessToken)
+            redirectUri.searchParams.set('refresh_token', refreshToken)
           }
 
           return yield* HttpServerResponse.redirect(redirectUri).pipe(
@@ -162,6 +162,39 @@ export const oauthController = HttpApiBuilder.group(
                 { ...COOKIE_OPTIONS, maxAge: '0 seconds' },
               ],
             ]),
+            Effect.orDie
+          )
+        })
+      )
+
+      .handle(
+        'exchange',
+        Effect.fn(function* exchangeHandler({ payload }) {
+          const { token } = payload
+
+          const { user, expiresAt } =
+            yield* authService.verifyRefreshToken(token)
+
+          const accessToken = yield* authService.createAccessToken(
+            user.id,
+            user.role
+          )
+
+          return yield* HttpServerResponse.json({ success: true }).pipe(
+            Effect.flatMap(
+              HttpServerResponse.setCookies([
+                [
+                  COOKIE_KEYS.REFRESH_TOKEN,
+                  token,
+                  { ...COOKIE_OPTIONS, expires: expiresAt },
+                ],
+                [
+                  COOKIE_KEYS.ACCESS_TOKEN,
+                  accessToken,
+                  { ...COOKIE_OPTIONS, expires: expiresAt },
+                ],
+              ])
+            ),
             Effect.orDie
           )
         })

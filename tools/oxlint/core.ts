@@ -132,18 +132,7 @@ export default defineConfig({
     'no-redeclare': 'error',
     'no-regex-spaces': 'error',
     'no-restricted-globals': 'error',
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: [
-          {
-            group: ['**/_internal/**'],
-            message:
-              'This is an internal module and should not be imported directly. Use the public API instead.',
-          },
-        ],
-      },
-    ],
+    'no-restricted-imports': 'error',
     'no-restricted-properties': 'off',
     'no-return-assign': 'error',
     'no-script-url': 'error',

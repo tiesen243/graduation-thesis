@@ -1,16 +1,9 @@
 {
-  "$schema": "./node_modules/@effect/tsgo/schema.json",
   "extends": "@rozumari/tsconfig/base.json",
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "plugins": [
-      {
-        "name": "@effect/language-service",
-        "barrelImportPackages": ["effect"]
-      }
-    ]
+    }
   },
   "include": ["src/**/*.ts"]
 }

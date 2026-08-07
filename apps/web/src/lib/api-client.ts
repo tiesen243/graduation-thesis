@@ -1,10 +1,6 @@
 // oxlint-disable eslint/no-underscore-dangle
 
-import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
-import type { HttpClientResponse } from 'effect/unstable/http/HttpClientResponse'
-
 import { Api } from '@rozumari/contract'
-import * as Cause from 'effect/Cause'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Function from 'effect/Function'
@@ -27,33 +23,26 @@ export class ApiClient extends Context.Service<
             HttpClientRequest.setHeader('x-requested-with', 'web'),
             HttpClientRequest.acceptJson
           )
-        )
-      ),
+        ),
+        HttpClient.transformResponse(
+          Effect.fn(function* transformResponse(effect) {
+            let response = yield* effect
 
-    transformResponse: Effect.fn(function* transformResponse(effect) {
-      const exit = yield* Effect.exit(
-        effect as Effect.Effect<HttpClientResponse, HttpClientError, never>
-      )
-      if (exit._tag === 'Success') return exit.value
+            if (response.status === 401) {
+              yield* Effect.promise((signal) =>
+                fetch(`${env.VITE_API_URL}/api/auth/refresh`, {
+                  method: 'POST',
+                  credentials: 'include',
+                  signal,
+                })
+              )
 
-      const cause = Cause.findErrorOption(exit.cause)
+              response = yield* effect
+            }
 
-      if (
-        cause._tag === 'Some' &&
-        ((cause.value._tag === 'HttpClientError' &&
-          cause.value.reason._tag === 'StatusCodeError' &&
-          cause.value.reason.response.status === 401) ||
-          cause.value.message.includes('invalid token'))
-      )
-        yield* Effect.promise((signal) =>
-          fetch(`${env.VITE_API_URL}/api/auth/refresh`, {
-            method: 'POST',
-            credentials: 'include',
-            signal,
+            return response
           })
         )
-
-      return yield* Effect.failCause(exit.cause)
-    }),
+      ),
   }),
 }) {}
