@@ -1,3 +1,11 @@
+## @rozumari/web@0.0.4
+
+### Fix OAuth authentication flow and client-side cookie assignment.
+
+- **api / contract**: Add `POST /api/auth/exchange` endpoint to exchange OAuth token and properly set Partitioned HTTP-only auth cookies on client-initiated fetch requests.
+- **web**: Handle OAuth token exchange client-side, clear search params on completion, and switch between login form and OAuth handling states.
+- **oxlint**: Update linting rules.
+
 ## @rozumari/web@0.0.3
 
 ### Fix base URL retrieval using Vercel environment variables

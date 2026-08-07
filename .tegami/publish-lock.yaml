@@ -1,47 +1,53 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Fix base URL retrieval using Vercel environment variables\n\n- Applied the required `VITE_` prefix to Vercel environment variables so Vite can properly expose them to the client bundle.\n"
-    filename: 2026-08-06-mshh70v3.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/oxlint:\n    type: patch\n---\n\n## Fix OAuth authentication flow and client-side cookie assignment.\n\n- **api / contract**: Add `POST /api/auth/exchange` endpoint to exchange OAuth token and properly set Partitioned HTTP-only auth cookies on client-initiated fetch requests.\n- **web**: Handle OAuth token exchange client-side, clear search params on completion, and switch between login form and OAuth handling states.\n- **oxlint**: Update linting rules.\n"
+    filename: 2026-08-07-msiqmn8k.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
+  - id: npm:@rozumari/firmware
+    updated: false
+  - id: npm:@rozumari/github
+    updated: false
   - changelogIds:
-      - 2026-08-06-mshh70v3.md
+      - 2026-08-07-msiqmn8k.md
+    id: npm:@rozumari/contract
+    updated: true
+  - id: npm:@rozumari/proteus
+    updated: false
+  - id: npm:@rozumari/pcb
+    updated: false
+  - changelogIds:
+      - 2026-08-07-msiqmn8k.md
     id: npm:@rozumari/web
     updated: true
-  - id: npm:@rozumari/api
-    updated: false
-  - id: npm:@rozumari/mobile
-    updated: false
-  - id: npm:@rozumari/pcb
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
-  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/tsconfig
     updated: false
   - id: npm:@rozumari/lib
     updated: false
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/mobile
     updated: false
-  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/ui
     updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/github
-    updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
+  - changelogIds:
+      - 2026-08-07-msiqmn8k.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-08-07-msiqmn8k.md
+    id: npm:@rozumari/oxlint
+    updated: true
 npm:packages:
   - id: npm:graduation-thesis
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/pcb
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/proteus
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/contract
   - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/github
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/api
   - id: npm:@rozumari/oxlint
