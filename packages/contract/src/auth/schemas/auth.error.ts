@@ -2,7 +2,7 @@ import * as Schema from 'effect/Schema'
 
 import { ApiResponse } from '@/schema'
 
-export class Unauthorized extends Schema.TaggedErrorClass<Unauthorized>()(
+export class Unauthorized extends Schema.TaggedError<Unauthorized>()(
   'auth/domain/Unauthorized',
   ApiResponse({
     status: 401,
@@ -11,7 +11,7 @@ export class Unauthorized extends Schema.TaggedErrorClass<Unauthorized>()(
   { httpApiStatus: 401 }
 ) {}
 
-export class Forbidden extends Schema.TaggedErrorClass<Forbidden>()(
+export class Forbidden extends Schema.TaggedError<Forbidden>()(
   'auth/domain/Forbidden',
   ApiResponse({
     status: 403,
@@ -20,7 +20,7 @@ export class Forbidden extends Schema.TaggedErrorClass<Forbidden>()(
   { httpApiStatus: 403 }
 ) {}
 
-export class InvalidCredentials extends Schema.TaggedErrorClass<InvalidCredentials>()(
+export class InvalidCredentials extends Schema.TaggedError<InvalidCredentials>()(
   'auth/domain/InvalidCredentials',
   ApiResponse({
     status: 401,
@@ -29,7 +29,7 @@ export class InvalidCredentials extends Schema.TaggedErrorClass<InvalidCredentia
   { httpApiStatus: 401 }
 ) {}
 
-export class InvalidToken extends Schema.TaggedErrorClass<InvalidToken>()(
+export class InvalidToken extends Schema.TaggedError<InvalidToken>()(
   'auth/domain/InvalidToken',
   ApiResponse({
     status: 401,
@@ -38,7 +38,7 @@ export class InvalidToken extends Schema.TaggedErrorClass<InvalidToken>()(
   { httpApiStatus: 401 }
 ) {}
 
-export class TokenExpired extends Schema.TaggedErrorClass<TokenExpired>()(
+export class TokenExpired extends Schema.TaggedError<TokenExpired>()(
   'auth/domain/TokenExpired',
   ApiResponse({
     status: 401,
@@ -47,13 +47,13 @@ export class TokenExpired extends Schema.TaggedErrorClass<TokenExpired>()(
   { httpApiStatus: 401 }
 ) {}
 
-export class ProviderError extends Schema.TaggedErrorClass<ProviderError>()(
+export class ProviderError extends Schema.TaggedError<ProviderError>()(
   'auth/domain/ProviderError',
   ApiResponse({ status: 400 }),
   { httpApiStatus: 400 }
 ) {}
 
-export class AuthError extends Schema.TaggedErrorClass<AuthError>()(
+export class AuthError extends Schema.TaggedError<AuthError>()(
   'auth/domain/AuthError',
   {
     reason: Schema.Union([

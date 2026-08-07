@@ -23,6 +23,7 @@
     "pg": "^8.22.0"
   },
   "devDependencies": {
+    "@effect/tsgo": "0.33.0",
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",

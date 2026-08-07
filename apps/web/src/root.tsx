@@ -36,8 +36,13 @@ export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <Meta />
         <Links />
+
+        <script
+          crossOrigin='anonymous'
+          src='//unpkg.com/react-scan/dist/auto.global.js'
+        />
       </head>
-      <body className='bg-background text-foreground flex min-h-dvh flex-col font-sans antialiased'>
+      <body className='flex min-h-dvh flex-col bg-background font-sans text-foreground antialiased'>
         <Providers>{children}</Providers>
 
         <ScrollRestoration />
@@ -69,14 +74,14 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 
   return (
     <main className='flex min-h-dvh flex-col items-center justify-center gap-8'>
-      <div className='divide-border flex items-center gap-4 divide-x'>
+      <div className='flex items-center gap-4 divide-x divide-border'>
         <Typography variant='h1' className='pr-4'>
           {message}
         </Typography>
         <Typography>{details}</Typography>
       </div>
       {stack && (
-        <pre className='bg-accent text-accent-foreground max-h-64 max-w-4xl overflow-x-auto rounded-lg p-4'>
+        <pre className='max-h-64 max-w-4xl overflow-x-auto rounded-lg bg-accent p-4 text-accent-foreground'>
           {stack}
         </pre>
       )}

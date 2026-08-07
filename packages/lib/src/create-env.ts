@@ -117,6 +117,7 @@ export function createEnv<
     ? { ...opts.shared, ...opts.client, ...opts.server }
     : { ...opts.shared, ...opts.client }
 
+  // oxlint-disable-next-line no-use-before-define
   const parsedEnvs = parseEnvs(opts.runtimeEnv, envs as never)
   if (!opts.skipValidation && !parsedEnvs.success)
     throw new Error(

@@ -47,64 +47,70 @@ export default function LoginPage() {
         </CardDescription>
       </CardHeader>
 
-      <form id={form.formId} className='px-4' onSubmit={form.handleSubmit}>
-        <FieldSet disabled={login.isPending}>
-          <legend className='sr-only'>Login</legend>
+      <form.Form>
+        <form id={form.formId} className='px-4' onSubmit={form.handleSubmit}>
+          <FieldSet disabled={login.isPending}>
+            <legend className='sr-only'>Login</legend>
 
-          <form.Field
-            name='email'
-            render={({ field, meta }) => (
-              <Field data-invalid={meta.errors.length > 0}>
-                <FieldLabel htmlFor={field.id}>Email</FieldLabel>
-                <Input {...field} type='email' placeholder='Enter your email' />
-                <FieldError id={meta.errorId} errors={meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name='email'
+              render={({ field, meta }) => (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldLabel htmlFor={field.id}>Email</FieldLabel>
+                  <Input
+                    {...field}
+                    type='email'
+                    placeholder='Enter your email'
+                  />
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <form.Field
-            name='password'
-            render={({ field, meta }) => (
-              <Field data-invalid={meta.errors.length > 0}>
-                <FieldContent className='flex-row justify-between'>
-                  <FieldLabel htmlFor={field.id}>Password</FieldLabel>
-                  <FieldDescription>
-                    <Link to='/forgot-password' tabIndex={-1}>
-                      Forgot your password?
-                    </Link>
-                  </FieldDescription>
-                </FieldContent>
-                <Input
-                  {...field}
-                  type='password'
-                  placeholder='Enter your password'
-                />
-                <FieldError id={meta.errorId} errors={meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name='password'
+              render={({ field, meta }) => (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldContent className='flex-row justify-between'>
+                    <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+                    <FieldDescription>
+                      <Link to='/forgot-password' tabIndex={-1}>
+                        Forgot your password?
+                      </Link>
+                    </FieldDescription>
+                  </FieldContent>
+                  <Input
+                    {...field}
+                    type='password'
+                    placeholder='Enter your password'
+                  />
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <Field orientation='responsive'>
-            <Button type='submit'>Login</Button>
+            <Field orientation='responsive'>
+              <Button type='submit'>Login</Button>
 
-            <Button
-              variant='outline'
-              nativeButton={false}
-              render={
-                <Link
-                  to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}`}
-                />
-              }
-            >
-              Login with Google
-            </Button>
-          </Field>
+              <Button
+                variant='outline'
+                nativeButton={false}
+                render={
+                  <Link
+                    to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}`}
+                  />
+                }
+              >
+                Login with Google
+              </Button>
+            </Field>
 
-          <FieldDescription>
-            Don&apos;t have an account? <Link to='/register'>Register</Link>
-          </FieldDescription>
-        </FieldSet>
-      </form>
+            <FieldDescription>
+              Don&apos;t have an account? <Link to='/register'>Register</Link>
+            </FieldDescription>
+          </FieldSet>
+        </form>
+      </form.Form>
     </>
   )
 }

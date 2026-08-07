@@ -53,75 +53,81 @@ export default function RegisterPage() {
         </CardDescription>
       </CardHeader>
 
-      <form id={form.formId} className='px-4' onSubmit={form.handleSubmit}>
-        <FieldSet disabled={login.isPending}>
-          <legend className='sr-only'>Register</legend>
+      <form.Form>
+        <form id={form.formId} className='px-4' onSubmit={form.handleSubmit}>
+          <FieldSet disabled={login.isPending}>
+            <legend className='sr-only'>Register</legend>
 
-          <form.Field
-            name='username'
-            render={({ field, meta }) => (
-              <Field data-invalid={meta.errors.length > 0}>
-                <FieldLabel htmlFor={field.id}>Username</FieldLabel>
-                <Input
-                  {...field}
-                  type='text'
-                  placeholder='Enter your username'
-                />
-                <FieldError id={meta.errorId} errors={meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name='username'
+              render={({ field, meta }) => (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldLabel htmlFor={field.id}>Username</FieldLabel>
+                  <Input
+                    {...field}
+                    type='text'
+                    placeholder='Enter your username'
+                  />
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <form.Field
-            name='email'
-            render={({ field, meta }) => (
-              <Field data-invalid={meta.errors.length > 0}>
-                <FieldLabel htmlFor={field.id}>Email</FieldLabel>
-                <Input {...field} type='email' placeholder='Enter your email' />
-                <FieldError id={meta.errorId} errors={meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name='email'
+              render={({ field, meta }) => (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldLabel htmlFor={field.id}>Email</FieldLabel>
+                  <Input
+                    {...field}
+                    type='email'
+                    placeholder='Enter your email'
+                  />
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <form.Field
-            name='password'
-            render={({ field, meta }) => (
-              <Field data-invalid={meta.errors.length > 0}>
-                <FieldLabel htmlFor={field.id}>Password</FieldLabel>
-                <Input
-                  {...field}
-                  type='password'
-                  placeholder='Enter your password'
-                />
-                <FieldError id={meta.errorId} errors={meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name='password'
+              render={({ field, meta }) => (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+                  <Input
+                    {...field}
+                    type='password'
+                    placeholder='Enter your password'
+                  />
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <form.Field
-            name='confirmPassword'
-            render={({ field, meta }) => (
-              <Field data-invalid={meta.errors.length > 0}>
-                <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
-                <Input
-                  {...field}
-                  type='password'
-                  placeholder='Confirm your password'
-                />
-                <FieldError id={meta.errorId} errors={meta.errors} />
-              </Field>
-            )}
-          />
+            <form.Field
+              name='confirmPassword'
+              render={({ field, meta }) => (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
+                  <Input
+                    {...field}
+                    type='password'
+                    placeholder='Confirm your password'
+                  />
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <Field>
-            <Button type='submit'>Register</Button>
+            <Field>
+              <Button type='submit'>Register</Button>
 
-            <FieldDescription>
-              Already have an account? <Link to='/login'>Login</Link>
-            </FieldDescription>
-          </Field>
-        </FieldSet>
-      </form>
+              <FieldDescription>
+                Already have an account? <Link to='/login'>Login</Link>
+              </FieldDescription>
+            </Field>
+          </FieldSet>
+        </form>
+      </form.Form>
     </>
   )
 }

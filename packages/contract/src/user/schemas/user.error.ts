@@ -3,7 +3,7 @@ import * as Schema from 'effect/Schema'
 import { ApiResponse } from '@/schema'
 import { UserId } from '@/user/schemas/user.schema'
 
-export class UserQueryError extends Schema.TaggedErrorClass<UserQueryError>()(
+export class UserQueryError extends Schema.TaggedError<UserQueryError>()(
   'user/domain/UserQueryError',
   ApiResponse({
     status: 400,
@@ -13,7 +13,7 @@ export class UserQueryError extends Schema.TaggedErrorClass<UserQueryError>()(
   { httpApiStatus: 400 }
 ) {}
 
-export class UserNotFound extends Schema.TaggedErrorClass<UserNotFound>()(
+export class UserNotFound extends Schema.TaggedError<UserNotFound>()(
   'user/domain/UserNotFound',
   ApiResponse({
     status: 404,
@@ -23,7 +23,7 @@ export class UserNotFound extends Schema.TaggedErrorClass<UserNotFound>()(
   { httpApiStatus: 404 }
 ) {}
 
-export class UserAlreadyExists extends Schema.TaggedErrorClass<UserAlreadyExists>()(
+export class UserAlreadyExists extends Schema.TaggedError<UserAlreadyExists>()(
   'user/domain/UserAlreadyExists',
   ApiResponse({
     status: 409,
@@ -36,7 +36,7 @@ export class UserAlreadyExists extends Schema.TaggedErrorClass<UserAlreadyExists
   { httpApiStatus: 409 }
 ) {}
 
-export class UserError extends Schema.TaggedErrorClass<UserError>()(
+export class UserError extends Schema.TaggedError<UserError>()(
   'user/domain/UserError',
   {
     reason: Schema.Union([UserQueryError, UserNotFound, UserAlreadyExists]),
