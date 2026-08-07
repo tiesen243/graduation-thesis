@@ -1,4 +1,4 @@
-import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
+import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
 import { Button } from '@rozumari/ui/components/button'
 import {
   CardDescription,
@@ -7,6 +7,7 @@ import {
 } from '@rozumari/ui/components/card'
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldLabel,
@@ -17,61 +18,42 @@ import { toast } from '@rozumari/ui/components/toast'
 import { useForm } from '@rozumari/ui/hooks/use-form'
 import { useMutation } from '@tanstack/react-query'
 import { toStandardSchemaV1 } from 'effect/Schema'
-import { Link } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
+import { env } from '@/lib/env'
 import { api } from '@/lib/runtime'
+import { getBaseUrl } from '@/lib/utils'
 
-export default function RegisterPage() {
+export function LoginForm() {
+  const navigate = useNavigate()
+
   const login = useMutation({
-    ...api.auth.register.mutationOptions(),
+    ...api.auth.login.mutationOptions(),
     onSuccess: ({ message }) => toast.add({ type: 'success', title: message }),
     onError: ({ message }) =>
-      toast.add({
-        type: 'error',
-        title: 'Registration failed',
-        description: message,
-      }),
+      toast.add({ type: 'error', title: 'Login failed', description: message }),
   })
 
   const form = useForm({
-    defaultValues: {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-    schema: toStandardSchemaV1(RegisterDto.Input),
-    onSubmit: login.mutate,
+    defaultValues: { email: '', password: '' },
+    schema: toStandardSchemaV1(LoginDto.Input),
+    onSubmit: login.mutateAsync,
+    onSuccess: () => navigate('/'),
   })
 
   return (
     <>
       <CardHeader>
-        <CardTitle>Register</CardTitle>
+        <CardTitle>Login</CardTitle>
         <CardDescription>
-          Create an account to access all features.
+          Enter your credentials to access your account.
         </CardDescription>
       </CardHeader>
 
       <form.Form>
         <form id={form.formId} className='px-4' onSubmit={form.handleSubmit}>
           <FieldSet disabled={login.isPending}>
-            <legend className='sr-only'>Register</legend>
-
-            <form.Field
-              name='username'
-              render={({ field, meta }) => (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Username</FieldLabel>
-                  <Input
-                    {...field}
-                    type='text'
-                    placeholder='Enter your username'
-                  />
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
-              )}
-            />
+            <legend className='sr-only'>Login</legend>
 
             <form.Field
               name='email'
@@ -92,7 +74,14 @@ export default function RegisterPage() {
               name='password'
               render={({ field, meta }) => (
                 <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+                  <FieldContent className='flex-row justify-between'>
+                    <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+                    <FieldDescription>
+                      <Link to='/forgot-password' tabIndex={-1}>
+                        Forgot your password?
+                      </Link>
+                    </FieldDescription>
+                  </FieldContent>
                   <Input
                     {...field}
                     type='password'
@@ -103,28 +92,25 @@ export default function RegisterPage() {
               )}
             />
 
-            <form.Field
-              name='confirmPassword'
-              render={({ field, meta }) => (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
-                  <Input
-                    {...field}
-                    type='password'
-                    placeholder='Confirm your password'
+            <Field orientation='responsive'>
+              <Button type='submit'>Login</Button>
+
+              <Button
+                variant='outline'
+                nativeButton={false}
+                render={
+                  <Link
+                    to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}/login`}
                   />
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
-              )}
-            />
-
-            <Field>
-              <Button type='submit'>Register</Button>
-
-              <FieldDescription>
-                Already have an account? <Link to='/login'>Login</Link>
-              </FieldDescription>
+                }
+              >
+                Login with Google
+              </Button>
             </Field>
+
+            <FieldDescription>
+              Don&apos;t have an account? <Link to='/register'>Register</Link>
+            </FieldDescription>
           </FieldSet>
         </form>
       </form.Form>

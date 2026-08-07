@@ -5,6 +5,13 @@ import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers/base.provider'
 
+const GoogleUserSchema = Schema.Struct({
+  sub: Schema.String,
+  name: Schema.String,
+  email: Schema.String,
+  picture: Schema.String,
+})
+
 export class GoogleProvider extends BaseProvider {
   public constructor(clientId: string, clientSecret: string, redirectUri = '') {
     super('google', clientId, clientSecret, redirectUri)
@@ -54,10 +61,3 @@ export class GoogleProvider extends BaseProvider {
     }
   )
 }
-
-const GoogleUserSchema = Schema.Struct({
-  sub: Schema.String,
-  name: Schema.String,
-  email: Schema.String,
-  picture: Schema.String,
-})

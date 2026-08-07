@@ -40,7 +40,9 @@ export class InMemoryClient extends Context.Service<
     return {
       db,
 
+      // oxlint-disable-next-line no-use-before-define
       buildCriteria,
+
       buildOrderBy: (items, orderBy) =>
         Effect.sync(() =>
           [...items].toSorted((a, b) => {
@@ -61,6 +63,55 @@ export class InMemoryClient extends Context.Service<
   }),
 }) {
   public static readonly layer = Layer.effect(this, this.make)
+}
+
+// oxlint-disable-next-line eslint/complexity
+function matchOperator(itemValue: unknown, expr: unknown): boolean {
+  if (typeof expr !== 'object' || expr === null || expr instanceof Date) {
+    if (itemValue instanceof Date && expr instanceof Date) {
+      return itemValue.getTime() === expr.getTime()
+    }
+    return itemValue === expr
+  }
+
+  const opObj = expr as Record<string, unknown>
+
+  if ('eq' in opObj && itemValue !== opObj.eq) return false
+  if ('ne' in opObj && itemValue === opObj.ne) return false
+  if ('in' in opObj && Array.isArray(opObj.in) && !opObj.in.includes(itemValue))
+    return false
+
+  if ('isNull' in opObj) {
+    const isNullOrUndefined = itemValue === null || itemValue === undefined
+    if (opObj.isNull !== isNullOrUndefined) return false
+  }
+
+  if ('gt' in opObj && !((itemValue as any) > (opObj.gt as any))) return false
+  if ('gte' in opObj && !((itemValue as any) >= (opObj.gte as any)))
+    return false
+  if ('lt' in opObj && !((itemValue as any) < (opObj.lt as any))) return false
+  if ('lte' in opObj && !((itemValue as any) <= (opObj.lte as any)))
+    return false
+
+  if ('between' in opObj && Array.isArray(opObj.between)) {
+    const [from, to] = opObj.between as [any, any]
+    if ((itemValue as any) < from || (itemValue as any) > to) return false
+  }
+
+  if ('like' in opObj && typeof opObj.like === 'string') {
+    const strVal = String(itemValue ?? '')
+    const pattern = opObj.like
+      .replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&')
+      .replaceAll('%', '.*')
+      .replaceAll('_', '.')
+
+    const flags = opObj.mode === 'insensitive' ? 'i' : ''
+    const regex = new RegExp(`^${pattern}$`, flags)
+
+    if (!regex.test(strVal)) return false
+  }
+
+  return true
 }
 
 const buildCriteria = <TEntity>(
@@ -118,52 +169,3 @@ const buildCriteria = <TEntity>(
 
     return true
   })
-
-// oxlint-disable-next-line eslint/complexity
-function matchOperator(itemValue: unknown, expr: unknown): boolean {
-  if (typeof expr !== 'object' || expr === null || expr instanceof Date) {
-    if (itemValue instanceof Date && expr instanceof Date) {
-      return itemValue.getTime() === expr.getTime()
-    }
-    return itemValue === expr
-  }
-
-  const opObj = expr as Record<string, unknown>
-
-  if ('eq' in opObj && itemValue !== opObj.eq) return false
-  if ('ne' in opObj && itemValue === opObj.ne) return false
-  if ('in' in opObj && Array.isArray(opObj.in) && !opObj.in.includes(itemValue))
-    return false
-
-  if ('isNull' in opObj) {
-    const isNullOrUndefined = itemValue === null || itemValue === undefined
-    if (opObj.isNull !== isNullOrUndefined) return false
-  }
-
-  if ('gt' in opObj && !((itemValue as any) > (opObj.gt as any))) return false
-  if ('gte' in opObj && !((itemValue as any) >= (opObj.gte as any)))
-    return false
-  if ('lt' in opObj && !((itemValue as any) < (opObj.lt as any))) return false
-  if ('lte' in opObj && !((itemValue as any) <= (opObj.lte as any)))
-    return false
-
-  if ('between' in opObj && Array.isArray(opObj.between)) {
-    const [from, to] = opObj.between as [any, any]
-    if ((itemValue as any) < from || (itemValue as any) > to) return false
-  }
-
-  if ('like' in opObj && typeof opObj.like === 'string') {
-    const strVal = String(itemValue ?? '')
-    const pattern = opObj.like
-      .replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&')
-      .replaceAll('%', '.*')
-      .replaceAll('_', '.')
-
-    const flags = opObj.mode === 'insensitive' ? 'i' : ''
-    const regex = new RegExp(`^${pattern}$`, flags)
-
-    if (!regex.test(strVal)) return false
-  }
-
-  return true
-}

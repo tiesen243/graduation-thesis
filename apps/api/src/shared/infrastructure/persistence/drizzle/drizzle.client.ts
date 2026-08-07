@@ -70,6 +70,7 @@ export class DrizzleClient extends Context.Service<
         Effect.provide(PgDrizzle.DefaultServices)
       ),
 
+      // oxlint-disable-next-line no-use-before-define
       buildCriteria,
 
       buildOrderBy: Effect.fn(function* buildOrderByFn<TEntity>(

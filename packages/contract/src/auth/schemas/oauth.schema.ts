@@ -1,5 +1,7 @@
 import * as Schema from 'effect/Schema'
 
+import { RefreshToken } from '@/auth/schemas/token.schema'
+
 export namespace OAuthSchema {
   export const Params = Schema.Struct({
     provider: Schema.String,
@@ -12,4 +14,13 @@ export namespace OAuthSchema {
     redirect_uri: Schema.optional(Schema.String),
   })
   export type Query = typeof Query.Type
+
+  export const Payload = Schema.Struct({
+    token: RefreshToken,
+  })
+  export type Payload = typeof Payload.Type
+
+  export const Success = Schema.Struct({
+    success: Schema.Boolean,
+  })
 }

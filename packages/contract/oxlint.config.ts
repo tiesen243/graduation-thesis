@@ -8,6 +8,7 @@ export default defineConfig({
       files: ['src/**/*.error.ts'],
       rules: {
         'max-classes-per-file': 'off',
+        'unicorn/throw-new-error': 'off',
       },
     },
   ],

@@ -67,4 +67,12 @@ export class OAuthGroup extends HttpApiGroup.make('oauth')
     })
   )
 
+  .add(
+    HttpApiEndpoint.post('exchange', '/oauth', {
+      payload: OAuthSchema.Payload,
+      success: OAuthSchema.Success,
+      error: [ProviderError, InvalidToken],
+    })
+  )
+
   .prefix('/api/auth') {}

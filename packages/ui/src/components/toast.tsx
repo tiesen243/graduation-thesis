@@ -32,37 +32,6 @@ interface ToastProviderProps extends ToastPrimitive.Provider.Props {
   position?: ToastPosition
 }
 
-function ToastProvider({
-  position = 'bottom-right',
-  children,
-  ...props
-}: ToastProviderProps) {
-  return (
-    <ToastPrimitive.Provider toastManager={toast} {...props}>
-      {children}
-
-      <ToastPrimitive.Portal data-slot='toaster-portal'>
-        <ToastPrimitive.Viewport
-          data-slot='toaster-viewport'
-          data-position={position}
-          className={cn(
-            'fixed z-50 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]',
-            // Vertical positions
-            'data-[position*=top]:top-(--toast-inset)',
-            'data-[position*=bottom]:bottom-(--toast-inset)',
-            // Horizontal positions
-            'data-[position*=left]:left-(--toast-inset)',
-            'data-[position*=center]:left-1/2 data-[position*=center]:-translate-x-1/2',
-            'data-[position*=right]:right-(--toast-inset)'
-          )}
-        >
-          <Toaster position={position} />
-        </ToastPrimitive.Viewport>
-      </ToastPrimitive.Portal>
-    </ToastPrimitive.Provider>
-  )
-}
-
 function Toaster({
   position = 'bottom-right',
 }: Pick<ToastProviderProps, 'position'>) {
@@ -92,7 +61,7 @@ function Toaster({
           'data-[position*=top]:[--toast-calc-offset-y:calc(var(--toast-offset-y)+var(--toast-index)*var(--toast-gap)+var(--toast-swipe-movement-y))]',
           'data-[position*=bottom]:[--toast-calc-offset-y:calc(var(--toast-offset-y)*-1+var(--toast-index)*var(--toast-gap)*-1+var(--toast-swipe-movement-y))]',
           // Variants
-          'bg-popover text-popover-foreground border',
+          'border bg-popover text-popover-foreground',
           'data-[type=success]:border-green-600 data-[type=success]:bg-green-100 data-[type=success]:text-green-600 dark:data-[type=success]:border-green-400 dark:data-[type=success]:bg-green-950 dark:data-[type=success]:text-green-400',
           'data-[type=error]:border-red-600 data-[type=error]:bg-red-100 data-[type=error]:text-red-600 dark:data-[type=error]:border-red-400 dark:data-[type=error]:bg-red-950 dark:data-[type=error]:text-red-400',
           'data-[type=info]:border-blue-600 data-[type=info]:bg-blue-100 data-[type=info]:text-blue-600 dark:data-[type=info]:border-blue-400 dark:data-[type=info]:bg-blue-950 dark:data-[type=info]:text-blue-400',
@@ -134,7 +103,7 @@ function Toaster({
               {Icon && (
                 <Icon
                   data-slot='toast-icon'
-                  className='in-data-[type=loading]:text-muted-foreground size-4 shrink-0 in-data-[type=loading]:animate-spin'
+                  className='size-4 shrink-0 in-data-[type=loading]:animate-spin in-data-[type=loading]:text-muted-foreground'
                 />
               )}
 
@@ -146,7 +115,7 @@ function Toaster({
 
             <ToastPrimitive.Description
               data-slot='toast-description'
-              className='not-in-data-type:text-muted-foreground in-data-[type=loading]:text-muted-foreground text-sm'
+              className='text-sm not-in-data-type:text-muted-foreground in-data-[type=loading]:text-muted-foreground'
             />
           </div>
 
@@ -164,6 +133,37 @@ function Toaster({
       </ToastPrimitive.Root>
     )
   })
+}
+
+function ToastProvider({
+  position = 'bottom-right',
+  children,
+  ...props
+}: ToastProviderProps) {
+  return (
+    <ToastPrimitive.Provider toastManager={toast} {...props}>
+      {children}
+
+      <ToastPrimitive.Portal data-slot='toaster-portal'>
+        <ToastPrimitive.Viewport
+          data-slot='toaster-viewport'
+          data-position={position}
+          className={cn(
+            'fixed z-50 mx-auto flex w-[calc(100%-var(--toast-inset)*2)] max-w-90 [--toast-inset:--spacing(4)] sm:[--toast-inset:--spacing(8)]',
+            // Vertical positions
+            'data-[position*=top]:top-(--toast-inset)',
+            'data-[position*=bottom]:bottom-(--toast-inset)',
+            // Horizontal positions
+            'data-[position*=left]:left-(--toast-inset)',
+            'data-[position*=center]:left-1/2 data-[position*=center]:-translate-x-1/2',
+            'data-[position*=right]:right-(--toast-inset)'
+          )}
+        >
+          <Toaster position={position} />
+        </ToastPrimitive.Viewport>
+      </ToastPrimitive.Portal>
+    </ToastPrimitive.Provider>
+  )
 }
 
 export { toast, ToastProvider }

@@ -1,5 +1,6 @@
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
-import { Effect, Layer } from 'effect'
+import * as Effect from 'effect/Effect'
+import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
 
