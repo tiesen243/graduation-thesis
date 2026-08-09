@@ -1,3 +1,5 @@
+// oxlint-disable unicorn/no-nested-ternary
+
 import {
   Pagination,
   PaginationContent,
@@ -68,7 +70,6 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       </TableHeader>
 
       <TableBody>
-        {/* oxlint-disable-next-line no-nested-ternary */}
         {isLoading ? (
           Array.from({ length: pageSize ?? 1 }, (_, index) => (
             <TableRow key={index}>
