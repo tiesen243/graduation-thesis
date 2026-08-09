@@ -17,10 +17,9 @@ import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import type { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
-
 import { Jwt } from '@/modules/auth/application/security/jwt'
 import { TOKEN_EXPIRATION } from '@/modules/auth/constants'
+import { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
@@ -50,12 +49,9 @@ export class AuthService extends Context.Service<
       userRole: UserRole
     ) => Effect.Effect<Token>
 
-    readonly verifyRefreshToken: (token: RefreshToken) => Effect.Effect<
-      Pick<SessionUserAggregate['session'], 'token' | 'expiresAt'> & {
-        user: SessionUserAggregate['user']
-      },
-      InvalidToken
-    >
+    readonly verifyRefreshToken: (
+      token: RefreshToken
+    ) => Effect.Effect<SessionUserAggregate, InvalidToken>
   }
 >()('auth/application/AuthService', {
   make: Effect.gen(function* make() {
@@ -152,11 +148,10 @@ export class AuthService extends Context.Service<
           yield* sessionRepository.save(session)
         }
 
-        return {
-          token: refreshToken,
+        return SessionUserAggregate.make({
+          session,
           user: agg.user,
-          expiresAt: session.expiresAt,
-        }
+        })
       }),
     }
   }),

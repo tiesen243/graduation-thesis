@@ -4,20 +4,17 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@rozumari/ui/components/sidebar'
-import { useQuery } from '@tanstack/react-query'
 import { Navigate, Outlet } from 'react-router'
 
-import { api } from '@/lib/runtime'
+import { useSession } from '@/lib/use-session'
 import { DashboardSidebar } from '@/routes/dashboard/_components/dashboard-sidebar'
 
 export default function DashboardRoot() {
-  const { data, isLoading } = useQuery(
-    api.auth.whoami.queryOptions(undefined, { retry: 1 })
-  )
+  const { status } = useSession()
 
-  if (isLoading) return <div>Loading...</div>
+  if (status === 'loading') return null
 
-  if (!data?.data) return <Navigate to='/login' replace />
+  if (status === 'unauthenticated') return <Navigate to='/login' replace />
 
   return (
     <SidebarProvider>

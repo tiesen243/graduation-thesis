@@ -25,17 +25,14 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@rozumari/ui/components/sidebar'
-import { useQuery } from '@tanstack/react-query'
 
-import { api } from '@/lib/runtime'
+import { useSession } from '@/lib/use-session'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
-  const { data, isLoading } = useQuery(api.auth.whoami.queryOptions())
 
-  if (isLoading || !data?.data) return null
-
-  const user = data.data
+  const { user, status, logout } = useSession()
+  if (status !== 'authenticated') return null
 
   return (
     <SidebarMenu>
@@ -108,9 +105,8 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon />
-              Log out
+            <DropdownMenuItem onClick={() => logout()}>
+              <LogOutIcon /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

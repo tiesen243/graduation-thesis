@@ -6,7 +6,6 @@ import {
   CalendarClockIcon,
   CreditCardIcon,
   FileTextIcon,
-  Grid3x3Icon,
   LayoutDashboardIcon,
   LifeBuoyIcon,
   PillBottleIcon,
@@ -26,8 +25,8 @@ export interface NavItem {
   title: string
   url?: string
   icon: LucideIcon
-  badge?: string
   items?: NavSubItem[]
+  isAdminOnly?: boolean
 }
 
 export interface NavGroupConfig {
@@ -40,8 +39,13 @@ export const navGroups: NavGroupConfig[] = [
     label: 'Overview',
     items: [
       { title: 'Dashboard', icon: LayoutDashboardIcon, url: '/dashboard' },
-      { title: 'Patients', icon: UsersIcon, url: '/patients', badge: '8' },
-      { title: 'Adherence', icon: ActivityIcon, url: '/adherence' },
+      { title: 'Patients', icon: UsersIcon, url: '/patients' },
+      {
+        title: 'Adherence',
+        icon: ActivityIcon,
+        url: '/adherence',
+        isAdminOnly: true,
+      },
     ],
   },
   {
@@ -52,30 +56,49 @@ export const navGroups: NavGroupConfig[] = [
         icon: PillIcon,
         items: [
           { title: 'All Devices', icon: PillBottleIcon, url: '/devices' },
-          { title: 'Compartments', icon: Grid3x3Icon, url: '/compartments' },
           { title: 'Refills', icon: PillIcon, url: '/refills' },
         ],
+      },
+      {
+        title: 'Users',
+        icon: UsersIcon,
+        url: '/users',
+        isAdminOnly: true,
       },
       {
         title: 'Schedules',
         icon: CalendarClockIcon,
         url: '/schedules',
-        badge: '24',
       },
     ],
   },
   {
     label: 'Billing',
     items: [
-      { title: 'Subscriptions', icon: CreditCardIcon, url: '/subscriptions' },
-      { title: 'Invoices', icon: FileTextIcon, url: '/invoices' },
-      { title: 'Transactions', icon: ReceiptIcon, url: '/transactions' },
+      {
+        title: 'Subscriptions',
+        icon: CreditCardIcon,
+        url: '/subscriptions',
+        isAdminOnly: true,
+      },
+      {
+        title: 'Invoices',
+        icon: FileTextIcon,
+        url: '/invoices',
+        isAdminOnly: true,
+      },
+      {
+        title: 'Transactions',
+        icon: ReceiptIcon,
+        url: '/transactions',
+        isAdminOnly: true,
+      },
     ],
   },
 ]
 
 export const secondaryNavItems: NavItem[] = [
-  { title: 'Notifications', icon: BellIcon, url: '/notifications', badge: '3' },
+  { title: 'Notifications', icon: BellIcon, url: '/notifications' },
   { title: 'Settings', icon: SettingsIcon, url: '/settings' },
   { title: 'Support', icon: LifeBuoyIcon, url: '/support' },
 ]

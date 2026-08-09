@@ -5,4 +5,17 @@ import { defineConfig } from 'oxlint'
 
 export default defineConfig({
   extends: [core, effect, react],
+  overrides: [
+    {
+      files: ['./src/**/*.tsx'],
+      rules: {
+        'react/no-unstable-nested-components': [
+          'error',
+          {
+            allowAsProps: true,
+          },
+        ],
+      },
+    },
+  ],
 })

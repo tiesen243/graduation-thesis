@@ -1,4 +1,4 @@
-import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
+import type { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
 import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
@@ -9,21 +9,23 @@ import * as HttpServerRequest from 'effect/unstable/http/HttpServerRequest'
 
 import { AuthService } from '@/modules/auth/application/auth.service'
 import { COOKIE_KEYS } from '@/modules/auth/constants'
+import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 
-export class RefreshTokenUseCase extends Context.Service<
-  RefreshTokenUseCase,
+export class LogoutUseCase extends Context.Service<
+  LogoutUseCase,
   {
     execute: (
-      input: RefreshTokenDto.Input
+      input: LogoutDto.Input
     ) => Effect.Effect<
-      RefreshTokenDto.Output,
+      LogoutDto.Output,
       InvalidToken,
       HttpServerRequest.HttpServerRequest
     >
   }
->()('auth/application/RefreshTokenUseCase', {
+>()('auth/application/LogoutUseCase', {
   make: Effect.gen(function* make() {
     const authService = yield* AuthService
+    const sessionRepository = yield* SessionRepository
 
     return {
       execute: Effect.fn(function* execute(input) {
@@ -36,22 +38,14 @@ export class RefreshTokenUseCase extends Context.Service<
         ).pipe(Effect.orDie)
 
         const token = cookies[COOKIE_KEYS.REFRESH_TOKEN] ?? authorization ?? ''
-        if (!token) return yield* Effect.fail(new InvalidToken())
-
-        const { session, user } = yield* authService.verifyRefreshToken(
+        const { session } = yield* authService.verifyRefreshToken(
           RefreshToken.make(token)
         )
+        if (!session) return yield* Effect.fail(new InvalidToken())
 
-        const accessToken = yield* authService.createAccessToken(
-          user.id,
-          user.role
-        )
+        yield* sessionRepository.delete(session)
 
-        return RefreshTokenDto.Output.make({
-          refreshToken: session.token,
-          accessToken,
-          expiresAt: session.expiresAt,
-        })
+        return null
       }),
     }
   }),

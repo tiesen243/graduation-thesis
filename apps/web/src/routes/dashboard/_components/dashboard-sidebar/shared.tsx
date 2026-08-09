@@ -7,18 +7,24 @@ import { ChevronRightIcon, Loader2Icon } from '@rozumari/ui/components/icons'
 import {
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarMenuBadge,
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
 } from '@rozumari/ui/components/sidebar'
+import { useQuery } from '@tanstack/react-query'
 import { NavLink } from 'react-router'
 
 import type { NavItem } from '@/routes/dashboard/_components/dashboard-sidebar/config'
 
+import { api } from '@/lib/runtime'
+
 export function NavSingleItem({ item }: { item: NavItem }) {
+  const { data } = useQuery(api.auth.whoami.queryOptions())
+
   const Icon = item.icon
-  if (!item.url) return null
+  if (!item.url || !data?.data) return null
+
+  if (item.isAdminOnly && data.data.role !== 'admin') return null
 
   return (
     <SidebarMenuItem>
@@ -32,9 +38,6 @@ export function NavSingleItem({ item }: { item: NavItem }) {
                 <span className='truncate'>{item.title}</span>
 
                 {isPending && <Loader2Icon className='ml-auto animate-spin' />}
-                {item.badge && !isPending && (
-                  <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-                )}
               </>
             )}
           </NavLink>

@@ -5,6 +5,7 @@ import { ToastProvider } from '@rozumari/ui/components/toast'
 import { TooltipProvider } from '@rozumari/ui/components/tooltip'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ThemeProvider } from 'next-themes'
+import { NuqsAdapter } from 'nuqs/adapters/react-router/v8'
 
 let clientQueryClientSingleton: QueryClient | undefined
 const getQueryClient = () => {
@@ -28,7 +29,7 @@ export function Providers({
       <ToastProvider>
         <TooltipProvider>
           <QueryClientProvider client={queryClient}>
-            {children}
+            <NuqsAdapter>{children}</NuqsAdapter>
           </QueryClientProvider>
         </TooltipProvider>
       </ToastProvider>

@@ -184,8 +184,7 @@ export const oauthController = HttpApiBuilder.group(
         Effect.fn(function* exchangeHandler({ payload }) {
           const { token } = payload
 
-          const { user, expiresAt } =
-            yield* authService.verifyRefreshToken(token)
+          const { session, user } = yield* authService.verifyRefreshToken(token)
 
           const accessToken = yield* authService.createAccessToken(
             user.id,
@@ -198,12 +197,12 @@ export const oauthController = HttpApiBuilder.group(
                 [
                   COOKIE_KEYS.REFRESH_TOKEN,
                   token,
-                  { ...COOKIE_OPTIONS, expires: expiresAt },
+                  { ...COOKIE_OPTIONS, expires: session.expiresAt },
                 ],
                 [
                   COOKIE_KEYS.ACCESS_TOKEN,
                   accessToken,
-                  { ...COOKIE_OPTIONS, expires: expiresAt },
+                  { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
                 ],
               ])
             ),

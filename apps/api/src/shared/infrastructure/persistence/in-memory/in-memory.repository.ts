@@ -54,8 +54,13 @@ export const makeInMemoryRepository = Effect.fn(
       }),
 
       save: Effect.fn(function* save(entity) {
-        const key = primaryKey(entity)
-        yield* Ref.update(dictRef, (dict) => dict.set(key, entity))
+        const entities = Array.isArray(entity) ? entity : [entity]
+
+        for (const _entity of entities) {
+          const key = primaryKey(_entity)
+
+          yield* Ref.update(dictRef, (dict) => dict.set(key, _entity))
+        }
       }),
 
       delete: Effect.fn(function* deleteEntity(entity) {

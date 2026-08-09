@@ -45,13 +45,23 @@ export const makeDrizzleRepository = Effect.fn(function* makeDrizzleRepository<
     }),
 
     save: Effect.fn(function* save(entity) {
-      const row = mapper.toRow(entity)
+      if (Array.isArray(entity)) {
+        if (entity.length === 0) return
 
-      yield* db
+        return yield* db
+          .insert(table)
+          .values(entity.map(mapper.toRow))
+          .onConflictDoNothing({ target: primaryKey })
+          .pipe(Effect.asVoid, Effect.orDie)
+      }
+
+      const row = mapper.toRow(entity) as Record<string, unknown>
+
+      return yield* db
         .insert(table)
-        .values(row as never)
-        .onConflictDoUpdate({ target: primaryKey, set: row as never })
-        .pipe(Effect.orDie)
+        .values(row)
+        .onConflictDoUpdate({ target: primaryKey, set: row })
+        .pipe(Effect.asVoid, Effect.orDie)
     }),
 
     delete: Effect.fn(function* deleteEntity(entity) {

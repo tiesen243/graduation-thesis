@@ -20,13 +20,13 @@
     "@rozumari/lib": "workspace:*",
     "drizzle-orm": "^1.0.0-rc.4-fb12281",
     "effect": "catalog:effect",
-    "pg": "^8.22.0"
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "@types/pg": "^8.20.4",
+    "@types/pg": "^8.21.0",
     "drizzle-kit": "^1.0.0-rc.4-ca0f029",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
