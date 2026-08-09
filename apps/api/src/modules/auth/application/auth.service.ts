@@ -5,6 +5,7 @@ import type {
   UserId,
   UserRole,
 } from '@rozumari/contract/user/schemas/user.schema'
+import type { Crypto } from 'effect/Crypto'
 
 import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
 import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
@@ -15,6 +16,7 @@ import {
 import * as Context from 'effect/Context'
 import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
+import * as Encoding from 'effect/Encoding'
 import * as Layer from 'effect/Layer'
 
 import { Jwt } from '@/modules/auth/application/security/jwt'
@@ -24,13 +26,9 @@ import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
   constantTimeEqual,
+  generateSecureString,
   hashSecret,
 } from '@/modules/auth/infrastructure/security/crypto'
-import {
-  decodeHex,
-  encodeHex,
-} from '@/modules/auth/infrastructure/security/crypto/encoding'
-import { generateSecureString } from '@/modules/auth/infrastructure/security/crypto/random'
 
 export class AuthService extends Context.Service<
   AuthService,
@@ -47,11 +45,11 @@ export class AuthService extends Context.Service<
     readonly createRefreshToken: (
       userId: UserId,
       userRole: UserRole
-    ) => Effect.Effect<Token>
+    ) => Effect.Effect<Token, never, Crypto>
 
     readonly verifyRefreshToken: (
       token: RefreshToken
-    ) => Effect.Effect<SessionUserAggregate, InvalidToken>
+    ) => Effect.Effect<SessionUserAggregate, InvalidToken, Crypto>
   }
 >()('auth/application/AuthService', {
   make: Effect.gen(function* make() {
@@ -80,9 +78,9 @@ export class AuthService extends Context.Service<
 
       createRefreshToken: Effect.fn(
         function* createRefreshToken(userId, userRole) {
-          const id = generateSecureString()
-          const secret = generateSecureString()
-          const hashedSecret = yield* hashSecret(secret)
+          const id = yield* generateSecureString
+          const secret = yield* generateSecureString
+          const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
 
           const refreshToken = `${id}.${secret}`
           const expiresAt = DateTime.add(now, {
@@ -91,7 +89,7 @@ export class AuthService extends Context.Service<
 
           const session = Session.make({
             id: SessionId.make(id),
-            token: RefreshToken.make(encodeHex(hashedSecret)),
+            token: RefreshToken.make(Encoding.encodeHex(hashedSecret)),
             expiresAt: DateTime.toDate(expiresAt),
             userId,
           })
@@ -121,11 +119,14 @@ export class AuthService extends Context.Service<
           )
         let { session } = agg
 
-        const hashedSecret = yield* hashSecret(secret)
-        const isValid = constantTimeEqual(
-          hashedSecret,
-          decodeHex(session.token)
-        )
+        const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
+        const storedSecret = Encoding.decodeHex(session.token)
+        if (storedSecret._tag === 'Failure')
+          return yield* Effect.fail(
+            new InvalidToken({ message: 'Invalid refresh token' })
+          )
+
+        const isValid = constantTimeEqual(hashedSecret, storedSecret.success)
 
         const expiresTime = DateTime.makeUnsafe(session.expiresAt)
 

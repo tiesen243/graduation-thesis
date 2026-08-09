@@ -1,3 +1,5 @@
+import type { Crypto } from 'effect/Crypto'
+
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 import * as HttpClient from 'effect/unstable/http/HttpClient'
@@ -24,7 +26,7 @@ export class GoogleProvider extends BaseProvider {
   public override createAuthorizationUrl = (
     state: string,
     codeVerifier: string
-  ): Effect.Effect<URL> =>
+  ): Effect.Effect<URL, never, Crypto> =>
     this.createAuthorizationUrlWithPKCE(
       this.authorizationEndpoint,
       state,

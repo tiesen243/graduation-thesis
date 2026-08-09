@@ -1,3 +1,4 @@
+import type { Crypto } from 'effect/Crypto'
 import type { SchemaError } from 'effect/SchemaError'
 import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
 
@@ -7,7 +8,7 @@ import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
 import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { OAuth } from '@/modules/auth/application/types'
-import { generateCodeChallenge } from '@/modules/auth/infrastructure/security/crypto/random'
+import { generateCodeChallenge } from '@/modules/auth/infrastructure/security/crypto'
 
 export abstract class BaseProvider {
   protected constructor(
@@ -22,7 +23,7 @@ export abstract class BaseProvider {
   public abstract createAuthorizationUrl(
     state: string,
     codeVerifier: string
-  ): Effect.Effect<URL>
+  ): Effect.Effect<URL, never, Crypto>
 
   public abstract fetchUserData(
     code: string,

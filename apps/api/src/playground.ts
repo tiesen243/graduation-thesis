@@ -1,15 +1,14 @@
-import { BunRuntime } from '@effect/platform-bun'
-import { DateTime, Effect } from 'effect'
+import * as BunCrypto from '@effect/platform-bun/BunCrypto'
+import * as BunRuntime from '@effect/platform-bun/BunRuntime'
+import * as Effect from 'effect/Effect'
+
+import { hashSecret } from '@/modules/auth/infrastructure/security/crypto'
 
 const program = Effect.gen(function* program() {
-  const currentTimezone = yield* DateTime.CurrentTimeZone
-  yield* Effect.log(`Current timezone: ${currentTimezone}`)
+  const secret = 'my-secret'
 
-  const now = yield* DateTime.nowInCurrentZone
-  yield* Effect.log(`Current date and time: ${now}`)
-
-  const tomorrow = DateTime.add(now, { days: 1 })
-  yield* Effect.log(`Date and time after adding 1 day: ${tomorrow}`)
-}).pipe(Effect.provide(DateTime.layerCurrentZoneNamed('America/New_York')))
+  const hashedSecret = yield* hashSecret(secret)
+  yield* Effect.log(`Hashed secret: ${hashedSecret}`)
+}).pipe(Effect.provide(BunCrypto.layer))
 
 BunRuntime.runMain(program)

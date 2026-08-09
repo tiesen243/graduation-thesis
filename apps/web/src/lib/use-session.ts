@@ -1,12 +1,10 @@
 import type { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import * as Effect from 'effect/Effect'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 
-import { ApiClient } from '@/lib/api-client'
-import { api, runtime } from '@/lib/runtime'
+import { api } from '@/lib/runtime'
 
 type UseSessionReturn = (
   | { status: 'loading'; user: UserSchema | null }
@@ -23,7 +21,7 @@ export const useSession = () => {
     retry: 1,
   })
 
-  const { mutate } = useMutation({
+  const { mutate: logout } = useMutation({
     ...api.auth.logout.mutationOptions({ headers: {} }),
     onSettled: () =>
       queryClient.setQueryData(api.auth.whoami.getQueryKey(), { data: null }),
@@ -31,11 +29,9 @@ export const useSession = () => {
     onError: (e) => console.error(e),
   })
 
-  return useMemo<UseSessionReturn>(() => {
-    const logout = () => mutate()
-
+  return useMemo(() => {
     if (isLoading) return { status: 'loading', user: null, logout }
     if (data?.data) return { status: 'authenticated', user: data.data, logout }
     return { status: 'unauthenticated', user: null, logout }
-  }, [isLoading, data, mutate])
+  }, [isLoading, data, logout]) as UseSessionReturn
 }

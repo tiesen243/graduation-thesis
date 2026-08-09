@@ -1,13 +1,10 @@
 import * as Effect from 'effect/Effect'
+import * as Encoding from 'effect/Encoding'
 import * as Layer from 'effect/Layer'
 import { scrypt } from 'node:crypto'
 
 import { Password } from '@/modules/auth/application/security/password'
 import { constantTimeEqual } from '@/modules/auth/infrastructure/security/crypto'
-import {
-  decodeHex,
-  encodeHex,
-} from '@/modules/auth/infrastructure/security/crypto/encoding'
 
 export const PasswordLayer = ({
   secret = '',
@@ -51,9 +48,11 @@ export const PasswordLayer = ({
       })
 
       const hash = Effect.fn(function* hash(password: string) {
-        const salt = encodeHex(crypto.getRandomValues(new Uint8Array(16)))
+        const salt = Encoding.encodeHex(
+          crypto.getRandomValues(new Uint8Array(16))
+        )
         const key = yield* generateKey(password.normalize('NFKC'), salt)
-        return `${salt}:${encodeHex(key)}`
+        return `${salt}:${Encoding.encodeHex(key)}`
       })
 
       const verify = Effect.fn(function* verify(
@@ -66,7 +65,9 @@ export const PasswordLayer = ({
         const [salt = '', key = ''] = parts
         const targetKey = yield* generateKey(password.normalize('NFKC'), salt)
 
-        return constantTimeEqual(targetKey, decodeHex(key))
+        const decodedKey = Encoding.decodeHex(key)
+        if (decodedKey._tag === 'Failure') return false
+        return constantTimeEqual(targetKey, decodedKey.success)
       })
 
       return {

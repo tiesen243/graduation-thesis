@@ -1,3 +1,5 @@
+import type { Crypto } from 'effect/Crypto'
+
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
@@ -18,7 +20,7 @@ export class RefreshTokenUseCase extends Context.Service<
     ) => Effect.Effect<
       RefreshTokenDto.Output,
       InvalidToken,
-      HttpServerRequest.HttpServerRequest
+      Crypto | HttpServerRequest.HttpServerRequest
     >
   }
 >()('auth/application/RefreshTokenUseCase', {
@@ -48,7 +50,7 @@ export class RefreshTokenUseCase extends Context.Service<
         )
 
         return RefreshTokenDto.Output.make({
-          refreshToken: session.token,
+          refreshToken: RefreshToken.make(token),
           accessToken,
           expiresAt: session.expiresAt,
         })

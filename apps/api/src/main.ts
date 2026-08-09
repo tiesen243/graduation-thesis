@@ -1,3 +1,4 @@
+import * as BunCrypto from '@effect/platform-bun/BunCrypto'
 import * as DateTime from 'effect/DateTime'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
@@ -39,6 +40,7 @@ function bootstrap() {
       ),
       Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
       HttpServer.layerServices,
+      BunCrypto.layer,
     ])
   )
 

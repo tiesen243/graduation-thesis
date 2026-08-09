@@ -17,7 +17,7 @@ import { OAuth } from '@/modules/auth/application/security/oauth'
 import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/constants'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto/random'
+import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto'
 import { UserService } from '@/modules/user/application/user.service'
 import { withTransaction } from '@/shared/lib/utils'
 
@@ -36,8 +36,8 @@ export const oauthController = HttpApiBuilder.group(
         Effect.fn(function* authorizeHandler({ params, query }) {
           const provider = yield* OAuth.forProvider(params.provider)
 
-          const state = generateStateOrCode()
-          const code = generateStateOrCode()
+          const state = yield* generateStateOrCode
+          const code = yield* generateStateOrCode
 
           const authorizeUrl = yield* provider.createAuthorizationUrl(
             state,
@@ -137,7 +137,8 @@ export const oauthController = HttpApiBuilder.group(
             )
 
           const redirectUri = new URL(
-            request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/'
+            request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/',
+            request.originalUrl
           )
           if (redirectUri.origin !== request.originalUrl) {
             redirectUri.searchParams.set('access_token', accessToken)
