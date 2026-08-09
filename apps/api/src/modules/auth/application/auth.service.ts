@@ -57,8 +57,6 @@ export class AuthService extends Context.Service<
 
     const jwt = yield* Jwt
 
-    const now = yield* DateTime.nowInCurrentZone
-
     const createAccessToken = Effect.fn(
       function* createAccessToken(userId, userRole) {
         return yield* jwt.sign(
@@ -83,6 +81,8 @@ export class AuthService extends Context.Service<
           const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
 
           const refreshToken = `${id}.${secret}`
+
+          const now = yield* DateTime.now
           const expiresAt = DateTime.add(now, {
             seconds: TOKEN_EXPIRATION.refreshToken,
           })
@@ -128,6 +128,7 @@ export class AuthService extends Context.Service<
 
         const isValid = constantTimeEqual(hashedSecret, storedSecret.success)
 
+        const now = yield* DateTime.now
         const expiresTime = DateTime.makeUnsafe(session.expiresAt)
 
         if (!isValid || DateTime.isGreaterThanOrEqualTo(now, expiresTime)) {

@@ -101,11 +101,6 @@ export const oauthController = HttpApiBuilder.group(
                   userService.findByIdentifier({ email }),
                 ])
 
-                yield* Effect.logDebug({
-                  account,
-                  user,
-                })
-
                 let userId: UserId, userRole: UserRole
 
                 if (account) {

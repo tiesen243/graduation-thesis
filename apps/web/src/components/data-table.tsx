@@ -81,7 +81,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               ))}
             </TableRow>
           ))
-        ) : (data.length === 0 ? (
+        ) : data.length === 0 ? (
           <TableRow>
             <TableCell colSpan={activeKeys.length ?? 1} className='text-center'>
               No data available
@@ -97,7 +97,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
               ))}
             </TableRow>
           ))
-        ))}
+        )}
       </TableBody>
 
       {showPagination && (
