@@ -24,6 +24,8 @@ export const AddDeviceButton: React.FC = () => {
       setIsOpen(false)
       toast.add({ type: 'success', title: 'Device added successfully' })
     },
+    onError: (error) =>
+      toast.add({ type: 'error', description: error.message }),
     meta: { filter: { queryKey: api.device.list.getQueryKey() } },
   })
 
@@ -46,13 +48,7 @@ export const AddDeviceButton: React.FC = () => {
             Cancel
           </DialogClose>
 
-          <Button
-            onClick={() =>
-              mutate({
-                factoryModel: `PB-${Math.floor(Math.random() * 1_000_000)}`,
-              })
-            }
-          >
+          <Button onClick={() => mutate()}>
             {isPending ? 'Adding...' : 'Add device'}
           </Button>
         </DialogFooter>

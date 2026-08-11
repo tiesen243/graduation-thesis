@@ -14,9 +14,7 @@ export class AddDeviceDto extends Schema.TaggedClass<AddDeviceDto>()(
 ) {}
 
 export namespace AddDeviceDto {
-  export const Input = Schema.Struct({
-    factoryModel: DeviceSchema.fields.factoryModel,
-  })
+  export const Input = Schema.Void
   export type Input = typeof Input.Type
 
   export const Output = AddDeviceDto.fields.data

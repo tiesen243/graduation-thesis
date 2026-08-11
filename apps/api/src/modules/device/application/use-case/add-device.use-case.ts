@@ -1,6 +1,6 @@
 import type { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
+import type { DeviceAlreadyExists } from '@rozumari/contract/device/schemas/device.error'
 
-import { DeviceAlreadyExists } from '@rozumari/contract/device/schemas/device.error'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -24,17 +24,8 @@ export class AddDeviceUseCase extends Context.Service<
     const compartmentRepository = yield* CompartmentRepository
 
     return {
-      execute: Effect.fn(function* execute(input) {
-        const { factoryModel } = input
-
-        const [existingDevice] = yield* deviceRepository.findMany({
-          where: { factoryModel },
-          limit: 1,
-        })
-        if (existingDevice)
-          return yield* Effect.fail(
-            new DeviceAlreadyExists({ error: { id: null, factoryModel } })
-          )
+      execute: Effect.fn(function* execute(_input) {
+        const factoryModel = yield* Device.generateFactoryModel
 
         return yield* Effect.gen(function* tx() {
           const device = Device.make({ factoryModel })

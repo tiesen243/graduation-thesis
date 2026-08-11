@@ -16,7 +16,7 @@ export const devices = snakeCase.table(
   'devices',
   (t) => ({
     id: t.varchar({ length: 24 }).primaryKey().$type<DeviceId>(),
-    factoryModel: t.varchar({ length: 255 }).notNull(),
+    factoryModel: t.varchar({ length: 12 }).notNull(),
     status: deviceStatusEnum().notNull().$type<DeviceStatus>(),
     name: t.varchar({ length: 255 }),
     position: t.varchar({ length: 255 }),
