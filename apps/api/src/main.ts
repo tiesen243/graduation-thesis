@@ -31,9 +31,11 @@ function bootstrap() {
             : env.CORS_ORIGIN,
         allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: [
-          'Content-Type',
-          'Authorization',
-          'X-Requested-With',
+          'content-type',
+          'authorization',
+          'x-requested-with',
+          'x-vercel-protection-bypass',
+
           'b3',
           'traceparent',
         ],
