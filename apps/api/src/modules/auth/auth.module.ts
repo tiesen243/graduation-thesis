@@ -5,6 +5,7 @@ import type { UserService } from '@/modules/user/application/user.service'
 
 import { AuthService } from '@/modules/auth/application/auth.service'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
+import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
 import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
@@ -26,6 +27,7 @@ export class AuthModule {
 
     const useCaseLayer = Layer.mergeAll(
       LoginUseCase.layer,
+      LogoutUseCase.layer,
       RefreshTokenUseCase.layer,
       RegisterUseCase.layer,
       WhoAmIUseCase.layer

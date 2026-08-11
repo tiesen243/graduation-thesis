@@ -1,8 +1,9 @@
 import core from '@rozumari/oxlint/core'
+import effect from '@rozumari/oxlint/effect'
 import { defineConfig } from 'oxlint'
 
 export default defineConfig({
-  extends: [core],
+  extends: [core, effect],
   overrides: [
     {
       files: ['src/**/*.error.ts'],

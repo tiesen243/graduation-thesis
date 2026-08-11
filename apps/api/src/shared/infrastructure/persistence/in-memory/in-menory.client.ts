@@ -7,8 +7,10 @@ import * as Ref from 'effect/Ref'
 
 import type { Account } from '@/modules/auth/domain/entities/account.entity'
 import type { Session } from '@/modules/auth/domain/entities/session.entity'
+import type { Compartment } from '@/modules/device/domain/entities/compartment.entity'
+import type { Device } from '@/modules/device/domain/entities/device.entity'
 import type { User } from '@/modules/user/domain/entities/user.entity'
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 export class InMemoryClient extends Context.Service<
   InMemoryClient,
@@ -16,7 +18,11 @@ export class InMemoryClient extends Context.Service<
     db: {
       accounts: Ref.Ref<Map<string, Account>>
       sessions: Ref.Ref<Map<Session['id'], Session>>
+
       users: Ref.Ref<Map<User['id'], User>>
+
+      devices: Ref.Ref<Map<Device['id'], Device>>
+      compartments: Ref.Ref<Map<Compartment['id'], Compartment>>
     }
 
     buildCriteria: <TEntity>(
@@ -34,7 +40,11 @@ export class InMemoryClient extends Context.Service<
     const db = {
       accounts: yield* Ref.make(new Map<string, Account>()),
       sessions: yield* Ref.make(new Map<Session['id'], Session>()),
+
       users: yield* Ref.make(new Map<User['id'], User>()),
+
+      devices: yield* Ref.make(new Map<Device['id'], Device>()),
+      compartments: yield* Ref.make(new Map<Compartment['id'], Compartment>()),
     }
 
     return {

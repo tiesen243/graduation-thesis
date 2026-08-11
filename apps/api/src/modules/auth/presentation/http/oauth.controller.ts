@@ -1,7 +1,4 @@
-import type {
-  UserId,
-  UserRole,
-} from '@rozumari/contract/user/schemas/user.schema'
+import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
 import { Api } from '@rozumari/contract'
 import {
@@ -9,6 +6,7 @@ import {
   AccountProviderId,
 } from '@rozumari/contract/auth/schemas/account.schema'
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
+import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Effect from 'effect/Effect'
 import * as FetchHttpClient from 'effect/unstable/http/FetchHttpClient'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
@@ -19,8 +17,9 @@ import { OAuth } from '@/modules/auth/application/security/oauth'
 import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/constants'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto/random'
+import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto'
 import { UserService } from '@/modules/user/application/user.service'
+import { withTransaction } from '@/shared/utils'
 
 export const oauthController = HttpApiBuilder.group(
   Api,
@@ -37,8 +36,8 @@ export const oauthController = HttpApiBuilder.group(
         Effect.fn(function* authorizeHandler({ params, query }) {
           const provider = yield* OAuth.forProvider(params.provider)
 
-          const state = generateStateOrCode()
-          const code = generateStateOrCode()
+          const state = yield* generateStateOrCode
+          const code = yield* generateStateOrCode
 
           const authorizeUrl = yield* provider.createAuthorizationUrl(
             state,
@@ -88,44 +87,53 @@ export const oauthController = HttpApiBuilder.group(
             .pipe(Effect.provide(FetchHttpClient.layer))
             .pipe(Effect.orDie)
 
-          const [[account], user] = yield* Effect.all([
-            accountRepository.findMany({
-              where: {
-                provider: { eq: AccountProvider.make(params.provider) },
-                providerId: { eq: AccountProviderId.make(id) },
-              },
-              limit: 1,
-            }),
-            userService.findByIdentifier({ email }),
-          ])
-
-          let userId: UserId, userRole: UserRole
-
-          if (account && user) {
-            ;({ userId } = account)
-            userRole = user.role
-          } else {
-            const newUser = yield* userService.create({
-              username: crypto.randomUUID().slice(0, 8),
-              email,
-            })
-
-            userId = newUser.id
-            userRole = newUser.role
-
-            const newAccount = Account.make({
-              provider: AccountProvider.make(params.provider),
-              providerId: AccountProviderId.make(id),
-              userId,
-            })
-            yield* accountRepository.save(newAccount)
-          }
-
           const { accessToken, refreshToken, expiresAt } =
-            yield* authService.createRefreshToken(userId, userRole)
+            yield* withTransaction(
+              Effect.gen(function* tx() {
+                const [[account], user] = yield* Effect.all([
+                  accountRepository.findMany({
+                    where: {
+                      provider: { eq: AccountProvider.make(params.provider) },
+                      providerId: { eq: AccountProviderId.make(id) },
+                    },
+                    limit: 1,
+                  }),
+                  userService.findByIdentifier({ email }),
+                ])
+
+                let userId: UserId, userRole: UserRole
+
+                if (account) {
+                  ;({ userId } = account)
+                  userRole = user?.role ?? UserRole.make('user')
+                } else {
+                  if (user) {
+                    userId = user.id
+                    userRole = user.role
+                  } else {
+                    const newUser = yield* userService.create({
+                      username: crypto.randomUUID().slice(0, 8),
+                      email,
+                    })
+                    userId = newUser.id
+                    userRole = newUser.role
+                  }
+
+                  const newAccount = Account.make({
+                    provider: AccountProvider.make(params.provider),
+                    providerId: AccountProviderId.make(id),
+                    userId,
+                  })
+                  yield* accountRepository.save(newAccount)
+                }
+
+                return yield* authService.createRefreshToken(userId, userRole)
+              })
+            )
 
           const redirectUri = new URL(
-            request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/'
+            request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/',
+            request.originalUrl
           )
           if (redirectUri.origin !== request.originalUrl) {
             redirectUri.searchParams.set('access_token', accessToken)
@@ -172,8 +180,7 @@ export const oauthController = HttpApiBuilder.group(
         Effect.fn(function* exchangeHandler({ payload }) {
           const { token } = payload
 
-          const { user, expiresAt } =
-            yield* authService.verifyRefreshToken(token)
+          const { session, user } = yield* authService.verifyRefreshToken(token)
 
           const accessToken = yield* authService.createAccessToken(
             user.id,
@@ -186,12 +193,12 @@ export const oauthController = HttpApiBuilder.group(
                 [
                   COOKIE_KEYS.REFRESH_TOKEN,
                   token,
-                  { ...COOKIE_OPTIONS, expires: expiresAt },
+                  { ...COOKIE_OPTIONS, expires: session.expiresAt },
                 ],
                 [
                   COOKIE_KEYS.ACCESS_TOKEN,
                   accessToken,
-                  { ...COOKIE_OPTIONS, expires: expiresAt },
+                  { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
                 ],
               ])
             ),

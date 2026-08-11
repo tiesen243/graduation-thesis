@@ -10,5 +10,9 @@ export default [
     route('/register', './routes/auth/register.tsx'),
   ]),
 
-  // API routes
+  layout('./routes/dashboard/__root.tsx', [
+    route('/dashboard', './routes/dashboard/_index.tsx'),
+    route('/devices', './routes/dashboard/devices/_index.tsx'),
+    route('/*', './routes/dashboard/[...catch-all].tsx'),
+  ]),
 ] satisfies RouteConfig

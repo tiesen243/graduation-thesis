@@ -1,0 +1,45 @@
+import { Api } from '@rozumari/contract'
+import { CurrentUser } from '@rozumari/contract/auth/middleware'
+import { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
+import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
+import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
+import * as Effect from 'effect/Effect'
+import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
+
+import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
+import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
+import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+
+export const deviceController = HttpApiBuilder.group(
+  Api,
+  'device',
+  (handlers) =>
+    handlers
+
+      .handle('list', ({ query }) =>
+        ListDevicesUseCase.use((s) => s.execute(query)).pipe(
+          Effect.map((data) => ListDevicesDto.make({ data }))
+        )
+      )
+
+      .handle('me', ({ query }) =>
+        CurrentUser.pipe(
+          Effect.flatMap(({ userId }) =>
+            ListDevicesUseCase.use((s) => s.execute({ ...query, userId }))
+          ),
+          Effect.map((data) => ListDevicesDto.make({ data }))
+        )
+      )
+
+      .handle('show', ({ params }) =>
+        ShowDeviceUseCase.use((s) => s.execute(params)).pipe(
+          Effect.map((data) => ShowDeviceDto.make({ data }))
+        )
+      )
+
+      .handle('add', ({ payload }) =>
+        AddDeviceUseCase.use((s) => s.execute(payload)).pipe(
+          Effect.map((data) => AddDeviceDto.make({ data }))
+        )
+      )
+)

@@ -1,5 +1,6 @@
 import { Api } from '@rozumari/contract'
 import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
+import { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
 import { WhoAmIDto } from '@rozumari/contract/auth/dto/whoami.dto'
@@ -9,6 +10,7 @@ import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
+import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
 import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
@@ -43,6 +45,20 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
         ),
 
         Effect.map((data) => LoginDto.make({ data }))
+      )
+    )
+
+    .handle('logout', ({ headers }) =>
+      LogoutUseCase.use((s) => s.execute(headers)).pipe(
+        Effect.tap(() =>
+          HttpEffect.appendPreResponseHandler((_req, res) =>
+            HttpServerResponse.setCookies(res, [
+              [COOKIE_KEYS.REFRESH_TOKEN, '', { ...COOKIE_OPTIONS, maxAge: 0 }],
+              [COOKIE_KEYS.ACCESS_TOKEN, '', { ...COOKIE_OPTIONS, maxAge: 0 }],
+            ]).pipe(Effect.orDie)
+          )
+        ),
+        Effect.map(() => LogoutDto.make())
       )
     )
 

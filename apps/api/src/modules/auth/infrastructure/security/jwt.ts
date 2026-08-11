@@ -6,14 +6,11 @@ import {
 } from '@rozumari/contract/auth/schemas/auth.error'
 import { AccessToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Effect from 'effect/Effect'
+import * as Encoding from 'effect/Encoding'
 import * as Layer from 'effect/Layer'
 import crypto from 'node:crypto'
 
 import { Jwt } from '@/modules/auth/application/security/jwt'
-import {
-  decodeBase64Url,
-  encodeBase64Url,
-} from '@/modules/auth/infrastructure/security/crypto/encoding'
 
 export const JwtLayer = (secret: string, algorithm: Jwt.Algorithm = 'HS256') =>
   Layer.effect(
@@ -69,16 +66,18 @@ export const JwtLayer = (secret: string, algorithm: Jwt.Algorithm = 'HS256') =>
         if (options.includeIssuedTimestamp)
           payload.iat = Math.floor(Date.now() / 1000)
 
-        const headerPart = encodeBase64Url(
+        const headerPart = Encoding.encodeBase64Url(
           textEncoder.encode(JSON.stringify(header))
         )
-        const payloadPart = encodeBase64Url(
+        const payloadPart = Encoding.encodeBase64Url(
           textEncoder.encode(JSON.stringify(payload))
         )
 
         const data = textEncoder.encode(`${headerPart}.${payloadPart}`)
         const signature = yield* signData(data)
-        const signaturePart = encodeBase64Url(new Uint8Array(signature))
+        const signaturePart = Encoding.encodeBase64Url(
+          new Uint8Array(signature)
+        )
 
         return AccessToken.make(`${headerPart}.${payloadPart}.${signaturePart}`)
       })
@@ -93,7 +92,7 @@ export const JwtLayer = (secret: string, algorithm: Jwt.Algorithm = 'HS256') =>
         const data = textEncoder.encode(`${headerPart}.${payloadPart}`)
         const expectedSignature = yield* signData(data)
 
-        const expectedSignaturePart = encodeBase64Url(
+        const expectedSignaturePart = Encoding.encodeBase64Url(
           new Uint8Array(expectedSignature)
         )
         if (expectedSignaturePart !== signaturePart)
@@ -101,8 +100,18 @@ export const JwtLayer = (secret: string, algorithm: Jwt.Algorithm = 'HS256') =>
             new InvalidToken({ message: 'Invalid token signature' })
           )
 
-        const payloadJson = textDecoder.decode(decodeBase64Url(payloadPart))
-        const headerJson = textDecoder.decode(decodeBase64Url(headerPart))
+        const decodedPayload = Encoding.decodeBase64Url(payloadPart)
+        const decodedHeader = Encoding.decodeBase64Url(headerPart)
+        if (
+          decodedPayload._tag === 'Failure' ||
+          decodedHeader._tag === 'Failure'
+        )
+          return yield* Effect.fail(
+            new InvalidToken({ message: 'Invalid token encoding' })
+          )
+
+        const payloadJson = textDecoder.decode(decodedPayload.success)
+        const headerJson = textDecoder.decode(decodedHeader.success)
 
         const payload = JSON.parse(payloadJson) as JwtPayload & Jwt.Header
         const header = JSON.parse(headerJson) as Jwt.Header

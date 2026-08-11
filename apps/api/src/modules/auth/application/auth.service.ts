@@ -5,6 +5,7 @@ import type {
   UserId,
   UserRole,
 } from '@rozumari/contract/user/schemas/user.schema'
+import type { Crypto } from 'effect/Crypto'
 
 import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
 import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
@@ -13,24 +14,21 @@ import {
   RefreshToken,
 } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
+import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
+import * as Encoding from 'effect/Encoding'
 import * as Layer from 'effect/Layer'
-
-import type { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 
 import { Jwt } from '@/modules/auth/application/security/jwt'
 import { TOKEN_EXPIRATION } from '@/modules/auth/constants'
+import { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 import { Session } from '@/modules/auth/domain/entities/session.entity'
 import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import {
   constantTimeEqual,
+  generateSecureString,
   hashSecret,
 } from '@/modules/auth/infrastructure/security/crypto'
-import {
-  decodeHex,
-  encodeHex,
-} from '@/modules/auth/infrastructure/security/crypto/encoding'
-import { generateSecureString } from '@/modules/auth/infrastructure/security/crypto/random'
 
 export class AuthService extends Context.Service<
   AuthService,
@@ -47,14 +45,11 @@ export class AuthService extends Context.Service<
     readonly createRefreshToken: (
       userId: UserId,
       userRole: UserRole
-    ) => Effect.Effect<Token>
+    ) => Effect.Effect<Token, never, Crypto>
 
-    readonly verifyRefreshToken: (token: RefreshToken) => Effect.Effect<
-      Pick<SessionUserAggregate['session'], 'token' | 'expiresAt'> & {
-        user: SessionUserAggregate['user']
-      },
-      InvalidToken
-    >
+    readonly verifyRefreshToken: (
+      token: RefreshToken
+    ) => Effect.Effect<SessionUserAggregate, InvalidToken, Crypto>
   }
 >()('auth/application/AuthService', {
   make: Effect.gen(function* make() {
@@ -81,19 +76,21 @@ export class AuthService extends Context.Service<
 
       createRefreshToken: Effect.fn(
         function* createRefreshToken(userId, userRole) {
-          const id = generateSecureString()
-          const secret = generateSecureString()
-          const hashedSecret = yield* hashSecret(secret)
+          const id = yield* generateSecureString
+          const secret = yield* generateSecureString
+          const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
 
           const refreshToken = `${id}.${secret}`
-          const expiresAt = new Date(
-            Date.now() + TOKEN_EXPIRATION.refreshToken * 1000
-          )
+
+          const now = yield* DateTime.now
+          const expiresAt = DateTime.add(now, {
+            seconds: TOKEN_EXPIRATION.refreshToken,
+          })
 
           const session = Session.make({
             id: SessionId.make(id),
-            token: RefreshToken.make(encodeHex(hashedSecret)),
-            expiresAt,
+            token: RefreshToken.make(Encoding.encodeHex(hashedSecret)),
+            expiresAt: DateTime.toDate(expiresAt),
             userId,
           })
           yield* sessionRepository.save(session)
@@ -103,7 +100,7 @@ export class AuthService extends Context.Service<
           return {
             accessToken: AccessToken.make(accessToken),
             refreshToken: RefreshToken.make(refreshToken),
-            expiresAt,
+            expiresAt: DateTime.toDate(expiresAt),
           }
         }
       ),
@@ -122,31 +119,41 @@ export class AuthService extends Context.Service<
           )
         let { session } = agg
 
-        const hashedSecret = yield* hashSecret(secret)
-        const isValid = constantTimeEqual(
-          hashedSecret,
-          decodeHex(session.token)
-        )
+        const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
+        const storedSecret = Encoding.decodeHex(session.token)
+        if (storedSecret._tag === 'Failure')
+          return yield* Effect.fail(
+            new InvalidToken({ message: 'Invalid refresh token' })
+          )
 
-        const now = Date.now()
-        const expiresTime = new Date(session.expiresAt).getTime()
+        const isValid = constantTimeEqual(hashedSecret, storedSecret.success)
 
-        if (!isValid || now >= expiresTime) {
+        const now = yield* DateTime.now
+        const expiresTime = DateTime.makeUnsafe(session.expiresAt)
+
+        if (!isValid || DateTime.isGreaterThanOrEqualTo(now, expiresTime)) {
           yield* sessionRepository.delete(session)
           return yield* Effect.fail(
             new InvalidToken({ message: 'Invalid refresh token' })
           )
         }
 
-        if (now >= expiresTime - TOKEN_EXPIRATION.threshold * 1000) {
-          session = session.renew(
-            new Date(now + TOKEN_EXPIRATION.refreshToken * 1000)
-          )
+        const renewThreshold = DateTime.subtract(expiresTime, {
+          seconds: TOKEN_EXPIRATION.threshold,
+        })
+
+        if (DateTime.isGreaterThanOrEqualTo(now, renewThreshold)) {
+          const extendedExpriesAt = DateTime.add(now, {
+            seconds: TOKEN_EXPIRATION.refreshToken,
+          })
+          session = session.renew(DateTime.toDate(extendedExpriesAt))
           yield* sessionRepository.save(session)
         }
 
-        const { expiresAt } = session
-        return { token: refreshToken, user: agg.user, expiresAt }
+        return SessionUserAggregate.make({
+          session,
+          user: agg.user,
+        })
       }),
     }
   }),

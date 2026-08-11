@@ -7,17 +7,26 @@ import * as SchemaGetter from 'effect/SchemaGetter'
 
 export const env = createEnv({
   shared: {
-    PORT: Schema.Number.pipe(
-      Schema.withDecodingDefault(Effect.succeed(3000)),
-      Schema.toStandardSchemaV1
-    ),
-
     NODE_ENV: Schema.Literals(['development', 'production', 'test']).pipe(
       Schema.withDecodingDefault(Effect.succeed('development')),
       Schema.toStandardSchemaV1
     ),
 
+    PORT: Schema.Number.pipe(
+      Schema.withDecodingDefault(Effect.succeed(3000)),
+      Schema.toStandardSchemaV1
+    ),
+
+    // Vercel environment variables
+    VERCEL_ENV: Schema.Literals(['development', 'preview', 'production']).pipe(
+      Schema.optional,
+      Schema.toStandardSchemaV1
+    ),
     VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
+    VERCEL_BRANCH_URL: Schema.String.pipe(
+      Schema.optional,
+      Schema.toStandardSchemaV1
+    ),
     VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
@@ -49,6 +58,11 @@ export const env = createEnv({
     AUTH_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_ID: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
+
+    TIMEZONE: Schema.TimeZoneFromString.pipe(
+      Schema.withDecodingDefault(Effect.succeed('Asia/Ho_Chi_Minh')),
+      Schema.toStandardSchemaV1
+    ),
   },
 
   clientPrefix: 'PUBLIC_',

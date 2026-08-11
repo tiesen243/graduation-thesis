@@ -1,4 +1,5 @@
 import { createId } from '@rozumari/lib/create-id'
+import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
@@ -56,10 +57,10 @@ export const Url = ({
 
 export const Timestampz = Schema.Struct({
   createdAt: Schema.Date.pipe(
-    Schema.withConstructorDefault(Effect.sync(() => new Date()))
+    Schema.withConstructorDefault(DateTime.nowAsDate)
   ),
   updatedAt: Schema.Date.pipe(
-    Schema.withConstructorDefault(Effect.sync(() => new Date()))
+    Schema.withConstructorDefault(DateTime.nowAsDate)
   ),
 })
 
@@ -96,7 +97,7 @@ export const ApiResponse = <
       ) as unknown as TError),
 
     timestamp: Schema.Date.pipe(
-      Schema.withConstructorDefault(Effect.sync(() => new Date()))
+      Schema.withConstructorDefault(DateTime.nowAsDate)
     ),
   })
 

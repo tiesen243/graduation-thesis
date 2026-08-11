@@ -1,5 +1,6 @@
 import type { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
 import type { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
+import type { Crypto } from 'effect/Crypto'
 
 import {
   AccountProvider,
@@ -20,7 +21,11 @@ export class LoginUseCase extends Context.Service<
   {
     execute: (
       input: LoginDto.Input
-    ) => Effect.Effect<LoginDto.Output, InvalidCredentials | UserNotFound>
+    ) => Effect.Effect<
+      LoginDto.Output,
+      InvalidCredentials | UserNotFound,
+      Crypto
+    >
   }
 >()('auth/application/LoginUseCase', {
   make: Effect.gen(function* make() {

@@ -15,7 +15,7 @@ import { Password } from '@/modules/auth/application/security/password'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
 import { UserService } from '@/modules/user/application/user.service'
-import { withTransaction } from '@/shared/lib/utils'
+import { withTransaction } from '@/shared/utils'
 
 export class RegisterUseCase extends Context.Service<
   RegisterUseCase,

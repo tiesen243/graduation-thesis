@@ -1,3 +1,4 @@
+import type { Crypto } from 'effect/Crypto'
 import type { SchemaError } from 'effect/SchemaError'
 import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
 
@@ -7,7 +8,8 @@ import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
 import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { OAuth } from '@/modules/auth/application/types'
-import { generateCodeChallenge } from '@/modules/auth/infrastructure/security/crypto/random'
+import { generateCodeChallenge } from '@/modules/auth/infrastructure/security/crypto'
+import { env } from '@/shared/env'
 
 export abstract class BaseProvider {
   protected constructor(
@@ -22,7 +24,7 @@ export abstract class BaseProvider {
   public abstract createAuthorizationUrl(
     state: string,
     codeVerifier: string
-  ): Effect.Effect<URL>
+  ): Effect.Effect<URL, never, Crypto>
 
   public abstract fetchUserData(
     code: string,
@@ -34,10 +36,10 @@ export abstract class BaseProvider {
   >
 
   protected createCallbackUrl() {
-    let baseUrl = `http://localhost:${process.env.PORT ?? 3000}`
-    if (process.env.APP_URL) baseUrl = `https://${process.env.APP_URL}`
-    else if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
-      baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    let baseUrl = `http://localhost:${env.PORT}`
+    if (env.VERCEL_PROJECT_PRODUCTION_URL)
+      baseUrl = `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
+    else if (env.VERCEL_URL) baseUrl = `https://${env.VERCEL_URL}`
 
     return `${baseUrl}/api/auth/${this.providerName}/callback`
   }

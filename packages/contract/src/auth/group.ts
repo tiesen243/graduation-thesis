@@ -2,6 +2,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { LoginDto } from '@/auth/dto/login.dto'
+import { LogoutDto } from '@/auth/dto/logout.dto'
 import { RefreshTokenDto } from '@/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@/auth/dto/register.dto'
 import { WhoAmIDto } from '@/auth/dto/whoami.dto'
@@ -33,9 +34,17 @@ export class AuthGroup extends HttpApiGroup.make('auth')
   )
 
   .add(
+    HttpApiEndpoint.post('logout', '/logout', {
+      headers: LogoutDto.Input,
+      success: LogoutDto,
+      error: InvalidToken,
+    })
+  )
+
+  .add(
     HttpApiEndpoint.post('refresh', '/refresh', {
-      success: RefreshTokenDto,
       headers: RefreshTokenDto.Input,
+      success: RefreshTokenDto,
       error: InvalidToken,
     })
   )
@@ -68,7 +77,7 @@ export class OAuthGroup extends HttpApiGroup.make('oauth')
   )
 
   .add(
-    HttpApiEndpoint.post('exchange', '/oauth', {
+    HttpApiEndpoint.post('exchange', '/oauth/exchange', {
       payload: OAuthSchema.Payload,
       success: OAuthSchema.Success,
       error: [ProviderError, InvalidToken],

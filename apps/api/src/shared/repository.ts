@@ -15,7 +15,7 @@ export interface IRepository<TEntity> {
 
   readonly count: (where?: IRepository.Criteria<TEntity>) => Effect<number>
 
-  readonly save: (entity: TEntity) => Effect<void>
+  readonly save: (entity: TEntity | TEntity[]) => Effect<void>
 
   readonly delete: (entity: TEntity) => Effect<void>
 }

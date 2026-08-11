@@ -1,3 +1,5 @@
+import type { Crypto } from 'effect/Crypto'
+
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
@@ -18,7 +20,7 @@ export class RefreshTokenUseCase extends Context.Service<
     ) => Effect.Effect<
       RefreshTokenDto.Output,
       InvalidToken,
-      HttpServerRequest.HttpServerRequest
+      Crypto | HttpServerRequest.HttpServerRequest
     >
   }
 >()('auth/application/RefreshTokenUseCase', {
@@ -38,11 +40,9 @@ export class RefreshTokenUseCase extends Context.Service<
         const token = cookies[COOKIE_KEYS.REFRESH_TOKEN] ?? authorization ?? ''
         if (!token) return yield* Effect.fail(new InvalidToken())
 
-        const {
-          token: refreshToken,
-          user,
-          expiresAt,
-        } = yield* authService.verifyRefreshToken(RefreshToken.make(token))
+        const { session, user } = yield* authService.verifyRefreshToken(
+          RefreshToken.make(token)
+        )
 
         const accessToken = yield* authService.createAccessToken(
           user.id,
@@ -50,9 +50,9 @@ export class RefreshTokenUseCase extends Context.Service<
         )
 
         return RefreshTokenDto.Output.make({
-          refreshToken,
+          refreshToken: RefreshToken.make(token),
           accessToken,
-          expiresAt,
+          expiresAt: session.expiresAt,
         })
       }),
     }
