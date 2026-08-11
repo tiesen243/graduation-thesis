@@ -46,6 +46,12 @@ function bootstrap() {
           VERCEL_URL: env.VERCEL_URL,
           VERCEL_BRANCH_URL: env.VERCEL_BRANCH_URL,
           VERCEL_PROJECT_PRODUCTION_URL: env.VERCEL_PROJECT_PRODUCTION_URL,
+          cors:
+            env.VERCEL_ENV === 'preview' && env.VERCEL_BRANCH_URL
+              ? [
+                  `https://${env.VERCEL_BRANCH_URL.replace('-api-git-', '-git-')}`,
+                ]
+              : env.CORS_ORIGIN,
         })
       ),
       Layer.succeed(

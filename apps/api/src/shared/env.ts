@@ -22,11 +22,11 @@ export const env = createEnv({
       Schema.optional,
       Schema.toStandardSchemaV1
     ),
+    VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
     VERCEL_BRANCH_URL: Schema.String.pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
     ),
-    VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
     VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
       Schema.optional,
       Schema.toStandardSchemaV1

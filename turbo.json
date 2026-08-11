@@ -32,8 +32,10 @@
     "NODE_ENV",
     "CI",
     "npm_lifecycle_event",
+
     "VERCEL",
     "VERCEL_URL",
+    "VERCEL_BRANCH_URL",
     "VERCEL_PROJECT_PRODUCTION_URL"
   ]
 }
