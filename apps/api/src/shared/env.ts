@@ -17,23 +17,16 @@ export const env = createEnv({
       Schema.toStandardSchemaV1
     ),
 
-    TIMEZONE: Schema.TimeZoneFromString.pipe(
-      Schema.withDecodingDefault(Effect.succeed('Asia/Ho_Chi_Minh')),
-      Schema.toStandardSchemaV1
-    ),
-
+    // Vercel environment variables
     VERCEL_ENV: Schema.Literals(['development', 'preview', 'production']).pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
     ),
-
     VERCEL_BRANCH_URL: Schema.String.pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
     ),
-
     VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
-
     VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
@@ -65,6 +58,11 @@ export const env = createEnv({
     AUTH_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_ID: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
+
+    TIMEZONE: Schema.TimeZoneFromString.pipe(
+      Schema.withDecodingDefault(Effect.succeed('Asia/Ho_Chi_Minh')),
+      Schema.toStandardSchemaV1
+    ),
   },
 
   clientPrefix: 'PUBLIC_',

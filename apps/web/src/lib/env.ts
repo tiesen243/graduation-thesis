@@ -9,6 +9,12 @@ export const env = createEnv({
       Schema.toStandardSchemaV1
     ),
 
+    PORT: Schema.Number.pipe(
+      Schema.withDecodingDefault(Effect.succeed(5173)),
+      Schema.toStandardSchemaV1
+    ),
+
+    // Vercel environment variables
     VERCEL_ENV: Schema.Literals(['development', 'preview', 'production']).pipe(
       Schema.optional,
       Schema.toStandardSchemaV1
@@ -37,41 +43,13 @@ export const env = createEnv({
       Schema.withDecodingDefault(Effect.succeed('http://localhost:3000')),
       Schema.toStandardSchemaV1
     ),
-
-    // Vercel environment variables
-
-    VITE_VERCEL_ENV: Schema.Literals([
-      'development',
-      'preview',
-      'production',
-    ]).pipe(Schema.optional, Schema.toStandardSchemaV1),
-
-    VITE_VERCEL_URL: Schema.String.pipe(
-      Schema.optional,
-      Schema.toStandardSchemaV1
-    ),
-
-    VITE_VERCEL_BRANCH_URL: Schema.String.pipe(
-      Schema.optional,
-      Schema.toStandardSchemaV1
-    ),
-
-    VITE_VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
-      Schema.optional,
-      Schema.toStandardSchemaV1
-    ),
   },
 
   runtimeEnv: {
     ...process.env,
 
+    VITE_APP_NAME: import.meta.env.VITE_APP_NAME,
     VITE_API_URL: import.meta.env.VITE_API_URL,
-
-    VITE_VERCEL_ENV: import.meta.env.VITE_VERCEL_ENV,
-    VITE_VERCEL_URL: import.meta.env.VITE_VERCEL_URL,
-    VITE_VERCEL_BRANCH_URL: import.meta.env.VITE_VERCEL_BRANCH_URL,
-    VITE_VERCEL_PROJECT_PRODUCTION_URL: import.meta.env
-      .VITE_VERCEL_PROJECT_PRODUCTION_URL,
   },
 
   emptyStringAsUndefined: true,

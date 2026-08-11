@@ -36,7 +36,7 @@ export abstract class BaseProvider {
   >
 
   protected createCallbackUrl() {
-    let baseUrl = `http://localhost:${env.PORT ?? 3000}`
+    let baseUrl = `http://localhost:${env.PORT}`
     if (env.VERCEL_PROJECT_PRODUCTION_URL)
       baseUrl = `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
     else if (env.VERCEL_URL) baseUrl = `https://${env.VERCEL_URL}`
