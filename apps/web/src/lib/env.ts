@@ -8,6 +8,20 @@ export const env = createEnv({
       Schema.withDecodingDefault(Effect.succeed('development')),
       Schema.toStandardSchemaV1
     ),
+
+    VERCEL_ENV: Schema.Literals(['development', 'preview', 'production']).pipe(
+      Schema.optional,
+      Schema.toStandardSchemaV1
+    ),
+    VERCEL_URL: Schema.String.pipe(Schema.optional, Schema.toStandardSchemaV1),
+    VERCEL_BRANCH_URL: Schema.String.pipe(
+      Schema.optional,
+      Schema.toStandardSchemaV1
+    ),
+    VERCEL_PROJECT_PRODUCTION_URL: Schema.String.pipe(
+      Schema.optional,
+      Schema.toStandardSchemaV1
+    ),
   },
 
   server: {},
