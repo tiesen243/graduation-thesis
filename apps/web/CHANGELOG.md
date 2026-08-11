@@ -1,3 +1,13 @@
+## @rozumari/web@0.0.5
+
+### Layout & Navigation
+
+- **Landing Page:** Added initial landing page layout.
+- **Dashboard:** Implemented dashboard layout with responsive sidebar navigation.
+- **Authentication Flows:** Added automatic route redirection based on user auth status:
+  - Authenticated users -> Redirect to `/dashboard`
+  - Unauthenticated users -> Redirect to `/login`
+
 ## @rozumari/web@0.0.4
 
 ### Fix OAuth authentication flow and client-side cookie assignment.

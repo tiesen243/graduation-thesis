@@ -1,3 +1,10 @@
+## @rozumari/oxlint@0.0.3
+
+### Add device management module
+
+- Introduce endpoints to list all devices and fetch a device by ID
+- Add contract schemas and linting configurations for device endpoints
+
 ## @rozumari/oxlint@0.0.2
 
 ### Fix OAuth authentication flow and client-side cookie assignment.
