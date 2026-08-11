@@ -4,6 +4,7 @@ import { HeroSectoon } from '@/components/landing/hero-section'
 import { HowItWorkSection } from '@/components/landing/how-it-work-section'
 import { StoriesSection } from '@/components/landing/stories-section'
 import { WaitlistSection } from '@/components/landing/waitlist-section'
+import { getApiUrl } from '@/lib/utils'
 
 import type { Route } from './+types/_index'
 
@@ -17,6 +18,8 @@ export default function IndexPage() {
       <LandingHeader />
       <main className='min-h-dvh overflow-hidden'>
         <HeroSectoon />
+
+        {getApiUrl()}
 
         <section
           className='border-y bg-muted/40'
