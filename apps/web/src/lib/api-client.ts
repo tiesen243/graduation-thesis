@@ -8,6 +8,7 @@ import * as HttpClient from 'effect/unstable/http/HttpClient'
 import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
 import * as HttpApiClient from 'effect/unstable/httpapi/HttpApiClient'
 
+import { env } from '@/lib/env'
 import { getApiUrl } from '@/lib/utils'
 
 export class ApiClient extends Context.Service<
@@ -21,6 +22,12 @@ export class ApiClient extends Context.Service<
           Function.flow(
             HttpClientRequest.prependUrl(getApiUrl()),
             HttpClientRequest.setHeader('x-requested-with', 'web'),
+            HttpClientRequest.setHeader(
+              'x-vercel-protection-bypass',
+              env.VERCEL_ENV === 'preview' && env.VITE_BYPASS_TOKEN
+                ? env.VITE_BYPASS_TOKEN
+                : ''
+            ),
             HttpClientRequest.acceptJson
           )
         ),
