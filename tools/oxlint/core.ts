@@ -1,5 +1,27 @@
 import { defineConfig } from 'oxlint'
 
+const message =
+  'Use `import { env } from "@/lib/env"` instead to ensure validated types.'
+export const restrictedEnvVars = defineConfig({
+  overrides: [
+    {
+      files: ['**/*.{ts,tsx,js,jsx}'],
+      excludeFiles: ['**/env.ts'],
+      rules: {
+        'no-restricted-properties': [
+          'error',
+          { object: 'process', property: 'env', message },
+          { object: 'import.meta', property: 'env', message },
+        ],
+        'no-restricted-imports': [
+          'error',
+          { name: 'process', importNames: ['env'], message },
+        ],
+      },
+    },
+  ],
+})
+
 export default defineConfig({
   plugins: [
     'eslint',

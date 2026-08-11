@@ -1,7 +1,7 @@
 import * as Context from 'effect/Context'
 
 import type { Account } from '@/modules/auth/domain/entities/account.entity'
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 interface IAccountRepository extends IRepository<Account> {}
 

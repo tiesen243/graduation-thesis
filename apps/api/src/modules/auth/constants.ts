@@ -2,6 +2,8 @@ import type { Cookie } from 'effect/unstable/http/Cookies'
 
 import { COOKIE_ACCESS_TOKEN_KEY } from '@rozumari/contract/auth/middleware'
 
+import { env } from '@/shared/env'
+
 export const COOKIE_KEYS = {
   ACCESS_TOKEN: COOKIE_ACCESS_TOKEN_KEY,
   REFRESH_TOKEN: 'auth.refresh_token',
@@ -14,9 +16,9 @@ export const COOKIE_KEYS = {
 export const COOKIE_OPTIONS = {
   path: '/',
   httpOnly: true,
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  secure: process.env.NODE_ENV === 'production',
-  partitioned: process.env.NODE_ENV === 'production',
+  sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+  secure: env.NODE_ENV === 'production',
+  partitioned: env.NODE_ENV === 'production',
 } satisfies Cookie['options']
 
 export const TOKEN_EXPIRATION = {

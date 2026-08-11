@@ -9,7 +9,7 @@ import { Compartment } from '@/modules/device/domain/entities/compartment.entity
 import { Device } from '@/modules/device/domain/entities/device.entity'
 import { CompartmentRepository } from '@/modules/device/domain/repositories/compartment.repository'
 import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
-import { withTransaction } from '@/shared/lib/utils'
+import { withTransaction } from '@/shared/utils'
 
 export class AddDeviceUseCase extends Context.Service<
   AddDeviceUseCase,

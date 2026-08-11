@@ -3,7 +3,7 @@
 import * as Effect from 'effect/Effect'
 import * as Ref from 'effect/Ref'
 
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

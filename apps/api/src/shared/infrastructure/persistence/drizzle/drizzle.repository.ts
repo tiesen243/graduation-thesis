@@ -3,7 +3,7 @@ import type { IndexColumn, AnyPgTable } from 'drizzle-orm/pg-core'
 import { and, eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 

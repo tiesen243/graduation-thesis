@@ -19,7 +19,7 @@ import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
 import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto'
 import { UserService } from '@/modules/user/application/user.service'
-import { withTransaction } from '@/shared/lib/utils'
+import { withTransaction } from '@/shared/utils'
 
 export const oauthController = HttpApiBuilder.group(
   Api,

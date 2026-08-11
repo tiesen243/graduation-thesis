@@ -9,6 +9,7 @@ import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { OAuth } from '@/modules/auth/application/types'
 import { generateCodeChallenge } from '@/modules/auth/infrastructure/security/crypto'
+import { env } from '@/shared/env'
 
 export abstract class BaseProvider {
   protected constructor(
@@ -35,10 +36,10 @@ export abstract class BaseProvider {
   >
 
   protected createCallbackUrl() {
-    let baseUrl = `http://localhost:${process.env.PORT ?? 3000}`
-    if (process.env.APP_URL) baseUrl = `https://${process.env.APP_URL}`
-    else if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
-      baseUrl = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    let baseUrl = `http://localhost:${env.PORT ?? 3000}`
+    if (env.VERCEL_PROJECT_PRODUCTION_URL)
+      baseUrl = `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
+    else if (env.VERCEL_URL) baseUrl = `https://${env.VERCEL_URL}`
 
     return `${baseUrl}/api/auth/${this.providerName}/callback`
   }

@@ -6,7 +6,7 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
 import type { Device } from '@/modules/device/domain/entities/device.entity'
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
 

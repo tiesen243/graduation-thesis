@@ -10,7 +10,7 @@ import type { Session } from '@/modules/auth/domain/entities/session.entity'
 import type { Compartment } from '@/modules/device/domain/entities/compartment.entity'
 import type { Device } from '@/modules/device/domain/entities/device.entity'
 import type { User } from '@/modules/user/domain/entities/user.entity'
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 export class InMemoryClient extends Context.Service<
   InMemoryClient,

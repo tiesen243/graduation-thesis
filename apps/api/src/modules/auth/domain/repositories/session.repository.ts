@@ -4,7 +4,7 @@ import * as Context from 'effect/Context'
 
 import type { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
 import type { Session } from '@/modules/auth/domain/entities/session.entity'
-import type { IRepository } from '@/shared/domain/repository'
+import type { IRepository } from '@/shared/repository'
 
 interface ISessionRepository extends IRepository<Session> {
   readonly findWithUser: (

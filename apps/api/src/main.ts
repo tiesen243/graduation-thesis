@@ -1,9 +1,10 @@
-import * as BunCrypto from '@effect/platform-bun/BunCrypto'
+import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
+import * as BunServices from '@effect/platform-bun/BunServices'
 import * as DateTime from 'effect/DateTime'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
+import * as Etag from 'effect/unstable/http/Etag'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
-import * as HttpServer from 'effect/unstable/http/HttpServer'
 
 import { AppModule } from '@/modules/app.module'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
@@ -23,7 +24,10 @@ function bootstrap() {
   const { handler } = HttpRouter.toWebHandler(
     Layer.provide(routes, [
       HttpRouter.cors({
-        allowedOrigins: env.CORS_ORIGIN,
+        allowedOrigins:
+          env.VERCEL_ENV === 'preview' && env.VERCEL_BRANCH_URL
+            ? [`https://${env.VERCEL_BRANCH_URL.replace('-api-git', '-git')}`]
+            : env.CORS_ORIGIN,
         allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: [
           'Content-Type',
@@ -39,8 +43,9 @@ function bootstrap() {
         env.NODE_ENV === 'production' ? 'Info' : 'Debug'
       ),
       Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
-      HttpServer.layerServices,
-      BunCrypto.layer,
+      BunHttpPlatform.layer,
+      BunServices.layer,
+      Etag.layer,
     ])
   )
 

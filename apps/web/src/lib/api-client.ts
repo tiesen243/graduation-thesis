@@ -8,7 +8,7 @@ import * as HttpClient from 'effect/unstable/http/HttpClient'
 import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
 import * as HttpApiClient from 'effect/unstable/httpapi/HttpApiClient'
 
-import { env } from '@/lib/env'
+import { getApiUrl } from '@/lib/utils'
 
 export class ApiClient extends Context.Service<
   ApiClient,
@@ -19,7 +19,7 @@ export class ApiClient extends Context.Service<
       client.pipe(
         HttpClient.mapRequest(
           Function.flow(
-            HttpClientRequest.prependUrl(env.VITE_API_URL),
+            HttpClientRequest.prependUrl(getApiUrl()),
             HttpClientRequest.setHeader('x-requested-with', 'web'),
             HttpClientRequest.acceptJson
           )
@@ -30,7 +30,7 @@ export class ApiClient extends Context.Service<
 
             if (response.status === 401) {
               yield* Effect.promise((signal) =>
-                fetch(`${env.VITE_API_URL}/api/auth/refresh`, {
+                fetch(`${getApiUrl()}/api/auth/refresh`, {
                   method: 'POST',
                   credentials: 'include',
                   signal,

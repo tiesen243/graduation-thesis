@@ -106,7 +106,7 @@ export default defineConfig({
     'react/no-unescaped-entities': 'error',
     'react/no-unknown-property': 'off',
     'react/no-unsafe': 'error',
-    'react/no-unstable-nested-components': 'error',
+    'react/no-unstable-nested-components': ['error', { allowAsProps: true }],
     'react/no-will-update-set-state': 'error',
     'react/only-export-components': 'off',
     'react/prefer-es6-class': 'error',
