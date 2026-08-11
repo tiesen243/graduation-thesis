@@ -1,6 +1,11 @@
 import { env } from '@/lib/env'
 
 export function getApiUrl() {
+  console.log({
+    VITE_VERCEL_ENV: env.VITE_VERCEL_ENV,
+    VITE_VERCEL_BRANCH_URL: env.VITE_VERCEL_BRANCH_URL,
+  })
+
   if (env.VITE_VERCEL_ENV === 'preview' && env.VITE_VERCEL_BRANCH_URL)
     return `https://${env.VITE_VERCEL_BRANCH_URL.replace('-git-', '-api-git-')}`
   if (env.VITE_API_URL) return env.VITE_API_URL
