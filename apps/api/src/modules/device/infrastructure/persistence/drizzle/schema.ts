@@ -47,5 +47,11 @@ export const compartments = snakeCase.table(
       .notNull()
       .$type<DeviceId>(),
   }),
-  (t) => [index('compartments_device_id_index').on(t.deviceId)]
+  (t) => [
+    index('compartments_device_id_index').on(t.deviceId),
+    uniqueIndex('compartments_device_id_position_index').on(
+      t.deviceId,
+      t.position
+    ),
+  ]
 )

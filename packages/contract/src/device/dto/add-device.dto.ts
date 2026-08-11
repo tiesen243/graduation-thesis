@@ -14,7 +14,9 @@ export class AddDeviceDto extends Schema.TaggedClass<AddDeviceDto>()(
 ) {}
 
 export namespace AddDeviceDto {
-  export const Input = Schema.Void
+  export const Input = Schema.Struct({
+    size: Schema.Literals(['sm', 'md', 'lg']),
+  })
   export type Input = typeof Input.Type
 
   export const Output = AddDeviceDto.fields.data

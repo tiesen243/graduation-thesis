@@ -24,21 +24,15 @@ export class AddDeviceUseCase extends Context.Service<
     const compartmentRepository = yield* CompartmentRepository
 
     return {
-      execute: Effect.fn(function* execute(_input) {
+      execute: Effect.fn(function* execute(input) {
         const factoryModel = yield* Device.generateFactoryModel
+        const { size } = input
 
         return yield* Effect.gen(function* tx() {
           const device = Device.make({ factoryModel })
           yield* deviceRepository.save(device)
 
-          const compartments = Array.from({ length: 4 }, (_, index) => {
-            const row = Math.floor(index / 2)
-            const column = index % 2
-            return Compartment.make({
-              deviceId: device.id,
-              position: `${row}-${column}`,
-            })
-          })
+          const compartments = yield* Compartment.makeRange(device.id, size)
           yield* compartmentRepository.save(compartments)
 
           return { id: device.id }
