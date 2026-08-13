@@ -1,5 +1,5 @@
 import { Badge } from '@rozumari/ui/components/badge'
-import { Button } from '@rozumari/ui/components/button'
+import { buttonVariants } from '@rozumari/ui/components/button'
 import { SearchIcon } from '@rozumari/ui/components/icons'
 import {
   InputGroup,
@@ -9,6 +9,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs'
+import { Link } from 'react-router'
 
 import { DataTable } from '@/components/data-table'
 import { api } from '@/lib/runtime'
@@ -77,8 +78,8 @@ export default function DevicesIndexPage() {
         data={data?.data.devices ?? []}
         keyExtractor={(item) => item.id}
         columns={{
-          id: 'ID',
           factoryModel: 'Factory Model',
+          name: 'Name',
           status: {
             header: 'Status',
             action: (item) => (
@@ -94,7 +95,14 @@ export default function DevicesIndexPage() {
           },
           _: {
             header: 'Actions',
-            action: (_item) => <Button>Edit</Button>,
+            action: ({ id }) => (
+              <Link
+                to={`/devices/${id}`}
+                className={buttonVariants({ variant: 'link' })}
+              >
+                View
+              </Link>
+            ),
           },
         }}
 

@@ -1,5 +1,6 @@
 import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
+import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 
 import { LoginDto } from '@/auth/dto/login.dto'
 import { LogoutDto } from '@/auth/dto/logout.dto'
@@ -84,4 +85,6 @@ export class OAuthGroup extends HttpApiGroup.make('oauth')
     })
   )
 
-  .prefix('/api/auth') {}
+  .prefix('/api/auth')
+
+  .annotateMerge(OpenApi.annotations({ exclude: true })) {}

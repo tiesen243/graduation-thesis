@@ -65,9 +65,9 @@ export namespace IRepository {
       : T | Operator<T>
 
   export type BaseCriteria<TEntity> = {
-    [K in keyof TEntity as TEntity[K] extends FunctionLike
-      ? never
-      : K]?: CriteriaValue<NonNullable<TEntity[K]>>
+    [
+      K in keyof TEntity as TEntity[K] extends FunctionLike ? never : K
+    ]?: CriteriaValue<NonNullable<TEntity[K]>>
   }
 
   type Levels = [never, 0, 1, 2]

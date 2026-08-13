@@ -22,15 +22,12 @@ export class ShowDeviceUseCase extends Context.Service<
       execute: Effect.fn(function* execute(input) {
         const { id } = input
 
-        const [device] = yield* deviceRepository.findMany({
-          where: { id: { eq: id } },
-          limit: 1,
-        })
-
-        if (!device)
+        const agg = yield* deviceRepository.findWithCompartment(id)
+        if (!agg)
           return yield* Effect.fail(new DeviceNotFound({ error: { id } }))
 
-        return device
+        const { device, compartments } = agg
+        return { ...device, compartments }
       }),
     }
   }),

@@ -3,6 +3,7 @@ import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { AdminMiddleware, AuthMiddleware } from '@/auth/middleware'
 import { AddDeviceDto } from '@/device/dto/add-device.dto'
+import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { ListDevicesDto } from '@/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@/device/dto/show-device.dto'
 import {
@@ -39,6 +40,20 @@ export class DeviceGroup extends HttpApiGroup.make('device')
       success: AddDeviceDto,
       error: [DeviceAlreadyExists],
     }).middleware(AdminMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.get('stream', '/:id/stream', {
+      params: ShowDeviceDto.Input,
+      success: DeviceStreamDto.Data,
+    })
+  )
+
+  .add(
+    HttpApiEndpoint.post('emit', '/:id/emit', {
+      payload: DeviceStreamDto.Emit,
+      error: [DeviceNotFound],
+    })
   )
 
   .middleware(AuthMiddleware)

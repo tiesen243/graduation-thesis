@@ -1,5 +1,4 @@
 import type { Crypto } from 'effect/Crypto'
-import type { SchemaError } from 'effect/SchemaError'
 import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
 
 import * as Effect from 'effect/Effect'
@@ -29,11 +28,7 @@ export abstract class BaseProvider {
   public abstract fetchUserData(
     code: string,
     codeVerifier: string
-  ): Effect.Effect<
-    OAuth.Account,
-    HttpClientError | SchemaError,
-    HttpClient.HttpClient
-  >
+  ): Effect.Effect<OAuth.Account, HttpClientError, HttpClient.HttpClient>
 
   protected createCallbackUrl() {
     let baseUrl = `http://localhost:${env.PORT}`
@@ -122,7 +117,8 @@ export abstract class BaseProvider {
         .pipe(
           Effect.flatMap(HttpClientResponse.filterStatusOk),
           Effect.flatMap(HttpClientResponse.schemaBodyJson(OAuth.Token)),
-          Effect.scoped
+          Effect.scoped,
+          Effect.orDie
         )
 
       return response

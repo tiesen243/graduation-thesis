@@ -1,10 +1,6 @@
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
 import { Api } from '@rozumari/contract'
-import {
-  AccountProvider,
-  AccountProviderId,
-} from '@rozumari/contract/auth/schemas/account.schema'
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
 import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Effect from 'effect/Effect'
@@ -93,8 +89,8 @@ export const oauthController = HttpApiBuilder.group(
                 const [[account], user] = yield* Effect.all([
                   accountRepository.findMany({
                     where: {
-                      provider: { eq: AccountProvider.make(params.provider) },
-                      providerId: { eq: AccountProviderId.make(id) },
+                      provider: { eq: params.provider },
+                      providerId: { eq: id },
                     },
                     limit: 1,
                   }),
@@ -120,8 +116,8 @@ export const oauthController = HttpApiBuilder.group(
                   }
 
                   const newAccount = Account.make({
-                    provider: AccountProvider.make(params.provider),
-                    providerId: AccountProviderId.make(id),
+                    provider: params.provider,
+                    providerId: id,
                     userId,
                   })
                   yield* accountRepository.save(newAccount)

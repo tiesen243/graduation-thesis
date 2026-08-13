@@ -1,5 +1,6 @@
 import type { Crypto } from 'effect/Crypto'
 
+import { AccountProviderId } from '@rozumari/contract/auth/schemas/account.schema'
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 import * as HttpClient from 'effect/unstable/http/HttpClient'
@@ -8,7 +9,7 @@ import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 import { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers/base.provider'
 
 const GoogleUserSchema = Schema.Struct({
-  sub: Schema.String,
+  sub: AccountProviderId,
   name: Schema.String,
   email: Schema.String,
   picture: Schema.String,
@@ -51,7 +52,8 @@ export class GoogleProvider extends BaseProvider {
         })
         .pipe(
           Effect.flatMap(HttpClientResponse.filterStatusOk),
-          Effect.flatMap(HttpClientResponse.schemaBodyJson(GoogleUserSchema))
+          Effect.flatMap(HttpClientResponse.schemaBodyJson(GoogleUserSchema)),
+          Effect.orDie
         )
 
       return {

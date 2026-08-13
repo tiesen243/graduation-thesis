@@ -38,3 +38,4 @@ export const DeviceSchema = Schema.Struct({
     Schema.withConstructorDefault(Effect.succeed(null))
   ),
 })
+export type DeviceSchema = typeof DeviceSchema.Type

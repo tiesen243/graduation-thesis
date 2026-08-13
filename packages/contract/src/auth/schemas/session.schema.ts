@@ -1,6 +1,5 @@
 import * as Schema from 'effect/Schema'
 
-import { RefreshToken } from '@/auth/schemas/token.schema'
 import { Timestampz } from '@/schema'
 import { UserId } from '@/user/schemas/user.schema'
 
@@ -12,7 +11,7 @@ export type SessionId = typeof SessionId.Type
 export const SessionSchema = Schema.Struct({
   id: SessionId,
 
-  token: RefreshToken,
+  token: Schema.String,
 
   expiresAt: Schema.Date,
 
