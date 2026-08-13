@@ -1,3 +1,7 @@
+## @rozumari/api@0.0.7
+
+### Added device sse
+
 ## @rozumari/api@0.0.6
 
 ### Add device management module

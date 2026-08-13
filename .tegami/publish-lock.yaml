@@ -1,58 +1,51 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n### Layout & Navigation\n\n- **Landing Page:** Added initial landing page layout.\n- **Dashboard:** Implemented dashboard layout with responsive sidebar navigation.\n- **Authentication Flows:** Added automatic route redirection based on user auth status:\n  - Authenticated users -> Redirect to `/dashboard`\n  - Unauthenticated users -> Redirect to `/login`\n"
-    filename: 2026-08-08-msja84gl.md
-    v: 0.0.0
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/oxlint:\n    type: patch\n---\n\n## Add device management module\n\n- Introduce endpoints to list all devices and fetch a device by ID\n- Add contract schemas and linting configurations for device endpoints\n"
-    filename: 2026-08-07-msiuezxg.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Added device sse\n"
+    filename: 2026-08-13-msr5ds3c.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - changelogIds:
-      - 2026-08-08-msja84gl.md
+      - 2026-08-13-msr5ds3c.md
     id: npm:@rozumari/web
     updated: true
+  - id: npm:@rozumari/pcb
+    updated: false
   - changelogIds:
-      - 2026-08-07-msiuezxg.md
-      - 2026-08-08-msja84gl.md
+      - 2026-08-13-msr5ds3c.md
     id: npm:@rozumari/api
-    updated: true
-  - id: npm:@rozumari/github
-    updated: false
-  - id: npm:@rozumari/mobile
-    updated: false
-  - changelogIds:
-      - 2026-08-07-msiuezxg.md
-      - 2026-08-08-msja84gl.md
-    id: npm:@rozumari/contract
-    updated: true
-  - id: npm:@rozumari/firmware
-    updated: false
-  - changelogIds:
-      - 2026-08-07-msiuezxg.md
-    id: npm:@rozumari/oxlint
     updated: true
   - id: npm:@rozumari/ui
     updated: false
-  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/mobile
     updated: false
   - id: npm:@rozumari/proteus
     updated: false
-  - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/firmware
     updated: false
-  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/tsconfig
     updated: false
+  - id: npm:@rozumari/github
+    updated: false
+  - id: npm:@rozumari/oxlint
+    updated: false
+  - changelogIds:
+      - 2026-08-13-msr5ds3c.md
+    id: npm:@rozumari/contract
+    updated: true
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/web
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/github
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/proteus
   - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/lib
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/contract

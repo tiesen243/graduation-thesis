@@ -1,3 +1,7 @@
+## @rozumari/web@0.0.6
+
+### Added device sse
+
 ## @rozumari/web@0.0.5
 
 ### Layout & Navigation
