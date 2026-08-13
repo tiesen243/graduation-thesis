@@ -18,6 +18,7 @@ import {
   FieldLabel,
   FieldTitle,
 } from '@rozumari/ui/components/field'
+import { Input } from '@rozumari/ui/components/input'
 import { RadioGroup, RadioGroupItem } from '@rozumari/ui/components/radio-group'
 import { toast } from '@rozumari/ui/components/toast'
 import { useMutation } from '@tanstack/react-query'
@@ -48,6 +49,7 @@ const SIZE_OPTIONS = [
 
 export const AddDeviceButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [amount, setAmount] = useState<AddDeviceDto.Input['amount']>(1)
   const [size, setSize] = useState<AddDeviceDto.Input['size']>('sm')
 
   const { mutate, isPending } = useMutation({
@@ -76,6 +78,20 @@ export const AddDeviceButton: React.FC = () => {
           </DialogDescription>
         </DialogHeader>
 
+        <FieldLabel htmlFor='amount'>
+          <Field orientation='horizontal'>
+            <FieldTitle>Amount</FieldTitle>
+            <Input
+              type='number'
+              id='amount'
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+              min={1}
+              disabled={isPending}
+            />
+          </Field>
+        </FieldLabel>
+
         <RadioGroup value={size} onValueChange={setSize} disabled={isPending}>
           {SIZE_OPTIONS.map((option) => (
             <FieldLabel key={option.value} htmlFor={option.id}>
@@ -98,7 +114,7 @@ export const AddDeviceButton: React.FC = () => {
             Cancel
           </DialogClose>
 
-          <Button onClick={() => mutate({ size })} disabled={isPending}>
+          <Button onClick={() => mutate({ amount, size })} disabled={isPending}>
             {isPending ? 'Adding...' : 'Add device'}
           </Button>
         </DialogFooter>

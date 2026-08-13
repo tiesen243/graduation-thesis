@@ -30,3 +30,4 @@ export const CompartmentSchema = Schema.Struct({
 
   deviceId: DeviceId,
 })
+export type CompartmentSchema = typeof CompartmentSchema.Type

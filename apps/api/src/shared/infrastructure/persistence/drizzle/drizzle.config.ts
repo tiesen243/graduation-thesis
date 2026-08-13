@@ -4,7 +4,6 @@ import path from 'node:path'
 import { env } from '@/shared/env'
 
 export default defineConfig({
-  strict: true,
   dialect: 'postgresql',
   dbCredentials: {
     url: env.DATABASE_URL,

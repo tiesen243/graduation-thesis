@@ -13,6 +13,7 @@ export default [
   layout('./routes/dashboard/__root.tsx', [
     route('/dashboard', './routes/dashboard/_index.tsx'),
     route('/devices', './routes/dashboard/devices/_index.tsx'),
+    route('/devices/:id', './routes/dashboard/devices/[id].tsx'),
     route('/*', './routes/dashboard/[...catch-all].tsx'),
   ]),
 ] satisfies RouteConfig

@@ -37,12 +37,15 @@ export class RefreshTokenUseCase extends Context.Service<
           })
         ).pipe(Effect.orDie)
 
-        const token = cookies[COOKIE_KEYS.REFRESH_TOKEN] ?? authorization ?? ''
-        if (!token) return yield* Effect.fail(new InvalidToken())
-
-        const { session, user } = yield* authService.verifyRefreshToken(
-          RefreshToken.make(token)
+        const refreshToken = RefreshToken.make(
+          cookies[COOKIE_KEYS.REFRESH_TOKEN] ?? authorization ?? ''
         )
+        if (!refreshToken) return yield* Effect.fail(new InvalidToken())
+
+        const {
+          user,
+          session: { expiresAt },
+        } = yield* authService.verifyRefreshToken(refreshToken)
 
         const accessToken = yield* authService.createAccessToken(
           user.id,
@@ -50,9 +53,9 @@ export class RefreshTokenUseCase extends Context.Service<
         )
 
         return RefreshTokenDto.Output.make({
-          refreshToken: RefreshToken.make(token),
+          refreshToken,
           accessToken,
-          expiresAt: session.expiresAt,
+          expiresAt,
         })
       }),
     }

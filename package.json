@@ -34,9 +34,9 @@
       "@tanstack/react-query": "^5.101.4"
     },
     "effect": {
-      "@effect/platform-bun": ">=4.0.0-beta.107",
-      "@effect/sql-pg": ">=4.0.0-beta.107",
-      "effect": ">=4.0.0-beta.107"
+      "@effect/platform-bun": ">=4.0.0-rc.108",
+      "@effect/sql-pg": ">=4.0.0-rc.108",
+      "effect": ">=4.0.0-rc.108"
     },
     "react": {
       "@types/react": "^19.2.18",

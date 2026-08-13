@@ -7,15 +7,23 @@ export class AddDeviceDto extends Schema.TaggedClass<AddDeviceDto>()(
   'device/application/AddDeviceDto',
   ApiResponse({
     message: 'Add device successfully',
-    dataSchema: Schema.Struct({
-      id: DeviceSchema.fields.id,
-    }),
+    dataSchema: Schema.Array(
+      Schema.Struct({
+        id: DeviceSchema.fields.id,
+        factoryModel: DeviceSchema.fields.factoryModel,
+      })
+    ),
   })
 ) {}
 
 export namespace AddDeviceDto {
   export const Input = Schema.Struct({
     size: Schema.Literals(['sm', 'md', 'lg']),
+    amount: Schema.Int.check(
+      Schema.isGreaterThanOrEqualTo(1, {
+        message: 'Amount must be greater than or equal to 1',
+      })
+    ),
   })
   export type Input = typeof Input.Type
 

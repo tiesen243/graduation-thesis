@@ -4,9 +4,12 @@ import { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 import * as Effect from 'effect/Effect'
+import { encodeText } from 'effect/Stream'
+import { HttpServerResponse } from 'effect/unstable/http'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
+import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
 
@@ -41,5 +44,24 @@ export const deviceController = HttpApiBuilder.group(
         AddDeviceUseCase.use((s) => s.execute(payload)).pipe(
           Effect.map((data) => AddDeviceDto.make({ data }))
         )
+      )
+
+      .handle('stream', ({ params }) =>
+        DeviceStreamUseCase.use((s) => s.subcribe(params)).pipe(
+          Effect.map((stream) =>
+            HttpServerResponse.stream(stream.pipe(encodeText as never), {
+              contentType: 'text/event-stream',
+              headers: {
+                'Cache-Control': 'no-cache',
+                Connection: 'keep-alive',
+                'X-Accel-Buffering': 'no',
+              },
+            })
+          )
+        )
+      )
+
+      .handle('emit', ({ payload }) =>
+        DeviceStreamUseCase.use((s) => s.emit(payload))
       )
 )

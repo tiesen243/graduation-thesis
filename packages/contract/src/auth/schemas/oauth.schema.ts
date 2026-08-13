@@ -1,10 +1,11 @@
 import * as Schema from 'effect/Schema'
 
+import { AccountProvider } from '@/auth/schemas/account.schema'
 import { RefreshToken } from '@/auth/schemas/token.schema'
 
 export namespace OAuthSchema {
   export const Params = Schema.Struct({
-    provider: Schema.String,
+    provider: AccountProvider,
   })
   export type Params = typeof Params.Type
 

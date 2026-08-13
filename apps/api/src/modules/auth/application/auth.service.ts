@@ -1,6 +1,9 @@
 import type { JwtPayload } from '@rozumari/contract/auth/middleware'
 import type { TokenExpired } from '@rozumari/contract/auth/schemas/auth.error'
-import type { Token } from '@rozumari/contract/auth/schemas/token.schema'
+import type {
+  Token,
+  AccessToken,
+} from '@rozumari/contract/auth/schemas/token.schema'
 import type {
   UserId,
   UserRole,
@@ -9,10 +12,7 @@ import type { Crypto } from 'effect/Crypto'
 
 import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
 import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
-import {
-  AccessToken,
-  RefreshToken,
-} from '@rozumari/contract/auth/schemas/token.schema'
+import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
 import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
@@ -80,7 +80,7 @@ export class AuthService extends Context.Service<
           const secret = yield* generateSecureString
           const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
 
-          const refreshToken = `${id}.${secret}`
+          const refreshToken = RefreshToken.make(`${id}.${secret}`)
 
           const now = yield* DateTime.now
           const expiresAt = DateTime.add(now, {
@@ -89,7 +89,7 @@ export class AuthService extends Context.Service<
 
           const session = Session.make({
             id: SessionId.make(id),
-            token: RefreshToken.make(Encoding.encodeHex(hashedSecret)),
+            token: Encoding.encodeHex(hashedSecret),
             expiresAt: DateTime.toDate(expiresAt),
             userId,
           })
@@ -98,8 +98,8 @@ export class AuthService extends Context.Service<
           const accessToken = yield* createAccessToken(userId, userRole)
 
           return {
-            accessToken: AccessToken.make(accessToken),
-            refreshToken: RefreshToken.make(refreshToken),
+            accessToken,
+            refreshToken,
             expiresAt: DateTime.toDate(expiresAt),
           }
         }

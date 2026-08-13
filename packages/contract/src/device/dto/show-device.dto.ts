@@ -1,5 +1,6 @@
 import * as Schema from 'effect/Schema'
 
+import { CompartmentSchema } from '@/device/schemas/compartment.schema'
 import { DeviceSchema } from '@/device/schemas/device.schema'
 import { ApiResponse } from '@/schema'
 
@@ -14,6 +15,7 @@ export class ShowDeviceDto extends Schema.TaggedClass<ShowDeviceDto>()(
       name: DeviceSchema.fields.name,
       position: DeviceSchema.fields.position,
       activatedAt: DeviceSchema.fields.activatedAt,
+      compartments: Schema.Array(CompartmentSchema),
     }),
   })
 ) {}
