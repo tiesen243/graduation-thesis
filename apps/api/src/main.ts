@@ -1,5 +1,6 @@
+import * as BunFileSystem from '@effect/platform-bun/BunFileSystem'
 import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
-import * as BunServices from '@effect/platform-bun/BunServices'
+import * as BunPath from '@effect/platform-bun/BunPath'
 import * as DateTime from 'effect/DateTime'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
@@ -46,7 +47,8 @@ function bootstrap() {
       ),
       Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
       BunHttpPlatform.layer,
-      BunServices.layer,
+      BunFileSystem.layer,
+      BunPath.layer,
       Etag.layer,
     ])
   )
