@@ -3,7 +3,6 @@ import * as Layer from 'effect/Layer'
 import type { AppModule } from '@/modules/app.module'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
-import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
 import { DeviceInfrastructureModule } from '@/modules/device/infrastructure/infrastructure.module'
@@ -17,7 +16,6 @@ export class DeviceModule {
 
     const useCaseLayer = Layer.mergeAll(
       AddDeviceUseCase.layer,
-      DeviceStreamUseCase.layer,
       ListDevicesUseCase.layer,
       ShowDeviceUseCase.layer
     )
