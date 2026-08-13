@@ -1,3 +1,5 @@
+// oxlint-disable require-yield
+
 import type { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
 import type { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 
@@ -18,14 +20,8 @@ export class DeviceStreamUseCase extends Context.Service<
   }
 >()('device/application/DeviceStreamUseCase', {
   make: Effect.gen(function* make() {
-    yield* Effect.logDebug('Initializing DeviceStreamUseCase')
-
     return {
       subcribe: Effect.fn(function* subcribe(input) {
-        yield* Effect.logDebug(
-          `Subscribing to device stream for deviceId: ${input.id}`
-        )
-
         const keepAliveStream = Stream.repeat(
           Stream.succeed(':keep-alive\n\n'),
           Schedule.spaced('30 seconds')
