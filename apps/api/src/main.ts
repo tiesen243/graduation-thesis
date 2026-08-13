@@ -12,7 +12,7 @@ import { AppModule } from '@/modules/app.module'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { env } from '@/shared/env'
 
-function bootstrap() {
+export function bootstrap() {
   const { routes } = AppModule.create({
     persistence: 'drizzle',
     auth: {
@@ -59,13 +59,13 @@ function bootstrap() {
   return handler as (request: Request) => Promise<Response>
 }
 
-Bun.serve({
-  port: env.PORT,
-
-  fetch: bootstrap(),
-
-  development: env.NODE_ENV === 'development' && {
-    hmr: true,
-    console: true,
-  },
-})
+// Bun.serve({
+//   port: env.PORT,
+//
+//   fetch: bootstrap(),
+//
+//   development: env.NODE_ENV === 'development' && {
+//     hmr: true,
+//     console: true,
+//   },
+// })
