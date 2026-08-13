@@ -1,3 +1,7 @@
+## @rozumari/contract@0.0.4
+
+### Added device sse
+
 ## @rozumari/contract@0.0.3
 
 ### Add device management module
