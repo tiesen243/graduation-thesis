@@ -19,6 +19,8 @@ export const useSession = () => {
   const { data, isLoading } = useQuery({
     ...api.auth.whoami.queryOptions(),
     retry: 1,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   })
 
   const { mutate: logout } = useMutation({
