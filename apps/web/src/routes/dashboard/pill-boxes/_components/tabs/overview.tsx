@@ -27,8 +27,8 @@ import { TabsContent } from '@rozumari/ui/components/tabs'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useMemo } from 'react'
 
-import { CompartmentCard } from '@/routes/dashboard/devices/_components/compartment-card'
-import { Metric } from '@/routes/dashboard/devices/_components/metric'
+import { CompartmentCard } from '@/routes/dashboard/pill-boxes/_components/compartment-card'
+import { Metric } from '@/routes/dashboard/pill-boxes/_components/metric'
 
 export const OverviewTab: React.FC<{ device: ShowDeviceDto.Output }> = ({
   device,
@@ -86,7 +86,7 @@ export const OverviewTab: React.FC<{ device: ShowDeviceDto.Output }> = ({
             </Button>
           </div>
 
-          <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-3'>
+          <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
             {device.compartments.map((item) => (
               <CompartmentCard key={item.position} item={item} />
             ))}

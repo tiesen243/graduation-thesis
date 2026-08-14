@@ -25,24 +25,39 @@ export class AddDeviceUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const { amount, size } = input
+        const { amount: _, size } = input
 
-        // oxlint-disable-next-line unicorn/no-array-for-each
-        return yield* Effect.forEach(
-          Array.from({ length: amount }),
-          Effect.fn(function* txLoop() {
+        return yield* withTransaction(
+          Effect.gen(function* executeTx() {
             const factoryModel = yield* Device.generateFactoryModel
             const device = Device.make({ factoryModel })
             yield* deviceRepository.save(device)
 
             const compartments = yield* Compartment.makeRange(device.id, size)
+            yield* Effect.log(
+              `Created ${compartments.length} compartments for device ${device.id}`
+            )
             yield* compartmentRepository.save(compartments)
 
-            return { id: device.id, factoryModel }
-          }),
-          { concurrency: 'unbounded' }
-        ).pipe(withTransaction)
+            return [{ id: device.id, factoryModel }]
+          })
+        ).pipe(Effect.orDie)
       }),
+
+      // return yield* Effect.forEach(
+      //   Array.from({ length: amount }),
+      //   Effect.fn(function* txLoop() {
+      //     const factoryModel = yield* Device.generateFactoryModel
+      //     const device = Device.make({ factoryModel })
+      //     yield* deviceRepository.save(device)
+      //
+      //     const compartments = yield* Compartment.makeRange(device.id, size)
+      //     yield* compartmentRepository.save(compartments)
+      //
+      //     return { id: device.id, factoryModel }
+      //   }),
+      //   { concurrency: 'unbounded' }
+      // )
     }
   }),
 }) {

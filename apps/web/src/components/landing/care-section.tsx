@@ -3,6 +3,7 @@ import {
   HeartPulseIcon,
   ShieldCheckIcon,
 } from '@rozumari/ui/components/icons'
+import { Typography } from '@rozumari/ui/components/typography'
 
 const benefits = [
   {
@@ -30,34 +31,28 @@ const benefits = [
 
 export function CareSection() {
   return (
-    <section
-      id='care'
-      className='mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32'
-    >
-      <div className='max-w-2xl'>
-        <p className='text-sm font-semibold tracking-[0.18em] text-primary uppercase'>
-          A calmer way to care
-        </p>
-        <h2 className='mt-4 font-serif text-4xl tracking-tight text-balance sm:text-5xl'>
-          The little things add up to a lot of reassurance.
-        </h2>
-      </div>
-      <div className='mt-14 grid gap-px overflow-hidden rounded-3xl border bg-border md:grid-cols-3'>
+    <section id='care' className='container px-6 py-24 lg:px-8 lg:py-32'>
+      <Typography className='text-sm font-semibold tracking-[0.18em] text-primary uppercase'>
+        A calmer way to care
+      </Typography>
+      <Typography variant='h2' className='mt-4 font-serif'>
+        The little things add up to a lot of reassurance.
+      </Typography>
+
+      <ul className='mt-14 grid gap-px overflow-hidden rounded-3xl border bg-border md:grid-cols-3'>
         {benefits.map((benefit) => (
-          <article key={benefit.title} className='bg-background p-7 lg:p-9'>
+          <li key={benefit.title} className='space-y-3 bg-background p-4'>
             <benefit.icon className='size-6 text-primary' aria-hidden='true' />
-            <p className='mt-12 text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase'>
+            <Typography className='text-xs font-semibold text-muted-foreground uppercase'>
               {benefit.eyebrow}
-            </p>
-            <h3 className='mt-3 text-2xl font-semibold tracking-tight'>
-              {benefit.title}
-            </h3>
-            <p className='mt-4 leading-7 text-muted-foreground'>
+            </Typography>
+            <Typography variant='h3'>{benefit.title}</Typography>
+            <Typography className='text-muted-foreground'>
               {benefit.description}
-            </p>
-          </article>
+            </Typography>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )
 }

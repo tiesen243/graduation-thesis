@@ -2,10 +2,10 @@ import { Tabs, TabsList, TabsTrigger } from '@rozumari/ui/components/tabs'
 import { useQuery } from '@tanstack/react-query'
 
 import { api } from '@/lib/runtime'
-import { DeviceInfo } from '@/routes/dashboard/devices/_components/device-info'
-import { ActivityTab } from '@/routes/dashboard/devices/_components/tabs/activity'
-import { OverviewTab } from '@/routes/dashboard/devices/_components/tabs/overview'
-import { SettingsTab } from '@/routes/dashboard/devices/_components/tabs/settings'
+import { DeviceInfo } from '@/routes/dashboard/pill-boxes/_components/device-info'
+import { ActivityTab } from '@/routes/dashboard/pill-boxes/_components/tabs/activity'
+import { OverviewTab } from '@/routes/dashboard/pill-boxes/_components/tabs/overview'
+import { SettingsTab } from '@/routes/dashboard/pill-boxes/_components/tabs/settings'
 
 import type { Route } from './+types/[id]'
 

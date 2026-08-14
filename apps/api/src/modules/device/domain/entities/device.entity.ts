@@ -34,5 +34,3 @@ export class Device extends Schema.TaggedClass<Device>()(
     }
   )
 }
-
-Effect.runSync(Device.generateFactoryModel.pipe(Effect.tap(Effect.log)))

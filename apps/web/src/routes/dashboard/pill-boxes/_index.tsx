@@ -13,7 +13,8 @@ import { Link } from 'react-router'
 
 import { DataTable } from '@/components/data-table'
 import { api } from '@/lib/runtime'
-import { AddDeviceButton } from '@/routes/dashboard/devices/_components/add-device-button'
+import { useSession } from '@/lib/use-session'
+import { AddDeviceButton } from '@/routes/dashboard/pill-boxes/_components/add-device-button'
 
 const STATUS_VARIANTS = {
   unlinked: 'warning',
@@ -21,7 +22,7 @@ const STATUS_VARIANTS = {
   suspended: 'destructive',
 } as const
 
-export default function DevicesIndexPage() {
+export default function PillBoxesIndexPage() {
   const [query, setQuery] = useQueryStates(
     {
       query: parseAsString.withDefault(''),
@@ -31,9 +32,9 @@ export default function DevicesIndexPage() {
     { urlKeys: { query: 'q' } }
   )
 
-  const { data: user } = useQuery(api.auth.whoami.queryOptions())
+  const { user } = useSession()
   const { data, isLoading } = useQuery(
-    user?.data.role === 'admin'
+    user?.role === 'admin'
       ? api.device.list.queryOptions({ query })
       : api.device.me.queryOptions({ query })
   )
@@ -42,9 +43,9 @@ export default function DevicesIndexPage() {
     <>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
         <div className='space-y-1'>
-          <Typography variant='h2'>Devices</Typography>
+          <Typography variant='h2'>PillBoxes</Typography>
           <Typography>
-            Manage your devices, check status, and handle refills.
+            Manage your pill-boxes, check status, and handle refills.
           </Typography>
         </div>
 
@@ -69,7 +70,7 @@ export default function DevicesIndexPage() {
         <InputGroupInput
           name='query'
           defaultValue={query.query}
-          placeholder='Search devices...'
+          placeholder='Search pill-boxes...'
           type='search'
         />
       </InputGroup>
@@ -97,7 +98,7 @@ export default function DevicesIndexPage() {
             header: 'Actions',
             action: ({ id }) => (
               <Link
-                to={`/devices/${id}`}
+                to={`/pill-boxes/${id}`}
                 className={buttonVariants({ variant: 'link' })}
               >
                 View

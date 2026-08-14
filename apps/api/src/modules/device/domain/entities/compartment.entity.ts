@@ -38,16 +38,16 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
     // oxlint-disable-next-line unicorn/no-array-for-each
     return yield* Effect.forEach(
       Array.from({ length: count }),
-      (_, index) => {
+      Effect.fn(function* makeRangeLoop(_, index) {
         const row = Math.floor(index / Compartment.COLS)
         const column = index % Compartment.COLS
 
-        return Compartment.makeEffect({
+        yield* Effect.sleep(100)
+        return Compartment.make({
           deviceId,
           position: `${row}-${column}`,
         })
-      },
-      { concurrency: 'unbounded' }
-    ).pipe(Effect.orDie)
+      })
+    )
   })
 }

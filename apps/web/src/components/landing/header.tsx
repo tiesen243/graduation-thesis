@@ -35,12 +35,11 @@ export function LandingHeader() {
         </Link>
       </div>
       <Button
-        render={<Link to='#waitlist' />}
-        nativeButton={false}
         variant='outline'
-        className='rounded-full px-5'
+        nativeButton={false}
+        render={<Link to='login' />}
       >
-        Join the waitlist
+        Log in
       </Button>
     </header>
   )

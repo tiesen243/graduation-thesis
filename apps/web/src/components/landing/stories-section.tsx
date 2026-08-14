@@ -1,25 +1,27 @@
+import { Typography } from '@rozumari/ui/components/typography'
+
 export function StoriesSection() {
   return (
-    <section
-      id='stories'
-      className='mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32'
-    >
+    <section id='stories' className='container py-24 lg:py-32'>
       <div className='grid gap-8 rounded-3xl border bg-card p-8 sm:p-12 lg:grid-cols-[0.7fr_1.3fr] lg:p-16'>
-        <div>
-          <p className='text-sm font-semibold tracking-[0.18em] text-primary uppercase'>
+        <div className='space-y-4'>
+          <Typography className='text-sm font-semibold tracking-[0.18em] text-primary uppercase'>
             A better feeling
-          </p>
-          <h2 className='mt-4 font-serif text-4xl tracking-tight'>
+          </Typography>
+          <Typography variant='h2' className='font-serif'>
             “It gives us a gentle sense that someone has our back.”
-          </h2>
+          </Typography>
         </div>
+
         <div className='flex flex-col justify-between gap-8 lg:pl-12'>
-          <p className='max-w-2xl text-xl leading-9 text-muted-foreground'>
+          <Typography className='text-xl text-muted-foreground'>
             “My dad wants his independence, and I want to know he is okay.
             Rozumari finds the middle ground — it supports him without making
             every reminder feel like a check-in.”
-          </p>
-          <p className='text-sm font-semibold'>Elena, early Rozumari family</p>
+          </Typography>
+          <Typography className='text-sm font-semibold'>
+            Elena, early Rozumari family
+          </Typography>
         </div>
       </div>
     </section>
