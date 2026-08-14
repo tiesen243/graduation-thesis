@@ -2,9 +2,9 @@
   "name": "@rozumari/api",
   "version": "0.0.7",
   "private": false,
+  "bin": "./dist/cli.mjs",
   "type": "module",
   "main": "./dist/main.mjs",
-  "types": "./dist/main.d.mts",
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
