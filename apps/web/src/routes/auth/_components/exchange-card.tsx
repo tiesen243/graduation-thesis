@@ -32,10 +32,6 @@ export const ExchangeCard: React.FC<{ token: string }> = ({ token }) => {
       handledRef.current = true
       exchange.mutate({ token: RefreshToken.make(token) })
     }
-
-    return () => {
-      handledRef.current = false
-    }
   }, [exchange, token])
 
   return (
