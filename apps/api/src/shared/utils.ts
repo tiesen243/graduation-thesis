@@ -2,7 +2,11 @@ import * as Effect from 'effect/Effect'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
-export const withTransaction = <A, E, R>(effect: Effect.Effect<A, E, R>) =>
+export const withTransaction = <A, E, R>(
+  effect:
+    | Effect.Effect<A, E, R>
+    | ((rollback: () => Effect.Effect<void, unknown>) => Effect.Effect<A, E, R>)
+) =>
   Effect.gen(function* transaction() {
     const { maybeDrizzle } = yield* Effect.all(
       {
@@ -12,13 +16,16 @@ export const withTransaction = <A, E, R>(effect: Effect.Effect<A, E, R>) =>
       { concurrency: 'unbounded' }
     )
 
-    let effectToRun = effect
+    let effectToRun =
+      typeof effect === 'function'
+        ? effect(() => Effect.log('Transaction rolled back'))
+        : effect
 
     // oxlint-disable-next-line eslint/no-underscore-dangle
     if (maybeDrizzle._tag === 'Some')
       effectToRun = maybeDrizzle.value.db
         .transaction((tx) =>
-          effect.pipe(
+          (typeof effect === 'function' ? effect(tx.rollback) : effect).pipe(
             Effect.provideService(DrizzleClient, {
               ...maybeDrizzle.value,
               db: tx,

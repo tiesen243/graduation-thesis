@@ -22,7 +22,7 @@ export class InMemoryClient extends Context.Service<
       users: Ref.Ref<Map<User['id'], User>>
 
       devices: Ref.Ref<Map<Device['id'], Device>>
-      compartments: Ref.Ref<Map<Compartment['id'], Compartment>>
+      compartments: Ref.Ref<Map<string, Compartment>>
     }
 
     buildCriteria: <TEntity>(
@@ -44,7 +44,7 @@ export class InMemoryClient extends Context.Service<
       users: yield* Ref.make(new Map<User['id'], User>()),
 
       devices: yield* Ref.make(new Map<Device['id'], Device>()),
-      compartments: yield* Ref.make(new Map<Compartment['id'], Compartment>()),
+      compartments: yield* Ref.make(new Map<string, Compartment>()),
     }
 
     return {

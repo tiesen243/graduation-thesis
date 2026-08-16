@@ -12,8 +12,8 @@ export default [
 
   layout('./routes/dashboard/__root.tsx', [
     route('/dashboard', './routes/dashboard/_index.tsx'),
-    route('/devices', './routes/dashboard/devices/_index.tsx'),
-    route('/devices/:id', './routes/dashboard/devices/[id].tsx'),
+    route('/pill-boxes', './routes/dashboard/pill-boxes/_index.tsx'),
+    route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),
     route('/*', './routes/dashboard/[...catch-all].tsx'),
   ]),
 ] satisfies RouteConfig

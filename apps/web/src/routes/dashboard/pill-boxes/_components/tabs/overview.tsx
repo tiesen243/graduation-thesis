@@ -1,4 +1,3 @@
-import type { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 import type { LucideIcon } from '@rozumari/ui/components/icons'
 
 import {
@@ -27,22 +26,30 @@ import { TabsContent } from '@rozumari/ui/components/tabs'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useMemo } from 'react'
 
-import { CompartmentCard } from '@/routes/dashboard/devices/_components/compartment-card'
-import { Metric } from '@/routes/dashboard/devices/_components/metric'
+import { CompartmentCard } from '@/routes/dashboard/pill-boxes/_components/compartment-card'
+import { Metric } from '@/routes/dashboard/pill-boxes/_components/metric'
+import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
 
-export const OverviewTab: React.FC<{ device: ShowDeviceDto.Output }> = ({
-  device,
-}) => {
+export const OverviewTab: React.FC = () => {
+  const { device } = useDevice()
+
   const alerts = useMemo(
     () =>
-      device.compartments.filter((compartment) => {
-        if (compartment.maxCapacity === 0) return false
-        const percentage =
-          (compartment.capacity / compartment.maxCapacity) * 100
-        return percentage < 20
+      device?.compartments.filter((compartment) => {
+        if (!compartment.medicine) return false
+        return compartment.capacity <= 4
       }),
-    [device.compartments]
+    [device?.compartments]
   )
+
+  const pillsRemaining = useMemo(() => {
+    let total = 0
+    for (const compartment of device?.compartments ?? [])
+      if (compartment.medicine) total += compartment.capacity
+    return total
+  }, [device?.compartments])
+
+  if (!device) return null
 
   return (
     <TabsContent value='overview'>
@@ -52,7 +59,7 @@ export const OverviewTab: React.FC<{ device: ShowDeviceDto.Output }> = ({
           [
             PackageIcon,
             'Medication stock',
-            '70 / 140',
+            pillsRemaining,
             'Total pills remaining',
           ],
           [Clock3Icon, 'Next dose', 'Today, 8:00 AM', 'Lisinopril · 10 mg'],
@@ -86,7 +93,7 @@ export const OverviewTab: React.FC<{ device: ShowDeviceDto.Output }> = ({
             </Button>
           </div>
 
-          <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-3'>
+          <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
             {device.compartments.map((item) => (
               <CompartmentCard key={item.position} item={item} />
             ))}
@@ -129,7 +136,7 @@ export const OverviewTab: React.FC<{ device: ShowDeviceDto.Output }> = ({
             </CardContent>
           </Card>
 
-          {alerts.length > 0 && (
+          {alerts?.length && (
             <Alert variant='warning'>
               <PillIcon />
 

@@ -11,7 +11,7 @@ export const InMemoryCompartmentRepository = Layer.effect(
     const { db } = yield* InMemoryClient
     const repository = yield* makeInMemoryRepository(
       db.compartments,
-      (entity) => entity.id
+      (entity) => `${entity.deviceId}:${entity.position}`
     )
 
     return {

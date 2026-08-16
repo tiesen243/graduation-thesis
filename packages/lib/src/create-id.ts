@@ -67,16 +67,20 @@ const createFingerprint = ({
   return hash(sourceString).slice(0, 32)
 }
 
-// oxlint-disable-next-line no-param-reassign, no-plusplus
-const createCounter = (count: number) => () => count++
+let globalCount = Math.floor(random() * 476_782_367)
+const getNextCount = () => {
+  globalCount = (globalCount + 1) % 476_782_367
+  return globalCount
+}
+
+const cachedFingerprint = createFingerprint({ random })
 
 export function createId(rand = random): string {
   const time = Date.now().toString(36)
-  const count = createCounter(Math.floor(rand() * 476_782_367))().toString(36)
-  const fingerprint = createFingerprint({ random: rand })
+  const count = getNextCount().toString(36)
 
   const salt = createEntropy(24, rand)
-  const hashInput = `${time}${salt}${count}${fingerprint}`
+  const hashInput = `${time}${salt}${count}${cachedFingerprint}`
 
   const letter = String.fromCodePoint(97 + Math.floor(rand() * 26))
   return `${letter}${hash(hashInput).slice(1, 24)}`

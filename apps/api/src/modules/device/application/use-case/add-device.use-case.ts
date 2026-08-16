@@ -36,11 +36,12 @@ export class AddDeviceUseCase extends Context.Service<
             yield* deviceRepository.save(device)
 
             const compartments = yield* Compartment.makeRange(device.id, size)
+            console.table(compartments)
             yield* compartmentRepository.save(compartments)
 
             return { id: device.id, factoryModel }
           }),
-          { concurrency: 'unbounded' }
+          { concurrency: 1 }
         ).pipe(withTransaction)
       }),
     }

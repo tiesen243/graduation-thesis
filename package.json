@@ -36,6 +36,7 @@
     "effect": {
       "@effect/platform-bun": ">=4.0.0-rc.108",
       "@effect/sql-pg": ">=4.0.0-rc.108",
+      "@effect/atom-react": ">=4.0.0-rc.108",
       "effect": ">=4.0.0-rc.108"
     },
     "react": {

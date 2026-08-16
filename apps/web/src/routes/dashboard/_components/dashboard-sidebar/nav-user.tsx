@@ -14,7 +14,6 @@ import {
 } from '@rozumari/ui/components/dropdown-menu'
 import {
   BadgeCheckIcon,
-  BellIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
   LogOutIcon,
@@ -27,6 +26,7 @@ import {
 } from '@rozumari/ui/components/sidebar'
 
 import { useSession } from '@/lib/use-session'
+import { ThemeSwitcher } from '@/routes/dashboard/_components/dashboard-sidebar/theme-switcher'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -92,17 +92,13 @@ export function NavUser() {
 
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheckIcon />
-                Account
+                <BadgeCheckIcon /> Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCardIcon />
-                Billing
+                <CreditCardIcon /> Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon />
-                Notifications
-              </DropdownMenuItem>
+
+              <ThemeSwitcher />
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => logout()}>

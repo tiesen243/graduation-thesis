@@ -9,7 +9,6 @@ import {
   LayoutDashboardIcon,
   LifeBuoyIcon,
   PillBottleIcon,
-  PillIcon,
   ReceiptIcon,
   SettingsIcon,
   UsersIcon,
@@ -49,15 +48,12 @@ export const navGroups: NavGroupConfig[] = [
     ],
   },
   {
-    label: 'Devices',
+    label: 'Management',
     items: [
       {
         title: 'Pill Boxes',
-        icon: PillIcon,
-        items: [
-          { title: 'All Devices', icon: PillBottleIcon, url: '/devices' },
-          { title: 'Refills', icon: PillIcon, url: '/refills' },
-        ],
+        icon: PillBottleIcon,
+        url: '/pill-boxes',
       },
       {
         title: 'Users',

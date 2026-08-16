@@ -1,9 +1,9 @@
 import { CareSection } from '@/components/landing/care-section'
+import { CtaSection } from '@/components/landing/cta-section'
 import { LandingHeader } from '@/components/landing/header'
 import { HeroSectoon } from '@/components/landing/hero-section'
 import { HowItWorkSection } from '@/components/landing/how-it-work-section'
 import { StoriesSection } from '@/components/landing/stories-section'
-import { WaitlistSection } from '@/components/landing/waitlist-section'
 
 import type { Route } from './+types/_index'
 
@@ -15,13 +15,20 @@ export default function IndexPage() {
   return (
     <>
       <LandingHeader />
+
       <main className='min-h-dvh overflow-hidden'>
+        <h1 className='sr-only'>
+          Rozumari - Thoughtful technology for everyday care
+        </h1>
+
         <HeroSectoon />
 
         <section
           className='border-y bg-muted/40'
           aria-label='Rozumari highlights'
         >
+          <h2 className='sr-only'>Rozumari highlights</h2>
+
           <div className='mx-auto flex max-w-7xl flex-col gap-6 px-6 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:px-8'>
             <p className='font-medium text-foreground'>
               Designed for real routines, not perfect ones.
@@ -40,7 +47,7 @@ export default function IndexPage() {
 
         <StoriesSection />
 
-        <WaitlistSection />
+        <CtaSection />
       </main>
 
       <footer className='border-t'>

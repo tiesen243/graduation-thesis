@@ -14,14 +14,7 @@ export namespace RegisterDto {
     username: Username,
     email: Email,
     password: Password,
-    confirmPassword: Password,
-  }).check(
-    Schema.makeFilter((data) =>
-      data.password === data.confirmPassword
-        ? undefined
-        : { path: ['confirmPassword'], issue: 'Passwords do not match' }
-    )
-  )
+  })
   export type Input = typeof Input.Type
 
   export const Output = RegisterDto.fields.data

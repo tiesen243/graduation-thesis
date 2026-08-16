@@ -83,55 +83,58 @@ export const oauthController = HttpApiBuilder.group(
             .pipe(Effect.provide(FetchHttpClient.layer))
             .pipe(Effect.orDie)
 
-          const { accessToken, refreshToken, expiresAt } =
-            yield* withTransaction(
-              Effect.gen(function* tx() {
-                const [[account], user] = yield* Effect.all([
-                  accountRepository.findMany({
-                    where: {
-                      provider: { eq: params.provider },
-                      providerId: { eq: id },
-                    },
-                    limit: 1,
-                  }),
-                  userService.findByIdentifier({ email }),
-                ])
+          const { accessToken, refreshToken, expiresAt } = yield* Effect.gen(
+            function* tx() {
+              const [[account], user] = yield* Effect.all([
+                accountRepository.findMany({
+                  where: {
+                    provider: { eq: params.provider },
+                    providerId: { eq: id },
+                  },
+                  limit: 1,
+                }),
+                userService.findByIdentifier({ email }),
+              ])
 
-                let userId: UserId, userRole: UserRole
+              let userId: UserId, userRole: UserRole
 
-                if (account) {
-                  ;({ userId } = account)
-                  userRole = user?.role ?? UserRole.make('user')
+              if (account) {
+                ;({ userId } = account)
+                userRole = user?.role ?? UserRole.make('user')
+              } else {
+                if (user) {
+                  userId = user.id
+                  userRole = user.role
                 } else {
-                  if (user) {
-                    userId = user.id
-                    userRole = user.role
-                  } else {
-                    const newUser = yield* userService.create({
-                      username: crypto.randomUUID().slice(0, 8),
-                      email,
-                    })
-                    userId = newUser.id
-                    userRole = newUser.role
-                  }
-
-                  const newAccount = Account.make({
-                    provider: params.provider,
-                    providerId: id,
-                    userId,
+                  const newUser = yield* userService.create({
+                    username: crypto.randomUUID().slice(0, 8),
+                    email,
                   })
-                  yield* accountRepository.save(newAccount)
+                  userId = newUser.id
+                  userRole = newUser.role
                 }
 
-                return yield* authService.createRefreshToken(userId, userRole)
-              })
-            )
+                const newAccount = Account.make({
+                  provider: params.provider,
+                  providerId: id,
+                  userId,
+                })
+                yield* accountRepository.save(newAccount)
+              }
 
+              return yield* authService.createRefreshToken(userId, userRole)
+            }
+          ).pipe(withTransaction)
+
+          const original = new URL(request.originalUrl)
           const redirectUri = new URL(
-            request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/',
-            request.originalUrl
+            (request.cookies[COOKIE_KEYS.OAUTH_REDIRECT] ?? '/').replace(
+              /^(?<protocol>https?|exp):\/(?!\/)/u,
+              '$1://'
+            ),
+            original.origin
           )
-          if (redirectUri.origin !== request.originalUrl) {
+          if (redirectUri.origin !== original.origin) {
             redirectUri.searchParams.set('access_token', accessToken)
             redirectUri.searchParams.set('refresh_token', refreshToken)
           }
