@@ -7,6 +7,7 @@ import * as Etag from 'effect/unstable/http/Etag'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
 
 import { AppModule } from '@/modules/app.module'
+import { FacebookProvider } from '@/modules/auth/infrastructure/oauth/providers/facebook.provider'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { env } from '@/shared/env'
 
@@ -16,6 +17,7 @@ function bootstrap() {
     auth: {
       secret: env.AUTH_SECRET,
       providers: [
+        new FacebookProvider(env.AUTH_FACEBOOK_ID, env.AUTH_FACEBOOK_SECRET),
         new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET),
       ],
     },

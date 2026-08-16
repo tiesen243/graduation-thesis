@@ -56,6 +56,8 @@ export const env = createEnv({
     ),
 
     AUTH_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
+    AUTH_FACEBOOK_ID: Schema.String.pipe(Schema.toStandardSchemaV1),
+    AUTH_FACEBOOK_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_ID: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
 
