@@ -15,31 +15,29 @@ import {
 } from '@rozumari/ui/components/field'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
-import { useForm } from '@rozumari/ui/hooks/use-form'
-import { useMutation } from '@tanstack/react-query'
-import { toStandardSchemaV1 } from 'effect/Schema'
+import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { Link, useNavigate } from 'react-router'
 
 import { env } from '@/lib/env'
 import { api } from '@/lib/runtime'
 import { getBaseUrl } from '@/lib/utils'
 
+const form = FormBuilder.empty
+  .add('email', LoginDto.Input.fields.email)
+  .add('password', LoginDto.Input.fields.password)
+  .make((payload) => api.auth.login.mutateEffect({ payload }), {
+    defaultValues: { email: '', password: '' },
+    onSuccess: () => toast.add({ type: 'success', title: 'Login successful' }),
+    onError: (error) =>
+      toast.add({
+        type: 'error',
+        title: 'Login Fail',
+        description: error.message,
+      }),
+  })
+
 export function LoginForm() {
   const navigate = useNavigate()
-
-  const login = useMutation({
-    ...api.auth.login.mutationOptions(),
-    onSuccess: ({ message }) => toast.add({ type: 'success', title: message }),
-    onError: ({ message }) =>
-      toast.add({ type: 'error', title: 'Login failed', description: message }),
-  })
-
-  const form = useForm({
-    defaultValues: { email: '', password: '' },
-    schema: toStandardSchemaV1(LoginDto.Input),
-    onSubmit: login.mutateAsync,
-    onSuccess: () => navigate('/dashboard', { replace: true }),
-  })
 
   return (
     <>
@@ -50,70 +48,84 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
 
-      <form.Form>
-        <form id={form.formId} className='px-4' onSubmit={form.handleSubmit}>
-          <FieldSet disabled={login.isPending}>
-            <legend className='sr-only'>Login</legend>
+      <form.Root
+        render={({ handleSubmit }) => (
+          <form
+            className='px-4'
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSubmit({
+                onSuccess: () => navigate('/dashboard', { replace: true }),
+              })
+            }}
+          />
+        )}
+      >
+        <FieldSet>
+          <legend className='sr-only'>Login</legend>
 
-            <form.Field
-              name='email'
-              render={({ field, meta }) => (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Email</FieldLabel>
-                  <Input
-                    {...field}
-                    type='email'
-                    placeholder='Enter your email'
-                  />
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
-              )}
-            />
+          <form.Field
+            name='email'
+            render={({ field, meta }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Email</FieldLabel>
+                <Input
+                  {...field}
+                  type='email'
+                  disabled={meta.isPending}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  placeholder='Enter your email'
+                />
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-            <form.Field
-              name='password'
-              render={({ field, meta }) => (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldContent className='flex-row justify-between'>
-                    <FieldLabel htmlFor={field.id}>Password</FieldLabel>
-                    <FieldDescription>
-                      <Link to='/forgot-password' tabIndex={-1}>
-                        Forgot your password?
-                      </Link>
-                    </FieldDescription>
-                  </FieldContent>
-                  <Input
-                    {...field}
-                    type='password'
-                    placeholder='Enter your password'
-                  />
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
-              )}
-            />
+          <form.Field
+            name='password'
+            render={({ field, meta }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldContent className='flex-row justify-between'>
+                  <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+                  <FieldDescription>
+                    <Link to='/forgot-password' tabIndex={-1}>
+                      Forgot your password?
+                    </Link>
+                  </FieldDescription>
+                </FieldContent>
+                <Input
+                  {...field}
+                  type='password'
+                  disabled={meta.isPending}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  placeholder='Enter your password'
+                />
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-            <Field orientation='responsive'>
-              <Button type='submit'>Login</Button>
+          <Field orientation='responsive'>
+            <Button type='submit'>Login</Button>
 
-              <Button
-                variant='outline'
-                nativeButton={false}
-                render={
-                  <Link
-                    to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}/login`}
-                  />
-                }
-              >
-                Login with Google
-              </Button>
-            </Field>
+            <Button
+              variant='outline'
+              nativeButton={false}
+              render={
+                <Link
+                  to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}/login`}
+                />
+              }
+            >
+              Login with Google
+            </Button>
+          </Field>
 
-            <FieldDescription>
-              Don&apos;t have an account? <Link to='/register'>Register</Link>
-            </FieldDescription>
-          </FieldSet>
-        </form>
-      </form.Form>
+          <FieldDescription>
+            Don&apos;t have an account? <Link to='/register'>Register</Link>
+          </FieldDescription>
+        </FieldSet>
+      </form.Root>
     </>
   )
 }

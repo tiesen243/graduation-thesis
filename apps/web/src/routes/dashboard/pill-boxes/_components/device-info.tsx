@@ -1,6 +1,5 @@
 import type { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 
-import { cn } from '@rozumari/ui'
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
@@ -10,6 +9,7 @@ import {
   ServerIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
+import { cn } from '@rozumari/ui/lib/utils'
 
 // oxlint-disable-next-line typescript/no-inferrable-types
 const status: string = 'pending'

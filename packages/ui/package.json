@@ -4,10 +4,6 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": {
-      "types": "./dist/lib/utils.d.mts",
-      "default": "./dist/lib/utils.mjs"
-    },
     "./components/*": {
       "types": "./dist/components/*.d.mts",
       "default": "./dist/components/*.mjs"
@@ -15,6 +11,10 @@
     "./hooks/*": {
       "types": "./dist/hooks/*.d.mts",
       "default": "./dist/hooks/*.mjs"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.mts",
+      "default": "./dist/lib/*.mjs"
     },
     "./tailwind.css": "./dist/tailwind.css",
     "./package.json": "./package.json"
@@ -41,6 +41,8 @@
     "typescript": "catalog:dev"
   },
   "peerDependencies": {
+    "@effect/atom-react": "catalog:effect",
+    "effect": "catalog:effect",
     "react": "catalog:react"
   }
 }
