@@ -1,3 +1,10 @@
+## @rozumari/web@0.0.7
+
+### Improvements
+
+- Update landing page
+- Update form components using FormBuilder
+
 ## @rozumari/web@0.0.6
 
 ### Added device sse
