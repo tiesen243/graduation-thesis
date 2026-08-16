@@ -3,7 +3,6 @@ import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
 
 import * as Effect from 'effect/Effect'
 import * as HttpClient from 'effect/unstable/http/HttpClient'
-import * as HttpClientRequest from 'effect/unstable/http/HttpClientRequest'
 import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { OAuth } from '@/modules/auth/application/types'
@@ -95,29 +94,22 @@ export abstract class BaseProvider {
     ) {
       const httpClient = yield* HttpClient.HttpClient
 
-      const body = new URLSearchParams()
-      body.set('grant_type', 'authorization_code')
-      body.set('redirect_uri', this.redirectUri)
-      body.set('client_id', this.clientId)
-      body.set('code', code)
+      const urlParams = new URLSearchParams()
+      urlParams.set('grant_type', 'authorization_code')
+      urlParams.set('redirect_uri', this.redirectUri)
+      urlParams.set('client_id', this.clientId)
+      urlParams.set('code', code)
 
-      if (codeVerifier) body.set('code_verifier', codeVerifier)
-
-      const request = HttpClientRequest.post(endpoint).pipe(
-        HttpClientRequest.bodyUrlParams(body),
-        HttpClientRequest.setHeader(
-          'Authorization',
-          `Basic ${this.credentials}`
-        ),
-        HttpClientRequest.acceptJson
-      )
+      if (codeVerifier) urlParams.set('code_verifier', codeVerifier)
 
       const response = yield* httpClient
-        .execute(request)
+        .post(endpoint, {
+          urlParams,
+          headers: { Authorization: `Basic ${this.credentials}` },
+        })
         .pipe(
           Effect.flatMap(HttpClientResponse.filterStatusOk),
           Effect.flatMap(HttpClientResponse.schemaBodyJson(OAuth.Token)),
-          Effect.scoped,
           Effect.orDie
         )
 

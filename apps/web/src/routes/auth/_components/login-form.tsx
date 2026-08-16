@@ -13,6 +13,7 @@ import {
   FieldLabel,
   FieldSet,
 } from '@rozumari/ui/components/field'
+import { FacebookIcon, GoogleIcon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
@@ -35,6 +36,11 @@ const form = FormBuilder.empty
         description: error.message,
       }),
   })
+
+const PROVIDERS = [
+  { name: 'facebook', label: 'Facebook', icon: FacebookIcon },
+  { name: 'google', label: 'Google', icon: GoogleIcon },
+]
 
 export function LoginForm() {
   const navigate = useNavigate()
@@ -105,25 +111,36 @@ export function LoginForm() {
             )}
           />
 
-          <Field orientation='responsive'>
+          <Field>
             <Button type='submit'>Login</Button>
 
-            <Button
-              variant='outline'
-              nativeButton={false}
-              render={
-                <Link
-                  to={`${env.VITE_API_URL}/api/auth/google?redirect_uri=${getBaseUrl()}/login`}
-                />
-              }
-            >
-              Login with Google
-            </Button>
+            <FieldDescription>
+              Don&apos;t have an account? <Link to='/register'>Register</Link>
+            </FieldDescription>
           </Field>
 
-          <FieldDescription>
-            Don&apos;t have an account? <Link to='/register'>Register</Link>
-          </FieldDescription>
+          <Field className='relative grid grid-cols-1 pt-5 md:grid-cols-2'>
+            <div className='absolute inset-0 flex h-px w-full items-center justify-center bg-border'>
+              <span className='bg-background px-2 text-muted-foreground md:bg-card'>
+                Or
+              </span>
+            </div>
+
+            {PROVIDERS.map((provider) => (
+              <Button
+                key={provider.name}
+                variant='outline'
+                nativeButton={false}
+                render={
+                  <Link
+                    to={`${env.VITE_API_URL}/api/auth/${provider.name}?redirect_uri=${getBaseUrl()}/login`}
+                  />
+                }
+              >
+                <provider.icon /> Continue with {provider.label}
+              </Button>
+            ))}
+          </Field>
         </FieldSet>
       </form.Root>
     </>
