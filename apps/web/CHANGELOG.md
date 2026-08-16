@@ -1,3 +1,11 @@
+## @rozumari/web@0.0.8
+
+### Added Facebook OAuth authentication provider.
+
+- Integrated Facebook OAuth 2.0 flow into the authentication infrastructure.
+- Added user profile retrieval (`id`, `name`, `picture`, `email`) via Facebook Graph API v26.0.
+- Fixed query parameters formatting for HTTP requests and resolved PKCE `code_verifier` validation issues.
+
 ## @rozumari/web@0.0.7
 
 ### Improvements
