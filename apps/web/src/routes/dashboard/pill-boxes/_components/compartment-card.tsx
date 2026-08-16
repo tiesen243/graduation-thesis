@@ -7,29 +7,23 @@ import {
   CardContent,
   CardAction,
 } from '@rozumari/ui/components/card'
-import { MoreHorizontalIcon, PackageIcon } from '@rozumari/ui/components/icons'
-import { Progress } from '@rozumari/ui/components/progress'
+import {
+  MoreHorizontalIcon,
+  PackageIcon,
+  PillIcon,
+  PlusIcon,
+} from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 
 export const CompartmentCard: React.FC<{
   item: CompartmentSchema
 }> = ({ item }) => {
-  const filled = Boolean(item.medicine)
-  const percentage =
-    item.maxCapacity > 0
-      ? Math.round((item.capacity / item.maxCapacity) * 100)
-      : 0
+  const isFilled = Boolean(item.medicine)
 
   return (
-    <Card className='flex flex-col'>
+    <Card className='flex flex-col justify-between'>
       <CardHeader>
-        <Typography variant='h4' className='text-sm'>
-          {item.medicine ?? 'Empty compartment'}
-        </Typography>
-        <Typography
-          variant='code'
-          className='border-0 bg-transparent p-0 text-xs'
-        >
+        <Typography className='text-sm font-semibold'>
           SLOT {item.position}
         </Typography>
 
@@ -44,33 +38,56 @@ export const CompartmentCard: React.FC<{
         </CardAction>
       </CardHeader>
 
-      <div className='flex-1' />
-
-      <CardContent className='flex flex-col items-center'>
-        {filled ? (
+      <CardContent className='flex flex-1 flex-col justify-between'>
+        {isFilled ? (
           <>
-            <Progress value={percentage} className='w-full' />
+            <div className='flex flex-col items-center justify-center'>
+              <div className='mb-2 flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary'>
+                <PillIcon className='size-5' />
+              </div>
 
-            <div className='mt-3 flex w-full justify-between'>
-              <Typography className='font-semibold'>
-                {item.capacity}{' '}
-                <span className='font-normal text-muted-foreground'>
-                  / {item.maxCapacity}
-                </span>
+              <Typography
+                variant='h4'
+                className='font-semibold text-foreground'
+                title={item.medicine ?? undefined}
+              >
+                {item.medicine}
               </Typography>
 
-              <Typography variant='caption' as='p'>
-                {percentage}% full
+              {item.dosage !== null && (
+                <Typography variant='caption' className='text-muted-foreground'>
+                  {item.dosage} mg / unit
+                </Typography>
+              )}
+            </div>
+
+            <div className='flex h-9 items-baseline justify-between rounded-lg bg-muted px-3'>
+              <Typography
+                variant='caption'
+                className='font-medium text-muted-foreground'
+                as='span'
+              >
+                Quantity
               </Typography>
+
+              <div className='flex items-baseline gap-1'>
+                <span className='text-lg font-bold'>{item.capacity}</span>
+                <span className='text-xs text-muted-foreground'>pills</span>
+              </div>
             </div>
           </>
         ) : (
           <>
-            <PackageIcon className='text-muted-foreground/60' />
-            <Typography variant='small' className='mt-2 text-muted-foreground'>
-              Empty compartment
-            </Typography>
-            <Button variant='link' size='sm'>
+            <div className='mb-2 flex aspect-video flex-col items-center justify-center gap-3 rounded-md bg-muted/60 text-muted-foreground/70'>
+              <PackageIcon className='size-5' />
+
+              <Typography variant='small' className='font-medium'>
+                Empty compartment
+              </Typography>
+            </div>
+
+            <Button variant='outline' size='lg' className='border-dashed'>
+              <PlusIcon />
               Add medication
             </Button>
           </>

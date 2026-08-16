@@ -1,4 +1,3 @@
-import type { CompartmentId } from '@rozumari/contract/device/schemas/compartment.schema'
 import type {
   DeviceId,
   DeviceStatus,
@@ -6,7 +5,13 @@ import type {
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
 import { deviceStatuses } from '@rozumari/contract/device/schemas/device.schema'
-import { index, pgEnum, snakeCase, uniqueIndex } from 'drizzle-orm/pg-core'
+import {
+  index,
+  pgEnum,
+  primaryKey,
+  snakeCase,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core'
 
 import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
 
@@ -35,10 +40,9 @@ export const devices = snakeCase.table(
 export const compartments = snakeCase.table(
   'compartments',
   (t) => ({
-    id: t.varchar({ length: 24 }).primaryKey().$type<CompartmentId>(),
     medicine: t.varchar({ length: 255 }),
     capacity: t.integer().notNull(),
-    maxCapacity: t.integer().notNull(),
+    dosage: t.numeric({ precision: 8, scale: 2, mode: 'number' }).notNull(),
     position: t.varchar({ length: 4 }).notNull(),
     lastRefillAt: t.timestamp(),
     deviceId: t
@@ -48,10 +52,7 @@ export const compartments = snakeCase.table(
       .$type<DeviceId>(),
   }),
   (t) => [
+    primaryKey({ columns: [t.deviceId, t.position] }),
     index('compartments_device_id_index').on(t.deviceId),
-    uniqueIndex('compartments_device_id_position_index').on(
-      t.deviceId,
-      t.position
-    ),
   ]
 )

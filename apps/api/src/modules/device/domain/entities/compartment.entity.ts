@@ -47,7 +47,8 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
           deviceId,
           position: `${row}-${column}`,
         })
-      })
+      }),
+      { concurrency: 1 }
     )
   })
 }

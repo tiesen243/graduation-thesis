@@ -38,14 +38,6 @@ export const DrizzleDeviceRepository = Layer.effect(
       DrizzleDeviceMapper
     )
 
-    //     id: string & Brand<"device/domain/CompartmentId">;
-    // position: string;
-    // medicine: string | null;
-    // capacity: number;
-    // maxCapacity: number;
-    // lastRefillAt: Date | null;
-    // deviceId: string & Brand<"device/domain/DeviceId">;
-
     return {
       ...repository,
 
@@ -56,15 +48,14 @@ export const DrizzleDeviceRepository = Layer.effect(
             compartments: sql<(typeof compartments.$inferSelect)[]>`COALESCE(
               json_agg(
                 json_build_object(
-                  'id', ${compartments.id},
                   'medicine', ${compartments.medicine},
                   'capacity', ${compartments.capacity},
-                  'maxCapacity', ${compartments.maxCapacity},
+                  'dosage', ${compartments.dosage},
                   'position', ${compartments.position},
                   'lastRefillAt', ${compartments.lastRefillAt},
                   'deviceId', ${compartments.deviceId}
-                )
-              ) FILTER (WHERE ${compartments.id} IS NOT NULL),
+                ) ORDER BY ${compartments.position} ASC
+              ) FILTER (WHERE ${compartments.deviceId} IS NOT NULL),
             '[]'::json)`.as('compartments'),
           })
           .from(devices)
