@@ -30,7 +30,7 @@ function bootstrap() {
           env.VERCEL_ENV === 'preview' && env.VERCEL_BRANCH_URL
             ? [`https://${env.VERCEL_BRANCH_URL.replace('-api-git-', '-git-')}`]
             : env.CORS_ORIGIN,
-        allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: [
           'content-type',
           'authorization',

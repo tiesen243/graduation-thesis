@@ -6,6 +6,7 @@ import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-devi
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
 import { DeviceInfrastructureModule } from '@/modules/device/infrastructure/infrastructure.module'
 import { deviceController } from '@/modules/device/presentation/http/device.controller'
 
@@ -19,7 +20,8 @@ export class DeviceModule {
       AddDeviceUseCase.layer,
       DeviceStreamUseCase.layer,
       ListDevicesUseCase.layer,
-      ShowDeviceUseCase.layer
+      ShowDeviceUseCase.layer,
+      UpdateCompartmentUseCase.layer
     )
 
     const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)

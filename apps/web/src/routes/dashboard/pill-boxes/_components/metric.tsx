@@ -26,9 +26,7 @@ export const Metric: React.FC<MetricProps> = ({
       <Typography variant='h4' className='mt-0.5'>
         {value}
       </Typography>
-      <Typography variant='caption' className='text-left'>
-        {detail}
-      </Typography>
+      <Typography className='text-left'>{detail}</Typography>
     </div>
   </div>
 )

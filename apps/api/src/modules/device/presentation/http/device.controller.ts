@@ -3,6 +3,7 @@ import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
+import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
 import { HttpServerResponse } from 'effect/unstable/http'
@@ -12,6 +13,7 @@ import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-devi
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
 
 export const deviceController = HttpApiBuilder.group(
   Api,
@@ -44,6 +46,12 @@ export const deviceController = HttpApiBuilder.group(
         AddDeviceUseCase.use((s) => s.execute(payload)).pipe(
           Effect.map((data) => AddDeviceDto.make({ data }))
         )
+      )
+
+      .handle('update-compartment', ({ params, payload }) =>
+        UpdateCompartmentUseCase.use((s) =>
+          s.execute({ ...params, ...payload })
+        ).pipe(Effect.map((data) => UpdateCompartmentDto.make({ data })))
       )
 
       .handle('stream', ({ params }) =>

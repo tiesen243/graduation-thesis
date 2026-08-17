@@ -51,4 +51,11 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
       { concurrency: 1 }
     )
   })
+
+  public update(props: Pick<Compartment, 'medicine' | 'dosage' | 'capacity'>) {
+    return Compartment.make({
+      ...structuredClone(this),
+      ...props,
+    })
+  }
 }

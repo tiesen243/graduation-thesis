@@ -6,6 +6,8 @@ import { AddDeviceDto } from '@/device/dto/add-device.dto'
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { ListDevicesDto } from '@/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@/device/dto/show-device.dto'
+import { UpdateCompartmentDto } from '@/device/dto/update-compartment.dto'
+import { CompartmentNotFound } from '@/device/schemas/compartment.error'
 import {
   DeviceAlreadyExists,
   DeviceNotFound,
@@ -40,6 +42,15 @@ export class DeviceGroup extends HttpApiGroup.make('device')
       success: AddDeviceDto,
       error: [DeviceAlreadyExists],
     }).middleware(AdminMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.patch('update-compartment', '/:deviceId/:position', {
+      params: UpdateCompartmentDto.Params,
+      payload: UpdateCompartmentDto.Input,
+      success: UpdateCompartmentDto,
+      error: [CompartmentNotFound],
+    })
   )
 
   .add(
