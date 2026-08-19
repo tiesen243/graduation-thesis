@@ -7,8 +7,8 @@
     "build": "react-router build",
     "clean": "git clean -fdx .cache .react-router .turbo build node_modules",
     "dev": "react-router dev",
-    "start": "react-router-serve",
-    "typecheck": "react-router typegen && tsc --noEmit"
+    "start": "bunx --bun @react-router/serve ./build/server/nodejs_*/index.js",
+    "typecheck": "bun --bun react-router typegen && tsc --noEmit"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:effect",
