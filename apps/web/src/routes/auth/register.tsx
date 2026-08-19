@@ -26,24 +26,9 @@ const registerForm = FormBuilder.empty
   .add('confirmPassword', RegisterDto.Input.fields.password)
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Passwords do not match',
+    issue: 'Passwords do not match',
   })
-  .make((payload) => api.auth.register.mutateEffect({ payload }), {
-    defaultValues: {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-    onSuccess: () =>
-      toast.add({ type: 'success', title: 'Registration successful' }),
-    onError: (error) =>
-      toast.add({
-        type: 'error',
-        title: 'Registration failed',
-        description: error.message,
-      }),
-  })
+  .make()
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -58,14 +43,34 @@ export default function RegisterPage() {
       </CardHeader>
 
       <registerForm.Root
+        defaultValues={{
+          email: '',
+          username: '',
+          password: '',
+          confirmPassword: '',
+        }}
         render={({ handleSubmit }) => (
           <form
             className='px-4'
             onSubmit={(e) => {
               e.preventDefault()
-              handleSubmit({
-                onSuccess: () => navigate('/login', { replace: true }),
-              })
+              e.stopPropagation()
+
+              handleSubmit(
+                (payload) => api.auth.register.mutateEffect({ payload }),
+                {
+                  onSuccess: () => {
+                    navigate('/login', { replace: true })
+                    toast.add({
+                      type: 'success',
+                      title: 'Registration successful',
+                      description: 'You can now log in with your new account.',
+                    })
+                  },
+                  onError: (error) =>
+                    toast.add({ type: 'error', description: error.message }),
+                }
+              )
             }}
           />
         )}

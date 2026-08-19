@@ -33,10 +33,16 @@ import {
 } from '@rozumari/ui/components/input-group'
 import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { api } from '@/lib/runtime'
 import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
+
+const updateCompartmentForm = FormBuilder.empty
+  .add('medicine', UpdateCompartmentDto.Input.fields.medicine)
+  .add('dosage', UpdateCompartmentDto.Input.fields.dosage)
+  .add('capacity', UpdateCompartmentDto.Input.fields.capacity)
+  .make()
 
 const UpdateCompartmentForm: React.FC<{
   trigger: React.ReactElement
@@ -46,41 +52,20 @@ const UpdateCompartmentForm: React.FC<{
   const { deviceId, position, medicine, dosage, capacity } = compartment
   const { refetch } = useDevice()
 
-  const form = useMemo(
-    () =>
-      FormBuilder.empty
-        .add('medicine', UpdateCompartmentDto.Input.fields.medicine)
-        .add('dosage', UpdateCompartmentDto.Input.fields.dosage)
-        .add('capacity', UpdateCompartmentDto.Input.fields.capacity)
-        .make(
-          (payload) =>
-            api.device['update-compartment'].mutateEffect({
-              params: { deviceId, position },
-              payload,
-            }),
-          {
-            defaultValues: { medicine: medicine ?? '', dosage, capacity },
-            onSuccess: async () => {
-              setIsOpen(false)
-              await refetch()
-            },
-            onError: console.error,
-          }
-        ),
-    [capacity, refetch, dosage, position, medicine, deviceId]
-  )
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger render={trigger} />
 
-      <form.Root render={() => <DialogContent />}>
+      <updateCompartmentForm.Root
+        defaultValues={{ medicine: medicine ?? '', dosage, capacity }}
+        render={() => <DialogContent />}
+      >
         <DialogHeader>
           <DialogTitle>Update Compartment</DialogTitle>
           <DialogDescription>Update medicine at {position}</DialogDescription>
         </DialogHeader>
 
-        <form.Field
+        <updateCompartmentForm.Field
           name='medicine'
           render={({ field, meta }) => (
             <Field data-invalid={meta.errors.length > 0}>
@@ -94,7 +79,7 @@ const UpdateCompartmentForm: React.FC<{
           )}
         />
 
-        <form.Field
+        <updateCompartmentForm.Field
           name='dosage'
           render={({ field, meta }) => (
             <Field data-invalid={meta.errors.length > 0}>
@@ -117,7 +102,7 @@ const UpdateCompartmentForm: React.FC<{
           )}
         />
 
-        <form.Field
+        <updateCompartmentForm.Field
           name='capacity'
           render={({ field, meta }) => (
             <Field data-invalid={meta.errors.length > 0}>
@@ -141,15 +126,58 @@ const UpdateCompartmentForm: React.FC<{
         />
 
         <DialogFooter>
-          <form.Submit
+          <updateCompartmentForm.Submit
             render={({ handleSubmit, meta }) => (
-              <Button onClick={() => handleSubmit()} disabled={meta.isPending}>
+              <Button
+                variant='destructive'
+                onClick={() =>
+                  handleSubmit(
+                    () =>
+                      api.device['update-compartment'].mutateEffect({
+                        params: { deviceId, position },
+                        payload: { medicine: '', dosage: 0, capacity: 0 },
+                      }),
+                    {
+                      onSuccess: async () => {
+                        setIsOpen(false)
+                        await refetch()
+                      },
+                    }
+                  )
+                }
+                disabled={meta.isPending}
+              >
+                {meta.isPending ? 'Deleting...' : 'Delete compartment'}
+              </Button>
+            )}
+          />
+
+          <updateCompartmentForm.Submit
+            render={({ handleSubmit, meta }) => (
+              <Button
+                onClick={() =>
+                  handleSubmit(
+                    (payload) =>
+                      api.device['update-compartment'].mutateEffect({
+                        params: { deviceId, position },
+                        payload,
+                      }),
+                    {
+                      onSuccess: async () => {
+                        setIsOpen(false)
+                        await refetch()
+                      },
+                    }
+                  )
+                }
+                disabled={meta.isPending}
+              >
                 {meta.isPending ? 'Saving...' : 'Save changes'}
               </Button>
             )}
           />
         </DialogFooter>
-      </form.Root>
+      </updateCompartmentForm.Root>
     </Dialog>
   )
 }

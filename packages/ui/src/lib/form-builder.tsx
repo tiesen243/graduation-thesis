@@ -40,7 +40,7 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
   private refinements: {
     refinement: (data: Schema.Struct<TFields>['Type']) => boolean
-    options: { path: (keyof TFields)[]; message: string }
+    options: { path: (keyof TFields)[]; issue: string }
   }[] = []
 
   public static get empty() {
@@ -59,20 +59,21 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
   public refine(
     refinement: (data: Schema.Struct<TFields>['Type']) => boolean,
-    options: { path: (keyof TFields)[]; message: string }
+    options: { path: (keyof TFields)[]; issue: string }
   ): FormBuilder<TFields> {
     this.refinements.push({ refinement, options })
     return this
   }
 
-  public make<TValues extends Schema.Struct<TFields>['Type'], A, E>(
-    onSubmit: (values: NoInfer<TValues>) => Effect.Effect<A, E>,
-    options: SubmitOptions<A, E> & { defaultValues: TValues }
-  ) {
-    const keys = Object.keys(options.defaultValues) as (keyof TValues)[]
+  public make<
+    TValues extends Schema.Struct<TFields>['Type'] =
+      Schema.Struct<TFields>['Type'],
+  >() {
+    const defaultValuesAtom = Atom.make({} as TValues)
 
-    const valuesAtoms = Atom.family((fieldName: keyof TValues) =>
-      Atom.make(options.defaultValues[fieldName])
+    const valuesAtoms = Atom.family((_fieldName: keyof TValues) =>
+      // oxlint-disable-next-line unicorn/no-useless-undefined typescript/no-explicit-any
+      Atom.make<any>(undefined)
     )
 
     const errorsAtoms = Atom.family((_fieldName: keyof TValues) =>
@@ -84,18 +85,23 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
     const formAtom = make(() =>
       Atom.writable(
         (get) => {
-          const values = {} as TValues
+          const defaults = get(defaultValuesAtom)
+          const keys = Object.keys(defaults) as (keyof TValues)[]
+          const values = { ...defaults } as TValues
           const errors = {} as Record<keyof TValues, Issues>
           const isPending = get(pendingAtom)
 
           for (const key of keys) {
-            values[key] = get(valuesAtoms(key))
+            const val = get(valuesAtoms(key))
+            if (val !== undefined) values[key] = val
+
             errors[key] = get(errorsAtoms(key))
           }
 
           return { values, errors, isPending }
         },
         (ctx, newState: FormState<TValues>) => {
+          const keys = Object.keys(newState.values) as (keyof TValues)[]
           for (const key of keys) {
             const oldVal = ctx.get(valuesAtoms(key))
             const newVal = newState.values[key]
@@ -115,20 +121,17 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
     let formSchema = Schema.Struct(this.fields)
     for (const { refinement, options: opts } of this.refinements)
       formSchema = formSchema.check(
-        Schema.makeFilter((data) =>
-          refinement(data)
-            ? undefined
-            : { path: opts.path, issue: opts.message }
-        )
+        Schema.makeFilter((data) => (refinement(data) ? undefined : opts))
       )
 
     const FormContext = React.createContext<{
       formId: string
+      defaultValues: TValues
     } | null>(null)
 
     const useSubmit = () => {
       const form = formAtom.use()
-      const valuesRef = React.useRef<TValues>(options.defaultValues)
+      const valuesRef = React.useRef<TValues>({} as TValues)
       const isPending = useAtomValue(form, (s) => s.isPending)
       const setState = useAtomSet(form)
 
@@ -139,7 +142,10 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
       )
 
       return React.useCallback(
-        async (opts?: SubmitOptions<A, E>) => {
+        async <A, E>(
+          onSubmit: (values: TValues) => Effect.Effect<A, E>,
+          opts?: SubmitOptions<A, E>
+        ) => {
           if (isPending) return
           setState((prev) => ({ ...prev, isPending: true }))
 
@@ -168,13 +174,11 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
           await onSubmit(result.success).pipe(
             Effect.tap((a) =>
               Effect.sync(() => {
-                options.onSuccess?.(a)
                 opts?.onSuccess?.(a)
               })
             ),
             Effect.catch((error) =>
               Effect.sync(() => {
-                options.onError?.(error)
                 opts?.onError?.(error)
               })
             ),
@@ -189,19 +193,31 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
     const Form: React.FC<
       Omit<useRender.ComponentProps<'div'>, 'render'> & {
+        defaultValues: TValues
         render: (args: {
-          handleSubmit: (options?: SubmitOptions<A, E>) => void
+          handleSubmit: <A, E>(
+            onSubmit: (values: TValues) => Effect.Effect<A, E>,
+            options?: SubmitOptions<A, E>
+          ) => void
           meta: { formId: string; isPending: boolean }
         }) => useRender.ComponentProps<'div'>['render']
       }
-    > = ({ render, className, ...props }) => {
+    > = ({ defaultValues, render, className, ...props }) => {
       const id = React.useId()
       const formId = `form-${id}`
+
+      const setDefaultValues = useAtomSet(defaultValuesAtom)
+      React.useMemo(() => {
+        setDefaultValues(defaultValues)
+      }, [defaultValues, setDefaultValues])
 
       const handleSubmit = useSubmit()
       const isPending = useAtomValue(formAtom.use(), (s) => s.isPending)
 
-      const memoizedValue = React.useMemo(() => ({ formId }), [formId])
+      const memoizedValue = React.useMemo(
+        () => ({ formId, defaultValues }),
+        [formId, defaultValues]
+      )
 
       return (
         <FormContext value={memoizedValue}>
@@ -256,10 +272,13 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
       if (!ctx) throw new Error('Field must be used within a Form')
 
       const prevValueRef = React.useRef<TValues[TFieldName]>(
-        options.defaultValues[props.name]
+        ctx.defaultValues[props.name]
       )
 
-      const [value, setValue] = useAtom(valuesAtoms(props.name))
+      const [rawAtomValue, setValue] = useAtom(valuesAtoms(props.name))
+      const value = (rawAtomValue ??
+        ctx.defaultValues[props.name]) as TValues[TFieldName]
+
       const [errors, setErrors] = useAtom(errorsAtoms(props.name))
       const isPending = useAtomValue(formAtom.use(), (s) => s.isPending)
 
@@ -284,7 +303,7 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
       const add = React.useCallback(
         (newValue: TValues[TFieldName] extends (infer U)[] ? U : never) => {
-          setValue((prev) =>
+          setValue((prev: unknown[]) =>
             Array.isArray(prev)
               ? ([...(prev as unknown[]), newValue] as never)
               : prev
@@ -298,7 +317,7 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
           index: number,
           newValue: TValues[TFieldName] extends (infer U)[] ? U : never
         ) => {
-          setValue((prev) =>
+          setValue((prev: unknown[]) =>
             Array.isArray(prev)
               ? ((prev as unknown[]).map((v, i) =>
                   i === index ? newValue : v
@@ -311,7 +330,7 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
       const remove = React.useCallback(
         (index: number) => {
-          setValue((prev) =>
+          setValue((prev: unknown[]) =>
             Array.isArray(prev)
               ? ((prev as unknown[]).filter((_, i) => i !== index) as never)
               : prev
@@ -377,7 +396,10 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
     const Submit = (props: {
       render: (args: {
-        handleSubmit: (options?: SubmitOptions<A, E>) => void
+        handleSubmit: <A, E>(
+          onSubmit: (values: TValues) => Effect.Effect<A, E>,
+          options?: SubmitOptions<A, E>
+        ) => void
         meta: { formId: string; isPending: boolean }
       }) => React.ReactNode
     }) => {
