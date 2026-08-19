@@ -10,9 +10,7 @@ export const CompartmentSchema = Schema.Struct({
 
   capacity: Schema.Int.pipe(Schema.withConstructorDefault(Effect.succeed(0))),
 
-  dosage: Schema.NumberFromString.pipe(
-    Schema.withConstructorDefault(Effect.succeed(0))
-  ),
+  dosage: Schema.Number.pipe(Schema.withConstructorDefault(Effect.succeed(0))),
 
   position: Schema.String.check(Schema.isMaxLength(4)),
 

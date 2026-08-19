@@ -6,9 +6,7 @@ import { OverviewTab } from '@/routes/dashboard/pill-boxes/_components/tabs/over
 import { SettingsTab } from '@/routes/dashboard/pill-boxes/_components/tabs/settings'
 import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
 
-import type { Route } from './+types/[id]'
-
-export default function DevicesShowPage(_: Route.ComponentProps) {
+export default function DevicesShowPage() {
   const { isLoading } = useDevice()
   if (isLoading) return <div>Loading...</div>
 

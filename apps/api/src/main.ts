@@ -10,6 +10,7 @@ import { AppModule } from '@/modules/app.module'
 import { FacebookProvider } from '@/modules/auth/infrastructure/oauth/providers/facebook.provider'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { env } from '@/shared/env'
+import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
 
 function bootstrap() {
   const { routes } = AppModule.create({
@@ -25,12 +26,14 @@ function bootstrap() {
 
   const { handler } = HttpRouter.toWebHandler(
     Layer.provide(routes, [
+      ResendService.layer,
+
       HttpRouter.cors({
         allowedOrigins:
           env.VERCEL_ENV === 'preview' && env.VERCEL_BRANCH_URL
             ? [`https://${env.VERCEL_BRANCH_URL.replace('-api-git-', '-git-')}`]
             : env.CORS_ORIGIN,
-        allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedMethods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: [
           'content-type',
           'authorization',
@@ -42,11 +45,13 @@ function bootstrap() {
         ],
         credentials: true,
       }),
+
       Layer.succeed(
         References.MinimumLogLevel,
         env.NODE_ENV === 'production' ? 'Info' : 'Debug'
       ),
       Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
+
       BunHttpPlatform.layer,
       BunServices.layer,
       Etag.layer,

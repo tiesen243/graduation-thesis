@@ -1,4 +1,4 @@
-// oxlint-disable react/react-compiler
+// oxlint-disable react/refs
 
 import type { StandardSchemaV1 } from '@rozumari/lib/standard-schema'
 

@@ -9,9 +9,9 @@ export const useDevice = () => {
   const params = useParams<{ id: DeviceId }>()
   if (!params.id) throw new Error('Device ID is required')
 
-  const { data, error, isLoading } = useQuery(
+  const { data, error, isLoading, refetch } = useQuery(
     api.device.show.queryOptions({ params: { id: params.id } })
   )
 
-  return { device: data?.data, error, isLoading }
+  return { device: data?.data, error, isLoading, refetch }
 }

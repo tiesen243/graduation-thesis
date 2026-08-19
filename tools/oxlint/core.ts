@@ -151,7 +151,7 @@ export default defineConfig({
     'no-promise-executor-return': 'error',
     'no-proto': 'error',
     'no-prototype-builtins': 'error',
-    'no-redeclare': 'error',
+    'no-redeclare': 'off',
     'no-regex-spaces': 'error',
     'no-restricted-globals': 'error',
     'no-restricted-imports': 'error',
