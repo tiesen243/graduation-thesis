@@ -4,11 +4,11 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
+    "build": "bun --bun react-router build",
     "clean": "git clean -fdx .cache .react-router .turbo build node_modules",
-    "dev": "react-router dev",
-    "start": "react-router-serve",
-    "typecheck": "react-router typegen && tsc --noEmit"
+    "dev": "bun --bun react-router dev",
+    "start": "bunx --bun @react-router/serve ./build/server/nodejs_*/index.js",
+    "typecheck": "bun --bun react-router typegen && tsc --noEmit"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:effect",
