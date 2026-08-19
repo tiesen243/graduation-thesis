@@ -34,9 +34,10 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_WEB_PROJECT_ID }}
     steps:
       - uses: actions/checkout@v6
+      - uses: ./tools/github/actions/setup
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: bun install --global vercel@latest
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=preview --token=${{ secrets.TURBO_TOKEN }}
