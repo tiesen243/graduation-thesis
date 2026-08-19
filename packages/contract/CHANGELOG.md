@@ -1,3 +1,12 @@
+## @rozumari/contract@0.0.5
+
+### Added forgot password features
+
+- Added send email using Resend
+- Added welcome email
+- Added send forgot password email
+- Added reset password functionality
+
 ## @rozumari/contract@0.0.4
 
 ### Added device sse

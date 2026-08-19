@@ -1,3 +1,12 @@
+## @rozumari/api@0.0.9
+
+### Added forgot password features
+
+- Added send email using Resend
+- Added welcome email
+- Added send forgot password email
+- Added reset password functionality
+
 ## @rozumari/api@0.0.8
 
 ### Added Facebook OAuth authentication provider.

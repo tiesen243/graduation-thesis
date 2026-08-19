@@ -1,49 +1,51 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Added Facebook OAuth authentication provider.\n\n- Integrated Facebook OAuth 2.0 flow into the authentication infrastructure.\n- Added user profile retrieval (`id`, `name`, `picture`, `email`) via Facebook Graph API v26.0.\n- Fixed query parameters formatting for HTTP requests and resolved PKCE `code_verifier` validation issues.\n"
-    filename: 2026-08-17-mswfypb1.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Added forgot password features\n\n- Added send email using Resend\n- Added welcome email\n- Added send forgot password email\n- Added reset password functionality\n"
+    filename: 2026-08-19-mszs4767.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - changelogIds:
-      - 2026-08-17-mswfypb1.md
+      - 2026-08-19-mszs4767.md
     id: npm:@rozumari/web
     updated: true
   - changelogIds:
-      - 2026-08-17-mswfypb1.md
+      - 2026-08-19-mszs4767.md
     id: npm:@rozumari/api
     updated: true
-  - id: npm:@rozumari/tsconfig
-    updated: false
   - id: npm:@rozumari/github
     updated: false
   - id: npm:@rozumari/mobile
     updated: false
   - id: npm:@rozumari/oxlint
     updated: false
-  - id: npm:@rozumari/pcb
-    updated: false
-  - id: npm:@rozumari/lib
+  - changelogIds:
+      - 2026-08-19-mszs4767.md
+    id: npm:@rozumari/contract
+    updated: true
+  - id: npm:@rozumari/tsconfig
     updated: false
   - id: npm:@rozumari/firmware
     updated: false
   - id: npm:@rozumari/ui
     updated: false
+  - id: npm:@rozumari/lib
+    updated: false
   - id: npm:@rozumari/proteus
     updated: false
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/pcb
     updated: false
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/web
   - id: npm:@rozumari/api
-  - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/github
   - id: npm:@rozumari/mobile
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/pcb
-  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/firmware
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
   - id: npm:@rozumari/proteus
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/pcb
