@@ -21,11 +21,7 @@ import { api } from '@/lib/runtime'
 
 const forgotPasswordForm = FormBuilder.empty
   .add('email', ForgotPasswordDto.Input.fields.email)
-  .make((payload) => api.auth['forgot-password'].mutateEffect({ payload }), {
-    defaultValues: { email: '' },
-    onSuccess: ({ message }) =>
-      toast.add({ type: 'success', description: message }),
-  })
+  .make()
 
 export default function ForgotPasswordPage() {
   return (
@@ -39,12 +35,26 @@ export default function ForgotPasswordPage() {
       </CardHeader>
 
       <forgotPasswordForm.Root
+        defaultValues={{ email: '' }}
         render={({ handleSubmit }) => (
           <form
             className='px-4'
             onSubmit={(e) => {
               e.preventDefault()
-              handleSubmit()
+              e.stopPropagation()
+
+              handleSubmit(
+                (payload) =>
+                  api.auth['forgot-password'].mutateEffect({ payload }),
+                {
+                  onSuccess: () =>
+                    toast.add({
+                      type: 'success',
+                      description:
+                        'If an account with that email exists, a reset link has been sent.',
+                    }),
+                }
+              )
             }}
           />
         )}

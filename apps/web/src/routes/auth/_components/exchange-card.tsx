@@ -12,15 +12,19 @@ import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router'
 
 import { api } from '@/lib/runtime'
+import { useSession } from '@/lib/use-session'
 
 export const ExchangeCard: React.FC<{ token: string }> = ({ token }) => {
   const navigate = useNavigate()
   const handledRef = useRef(false)
 
+  const { refetch } = useSession()
+
   const exchange = useMutation({
     ...api.oauth.exchange.mutationOptions(),
-    onSuccess: () => {
-      toast.add({ type: 'success', title: 'Login with Google successful' })
+    onSuccess: async () => {
+      await refetch()
+
       navigate('/dashboard', { replace: true })
     },
     onError: ({ message }) =>
@@ -37,9 +41,7 @@ export const ExchangeCard: React.FC<{ token: string }> = ({ token }) => {
   return (
     <CardHeader>
       <CardTitle>Authenticating...</CardTitle>
-      <CardDescription>
-        Please wait while we log you in with Google.
-      </CardDescription>
+      <CardDescription>Please wait while we log you in...</CardDescription>
 
       <CardContent className='flex items-center justify-center py-6'>
         <Loader2Icon className='size-8 animate-spin' />

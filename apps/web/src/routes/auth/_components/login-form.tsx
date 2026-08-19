@@ -21,21 +21,13 @@ import { Link, useNavigate } from 'react-router'
 
 import { env } from '@/lib/env'
 import { api } from '@/lib/runtime'
+import { useSession } from '@/lib/use-session'
 import { getBaseUrl } from '@/lib/utils'
 
 const form = FormBuilder.empty
   .add('email', LoginDto.Input.fields.email)
   .add('password', LoginDto.Input.fields.password)
-  .make((payload) => api.auth.login.mutateEffect({ payload }), {
-    defaultValues: { email: '', password: '' },
-    onSuccess: () => toast.add({ type: 'success', title: 'Login successful' }),
-    onError: (error) =>
-      toast.add({
-        type: 'error',
-        title: 'Login Fail',
-        description: error.message,
-      }),
-  })
+  .make()
 
 const PROVIDERS = [
   { name: 'facebook', label: 'Facebook', icon: FacebookIcon },
@@ -44,6 +36,7 @@ const PROVIDERS = [
 
 export function LoginForm() {
   const navigate = useNavigate()
+  const { refetch } = useSession()
 
   return (
     <>
@@ -55,14 +48,30 @@ export function LoginForm() {
       </CardHeader>
 
       <form.Root
+        defaultValues={{ email: '', password: '' }}
         render={({ handleSubmit }) => (
           <form
             className='px-4'
             onSubmit={(e) => {
               e.preventDefault()
-              handleSubmit({
-                onSuccess: () => navigate('/dashboard', { replace: true }),
-              })
+              e.stopPropagation()
+
+              handleSubmit(
+                (payload) => api.auth.login.mutateEffect({ payload }),
+                {
+                  onSuccess: async () => {
+                    await refetch()
+                    toast.add({
+                      type: 'success',
+                      description: 'You have successfully logged in.',
+                    })
+
+                    navigate('/dashboard', { replace: true })
+                  },
+                  onError: (error) =>
+                    toast.add({ type: 'error', description: error.message }),
+                }
+              )
             }}
           />
         )}

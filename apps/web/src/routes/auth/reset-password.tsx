@@ -24,29 +24,15 @@ const forgotPasswordForm = FormBuilder.empty
   .add('confirmPassword', ResetPasswordDto.Input.fields.password)
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
-    message: 'Passwords do not match',
+    issue: 'Passwords do not match',
   })
+  .make()
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
   const token = searchParams.get('token')
-
-  const form = forgotPasswordForm.make(
-    (payload) =>
-      api.auth['reset-password'].mutateEffect({
-        headers: { Authorization: `Bearer ${token}` },
-        payload,
-      }),
-    {
-      defaultValues: { password: '', confirmPassword: '' },
-      onSuccess: () => {
-        toast.add({ type: 'success', title: 'Password reset successful' })
-        navigate('/login', { replace: true })
-      },
-    }
-  )
 
   if (!token)
     return (
@@ -65,13 +51,30 @@ export default function ResetPasswordPage() {
         </CardDescription>
       </CardHeader>
 
-      <form.Root
+      <forgotPasswordForm.Root
+        defaultValues={{ password: '', confirmPassword: '' }}
         render={({ handleSubmit }) => (
           <form
             className='px-4'
             onSubmit={(e) => {
               e.preventDefault()
-              handleSubmit()
+
+              handleSubmit(
+                (payload) =>
+                  api.auth['reset-password'].mutateEffect({
+                    headers: { Authorization: `Bearer ${token}` },
+                    payload,
+                  }),
+                {
+                  onSuccess: () => {
+                    navigate('/login', { replace: true })
+                    toast.add({
+                      type: 'success',
+                      description: 'Password reset successfully.',
+                    })
+                  },
+                }
+              )
             }}
           />
         )}
@@ -79,7 +82,7 @@ export default function ResetPasswordPage() {
         <FieldSet className='group-data-[pending=true]/form:pointer-events-none'>
           <legend className='sr-only'>Forgot Password</legend>
 
-          <form.Field
+          <forgotPasswordForm.Field
             name='password'
             render={({ field, meta }) => (
               <Field data-invalid={meta.errors.length > 0}>
@@ -95,7 +98,7 @@ export default function ResetPasswordPage() {
             )}
           />
 
-          <form.Field
+          <forgotPasswordForm.Field
             name='confirmPassword'
             render={({ field, meta }) => (
               <Field data-invalid={meta.errors.length > 0}>
@@ -112,7 +115,7 @@ export default function ResetPasswordPage() {
           />
 
           <Field>
-            <form.Submit
+            <forgotPasswordForm.Submit
               render={({ meta }) => (
                 <Button
                   type='submit'
@@ -129,7 +132,7 @@ export default function ResetPasswordPage() {
             </FieldDescription>
           </Field>
         </FieldSet>
-      </form.Root>
+      </forgotPasswordForm.Root>
     </>
   )
 }

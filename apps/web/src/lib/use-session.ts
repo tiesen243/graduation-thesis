@@ -10,13 +10,13 @@ type UseSessionReturn = (
   | { status: 'loading'; user: UserSchema | null }
   | { status: 'authenticated'; user: UserSchema }
   | { status: 'unauthenticated'; user: null }
-) & { logout: () => void }
+) & { logout: () => void; refetch: () => Promise<void> }
 
 export const useSession = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     ...api.auth.whoami.queryOptions(),
     retry: 1,
     refetchOnMount: false,
@@ -32,8 +32,9 @@ export const useSession = () => {
   })
 
   return useMemo(() => {
-    if (isLoading) return { status: 'loading', user: null, logout }
-    if (data?.data) return { status: 'authenticated', user: data.data, logout }
-    return { status: 'unauthenticated', user: null, logout }
-  }, [isLoading, data, logout]) as UseSessionReturn
+    if (isLoading) return { status: 'loading', user: null, logout, refetch }
+    if (data?.data)
+      return { status: 'authenticated', user: data.data, logout, refetch }
+    return { status: 'unauthenticated', user: null, logout, refetch }
+  }, [isLoading, data, logout, refetch]) as unknown as UseSessionReturn
 }
