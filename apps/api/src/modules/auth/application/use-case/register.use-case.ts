@@ -15,6 +15,7 @@ import { Password } from '@/modules/auth/application/security/password'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
 import { UserService } from '@/modules/user/application/user.service'
+import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
 import { withTransaction } from '@/shared/utils'
 
 export class RegisterUseCase extends Context.Service<
@@ -31,6 +32,8 @@ export class RegisterUseCase extends Context.Service<
     const userService = yield* UserService
     const password = yield* Password
 
+    const resend = yield* Effect.option(ResendService)
+
     return {
       execute: Effect.fn(function* execute(input) {
         const { username, email, password: plainPassword } = input
@@ -43,21 +46,26 @@ export class RegisterUseCase extends Context.Service<
 
         const hashedPassword = yield* password.hash(plainPassword)
 
-        return yield* withTransaction(
-          Effect.gen(function* executeTx() {
-            const user = yield* userService.create({ username, email })
+        yield* Effect.gen(function* executeTx() {
+          const user = yield* userService.create({ username, email })
 
-            const account = Account.make({
-              provider: AccountProvider.make('credentials'),
-              providerId: AccountProviderId.make(user.id),
-              password: hashedPassword,
-              userId: user.id,
-            })
-            yield* accountRepository.save(account)
-
-            return null
+          const account = Account.make({
+            provider: AccountProvider.make('credentials'),
+            providerId: AccountProviderId.make(user.id),
+            password: hashedPassword,
+            userId: user.id,
           })
-        )
+          yield* accountRepository.save(account)
+        }).pipe(withTransaction)
+
+        if (resend._tag === 'Some')
+          yield* resend.value.sendEmail({
+            to: [email],
+            subject: 'Welcome to Rozumari!',
+            html: `<h1>Welcome to Rozumari!</h1><p>Hi ${username}, thank you for registering at Rozumari. We're excited to have you on board!</p>`,
+          })
+
+        return null
       }),
     }
   }),

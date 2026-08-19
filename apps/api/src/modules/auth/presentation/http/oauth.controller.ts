@@ -15,6 +15,7 @@ import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
 import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto'
 import { UserService } from '@/modules/user/application/user.service'
+import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
 import { withTransaction } from '@/shared/utils'
 
 export const oauthController = HttpApiBuilder.group(
@@ -25,6 +26,8 @@ export const oauthController = HttpApiBuilder.group(
 
     const authService = yield* AuthService
     const userService = yield* UserService
+
+    const resend = yield* Effect.option(ResendService)
 
     return handlers
       .handle(
@@ -83,8 +86,8 @@ export const oauthController = HttpApiBuilder.group(
             .pipe(Effect.provide(FetchHttpClient.layer))
             .pipe(Effect.orDie)
 
-          const { accessToken, refreshToken, expiresAt } = yield* Effect.gen(
-            function* tx() {
+          const { accessToken, refreshToken, expiresAt, isNewUser } =
+            yield* Effect.gen(function* tx() {
               const [[account], user] = yield* Effect.all([
                 accountRepository.findMany({
                   where: {
@@ -96,7 +99,9 @@ export const oauthController = HttpApiBuilder.group(
                 userService.findByIdentifier({ email }),
               ])
 
-              let userId: UserId, userRole: UserRole
+              let _isNewUser = false,
+                userId: UserId,
+                userRole: UserRole
 
               if (account) {
                 ;({ userId } = account)
@@ -112,6 +117,7 @@ export const oauthController = HttpApiBuilder.group(
                   })
                   userId = newUser.id
                   userRole = newUser.role
+                  _isNewUser = true
                 }
 
                 const newAccount = Account.make({
@@ -122,9 +128,20 @@ export const oauthController = HttpApiBuilder.group(
                 yield* accountRepository.save(newAccount)
               }
 
-              return yield* authService.createRefreshToken(userId, userRole)
-            }
-          ).pipe(withTransaction)
+              const result = yield* authService.createRefreshToken(
+                userId,
+                userRole
+              )
+
+              return { ...result, isNewUser: _isNewUser }
+            }).pipe(withTransaction)
+
+          if (isNewUser && resend._tag === 'Some')
+            yield* resend.value.sendEmail({
+              to: [email],
+              subject: 'Welcome to Rozumari!',
+              html: `<p>Welcome to Rozumari! Your account has been created successfully.</p>`,
+            })
 
           const original = new URL(request.originalUrl)
           const redirectUri = new URL(

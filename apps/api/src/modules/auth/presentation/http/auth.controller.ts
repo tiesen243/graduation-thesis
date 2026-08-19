@@ -1,18 +1,22 @@
 import { Api } from '@rozumari/contract'
+import { ForgotPasswordDto } from '@rozumari/contract/auth/dto/forgot-password.dto'
 import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
 import { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
+import { ResetPasswordDto } from '@rozumari/contract/auth/dto/reset-password.dto'
 import { WhoAmIDto } from '@rozumari/contract/auth/dto/whoami.dto'
 import * as Effect from 'effect/Effect'
 import * as HttpEffect from 'effect/unstable/http/HttpEffect'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
+import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
 import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
 import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
+import { ResetPasswordUseCase } from '@/modules/auth/application/use-case/reset-password'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
 import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/constants'
 
@@ -87,6 +91,18 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
           )
         ),
         Effect.map((data) => RefreshTokenDto.make({ data }))
+      )
+    )
+
+    .handle('forgot-password', ({ payload }) =>
+      ForgotPasswordUseCase.use((s) => s.execute(payload)).pipe(
+        Effect.map(() => ForgotPasswordDto.make())
+      )
+    )
+
+    .handle('reset-password', ({ payload }) =>
+      ResetPasswordUseCase.use((s) => s.execute(payload)).pipe(
+        Effect.map(() => ResetPasswordDto.make())
       )
     )
 )

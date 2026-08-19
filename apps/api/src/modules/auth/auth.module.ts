@@ -4,10 +4,12 @@ import type { AppModule } from '@/modules/app.module'
 import type { UserService } from '@/modules/user/application/user.service'
 
 import { AuthService } from '@/modules/auth/application/auth.service'
+import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
 import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
 import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
+import { ResetPasswordUseCase } from '@/modules/auth/application/use-case/reset-password'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
 import { AuthInfrastructureModule } from '@/modules/auth/infrastructure/infrastructure.module'
 import { authController } from '@/modules/auth/presentation/http/auth.controller'
@@ -26,10 +28,12 @@ export class AuthModule {
     )
 
     const useCaseLayer = Layer.mergeAll(
+      ForgotPasswordUseCase.layer,
       LoginUseCase.layer,
       LogoutUseCase.layer,
       RefreshTokenUseCase.layer,
       RegisterUseCase.layer,
+      ResetPasswordUseCase.layer,
       WhoAmIUseCase.layer
     )
 

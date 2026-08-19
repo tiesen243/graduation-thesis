@@ -8,7 +8,6 @@ import { AccessToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Effect from 'effect/Effect'
 import * as Encoding from 'effect/Encoding'
 import * as Layer from 'effect/Layer'
-import crypto from 'node:crypto'
 
 import { Jwt } from '@/modules/auth/application/security/jwt'
 
