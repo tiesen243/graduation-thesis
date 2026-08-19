@@ -136,7 +136,7 @@ export const OverviewTab: React.FC = () => {
             </CardContent>
           </Card>
 
-          {alerts?.length && (
+          {alerts?.length ? (
             <Alert variant='warning'>
               <PillIcon />
 
@@ -147,7 +147,7 @@ export const OverviewTab: React.FC = () => {
                 Consider scheduling a refill soon.
               </AlertDescription>
             </Alert>
-          )}
+          ) : null}
         </aside>
       </div>
     </TabsContent>

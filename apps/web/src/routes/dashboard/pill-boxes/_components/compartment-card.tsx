@@ -25,6 +25,12 @@ import {
   PlusIcon,
 } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from '@rozumari/ui/components/input-group'
 import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useMemo, useState } from 'react'
@@ -93,11 +99,19 @@ const UpdateCompartmentForm: React.FC<{
           render={({ field, meta }) => (
             <Field data-invalid={meta.errors.length > 0}>
               <FieldLabel htmlFor={field.id}>Dosage</FieldLabel>
-              <Input
-                {...field}
-                type='number'
-                onChange={({ target }) => field.onChange(target.valueAsNumber)}
-              />
+              <InputGroup>
+                <InputGroupInput
+                  {...field}
+                  type='number'
+                  onChange={({ target }) =>
+                    field.onChange(target.valueAsNumber)
+                  }
+                />
+
+                <InputGroupAddon align='inline-end'>
+                  <InputGroupText>mg / unit</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
               <FieldError id={meta.errorId} errors={meta.errors} />
             </Field>
           )}
@@ -107,12 +121,20 @@ const UpdateCompartmentForm: React.FC<{
           name='capacity'
           render={({ field, meta }) => (
             <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Dosage</FieldLabel>
-              <Input
-                {...field}
-                type='number'
-                onChange={({ target }) => field.onChange(target.valueAsNumber)}
-              />
+              <FieldLabel htmlFor={field.id}>Capacity</FieldLabel>
+              <InputGroup>
+                <InputGroupInput
+                  {...field}
+                  type='number'
+                  onChange={({ target }) =>
+                    field.onChange(target.valueAsNumber)
+                  }
+                />
+
+                <InputGroupAddon align='inline-end'>
+                  <InputGroupText>pills</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
               <FieldError id={meta.errorId} errors={meta.errors} />
             </Field>
           )}
@@ -183,7 +205,7 @@ export const CompartmentCard: React.FC<{
               )}
             </div>
 
-            <div className='flex h-9 items-baseline justify-between rounded-lg bg-muted px-3'>
+            <div className='flex h-9 items-center justify-between rounded-lg bg-muted px-3'>
               <Typography
                 className='font-medium text-muted-foreground'
                 as='span'
