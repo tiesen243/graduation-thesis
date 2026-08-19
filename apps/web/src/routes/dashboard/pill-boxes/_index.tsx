@@ -15,6 +15,7 @@ import { DataTable } from '@/components/data-table'
 import { api } from '@/lib/runtime'
 import { useSession } from '@/lib/use-session'
 import { AddDeviceButton } from '@/routes/dashboard/pill-boxes/_components/add-device-button'
+import { LinkDeviceButton } from '@/routes/dashboard/pill-boxes/_components/link-device-button'
 
 const STATUS_VARIANTS = {
   unlinked: 'warning',
@@ -49,7 +50,7 @@ export default function PillBoxesIndexPage() {
           </Typography>
         </div>
 
-        <AddDeviceButton />
+        {user?.role === 'admin' ? <AddDeviceButton /> : <LinkDeviceButton />}
       </div>
 
       <InputGroup
