@@ -26,7 +26,7 @@
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "@types/pg": "^8.21.0",
+    "@types/pg": "^8.23.1",
     "drizzle-kit": "^1.0.0-rc.5-ab785fc",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
