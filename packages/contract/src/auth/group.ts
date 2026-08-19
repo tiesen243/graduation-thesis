@@ -1,3 +1,5 @@
+// oxlint-disable eslint/max-classes-per-file
+
 import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
@@ -75,7 +77,6 @@ export class AuthGroup extends HttpApiGroup.make('auth')
 
   .prefix('/api/auth') {}
 
-// oxlint-disable-next-line eslint/max-classes-per-file
 export class OAuthGroup extends HttpApiGroup.make('oauth')
 
   .add(
