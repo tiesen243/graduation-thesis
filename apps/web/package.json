@@ -4,9 +4,9 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "bun --bun react-router build",
+    "build": "react-router build",
     "clean": "git clean -fdx .cache .react-router .turbo build node_modules",
-    "dev": "bun --bun react-router dev",
+    "dev": "react-router dev",
     "start": "bunx --bun @react-router/serve ./build/server/nodejs_*/index.js",
     "typecheck": "bun --bun react-router typegen && tsc --noEmit"
   },
