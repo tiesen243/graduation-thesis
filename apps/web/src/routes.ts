@@ -20,6 +20,7 @@ export default [
       route('/pill-boxes', './routes/dashboard/pill-boxes/_index.tsx'),
       route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),
 
+      route('/account', './routes/dashboard/account.tsx'),
       route('/change-password', './routes/dashboard/change-password.tsx'),
 
       route('/*', './routes/dashboard/[...catch-all].tsx'),

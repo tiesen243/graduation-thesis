@@ -11,9 +11,7 @@ interface ISessionRepository extends IRepository<Session> {
     id: Session['id']
   ) => Effect<SessionUserAggregate | null>
 
-  readonly deleteManyByUser: (
-    userId: Session['userId']
-  ) => Effect<void>
+  readonly deleteManyByUser: (userId: Session['userId']) => Effect<void>
 }
 
 export class SessionRepository extends Context.Service<

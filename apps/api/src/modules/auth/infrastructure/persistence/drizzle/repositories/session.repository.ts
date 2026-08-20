@@ -56,9 +56,10 @@ export const DrizzleSessionRepository = Layer.effect(
       }),
 
       deleteManyByUser: Effect.fn(function* deleteManyByUser(userId) {
-        yield* db.delete(sessions).where(eq(sessions.userId, userId)).pipe(
-          Effect.orDie
-        )
+        yield* db
+          .delete(sessions)
+          .where(eq(sessions.userId, userId))
+          .pipe(Effect.orDie)
       }),
     }
   })
