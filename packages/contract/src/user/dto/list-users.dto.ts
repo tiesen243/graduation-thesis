@@ -12,6 +12,8 @@ export class ListUsersDto extends Schema.TaggedClass<ListUsersDto>()(
         Schema.Struct({
           id: UserSchema.fields.id,
           username: UserSchema.fields.username,
+          email: UserSchema.fields.email,
+          role: UserSchema.fields.role,
           image: UserSchema.fields.image,
           createdAt: UserSchema.fields.createdAt,
           updatedAt: UserSchema.fields.updatedAt,

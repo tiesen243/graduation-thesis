@@ -13,7 +13,7 @@ export class UpdateCompartmentDto extends Schema.TaggedClass<UpdateCompartmentDt
 
 export namespace UpdateCompartmentDto {
   export const Params = Schema.Struct({
-    deviceId: DeviceId,
+    id: DeviceId,
     position: CompartmentSchema.fields.position,
   })
   export type Params = typeof Params.Type

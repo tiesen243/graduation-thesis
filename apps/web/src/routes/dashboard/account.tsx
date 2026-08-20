@@ -49,12 +49,10 @@ export default function AccountPage() {
 
   return (
     <>
-      <div className='space-y-1'>
-        <Typography variant='h2'>Account</Typography>
-        <Typography>
-          View your account details and manage your profile picture.
-        </Typography>
-      </div>
+      <Typography variant='h2'>Account</Typography>
+      <Typography>
+        View your account details and manage your profile picture.
+      </Typography>
 
       <div className='mt-4 grid gap-4 md:grid-cols-2'>
         <Card>

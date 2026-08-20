@@ -19,14 +19,14 @@ export class UpdateCompartmentUseCase extends Context.Service<
     const compartmentRepository = yield* CompartmentRepository
 
     return {
-      execute: Effect.fn(function* execute({ deviceId, position, ...input }) {
+      execute: Effect.fn(function* execute({ id, position, ...input }) {
         const [compartment] = yield* compartmentRepository.findMany({
-          where: { deviceId: { eq: deviceId }, position },
+          where: { deviceId: { eq: id }, position },
           limit: 1,
         })
         if (!compartment)
           return yield* Effect.fail(
-            new CompartmentNotFound({ error: { deviceId, position } })
+            new CompartmentNotFound({ error: { deviceId: id, position } })
           )
 
         const updatedCompartment = compartment.update(input)

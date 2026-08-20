@@ -30,13 +30,11 @@ export default function ChangePasswordPage() {
 
   return (
     <>
-      <div className='space-y-1'>
-        <Typography variant='h2'>Change Password</Typography>
-        <Typography>
-          Update your password to keep your account secure. If you signed in
-          with a social account, leave the current password blank to set one.
-        </Typography>
-      </div>
+      <Typography variant='h2'>Change Password</Typography>
+      <Typography>
+        Update your password to keep your account secure. If you signed in with
+        a social account, leave the current password blank to set one.
+      </Typography>
 
       <changePasswordForm.Root
         defaultValues={{

@@ -15,7 +15,8 @@ export default [
   layout(
     './routes/dashboard/__root.tsx',
     prefix('/dashboard', [
-      route('/', './routes/dashboard/_index.tsx'),
+      index('./routes/dashboard/_index.tsx'),
+      route('/users', './routes/dashboard/users.tsx'),
 
       route('/pill-boxes', './routes/dashboard/pill-boxes/_index.tsx'),
       route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),

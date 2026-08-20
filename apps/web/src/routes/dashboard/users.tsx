@@ -1,5 +1,4 @@
 import { Badge } from '@rozumari/ui/components/badge'
-import { buttonVariants } from '@rozumari/ui/components/button'
 import { SearchIcon } from '@rozumari/ui/components/icons'
 import {
   InputGroup,
@@ -9,21 +8,19 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs'
-import { Link } from 'react-router'
 
 import { DataTable } from '@/components/data-table'
 import { api } from '@/lib/runtime'
 import { useSession } from '@/lib/use-session'
-import { AddDeviceButton } from '@/routes/dashboard/pill-boxes/_components/add-device-button'
-import { LinkDeviceButton } from '@/routes/dashboard/pill-boxes/_components/link-device-button'
+import { DeleteUserDialog } from '@/routes/dashboard/_components/delete-user-dialog'
+import { EditUserDialog } from '@/routes/dashboard/_components/edit-user-dialog'
 
-const STATUS_VARIANTS = {
-  unlinked: 'warning',
-  linked: 'success',
-  suspended: 'destructive',
+const ROLE_VARIANTS = {
+  user: 'info',
+  admin: 'warning',
 } as const
 
-export default function PillBoxesIndexPage() {
+export default function UsersPage() {
   const [query, setQuery] = useQueryStates(
     {
       query: parseAsString.withDefault(''),
@@ -34,24 +31,21 @@ export default function PillBoxesIndexPage() {
   )
 
   const { user } = useSession()
-  const { data, isLoading } = useQuery(
-    user?.role === 'admin'
-      ? api.device.list.queryOptions({ query })
-      : api.device.me.queryOptions({ query })
-  )
+
+  const { data, isLoading } = useQuery(api.user.list.queryOptions({ query }))
+
+  if (user?.role !== 'admin')
+    return (
+      <>
+        <Typography variant='h2'>Users</Typography>
+        <Typography>You do not have permission to view this page.</Typography>
+      </>
+    )
 
   return (
     <>
-      <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-        <div>
-          <Typography variant='h2'>PillBoxes</Typography>
-          <Typography>
-            Manage your pill-boxes, check status, and handle refills.
-          </Typography>
-        </div>
-
-        {user?.role === 'admin' ? <AddDeviceButton /> : <LinkDeviceButton />}
-      </div>
+      <Typography variant='h2'>Users</Typography>
+      <Typography>Manage user accounts, roles, and access.</Typography>
 
       <InputGroup
         className='my-4'
@@ -71,39 +65,39 @@ export default function PillBoxesIndexPage() {
         <InputGroupInput
           name='query'
           defaultValue={query.query}
-          placeholder='Search pill-boxes...'
+          placeholder='Search users...'
           type='search'
         />
       </InputGroup>
 
       <DataTable
-        data={data?.data.devices ?? []}
+        data={data?.data.users ?? []}
         keyExtractor={(item) => item.id}
         columns={{
-          factoryModel: 'Factory Model',
-          name: 'Name',
-          status: {
-            header: 'Status',
+          username: 'Username',
+          email: 'Email',
+          role: {
+            header: 'Role',
             action: (item) => (
               <Badge
                 className='capitalize'
-                variant={
-                  STATUS_VARIANTS[item.status as keyof typeof STATUS_VARIANTS]
-                }
+                variant={ROLE_VARIANTS[item.role as keyof typeof ROLE_VARIANTS]}
               >
-                {item.status}
+                {item.role}
               </Badge>
             ),
           },
+          createdAt: {
+            header: 'Joined',
+            action: (item) => new Date(item.createdAt).toLocaleDateString(),
+          },
           _: {
             header: 'Actions',
-            action: ({ id }) => (
-              <Link
-                to={`/dashboard/pill-boxes/${id}`}
-                className={buttonVariants({ variant: 'link' })}
-              >
-                View
-              </Link>
+            action: (item) => (
+              <div className='flex gap-2'>
+                <EditUserDialog user={item} />
+                <DeleteUserDialog user={item} />
+              </div>
             ),
           },
         }}
