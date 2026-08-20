@@ -1,3 +1,12 @@
+## @rozumari/web@0.0.12
+
+### Added user management feature
+
+- Added UpdateUserDto and DeleteUserDto, PATCH /api/users/:id and DELETE /api/users/:id endpoints in contract
+- Added email and role fields to ListUsersDto output
+- Implemented UpdateUserUseCase (update user role) and DeleteUserUseCase (soft delete) in apps/api
+- Added users management page with DataTable in apps/web, edit user role dialog (RadioGroup) and delete user dialog (AlertDialog)
+
 ## @rozumari/web@0.0.11
 
 ### Added update device feature

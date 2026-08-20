@@ -134,7 +134,7 @@ const UpdateCompartmentForm: React.FC<{
                   handleSubmit(
                     () =>
                       api.device['update-compartment'].mutateEffect({
-                        params: { deviceId, position },
+                        params: { id: deviceId, position },
                         payload: { medicine: '', dosage: 0, capacity: 0 },
                       }),
                     {
@@ -159,7 +159,7 @@ const UpdateCompartmentForm: React.FC<{
                   handleSubmit(
                     (payload) =>
                       api.device['update-compartment'].mutateEffect({
-                        params: { deviceId, position },
+                        params: { id: deviceId, position },
                         payload,
                       }),
                     {
