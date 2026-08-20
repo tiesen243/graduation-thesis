@@ -15,4 +15,11 @@ export class User extends Schema.TaggedClass<User>()(
       deletedAt: now,
     })
   }
+
+  public update(props: Pick<User, 'role'>): User {
+    return User.make({
+      ...structuredClone(this),
+      ...props,
+    })
+  }
 }
