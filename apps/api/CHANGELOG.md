@@ -1,3 +1,17 @@
+## @rozumari/api@0.0.11
+
+### Added update device feature
+
+- Added UpdateDeviceDto and PATCH /api/devices/:id endpoint in contract (name, position)
+- Implemented UpdateDeviceUseCase in apps/api (update device nickname and position)
+- Added update device dialog UI in apps/web DeviceInfo Configure button
+
+### Added link device feature
+
+- Added LinkDeviceDto and POST /api/devices/:id/link endpoint in contract
+- Implemented LinkDeviceUseCase in apps/api (link unlinked device to current user)
+- Added link device dialog UI in apps/web (user inputs device id)
+
 ## @rozumari/api@0.0.10
 
 ### Added change password feature
