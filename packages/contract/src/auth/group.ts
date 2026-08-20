@@ -4,6 +4,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 
+import { ChangePasswordDto } from '@/auth/dto/change-password.dto'
 import { ForgotPasswordDto } from '@/auth/dto/forgot-password.dto'
 import { LoginDto } from '@/auth/dto/login.dto'
 import { LogoutDto } from '@/auth/dto/logout.dto'
@@ -57,6 +58,14 @@ export class AuthGroup extends HttpApiGroup.make('auth')
   .add(
     HttpApiEndpoint.get('whoami', '/whoami', {
       success: WhoAmIDto,
+    }).middleware(AuthMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.post('change-password', '/change-password', {
+      payload: ChangePasswordDto.Input,
+      success: ChangePasswordDto,
+      error: InvalidCredentials,
     }).middleware(AuthMiddleware)
   )
 

@@ -1,4 +1,5 @@
 import { Api } from '@rozumari/contract'
+import { ChangePasswordDto } from '@rozumari/contract/auth/dto/change-password.dto'
 import { ForgotPasswordDto } from '@rozumari/contract/auth/dto/forgot-password.dto'
 import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
 import { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
@@ -11,6 +12,7 @@ import * as HttpEffect from 'effect/unstable/http/HttpEffect'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
+import { ChangePasswordUseCase } from '@/modules/auth/application/use-case/change-password.use-case'
 import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
 import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
@@ -97,6 +99,12 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
     .handle('forgot-password', ({ payload }) =>
       ForgotPasswordUseCase.use((s) => s.execute(payload)).pipe(
         Effect.map(() => ForgotPasswordDto.make())
+      )
+    )
+
+    .handle('change-password', ({ payload }) =>
+      ChangePasswordUseCase.use((s) => s.execute(payload)).pipe(
+        Effect.map(() => ChangePasswordDto.make())
       )
     )
 

@@ -15,7 +15,7 @@ import {
 import {
   BadgeCheckIcon,
   ChevronsUpDownIcon,
-  CreditCardIcon,
+  KeyRoundIcon,
   LogOutIcon,
 } from '@rozumari/ui/components/icons'
 import {
@@ -27,6 +27,7 @@ import {
 
 import { useSession } from '@/lib/use-session'
 import { ThemeSwitcher } from '@/routes/dashboard/_components/dashboard-sidebar/theme-switcher'
+import { Link } from 'react-router'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -94,9 +95,13 @@ export function NavUser() {
               <DropdownMenuItem>
                 <BadgeCheckIcon /> Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon /> Billing
-              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={
+                  <Link to='/dashboard/change-password'>
+                    <KeyRoundIcon /> Change Password
+                  </Link>
+                }
+              />
 
               <ThemeSwitcher />
             </DropdownMenuGroup>

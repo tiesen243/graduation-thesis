@@ -99,7 +99,7 @@ export default function PillBoxesIndexPage() {
             header: 'Actions',
             action: ({ id }) => (
               <Link
-                to={`/pill-boxes/${id}`}
+                to={`/dashboard/pill-boxes/${id}`}
                 className={buttonVariants({ variant: 'link' })}
               >
                 View

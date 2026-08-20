@@ -4,6 +4,7 @@ import type { AppModule } from '@/modules/app.module'
 import type { UserService } from '@/modules/user/application/user.service'
 
 import { AuthService } from '@/modules/auth/application/auth.service'
+import { ChangePasswordUseCase } from '@/modules/auth/application/use-case/change-password.use-case'
 import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
 import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
@@ -28,6 +29,7 @@ export class AuthModule {
     )
 
     const useCaseLayer = Layer.mergeAll(
+      ChangePasswordUseCase.layer,
       ForgotPasswordUseCase.layer,
       LoginUseCase.layer,
       LogoutUseCase.layer,
