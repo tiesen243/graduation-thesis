@@ -4,12 +4,14 @@ import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 import { AdminMiddleware, AuthMiddleware } from '@/auth/middleware'
 import { AddDeviceDto } from '@/device/dto/add-device.dto'
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
+import { LinkDeviceDto } from '@/device/dto/link-device.dto'
 import { ListDevicesDto } from '@/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@/device/dto/show-device.dto'
 import { UpdateCompartmentDto } from '@/device/dto/update-compartment.dto'
 import { CompartmentNotFound } from '@/device/schemas/compartment.error'
 import {
   DeviceAlreadyExists,
+  DeviceAlreadyLinked,
   DeviceNotFound,
 } from '@/device/schemas/device.error'
 
@@ -42,6 +44,14 @@ export class DeviceGroup extends HttpApiGroup.make('device')
       success: AddDeviceDto,
       error: [DeviceAlreadyExists],
     }).middleware(AdminMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.post('link', '/:id/link', {
+      params: LinkDeviceDto.Input,
+      success: LinkDeviceDto,
+      error: [DeviceNotFound, DeviceAlreadyLinked],
+    })
   )
 
   .add(

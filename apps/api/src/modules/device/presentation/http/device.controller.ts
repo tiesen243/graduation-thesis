@@ -1,6 +1,7 @@
 import { Api } from '@rozumari/contract'
 import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
+import { LinkDeviceDto } from '@rozumari/contract/device/dto/link-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
@@ -11,6 +12,7 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
+import { LinkDeviceUseCase } from '@/modules/device/application/use-case/link-device.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
 import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
@@ -45,6 +47,15 @@ export const deviceController = HttpApiBuilder.group(
       .handle('add', ({ payload }) =>
         AddDeviceUseCase.use((s) => s.execute(payload)).pipe(
           Effect.map((data) => AddDeviceDto.make({ data }))
+        )
+      )
+
+      .handle('link', ({ params }) =>
+        CurrentUser.pipe(
+          Effect.flatMap(({ userId }) =>
+            LinkDeviceUseCase.use((s) => s.execute({ ...params, userId }))
+          ),
+          Effect.map((data) => LinkDeviceDto.make({ data }))
         )
       )
 
