@@ -1,8 +1,5 @@
 import { Badge } from '@rozumari/ui/components/badge'
-import {
-  MapPinIcon,
-  ServerIcon,
-} from '@rozumari/ui/components/icons'
+import { MapPinIcon, ServerIcon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 
