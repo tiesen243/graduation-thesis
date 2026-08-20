@@ -66,7 +66,7 @@ export class DeviceGroup extends HttpApiGroup.make('device')
   )
 
   .add(
-    HttpApiEndpoint.patch('update-compartment', '/:deviceId/:position', {
+    HttpApiEndpoint.patch('update-compartment', '/:id/:position', {
       params: UpdateCompartmentDto.Params,
       payload: UpdateCompartmentDto.Input,
       success: UpdateCompartmentDto,
