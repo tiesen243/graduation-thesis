@@ -1,3 +1,19 @@
+## @rozumari/web@0.0.10
+
+### Added change password feature
+
+- Added change password contract (DTO + endpoint)
+- Implemented change password use case with OAuth account creation support
+- Added session invalidation on password change
+- Added change password page in web app
+- Added navigation to change password in sidebar user menu
+
+### Added account page
+
+- Added dashboard account page showing user details from whoami
+- Added mock avatar upload (local preview only)
+- Added navigation link to Account in sidebar user menu
+
 ## @rozumari/web@0.0.9
 
 ### Added forgot password features
