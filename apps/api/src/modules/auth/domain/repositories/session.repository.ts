@@ -10,6 +10,8 @@ interface ISessionRepository extends IRepository<Session> {
   readonly findWithUser: (
     id: Session['id']
   ) => Effect<SessionUserAggregate | null>
+
+  readonly deleteManyByUser: (userId: Session['userId']) => Effect<void>
 }
 
 export class SessionRepository extends Context.Service<

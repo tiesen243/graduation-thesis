@@ -38,11 +38,11 @@ export const navGroups: NavGroupConfig[] = [
     label: 'Overview',
     items: [
       { title: 'Dashboard', icon: LayoutDashboardIcon, url: '/dashboard' },
-      { title: 'Patients', icon: UsersIcon, url: '/patients' },
+      { title: 'Patients', icon: UsersIcon, url: '/dashboard/patients' },
       {
         title: 'Adherence',
         icon: ActivityIcon,
-        url: '/adherence',
+        url: '/dashboard/adherence',
         isAdminOnly: true,
       },
     ],
@@ -53,18 +53,18 @@ export const navGroups: NavGroupConfig[] = [
       {
         title: 'Pill Boxes',
         icon: PillBottleIcon,
-        url: '/pill-boxes',
+        url: '/dashboard/pill-boxes',
       },
       {
         title: 'Users',
         icon: UsersIcon,
-        url: '/users',
+        url: '/dashboard/users',
         isAdminOnly: true,
       },
       {
         title: 'Schedules',
         icon: CalendarClockIcon,
-        url: '/schedules',
+        url: '/dashboard/schedules',
       },
     ],
   },
@@ -74,19 +74,19 @@ export const navGroups: NavGroupConfig[] = [
       {
         title: 'Subscriptions',
         icon: CreditCardIcon,
-        url: '/subscriptions',
+        url: '/dashboard/subscriptions',
         isAdminOnly: true,
       },
       {
         title: 'Invoices',
         icon: FileTextIcon,
-        url: '/invoices',
+        url: '/dashboard/invoices',
         isAdminOnly: true,
       },
       {
         title: 'Transactions',
         icon: ReceiptIcon,
-        url: '/transactions',
+        url: '/dashboard/transactions',
         isAdminOnly: true,
       },
     ],
@@ -94,7 +94,7 @@ export const navGroups: NavGroupConfig[] = [
 ]
 
 export const secondaryNavItems: NavItem[] = [
-  { title: 'Notifications', icon: BellIcon, url: '/notifications' },
-  { title: 'Settings', icon: SettingsIcon, url: '/settings' },
-  { title: 'Support', icon: LifeBuoyIcon, url: '/support' },
+  { title: 'Notifications', icon: BellIcon, url: '/dashboard/notifications' },
+  { title: 'Settings', icon: SettingsIcon, url: '/dashboard/settings' },
+  { title: 'Support', icon: LifeBuoyIcon, url: '/dashboard/support' },
 ]

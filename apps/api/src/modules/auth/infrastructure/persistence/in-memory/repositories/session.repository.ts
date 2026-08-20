@@ -32,6 +32,16 @@ export const InMemorySessionRepository = Layer.effect(
 
         return SessionUserAggregate.make({ session, user })
       }),
+
+      deleteManyByUser: Effect.fn(function* deleteManyByUser(userId) {
+        yield* Ref.update(db.sessions, (dict) => {
+          const next = new Map(dict)
+          for (const [id, session] of next)
+            if (session.userId === userId) next.delete(id)
+
+          return next
+        })
+      }),
     }
   })
 )

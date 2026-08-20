@@ -1,6 +1,6 @@
 import type { RouteConfig } from '@react-router/dev/routes'
 
-import { index, layout, route } from '@react-router/dev/routes'
+import { index, layout, prefix, route } from '@react-router/dev/routes'
 
 export default [
   index('./routes/_index.tsx'),
@@ -12,10 +12,18 @@ export default [
     route('/forgot-password/reset', './routes/auth/reset-password.tsx'),
   ]),
 
-  layout('./routes/dashboard/__root.tsx', [
-    route('/dashboard', './routes/dashboard/_index.tsx'),
-    route('/pill-boxes', './routes/dashboard/pill-boxes/_index.tsx'),
-    route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),
-    route('/*', './routes/dashboard/[...catch-all].tsx'),
-  ]),
+  layout(
+    './routes/dashboard/__root.tsx',
+    prefix('/dashboard', [
+      route('/', './routes/dashboard/_index.tsx'),
+
+      route('/pill-boxes', './routes/dashboard/pill-boxes/_index.tsx'),
+      route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),
+
+      route('/account', './routes/dashboard/account.tsx'),
+      route('/change-password', './routes/dashboard/change-password.tsx'),
+
+      route('/*', './routes/dashboard/[...catch-all].tsx'),
+    ])
+  ),
 ] satisfies RouteConfig

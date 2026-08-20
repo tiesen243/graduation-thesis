@@ -108,6 +108,11 @@ export const oauthController = HttpApiBuilder.group(
                 userRole = user?.role ?? UserRole.make('user')
               } else {
                 if (user) {
+                  if (user.deletedAt !== null)
+                    return yield* Effect.fail(
+                      new ProviderError({ message: 'User account is deleted' })
+                    )
+
                   userId = user.id
                   userRole = user.role
                 } else {
