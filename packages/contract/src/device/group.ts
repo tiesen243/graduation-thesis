@@ -2,6 +2,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { AdminMiddleware, AuthMiddleware } from '@/auth/middleware'
+import { Forbidden } from '@/auth/schemas/auth.error'
 import { AddDeviceDto } from '@/device/dto/add-device.dto'
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { LinkDeviceDto } from '@/device/dto/link-device.dto'
@@ -60,7 +61,7 @@ export class DeviceGroup extends HttpApiGroup.make('device')
       params: ShowDeviceDto.Input,
       payload: UpdateDeviceDto.Input,
       success: UpdateDeviceDto,
-      error: [DeviceNotFound],
+      error: [DeviceNotFound, Forbidden],
     })
   )
 
