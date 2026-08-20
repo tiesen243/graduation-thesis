@@ -33,4 +33,11 @@ export class Device extends Schema.TaggedClass<Device>()(
       return `${year}${month}${day}${randomNumber}`
     }
   )
+
+  public update(props: Pick<Device, 'name' | 'position'>) {
+    return Device.make({
+      ...structuredClone(this),
+      ...props,
+    })
+  }
 }

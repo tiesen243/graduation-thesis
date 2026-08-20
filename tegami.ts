@@ -8,6 +8,7 @@ const paper = tegami({
   npm: {
     client: 'bun',
     updateLockFile: true,
+    onBreakPeerDep: 'set',
   },
 
   plugins: [
