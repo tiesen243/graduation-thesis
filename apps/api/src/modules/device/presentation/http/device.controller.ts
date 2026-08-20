@@ -5,6 +5,7 @@ import { LinkDeviceDto } from '@rozumari/contract/device/dto/link-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
+import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
 import { HttpServerResponse } from 'effect/unstable/http'
@@ -16,6 +17,7 @@ import { LinkDeviceUseCase } from '@/modules/device/application/use-case/link-de
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
 import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
+import { UpdateDeviceUseCase } from '@/modules/device/application/use-case/update-device.use-case'
 
 export const deviceController = HttpApiBuilder.group(
   Api,
@@ -57,6 +59,12 @@ export const deviceController = HttpApiBuilder.group(
           ),
           Effect.map((data) => LinkDeviceDto.make({ data }))
         )
+      )
+
+      .handle('update', ({ params, payload }) =>
+        UpdateDeviceUseCase.use((s) =>
+          s.execute({ ...params, ...payload })
+        ).pipe(Effect.map((data) => UpdateDeviceDto.make({ data })))
       )
 
       .handle('update-compartment', ({ params, payload }) =>

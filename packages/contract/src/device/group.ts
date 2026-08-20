@@ -8,6 +8,7 @@ import { LinkDeviceDto } from '@/device/dto/link-device.dto'
 import { ListDevicesDto } from '@/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@/device/dto/show-device.dto'
 import { UpdateCompartmentDto } from '@/device/dto/update-compartment.dto'
+import { UpdateDeviceDto } from '@/device/dto/update-device.dto'
 import { CompartmentNotFound } from '@/device/schemas/compartment.error'
 import {
   DeviceAlreadyExists,
@@ -51,6 +52,15 @@ export class DeviceGroup extends HttpApiGroup.make('device')
       params: LinkDeviceDto.Input,
       success: LinkDeviceDto,
       error: [DeviceNotFound, DeviceAlreadyLinked],
+    })
+  )
+
+  .add(
+    HttpApiEndpoint.patch('update', '/:id', {
+      params: ShowDeviceDto.Input,
+      payload: UpdateDeviceDto.Input,
+      success: UpdateDeviceDto,
+      error: [DeviceNotFound],
     })
   )
 

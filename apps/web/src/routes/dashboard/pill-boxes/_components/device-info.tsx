@@ -1,14 +1,12 @@
 import { Badge } from '@rozumari/ui/components/badge'
-import { Button } from '@rozumari/ui/components/button'
 import {
   MapPinIcon,
-  PencilIcon,
-  Settings2Icon,
   ServerIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 
+import { UpdateDeviceDialog } from '@/routes/dashboard/pill-boxes/_components/update-device-dialog'
 import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
 
 // oxlint-disable-next-line typescript/no-inferrable-types
@@ -54,14 +52,7 @@ export const DeviceInfo: React.FC = () => {
         </div>
       </div>
 
-      <div className='flex gap-2'>
-        <Button variant='secondary'>
-          <PencilIcon data-icon='inline-start' /> Edit device
-        </Button>
-        <Button>
-          <Settings2Icon data-icon='inline-start' /> Configure
-        </Button>
-      </div>
+      <UpdateDeviceDialog />
     </section>
   )
 }
