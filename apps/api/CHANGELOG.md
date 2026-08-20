@@ -1,3 +1,13 @@
+## @rozumari/api@0.0.10
+
+### Added change password feature
+
+- Added change password contract (DTO + endpoint)
+- Implemented change password use case with OAuth account creation support
+- Added session invalidation on password change
+- Added change password page in web app
+- Added navigation to change password in sidebar user menu
+
 ## @rozumari/api@0.0.9
 
 ### Added forgot password features
