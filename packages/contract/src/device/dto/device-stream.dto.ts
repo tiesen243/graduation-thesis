@@ -10,16 +10,18 @@ export namespace DeviceStreamDto {
   })
   export type Params = typeof Params.Type
 
-  export const Data = HttpApiSchema.StreamSse({
+  export const Stream = HttpApiSchema.StreamSse({
     data: Schema.Struct({
-      message: Schema.String,
+      action: Schema.String,
+      payload: Schema.Unknown,
     }),
     error: DeviceNotFound,
   })
-  export type Data = typeof Data.Type
+  export type Stream = typeof Stream.Type
 
   export const Emit = Schema.Struct({
-    message: Schema.String,
+    action: Schema.String,
+    payload: Schema.Unknown,
   })
   export type Emit = typeof Emit.Type
 }

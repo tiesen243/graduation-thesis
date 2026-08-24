@@ -15,7 +15,6 @@ export const authMiddleware = Layer.effect(
       credential: Redacted.Redacted<string>
     ) {
       const token = Redacted.value(credential)
-      console.log('authMiddleware: token', token)
 
       const { userId, userRole } = yield* authService.verifyAccessToken(
         AccessToken.make(token)

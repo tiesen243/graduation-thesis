@@ -1,10 +1,9 @@
 // oxlint-disable require-yield
 
 import type { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
+import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
-import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { DeviceNotFound } from '@rozumari/contract/device/schemas/device.error'
-import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -18,12 +17,12 @@ export class DeviceStreamUseCase extends Context.Service<
   DeviceStreamUseCase,
   {
     readonly subcribe: (
-      input: DeviceStreamDto.Params
-    ) => Effect.Effect<DeviceStreamDto.Data, DeviceNotFound, CurrentUser>
+      input: DeviceStreamDto.Params & { userId?: UserId }
+    ) => Effect.Effect<DeviceStreamDto.Stream>
 
     readonly emit: (
-      input: DeviceStreamDto.Params & DeviceStreamDto.Emit
-    ) => Effect.Effect<void, DeviceNotFound, CurrentUser>
+      input: DeviceStreamDto.Params & DeviceStreamDto.Emit & { userId?: UserId }
+    ) => Effect.Effect<void, DeviceNotFound>
   }
 >()('device/application/DeviceStreamUseCase', {
   make: Effect.gen(function* make() {
@@ -33,14 +32,10 @@ export class DeviceStreamUseCase extends Context.Service<
 
     return {
       subcribe: Effect.fn(function* subcribe(input) {
-        const { userId, userRole } = yield* CurrentUser
-
         const [device] = yield* deviceRepository.findMany({
           where: {
             id: { eq: input.id },
-            ...(userRole === UserRole.make('admin')
-              ? {}
-              : { userId: { eq: userId } }),
+            ...(input.userId ? { userId: { eq: input.userId } } : {}),
           },
         })
         if (!device)
@@ -55,30 +50,28 @@ export class DeviceStreamUseCase extends Context.Service<
 
         const dataStream = Stream.mapEffect(
           streamService.subscribe(input.id),
-          (message) =>
-            Effect.succeed(`data: ${JSON.stringify({ message })}\n\n`)
+          (message) => Effect.succeed(`data: ${message}\n\n`)
         )
 
         return Stream.merge(keepAliveStream, dataStream).pipe(
           Stream.ensuring(streamService.unregister(input.id))
-        ) as unknown as DeviceStreamDto.Data
+        ) as unknown as DeviceStreamDto.Stream
       }),
 
       emit: Effect.fn(function* emit(input) {
-        const { userId, userRole } = yield* CurrentUser
-
         const [device] = yield* deviceRepository.findMany({
           where: {
             id: { eq: input.id },
-            ...(userRole === UserRole.make('admin')
-              ? {}
-              : { userId: { eq: userId } }),
+            ...(input.userId ? { userId: { eq: input.userId } } : {}),
           },
         })
         if (!device)
           return Effect.fail(new DeviceNotFound({ error: { id: input.id } }))
 
-        yield* streamService.publish(input.id, input.message)
+        yield* streamService.publish(
+          input.id,
+          JSON.stringify({ action: input.action, payload: input.payload })
+        )
       }),
     }
   }),

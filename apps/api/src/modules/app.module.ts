@@ -37,6 +37,8 @@ export class AppModule {
       Layer.provide([
         authModule.exports.middlewares.auth,
         authModule.exports.middlewares.admin,
+
+        deviceModule.exports.middlewares.device,
       ])
     )
 

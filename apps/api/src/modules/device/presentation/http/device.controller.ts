@@ -8,7 +8,7 @@ import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compa
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
-import { HttpServerResponse } from 'effect/unstable/http'
+import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
@@ -73,8 +73,11 @@ export const deviceController = HttpApiBuilder.group(
         ).pipe(Effect.map((data) => UpdateCompartmentDto.make({ data })))
       )
 
-      .handle('stream', ({ params }) =>
-        DeviceStreamUseCase.use((s) => s.subcribe(params)).pipe(
+      .handle('subscribe', ({ params }) =>
+        CurrentUser.pipe(
+          Effect.flatMap(({ userId }) =>
+            DeviceStreamUseCase.use((s) => s.subcribe({ ...params, userId }))
+          ),
           Effect.map((stream) =>
             HttpServerResponse.stream(stream.pipe(encodeText as never), {
               contentType: 'text/event-stream',
@@ -89,6 +92,13 @@ export const deviceController = HttpApiBuilder.group(
       )
 
       .handle('emit', ({ params, payload }) =>
-        DeviceStreamUseCase.use((s) => s.emit({ ...params, ...payload }))
+        CurrentUser.pipe(
+          Effect.flatMap(({ userId }) =>
+            DeviceStreamUseCase.use((s) =>
+              s.emit({ ...params, ...payload, userId })
+            )
+          ),
+          Effect.map(() => HttpServerResponse.empty())
+        )
       )
 )

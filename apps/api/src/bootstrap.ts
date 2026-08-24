@@ -10,6 +10,7 @@ import { AppModule } from '@/modules/app.module'
 import { FacebookProvider } from '@/modules/auth/infrastructure/oauth/providers/facebook.provider'
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { env } from '@/shared/env'
+import { Jwt } from '@/shared/infrastructure/jwt'
 import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
 import { StreamService } from '@/shared/stream.service'
 
@@ -29,6 +30,7 @@ function bootstrap() {
     Layer.provide(routes, [
       ResendService.layer,
       StreamService.layer,
+      Jwt.layer,
 
       HttpRouter.cors({
         allowedOrigins:

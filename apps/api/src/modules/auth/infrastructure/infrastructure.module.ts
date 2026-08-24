@@ -7,7 +7,6 @@ import { DrizzleAccountRepository } from '@/modules/auth/infrastructure/persiste
 import { DrizzleSessionRepository } from '@/modules/auth/infrastructure/persistence/drizzle/repositories/session.repository'
 import { InMemoryAccountRepository } from '@/modules/auth/infrastructure/persistence/in-memory/repositories/account.repository'
 import { InMemorySessionRepository } from '@/modules/auth/infrastructure/persistence/in-memory/repositories/session.repository'
-import { JwtLayer } from '@/modules/auth/infrastructure/security/jwt'
 import { PasswordLayer } from '@/modules/auth/infrastructure/security/password'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
@@ -22,8 +21,7 @@ export class AuthInfrastructureModule {
     return Layer.mergeAll(
       layer,
       PasswordLayer({ secret }),
-      OAuthLayer(providers),
-      JwtLayer(secret)
+      OAuthLayer(providers)
     )
   }
 

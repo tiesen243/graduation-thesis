@@ -2,7 +2,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { AdminMiddleware, AuthMiddleware } from '@/auth/middleware'
-import { Forbidden, Unauthorized } from '@/auth/schemas/auth.error'
+import { Forbidden } from '@/auth/schemas/auth.error'
 import { AddDeviceDto } from '@/device/dto/add-device.dto'
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { LinkDeviceDto } from '@/device/dto/link-device.dto'
@@ -75,10 +75,9 @@ export class DeviceGroup extends HttpApiGroup.make('device')
   )
 
   .add(
-    HttpApiEndpoint.get('stream', '/:id/stream', {
+    HttpApiEndpoint.get('subscribe', '/:id/subscribe', {
       params: DeviceStreamDto.Params,
-      success: DeviceStreamDto.Data,
-      error: Unauthorized,
+      success: DeviceStreamDto.Stream,
     })
   )
 
@@ -86,7 +85,7 @@ export class DeviceGroup extends HttpApiGroup.make('device')
     HttpApiEndpoint.post('emit', '/:id/emit', {
       params: DeviceStreamDto.Params,
       payload: DeviceStreamDto.Emit,
-      error: [DeviceNotFound, Unauthorized],
+      error: [DeviceNotFound],
     })
   )
 
