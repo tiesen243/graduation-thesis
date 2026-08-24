@@ -1,5 +1,6 @@
 # dependencies
 node_modules/
+.venv/
 
 # production
 build/
@@ -7,6 +8,9 @@ dist/
 
 # react router
 .react-router/
+
+# python
+__pycache__/
 
 # environment variables
 .env*

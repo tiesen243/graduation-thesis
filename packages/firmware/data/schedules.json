@@ -1,0 +1,15 @@
+[
+  {
+    "time": "08:00",
+    "slots": [
+      {
+        "position": "0-0",
+        "quantity": 1
+      },
+      {
+        "position": "0-1",
+        "quantity": 2
+      }
+    ]
+  }
+]

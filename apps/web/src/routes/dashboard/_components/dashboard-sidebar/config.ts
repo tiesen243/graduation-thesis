@@ -38,7 +38,6 @@ export const navGroups: NavGroupConfig[] = [
     label: 'Overview',
     items: [
       { title: 'Dashboard', icon: LayoutDashboardIcon, url: '/dashboard' },
-      { title: 'Patients', icon: UsersIcon, url: '/dashboard/patients' },
       {
         title: 'Adherence',
         icon: ActivityIcon,

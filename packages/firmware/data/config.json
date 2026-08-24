@@ -1,0 +1,24 @@
+{
+  "utc": 7,
+
+  "wifi": {
+    "ssid": "",
+    "password": ""
+  },
+
+  "device": {
+    "id": "",
+    "name": ""
+  },
+
+  "api": {
+    "host": "",
+    "port": 443,
+    "token": ""
+  },
+
+  "pins": {
+    "led": "LED",
+    "switch": "1"
+  }
+}

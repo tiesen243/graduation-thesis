@@ -88,7 +88,7 @@ export const deviceController = HttpApiBuilder.group(
         )
       )
 
-      .handle('emit', ({ payload }) =>
-        DeviceStreamUseCase.use((s) => s.emit(payload))
+      .handle('emit', ({ params, payload }) =>
+        DeviceStreamUseCase.use((s) => s.emit({ ...params, ...payload }))
       )
 )

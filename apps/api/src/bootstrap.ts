@@ -11,6 +11,7 @@ import { FacebookProvider } from '@/modules/auth/infrastructure/oauth/providers/
 import { GoogleProvider } from '@/modules/auth/infrastructure/oauth/providers/google.provider'
 import { env } from '@/shared/env'
 import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
+import { StreamService } from '@/shared/stream.service'
 
 function bootstrap() {
   const { routes } = AppModule.create({
@@ -27,6 +28,7 @@ function bootstrap() {
   const { handler } = HttpRouter.toWebHandler(
     Layer.provide(routes, [
       ResendService.layer,
+      StreamService.layer,
 
       HttpRouter.cors({
         allowedOrigins:
