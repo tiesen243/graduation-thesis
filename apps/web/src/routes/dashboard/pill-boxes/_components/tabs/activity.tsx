@@ -17,7 +17,7 @@ export const ActivityTab: React.FC = () => {
   const { device } = useDevice()
 
   useSubscription(
-    api.device.stream.subscriptionOptions(
+    api.device.subscribe.subscriptionOptions(
       { params: { id: device?.id ?? DeviceId.make('') } },
       {
         keepAlive: { timeout: '30 seconds' },

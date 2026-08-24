@@ -4,6 +4,4 @@ version = "0.0.0"
 requires-python = ">=3.14"
 
 [dependency-groups]
-dev = [
-  "micropython-rp2-rpi-pico2-w-stubs>=1.28.0.post4",
-]
+dev = ["micropython-rp2-rpi-pico2-w-stubs>=1.28.0.post4"]

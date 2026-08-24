@@ -27,7 +27,7 @@ export class DeviceMiddleware extends HttpApiMiddleware.Service<
 >()('device/middleware/DeviceMiddleware', {
   // This middleware requires clients to also provide an implementation, to
   // inject a api key
-  requiredForClient: true,
+  requiredForClient: false,
 
   // Middleware can optionally define security schemes, which are used to
   // generate OpenAPI docs and decode credientials from incoming requests for
