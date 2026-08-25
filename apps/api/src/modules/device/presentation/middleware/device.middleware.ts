@@ -19,7 +19,6 @@ export const deviceMiddleware = Layer.effect(
     return {
       bearer: Effect.fn(function* bearer(httpEffect, { credential }) {
         const token = Redacted.value(credential)
-        console.log('Token:', token) // Log the token for debugging
         if (!token)
           return yield* Effect.fail(
             new DeviceNotFound({ error: { id: '' as DeviceId } })

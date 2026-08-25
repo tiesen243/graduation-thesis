@@ -20,6 +20,7 @@ class ApiClient:
             f"{method.upper()} {path} HTTP/1.1",
             f"Host: {self.config.get('host')}:{self.config.get('port')}",
             f"Authorization: Bearer {self.config.get('token')}",
+            f"x-vercel-protection-bypass: {self.config.get('bypass_token')}",
             "Content-Type: application/json",
             "User-Agent: MicroPython/1.0",
         ]

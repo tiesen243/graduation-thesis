@@ -14,7 +14,8 @@
   "api": {
     "host": "",
     "port": 443,
-    "token": ""
+    "token": "",
+    "bypass_token": ""
   },
 
   "pins": {
