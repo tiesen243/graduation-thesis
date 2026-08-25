@@ -97,8 +97,7 @@ export const deviceController = HttpApiBuilder.group(
             DeviceStreamUseCase.use((s) =>
               s.emit({ ...params, ...payload, userId })
             )
-          ),
-          Effect.map(() => HttpServerResponse.empty())
+          )
         )
       )
 )

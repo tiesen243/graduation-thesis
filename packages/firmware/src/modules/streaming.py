@@ -42,11 +42,7 @@ class Streaming:
         print(f"Connecting to streaming endpoint: {url}")
 
         try:
-            res = urequests.get(
-                url,
-                headers=headers,
-                stream=True,
-            )
+            res = urequests.get(url, headers=headers, stream=True, timeout=30)
 
             if res.status_code != 200:
                 print("Failed to connect to the streaming endpoint:", res.status_code)
@@ -69,7 +65,6 @@ class Streaming:
                     line = line[5:].strip()
 
                 try:
-                    print("Raw data received:", line)
                     payload = ujson.loads(line)  # pyright: ignore[reportAny]
                     await self._handle_payload(payload)  # pyright: ignore[reportAny]
                 except Exception as e:  # noqa: BLE001

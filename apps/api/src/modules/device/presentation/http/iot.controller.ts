@@ -31,8 +31,7 @@ export const iotController = HttpApiBuilder.group(Api, 'iot', (handlers) =>
       CurrentDevice.pipe(
         Effect.flatMap((id) =>
           DeviceStreamUseCase.use((s) => s.emit({ id, ...payload }))
-        ),
-        Effect.map(() => HttpServerResponse.empty())
+        )
       )
     )
 )
