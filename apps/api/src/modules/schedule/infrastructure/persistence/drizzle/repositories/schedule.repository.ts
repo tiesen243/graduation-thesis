@@ -1,5 +1,6 @@
 // oxlint-disable unicorn/no-array-for-each
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
 import { and, eq } from 'drizzle-orm'
@@ -35,20 +36,19 @@ const groupJoinRows = (
     schedules: typeof schedules.$inferSelect
     schedule_items: typeof scheduleItems.$inferSelect | null
   }[]
-): ScheduleRepository.WithItems[] => {
-  const resultMap = new Map<ScheduleId, ScheduleRepository.WithItems>()
-  for (const { schedules: _schedule, schedule_items: _items } of rows) {
-    let entry = resultMap.get(_schedule.id)
+): ScheduleAggregate[] => {
+  const resultMap = new Map<ScheduleId, ScheduleAggregate>()
+  for (const { schedules: schedule, schedule_items: _item } of rows) {
+    let entry = resultMap.get(schedule.id)
 
     if (!entry) {
-      const schedule = Schedule.make(_schedule)
-      entry = { schedule, items: [] }
+      entry = { ...schedule, items: [] }
       resultMap.set(schedule.id, entry)
     }
 
-    if (_items) {
-      const item = ScheduleItem.make(_items)
-      entry.items.push(item)
+    if (_item) {
+      const item = ScheduleItem.make(_item)
+      ;(entry.items as ScheduleItem[]).push(item)
     }
   }
 

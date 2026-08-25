@@ -1,4 +1,5 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
 import * as Effect from 'effect/Effect'
@@ -39,9 +40,9 @@ export const InMemoryScheduleRepository = Layer.effect(
       const itemsBySchedule = Map.groupBy(allItems, (item) => item.scheduleId)
 
       return schedules.map((schedule) => ({
-        schedule,
+        ...schedule,
         items: itemsBySchedule.get(schedule.id) ?? [],
-      })) as ScheduleRepository.WithItems[]
+      })) as ScheduleAggregate[]
     })
 
     return {

@@ -1,8 +1,7 @@
 import * as Schema from 'effect/Schema'
 
 import { DeviceId } from '@/device/schemas/device.schema'
-import { ScheduleItemSchema } from '@/schedule/schemas/schedule-item.schema'
-import { ScheduleSchema } from '@/schedule/schemas/schedule.schema'
+import { ScheduleAggregateSchema } from '@/schedule/schemas/schedule.aggregate'
 import { ApiResponse, Pagination } from '@/schema'
 
 export class ListSchedulesDto extends Schema.TaggedClass<ListSchedulesDto>()(
@@ -10,12 +9,7 @@ export class ListSchedulesDto extends Schema.TaggedClass<ListSchedulesDto>()(
   ApiResponse({
     message: 'Get list of schedules successfully',
     dataSchema: Schema.Struct({
-      schedules: Schema.Array(
-        Schema.Struct({
-          schedule: ScheduleSchema,
-          items: Schema.Array(ScheduleItemSchema),
-        })
-      ),
+      schedules: Schema.Array(ScheduleAggregateSchema),
       meta: Pagination.Output,
     }),
   })

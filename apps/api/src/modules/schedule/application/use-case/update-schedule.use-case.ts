@@ -6,6 +6,7 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
 import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
+import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
 
 export class UpdateScheduleUseCase extends Context.Service<
@@ -25,22 +26,27 @@ export class UpdateScheduleUseCase extends Context.Service<
         if (!found)
           return yield* Effect.fail(new ScheduleNotFound({ error: { id } }))
 
-        const updatedSchedule = found.schedule.update({
-          date: input.date ?? found.schedule.date,
-          time: input.time ?? found.schedule.time,
-          status: input.status ?? found.schedule.status,
+        const updatedSchedule = Schedule.make({
+          ...found,
+          date: input.date ?? found.date,
+          time: input.time ?? found.time,
+          status: input.status ?? found.status,
         })
 
         const items = input.items
           ? input.items.map((item) =>
               ScheduleItem.make({
-                ...(item.id ? { id: item.id } : {}),
                 scheduleId: updatedSchedule.id,
                 slot: item.slot,
                 quantity: item.quantity,
               })
             )
-          : found.items
+          : found.items.map((item) =>
+              ScheduleItem.make({
+                ...item,
+                scheduleId: updatedSchedule.id,
+              })
+            )
 
         yield* scheduleRepository.saveWithItems(updatedSchedule, items)
 

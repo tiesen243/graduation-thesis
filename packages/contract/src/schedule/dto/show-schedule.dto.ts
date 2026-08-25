@@ -1,6 +1,6 @@
 import * as Schema from 'effect/Schema'
 
-import { ScheduleItemSchema } from '@/schedule/schemas/schedule-item.schema'
+import { ScheduleAggregateSchema } from '@/schedule/schemas/schedule.aggregate'
 import { ScheduleSchema } from '@/schedule/schemas/schedule.schema'
 import { ApiResponse } from '@/schema'
 
@@ -8,10 +8,7 @@ export class ShowScheduleDto extends Schema.TaggedClass<ShowScheduleDto>()(
   'schedule/application/ShowScheduleDto',
   ApiResponse({
     message: 'Get schedule successfully',
-    dataSchema: Schema.Struct({
-      schedule: ScheduleSchema,
-      items: Schema.Array(ScheduleItemSchema),
-    }),
+    dataSchema: ScheduleAggregateSchema,
   })
 ) {}
 

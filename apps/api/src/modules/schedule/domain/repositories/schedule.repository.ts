@@ -1,4 +1,5 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 import type { Effect } from 'effect/Effect'
@@ -12,18 +13,16 @@ import type { IRepository } from '@/shared/repository'
 interface IScheduleRepository extends IRepository<Schedule> {
   readonly findWithItems: (
     scheduleId: ScheduleId
-  ) => Effect<ScheduleRepository.WithItems | null>
+  ) => Effect<ScheduleAggregate | null>
 
   readonly findManyWithItems: (options: {
     userId: UserId
     deviceId?: DeviceId
     limit: number
     offset: number
-  }) => Effect<ScheduleRepository.WithItems[]>
+  }) => Effect<ScheduleAggregate[]>
 
-  readonly findByDevice: (
-    deviceId: DeviceId
-  ) => Effect<ScheduleRepository.WithItems[]>
+  readonly findByDevice: (deviceId: DeviceId) => Effect<ScheduleAggregate[]>
 
   readonly saveWithItems: (
     schedule: Schedule,
@@ -32,7 +31,7 @@ interface IScheduleRepository extends IRepository<Schedule> {
 
   readonly findTodayByDevice: (
     deviceId: DeviceId
-  ) => Effect<ScheduleRepository.WithItems[]>
+  ) => Effect<ScheduleAggregate[]>
 
   readonly deleteWithItems: (scheduleId: ScheduleId) => Effect<void>
 }
@@ -41,10 +40,3 @@ export class ScheduleRepository extends Context.Service<
   ScheduleRepository,
   IScheduleRepository
 >()('schedule/domain/ScheduleRepository') {}
-
-export namespace ScheduleRepository {
-  export interface WithItems {
-    schedule: Schedule
-    items: ScheduleItem[]
-  }
-}

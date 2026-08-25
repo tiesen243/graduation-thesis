@@ -20,9 +20,7 @@ export class TodayScheduleUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute({ id }) {
-        const schedules = yield* scheduleRepository.findTodayByDevice(id)
-
-        return { schedules }
+        return yield* scheduleRepository.findTodayByDevice(id)
       }),
     }
   }),

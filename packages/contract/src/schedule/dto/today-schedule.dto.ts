@@ -1,21 +1,13 @@
 import * as Schema from 'effect/Schema'
 
-import { ScheduleItemSchema } from '@/schedule/schemas/schedule-item.schema'
-import { ScheduleSchema } from '@/schedule/schemas/schedule.schema'
+import { ScheduleAggregateSchema } from '@/schedule/schemas/schedule.aggregate'
 import { ApiResponse } from '@/schema'
 
 export class TodayScheduleDto extends Schema.TaggedClass<TodayScheduleDto>()(
   'schedule/application/TodayScheduleDto',
   ApiResponse({
     message: 'Get today schedule successfully',
-    dataSchema: Schema.Struct({
-      schedules: Schema.Array(
-        Schema.Struct({
-          schedule: ScheduleSchema,
-          items: Schema.Array(ScheduleItemSchema),
-        })
-      ),
-    }),
+    dataSchema: Schema.Array(ScheduleAggregateSchema),
   })
 ) {}
 
