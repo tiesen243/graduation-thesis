@@ -15,10 +15,14 @@ export class ScheduleInfrastructureModule {
   }
 
   private static get inMemory() {
-    return InMemoryScheduleRepository.pipe(Layer.provideMerge(InMemoryClient.layer))
+    return InMemoryScheduleRepository.pipe(
+      Layer.provideMerge(InMemoryClient.layer)
+    )
   }
 
   private static get drizzle() {
-    return DrizzleScheduleRepository.pipe(Layer.provideMerge(DrizzleClient.layer))
+    return DrizzleScheduleRepository.pipe(
+      Layer.provideMerge(DrizzleClient.layer)
+    )
   }
 }

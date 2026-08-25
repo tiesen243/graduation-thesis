@@ -1,15 +1,8 @@
 import * as Schema from 'effect/Schema'
 
 import { ScheduleId } from '@/schedule/schemas/schedule.schema'
-import { Cuid2 } from '@/schema'
-
-export const ScheduleItemId = Cuid2.pipe(
-  Schema.brand('schedule/domain/ScheduleItemId')
-)
-export type ScheduleItemId = typeof ScheduleItemId.Type
 
 export const ScheduleItemSchema = Schema.Struct({
-  id: ScheduleItemId,
   scheduleId: ScheduleId,
   slot: Schema.String.check(
     Schema.isPattern(/^[0-9]-[0-1]$/u, {

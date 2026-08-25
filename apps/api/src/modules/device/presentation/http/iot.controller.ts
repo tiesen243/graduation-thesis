@@ -39,8 +39,11 @@ export const iotController = HttpApiBuilder.group(Api, 'iot', (handlers) =>
       )
     )
 
-    .handle('schedule-today', ({ params }) =>
-      TodayScheduleUseCase.use((s) => s.execute(params)).pipe(
+    .handle('schedule-today', () =>
+      CurrentDevice.pipe(
+        Effect.flatMap((id) =>
+          TodayScheduleUseCase.use((s) => s.execute({ id }))
+        ),
         Effect.map((data) => TodayScheduleDto.make({ data }))
       )
     )

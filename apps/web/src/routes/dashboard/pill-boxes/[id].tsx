@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from '@rozumari/ui/components/tabs'
 import { DeviceInfo } from '@/routes/dashboard/pill-boxes/_components/device-info'
 import { ActivityTab } from '@/routes/dashboard/pill-boxes/_components/tabs/activity'
 import { OverviewTab } from '@/routes/dashboard/pill-boxes/_components/tabs/overview'
-import { SettingsTab } from '@/routes/dashboard/pill-boxes/_components/tabs/settings'
+import { SchedulesTab } from '@/routes/dashboard/pill-boxes/_components/tabs/schedules'
 import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
 
 export default function DevicesShowPage() {
@@ -18,14 +18,14 @@ export default function DevicesShowPage() {
         <TabsList>
           <TabsTrigger value='overview'>Overview</TabsTrigger>
           <TabsTrigger value='activity'>Activity log</TabsTrigger>
-          <TabsTrigger value='settings'>Settings</TabsTrigger>
+          <TabsTrigger value='schedules'>Schedules</TabsTrigger>
         </TabsList>
 
         <OverviewTab />
 
         <ActivityTab />
 
-        <SettingsTab />
+        <SchedulesTab />
       </Tabs>
     </>
   )

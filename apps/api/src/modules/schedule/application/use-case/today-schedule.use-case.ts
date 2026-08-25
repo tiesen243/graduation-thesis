@@ -1,3 +1,4 @@
+import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import type { TodayScheduleDto } from '@rozumari/contract/schedule/dto/today-schedule.dto'
 
 import * as Context from 'effect/Context'
@@ -9,9 +10,9 @@ import { ScheduleRepository } from '@/modules/schedule/domain/repositories/sched
 export class TodayScheduleUseCase extends Context.Service<
   TodayScheduleUseCase,
   {
-    readonly execute: (
-      input: TodayScheduleDto.Input
-    ) => Effect.Effect<TodayScheduleDto.Output>
+    readonly execute: (input: {
+      id: DeviceId
+    }) => Effect.Effect<TodayScheduleDto.Output>
   }
 >()('schedule/application/TodayScheduleUseCase', {
   make: Effect.gen(function* make() {

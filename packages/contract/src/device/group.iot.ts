@@ -22,7 +22,7 @@ export class IotGroup extends HttpApiGroup.make('iot')
   )
 
   .add(
-    HttpApiEndpoint.get('schedule', '/schedule', {
+    HttpApiEndpoint.get('schedule-today', '/schedule/today', {
       success: TodayScheduleDto,
     })
   )

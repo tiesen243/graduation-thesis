@@ -24,9 +24,9 @@ export namespace UpdateScheduleDto {
   export const Input = Schema.Struct({
     date: ScheduleSchema.fields.date.pipe(Schema.optionalKey),
     time: ScheduleSchema.fields.time.pipe(Schema.optionalKey),
+    status: ScheduleSchema.fields.status.pipe(Schema.optionalKey),
     items: Schema.Array(
       Schema.Struct({
-        id: Schema.optional(ScheduleItemSchema.fields.id),
         slot: ScheduleItemSchema.fields.slot,
         quantity: ScheduleItemSchema.fields.quantity,
       })

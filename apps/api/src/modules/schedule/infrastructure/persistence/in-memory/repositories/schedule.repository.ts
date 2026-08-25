@@ -3,17 +3,14 @@ import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.sc
 
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import * as Ref from 'effect/Ref'
 
-import { Schedule, ScheduleItem } from '@/modules/schedule/domain/entities/schedule.entity'
-import {
-  ScheduleRepository,
-  type ScheduleWithItems,
-} from '@/modules/schedule/domain/repositories/schedule.repository'
+import type { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
+import type { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
+
+import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { formatToday } from '@/modules/schedule/domain/utils/format-today'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
-
-const DAY_OF_WEEK = () => new Date().getDay()
 
 export const InMemoryScheduleRepository = Layer.effect(
   ScheduleRepository,
@@ -26,22 +23,29 @@ export const InMemoryScheduleRepository = Layer.effect(
     )
     const itemsRepo = yield* makeInMemoryRepository<ScheduleItem, string>(
       db.scheduleItems,
-      (entity) => entity.id
+      (entity) => `${entity.scheduleId}:${entity.slot}`
     )
 
-    const withItemsFor = Effect.fn(function* withItemsFor(
-      schedule: Schedule
-    ): Effect.Effect<ScheduleWithItems> {
-      const items = yield* itemsRepo.findMany({
-        where: { scheduleId: { eq: schedule.id } },
+    const mapSchedulesWithItems = Effect.fn(function* mapSchedulesWithItems(
+      schedules: Schedule[]
+    ) {
+      if (schedules.length === 0) return []
+
+      const scheduleIds = new Set(schedules.map((s) => s.id))
+      const allItems = yield* itemsRepo.findMany({
+        where: { scheduleId: { in: [...scheduleIds] } },
       })
-      return { schedule, items }
+
+      const itemsBySchedule = Map.groupBy(allItems, (item) => item.scheduleId)
+
+      return schedules.map((schedule) => ({
+        schedule,
+        items: itemsBySchedule.get(schedule.id) ?? [],
+      })) as ScheduleRepository.WithItems[]
     })
 
     return {
-      findMany: schedulesRepo.findMany,
-
-      count: schedulesRepo.count,
+      ...schedulesRepo,
 
       findWithItems: Effect.fn(function* findWithItems(scheduleId) {
         const [schedule] = yield* schedulesRepo.findMany({
@@ -49,16 +53,34 @@ export const InMemoryScheduleRepository = Layer.effect(
           limit: 1,
         })
         if (!schedule) return null
-        return yield* withItemsFor(schedule)
+
+        const [result] = yield* mapSchedulesWithItems([schedule])
+        return result ?? null
       }),
 
       findByDevice: Effect.fn(function* findByDevice(deviceId: DeviceId) {
         const schedules = yield* schedulesRepo.findMany({
           where: { deviceId: { eq: deviceId } },
         })
-        return yield* Effect.forEach(schedules, withItemsFor, {
-          concurrency: 'unbounded',
+
+        return yield* mapSchedulesWithItems(schedules)
+      }),
+
+      findManyWithItems: Effect.fn(function* findManyWithItems({
+        userId,
+        deviceId,
+        limit,
+        offset,
+      }) {
+        const schedules = yield* schedulesRepo.findMany({
+          where: deviceId
+            ? { userId: { eq: userId }, deviceId: { eq: deviceId } }
+            : { userId: { eq: userId } },
+          limit,
+          offset,
         })
+
+        return yield* mapSchedulesWithItems(schedules)
       }),
 
       saveWithItems: Effect.fn(function* saveWithItems(schedule, items) {
@@ -67,29 +89,27 @@ export const InMemoryScheduleRepository = Layer.effect(
       }),
 
       findTodayByDevice: Effect.fn(function* findTodayByDevice(deviceId) {
-        const today = DAY_OF_WEEK()
+        const today = formatToday()
         const schedules = yield* schedulesRepo.findMany({
-          where: { deviceId: { eq: deviceId } },
+          where: { deviceId: { eq: deviceId }, date: { eq: today } },
         })
-        const todays = schedules.filter((s) =>
-          s.daysOfWeek.includes(today)
-        )
-        return yield* Effect.forEach(todays, withItemsFor, {
-          concurrency: 'unbounded',
-        })
+
+        return yield* mapSchedulesWithItems(schedules)
       }),
 
       deleteWithItems: Effect.fn(function* deleteWithItems(scheduleId) {
+        const items = yield* itemsRepo.findMany({
+          where: { scheduleId: { eq: scheduleId } },
+        })
+        if (items.length > 0)
+          // oxlint-disable-next-line unicorn/no-array-method-this-argument unicorn/no-array-for-each
+          yield* Effect.forEach(items, (item) => itemsRepo.delete(item))
+
         const [schedule] = yield* schedulesRepo.findMany({
           where: { id: { eq: scheduleId } },
           limit: 1,
         })
         if (schedule) yield* schedulesRepo.delete(schedule)
-
-        const items = yield* itemsRepo.findMany({
-          where: { scheduleId: { eq: scheduleId } },
-        })
-        for (const item of items) yield* itemsRepo.delete(item)
       }),
     }
   })

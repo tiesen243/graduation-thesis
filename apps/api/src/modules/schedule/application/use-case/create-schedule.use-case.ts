@@ -1,12 +1,16 @@
 import type { CreateScheduleDto } from '@rozumari/contract/schedule/dto/create-schedule.dto'
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
+import { ScheduleStatus } from '@rozumari/contract/schedule/schemas/schedule.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { Schedule, ScheduleItem } from '@/modules/schedule/domain/entities/schedule.entity'
+import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
+import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { expandDateRange } from '@/modules/schedule/domain/utils/expand-date-range'
+import { withTransaction } from '@/shared/utils'
 
 export class CreateScheduleUseCase extends Context.Service<
   CreateScheduleUseCase,
@@ -21,25 +25,38 @@ export class CreateScheduleUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute({ userId, ...input }) {
-        const schedule = Schedule.make({
-          ...input,
-          userId,
-        })
-
-        const items = input.items.map((item) =>
-          ScheduleItem.make({
-            scheduleId: schedule.id,
-            slot: item.slot,
-            quantity: item.quantity,
-          })
+        const dates = expandDateRange(
+          input.startDate,
+          input.endDate,
+          input.daysOfWeek
         )
 
-        yield* scheduleRepository.saveWithItems(schedule, items)
+        // oxlint-disable-next-line unicorn/no-array-for-each
+        return yield* Effect.forEach(
+          dates,
+          Effect.fn(function* createdLoop(date) {
+            const schedule = Schedule.make({
+              userId,
+              deviceId: input.deviceId,
+              date,
+              time: input.time,
+              status: ScheduleStatus.make('pending'),
+            })
 
-        return {
-          schedule,
-          items,
-        }
+            const items = input.items.map((item) =>
+              ScheduleItem.make({
+                scheduleId: schedule.id,
+                slot: item.slot,
+                quantity: item.quantity,
+              })
+            )
+
+            yield* scheduleRepository.saveWithItems(schedule, items)
+
+            return { schedule, items }
+          }),
+          { concurrency: 'unbounded' }
+        ).pipe(withTransaction)
       }),
     }
   }),

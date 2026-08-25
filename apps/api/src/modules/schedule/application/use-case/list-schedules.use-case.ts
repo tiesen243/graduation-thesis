@@ -19,25 +19,16 @@ export class ListSchedulesUseCase extends Context.Service<
     const scheduleRepository = yield* ScheduleRepository
 
     return {
-      execute: Effect.fn(function* execute({ userId, page, limit, deviceId }) {
+      execute: Effect.fn(function* execute({ userId, deviceId, ...input }) {
+        const { page = 1, limit = 10 } = input
         const offset = (page - 1) * limit
 
-        const schedules = yield* scheduleRepository.findMany({
-          where: deviceId
-            ? { userId: { eq: userId }, deviceId: { eq: deviceId } }
-            : { userId: { eq: userId } },
+        const results = yield* scheduleRepository.findManyWithItems({
+          userId,
+          deviceId,
           limit,
           offset,
         })
-
-        const results = yield* Effect.forEach(
-          schedules,
-          Effect.fn(function* (schedule) {
-            const found = yield* scheduleRepository.findWithItems(schedule.id)
-            return found ?? { schedule, items: [] }
-          }),
-          { concurrency: 'unbounded' }
-        )
 
         const total = yield* scheduleRepository.count({
           userId: { eq: userId },

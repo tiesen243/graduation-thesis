@@ -8,40 +8,32 @@ import { UserId } from '@/user/schemas/user.schema'
 export const ScheduleId = Cuid2.pipe(Schema.brand('schedule/domain/ScheduleId'))
 export type ScheduleId = typeof ScheduleId.Type
 
+export const scheduleStatuses = ['pending', 'completed', 'cancelled'] as const
+export const ScheduleStatus = Schema.Literals(scheduleStatuses).pipe(
+  Schema.brand('schedule/domain/ScheduleStatus')
+)
+export type ScheduleStatus = typeof ScheduleStatus.Type
+
 export const ScheduleSchema = Schema.Struct({
   id: ScheduleId,
   userId: UserId,
   deviceId: DeviceId,
 
-  startDate: Schema.String.check(
+  date: Schema.String.check(
     Schema.isPattern(
-      /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/u,
-      { message: 'Start date must be in dd/MM/yyyy format' }
-    )
-  ),
-
-  endDate: Schema.String.check(
-    Schema.isPattern(
-      /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/u,
-      { message: 'End date must be in dd/MM/yyyy format' }
-    )
-  ),
-
-  daysOfWeek: Schema.Array(
-    Schema.Int.check(
-      Schema.isGreaterThanOrEqualTo(0, {
-        message: 'Day of week must be greater than or equal to 0',
-      }),
-      Schema.isLessThanOrEqualTo(6, {
-        message: 'Day of week must be less than or equal to 6',
-      })
+      /^(?<day>0[1-9]|[12][0-9]|3[01])\/(?<month>0[1-9]|1[0-2])\/\d{4}$/u,
+      { message: 'Date must be in dd/MM/yyyy format' }
     )
   ),
 
   time: Schema.String.check(
-    Schema.isPattern(/^([01][0-9]|2[0-3]):([0-5][0-9])$/u, {
+    Schema.isPattern(/^(?<hour>[01][0-9]|2[0-3]):(?<minute>[0-5][0-9])$/u, {
       message: 'Time must be in hh:mm format',
     })
+  ),
+
+  status: ScheduleStatus.pipe(
+    Schema.withConstructorDefault(Effect.succeed('pending'))
   ),
 
   ...Timestampz.fields,

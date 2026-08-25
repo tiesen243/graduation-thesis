@@ -1,27 +1,22 @@
+// oxlint-disable unicorn/no-array-for-each
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
-import type { ScheduleItemId } from '@rozumari/contract/schedule/schemas/schedule-item.schema'
 
-import { eq, sql } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import {
-  Schedule,
-  ScheduleItem,
-} from '@/modules/schedule/domain/entities/schedule.entity'
-import {
-  ScheduleRepository,
-  type ScheduleWithItems,
-} from '@/modules/schedule/domain/repositories/schedule.repository'
+import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
+import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
+import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { formatToday } from '@/modules/schedule/domain/utils/format-today'
 import {
   scheduleItems,
   schedules,
 } from '@/modules/schedule/infrastructure/persistence/drizzle/schema'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
-
-const DAY_OF_WEEK = () => new Date().getDay()
+import { withTransaction } from '@/shared/utils'
 
 export const DrizzleScheduleMapper = {
   toEntity: (entity: (typeof schedules)['$inferSelect']) =>
@@ -35,6 +30,31 @@ export const DrizzleScheduleItemMapper = {
   toRow: structuredClone,
 }
 
+const groupJoinRows = (
+  rows: {
+    schedules: typeof schedules.$inferSelect
+    schedule_items: typeof scheduleItems.$inferSelect | null
+  }[]
+): ScheduleRepository.WithItems[] => {
+  const resultMap = new Map<ScheduleId, ScheduleRepository.WithItems>()
+  for (const { schedules: _schedule, schedule_items: _items } of rows) {
+    let entry = resultMap.get(_schedule.id)
+
+    if (!entry) {
+      const schedule = Schedule.make(_schedule)
+      entry = { schedule, items: [] }
+      resultMap.set(schedule.id, entry)
+    }
+
+    if (_items) {
+      const item = ScheduleItem.make(_items)
+      entry.items.push(item)
+    }
+  }
+
+  return [...resultMap.values()]
+}
+
 export const DrizzleScheduleRepository = Layer.effect(
   ScheduleRepository,
   Effect.gen(function* DrizzleScheduleRepository() {
@@ -45,108 +65,103 @@ export const DrizzleScheduleRepository = Layer.effect(
       schedules.id,
       DrizzleScheduleMapper
     )
+
     const itemsRepo = yield* makeDrizzleRepository(
       scheduleItems,
-      scheduleItems.id,
+      [scheduleItems.scheduleId, scheduleItems.slot],
       DrizzleScheduleItemMapper
     )
 
-    const withItemsFor = Effect.fn(function* withItemsFor(
-      scheduleId: ScheduleId
-    ): Effect.Effect<ScheduleWithItems> {
-      const [schedule] = yield* schedulesRepo.findMany({
-        where: { id: { eq: scheduleId } },
-        limit: 1,
-      })
-      const items = yield* itemsRepo.findMany({
-        where: { scheduleId: { eq: scheduleId } },
-      })
-      return { schedule: schedule!, items }
-    })
-
     return {
-      findMany: schedulesRepo.findMany,
-
-      count: schedulesRepo.count,
+      ...schedulesRepo,
 
       findWithItems: Effect.fn(function* findWithItems(scheduleId) {
-        const [schedule] = yield* schedulesRepo.findMany({
-          where: { id: { eq: scheduleId } },
-          limit: 1,
-        })
-        if (!schedule) return null
-        const items = yield* itemsRepo.findMany({
-          where: { scheduleId: { eq: scheduleId } },
-        })
-        return { schedule, items }
+        const rows = yield* db
+          .select()
+          .from(schedules)
+          .where(eq(schedules.id, scheduleId))
+          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
+          .pipe(Effect.orDie)
+
+        if (rows.length === 0) return null
+
+        const grouped = groupJoinRows(rows)
+        return grouped[0] ?? null
+      }),
+
+      findManyWithItems: Effect.fn(function* findManyWithItems({
+        userId,
+        deviceId,
+        limit,
+        offset,
+      }) {
+        const subQuery = db
+          .select({ id: schedules.id })
+          .from(schedules)
+          .where(
+            deviceId
+              ? and(
+                  eq(schedules.userId, userId),
+                  eq(schedules.deviceId, deviceId)
+                )
+              : eq(schedules.userId, userId)
+          )
+          .limit(limit)
+          .offset(offset)
+          .as('sq')
+
+        const rows = yield* db
+          .select()
+          .from(schedules)
+          .innerJoin(subQuery, eq(schedules.id, subQuery.id))
+          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
+          .pipe(Effect.orDie)
+
+        return groupJoinRows(rows)
       }),
 
       findByDevice: Effect.fn(function* findByDevice(deviceId: DeviceId) {
-        const schedulesList = yield* schedulesRepo.findMany({
-          where: { deviceId: { eq: deviceId } },
-        })
-        return yield* Effect.forEach(
-          schedulesList,
-          (s) => withItemsFor(s.id),
-          { concurrency: 'unbounded' }
-        )
+        const rows = yield* db
+          .select()
+          .from(schedules)
+          .where(eq(schedules.deviceId, deviceId))
+          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
+          .pipe(Effect.orDie)
+
+        return groupJoinRows(rows)
       }),
 
       saveWithItems: Effect.fn(function* saveWithItems(schedule, items) {
         yield* schedulesRepo.save(schedule)
         yield* itemsRepo.save(items)
-      }),
+      }, withTransaction),
 
       findTodayByDevice: Effect.fn(function* findTodayByDevice(deviceId) {
-        const today = DAY_OF_WEEK()
-        const [rows] = yield* db
-          .select({
-            schedule: schedules,
-            items: sql<
-              (typeof scheduleItems.$inferSelect)[]
-            >`COALESCE(
-              json_agg(
-                json_build_object(
-                  'id', ${scheduleItems.id},
-                  'scheduleId', ${scheduleItems.scheduleId},
-                  'slot', ${scheduleItems.slot},
-                  'quantity', ${scheduleItems.quantity}
-                ) ORDER BY ${scheduleItems.slot} ASC
-              ) FILTER (WHERE ${scheduleItems.scheduleId} IS NOT NULL),
-            '[]'::json)`.as('items'),
-          })
+        const today = formatToday()
+
+        const rows = yield* db
+          .select()
           .from(schedules)
-          .where(eq(schedules.deviceId, deviceId))
-          .leftJoin(
-            scheduleItems,
-            eq(scheduleItems.scheduleId, schedules.id)
+          .where(
+            and(eq(schedules.deviceId, deviceId), eq(schedules.date, today))
           )
-          .groupBy(schedules.id)
+          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
           .pipe(Effect.orDie)
 
-        const result: ScheduleWithItems[] = []
-        for (const row of rows) {
-          if (!row.schedule.daysOfWeek.includes(today)) continue
-          result.push({
-            schedule: Schedule.make({ ...row.schedule }),
-            items: row.items.map((item) => ScheduleItem.make({ ...item })),
-          })
-        }
-        return result
+        return groupJoinRows(rows)
       }),
 
       deleteWithItems: Effect.fn(function* deleteWithItems(scheduleId) {
-        const [schedule] = yield* schedulesRepo.findMany({
-          where: { id: { eq: scheduleId } },
-          limit: 1,
-        })
-        if (schedule) yield* schedulesRepo.delete(schedule)
+        yield* db
+          .delete(scheduleItems)
+          .where(eq(scheduleItems.scheduleId, scheduleId))
+          .pipe(Effect.orDie)
 
-        const items = yield* itemsRepo.findMany({
-          where: { scheduleId: { eq: scheduleId } },
-        })
-        for (const item of items) yield* itemsRepo.delete(item)
-      }),
+        yield* db
+          .delete(schedules)
+          .where(eq(schedules.id, scheduleId))
+          .pipe(Effect.orDie)
+      }, withTransaction),
     }
   })
 )

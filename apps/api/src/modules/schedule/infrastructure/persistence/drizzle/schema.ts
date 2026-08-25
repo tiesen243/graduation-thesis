@@ -1,12 +1,17 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
-import type { ScheduleItemId } from '@rozumari/contract/schedule/schemas/schedule-item.schema'
-import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
+import type {
+  ScheduleId,
+  ScheduleStatus,
+} from '@rozumari/contract/schedule/schemas/schedule.schema'
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
-import { index, primaryKey, snakeCase, uniqueIndex } from 'drizzle-orm/pg-core'
+import { scheduleStatuses } from '@rozumari/contract/schedule/schemas/schedule.schema'
+import { index, pgEnum, primaryKey, snakeCase } from 'drizzle-orm/pg-core'
 
 import { devices } from '@/modules/device/infrastructure/persistence/drizzle/schema'
 import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
+
+export const scheduleStatusEnum = pgEnum('schedule_status', scheduleStatuses)
 
 export const schedules = snakeCase.table(
   'schedules',
@@ -22,8 +27,9 @@ export const schedules = snakeCase.table(
       .references(() => devices.id, { onDelete: 'cascade' })
       .notNull()
       .$type<DeviceId>(),
-    date: t.date().notNull(),
+    date: t.varchar({ length: 10 }).notNull(),
     time: t.varchar({ length: 5 }).notNull(),
+    status: scheduleStatusEnum().notNull().$type<ScheduleStatus>(),
     createdAt: t.timestamp().notNull(),
     updatedAt: t.timestamp().notNull(),
   }),
@@ -36,7 +42,6 @@ export const schedules = snakeCase.table(
 export const scheduleItems = snakeCase.table(
   'schedule_items',
   (t) => ({
-    id: t.varchar({ length: 24 }).primaryKey().$type<ScheduleItemId>(),
     scheduleId: t
       .varchar({ length: 24 })
       .references(() => schedules.id, { onDelete: 'cascade' })
@@ -45,8 +50,5 @@ export const scheduleItems = snakeCase.table(
     slot: t.varchar({ length: 3 }).notNull(),
     quantity: t.integer().notNull(),
   }),
-  (t) => [
-    uniqueIndex('schedule_items_schedule_id_index').on(t.scheduleId),
-    primaryKey({ columns: [t.id] }),
-  ]
+  (t) => [primaryKey({ columns: [t.scheduleId, t.slot] })]
 )
