@@ -73,6 +73,12 @@ export class DeviceStreamUseCase extends Context.Service<
           input.id,
           JSON.stringify({ action: input.action, payload: input.payload })
         )
+
+        return {
+          deviceId: input.id,
+          action: input.action,
+          payload: input.payload,
+        }
       }),
     }
   }),
