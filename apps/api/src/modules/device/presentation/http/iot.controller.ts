@@ -1,4 +1,5 @@
 import { Api } from '@rozumari/contract'
+import { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
@@ -31,7 +32,8 @@ export const iotController = HttpApiBuilder.group(Api, 'iot', (handlers) =>
       CurrentDevice.pipe(
         Effect.flatMap((id) =>
           DeviceStreamUseCase.use((s) => s.emit({ id, ...payload }))
-        )
+        ),
+        Effect.map((data) => DeviceStreamDto.make({ data }))
       )
     )
 )

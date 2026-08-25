@@ -16,6 +16,7 @@ export class IotGroup extends HttpApiGroup.make('iot')
   .add(
     HttpApiEndpoint.post('emit', '/emit', {
       payload: DeviceStreamDto.Emit,
+      success: DeviceStreamDto,
     })
   )
 

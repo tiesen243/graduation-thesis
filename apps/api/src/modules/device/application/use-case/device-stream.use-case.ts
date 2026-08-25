@@ -22,7 +22,7 @@ export class DeviceStreamUseCase extends Context.Service<
 
     readonly emit: (
       input: DeviceStreamDto.Params & DeviceStreamDto.Emit & { userId?: UserId }
-    ) => Effect.Effect<void, DeviceNotFound>
+    ) => Effect.Effect<DeviceStreamDto.EmitSuccess, DeviceNotFound>
   }
 >()('device/application/DeviceStreamUseCase', {
   make: Effect.gen(function* make() {
@@ -67,7 +67,9 @@ export class DeviceStreamUseCase extends Context.Service<
         })
         yield* Effect.logInfo(device)
         if (!device)
-          return Effect.fail(new DeviceNotFound({ error: { id: input.id } }))
+          return yield* Effect.fail(
+            new DeviceNotFound({ error: { id: input.id } })
+          )
 
         yield* streamService.publish(
           input.id,

@@ -1,6 +1,7 @@
 import { Api } from '@rozumari/contract'
 import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
+import { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
 import { LinkDeviceDto } from '@rozumari/contract/device/dto/link-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
@@ -97,7 +98,8 @@ export const deviceController = HttpApiBuilder.group(
             DeviceStreamUseCase.use((s) =>
               s.emit({ ...params, ...payload, userId })
             )
-          )
+          ),
+          Effect.map((data) => DeviceStreamDto.make({ data }))
         )
       )
 )

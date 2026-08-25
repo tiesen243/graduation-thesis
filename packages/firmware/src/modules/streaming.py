@@ -46,6 +46,7 @@ class Streaming:
 
             if res.status_code != 200:
                 print("Failed to connect to the streaming endpoint:", res.status_code)
+                print("Response content:", res.text)
                 return
 
             while True:

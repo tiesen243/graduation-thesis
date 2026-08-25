@@ -23,6 +23,10 @@ class WiFi:
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
 
+        if wlan.isconnected():
+            wlan.disconnect()
+            await asyncio.sleep(1)
+
         if not wlan.isconnected():
             print(f"Connecting to {self.wifi.get('ssid')}", end="")
             wlan.connect(self.wifi.get("ssid"), self.wifi.get("password"))

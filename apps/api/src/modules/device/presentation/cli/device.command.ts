@@ -30,7 +30,10 @@ const generateToken = Command.make(
   Effect.fn(function* generateTokenFn(input) {
     const jwt = yield* Jwt
 
-    const token = yield* jwt.sign({ sub: input.deviceId })
+    const token = yield* jwt.sign(
+      { sub: input.deviceId },
+      { expiresIn: 999 * 365 * 24 * 60 * 60 } // no expiration
+    )
 
     yield* Effect.log(`Token: ${token}`)
   })
