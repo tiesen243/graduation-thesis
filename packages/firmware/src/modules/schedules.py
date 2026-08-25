@@ -1,20 +1,9 @@
 import asyncio
-from typing import TypedDict
 
 import ujson
 
 from lib.config import load_config
 from modules.wifi import WiFi
-
-
-class Slot(TypedDict):
-    position: str
-    quantity: int
-
-
-class Schedule(TypedDict):
-    time: str
-    slots: list[Slot]
 
 
 class Schedules:
@@ -29,7 +18,7 @@ class Schedules:
 
     async def start(self) -> None:
         last_executed_time = ""
-        schedules: list[Schedule] = []
+        schedules: list = []
 
         while True:
             try:
@@ -54,9 +43,9 @@ class Schedules:
 
             await asyncio.sleep(60)  # Check every minute
 
-    def _read_schedule(self) -> list[Schedule]:
+    def _read_schedule(self) -> list:
         try:
             with open(self.path, "r") as f:
                 return ujson.load(f)  # pyright: ignore[reportAny]
-        except OSError, ValueError:
+        except Exception:  # noqa: BLE001
             return []

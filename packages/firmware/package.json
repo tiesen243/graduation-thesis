@@ -1,5 +1,8 @@
 {
   "name": "@rozumari/firmware",
   "version": "0.0.1",
-  "private": false
+  "private": false,
+  "scripts": {
+    "upload": "mpremote soft-reset fs cp -r src/* :"
+  }
 }

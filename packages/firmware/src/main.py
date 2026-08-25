@@ -23,7 +23,7 @@ class Bootstrap:
 
         self.ble = None
 
-        self.switch = Pin(pins.get("switch"), Pin.IN, Pin.PULL_UP)
+        self.switch = Pin(int(pins.get("switch")), Pin.IN, Pin.PULL_UP)
 
     def _is_config_mode(self) -> bool:
         if self.switch is None:

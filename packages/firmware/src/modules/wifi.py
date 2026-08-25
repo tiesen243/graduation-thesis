@@ -4,11 +4,11 @@ import time
 import network
 import ntptime
 
-from lib.config import WifiConfig, load_config
+from lib.config import load_config
 
 
 class WiFi:
-    wifi: WifiConfig | None = None
+    wifi: dict | None = None
     utc: int | None = None
 
     def __init__(self):

@@ -3,7 +3,7 @@ import asyncio
 import ubluetooth
 import ujson
 
-from lib.config import DeviceConfig, load_config
+from lib.config import load_config
 
 _CONFIG_SERVICE_UUID = ubluetooth.UUID("ffaa5bd2-45cd-4512-bf35-c5d4276a0c7a")
 _CHAR_RX_UUID = ubluetooth.UUID("3d8cffcb-69d3-41d3-8f9e-fafed0bcce6b")
@@ -16,7 +16,7 @@ _FLAG_NOTIFY = 0x0010
 
 class BLE:
     ble: ubluetooth.BLE | None = None
-    device: DeviceConfig | None = None
+    device: dict | None = None
 
     handle_rx: memoryview[int] | None = None
     handle_tx: memoryview[int] | None = None
@@ -48,11 +48,11 @@ class BLE:
         if not self.ble or not self.device:
             return
 
-        device_name = self.device.get("name").encode("utf-8")
+        device_name = str(self.device.get("name")).encode("utf-8")
         payload = (
             bytearray([0x02, 0x01, 0x06, len(device_name) + 1, 0x09]) + device_name
         )
-        self.ble.gap_advertise(1000, adv_data=payload)  # pyright: ignore[reportCallIssue, reportUnknownMemberType]
+        self.ble.gap_advertise(1000, adv_data=payload)  # pyright: ignore[reportCallIssue]
         print(f"Advertising as {self.device.get('name')}...")
 
     def _irq(self, event: int, data: tuple[memoryview[int], ...]) -> None:

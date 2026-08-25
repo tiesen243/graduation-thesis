@@ -1,35 +1,9 @@
 import json as ujson
-from typing import TypedDict
+
+CONFIG_CACHE: dict | None = None
 
 
-class WifiConfig(TypedDict):
-    ssid: str
-    password: str
-
-
-class DeviceConfig(TypedDict):
-    id: str
-    name: str
-
-
-class ApiConfig(TypedDict):
-    host: str
-    port: int
-    token: str
-
-
-class Config(TypedDict, total=False):
-    utc: int
-    wifi: WifiConfig
-    device: DeviceConfig
-    api: ApiConfig
-    pins: dict[str, str | int]
-
-
-CONFIG_CACHE: Config | None = None
-
-
-def load_config(file_path: str = "data/config.json", force: bool = False) -> Config:
+def load_config(file_path: str = "data/config.json", force: bool = False) -> dict:
     """
     Load the configuration from a JSON file.
 
@@ -56,9 +30,7 @@ def load_config(file_path: str = "data/config.json", force: bool = False) -> Con
         return {}
 
 
-def save_wifi_config(
-    wifi_config: WifiConfig, file_path: str = "data/config.json"
-) -> None:
+def save_wifi_config(wifi_config: dict, file_path: str = "data/config.json") -> None:
     """
     Save the Wi-Fi configuration to a JSON file.
 

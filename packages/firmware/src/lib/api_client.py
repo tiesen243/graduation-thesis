@@ -1,13 +1,12 @@
 import asyncio
+import gc
 import json as ujson
-from collections.abc import AsyncGenerator
-from typing import Any
 
-from lib.config import ApiConfig, load_config
+from lib.config import load_config
 
 
 class ApiClient:
-    config: ApiConfig | None = None
+    config: dict | None = None
 
     def __init__(self):
         config = load_config()
@@ -34,7 +33,7 @@ class ApiClient:
 
         return "\r\n".join(headers) + "\r\n\r\n"
 
-    async def get(self, path: str) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+    async def get(self, path: str) -> dict:
         if not self.config:
             raise ValueError("API configuration is not set.")
 
@@ -61,7 +60,7 @@ class ApiClient:
 
         return self._parse_response(response)
 
-    async def post(self, path: str, data: dict[str, Any]) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+    async def post(self, path: str, data: dict) -> dict:
         if not self.config:
             raise ValueError("API configuration is not set.")
 
@@ -91,11 +90,17 @@ class ApiClient:
 
         return self._parse_response(response)
 
-    async def stream(self, path: str) -> AsyncGenerator[dict[str, str]]:
+    async def stream(self, path: str, callback):  # pyright: ignore[reportMissingParameterType]
         if not self.config:
             raise ValueError("API configuration is not set.")
 
+        print(
+            f"Starting stream: {self.config.get('host')}:{self.config.get('port')}{path}"
+        )
+
         while True:
+            reader = None
+            writer = None
             try:
                 reader, writer = await asyncio.open_connection(
                     self.config.get("host"),
@@ -104,7 +109,6 @@ class ApiClient:
                 )
 
                 request = self._headers("GET", path, is_stream=True)
-
                 writer.write(request.encode("utf-8"))
                 await writer.drain()
 
@@ -113,15 +117,28 @@ class ApiClient:
                     if not line:
                         break
 
-                    line = line.decode("utf-8").strip()
-                    if line.startswith("data:"):
-                        data = line[5:].strip()
-                        yield ujson.loads(data) if data else {}
+                    if line.startswith(b"data:"):
+                        raw_data = line[5:].strip()
+                        if raw_data:
+                            payload = ujson.loads(raw_data)  # pyright: ignore[reportAny]
+                            await callback(payload)
+
+                    line = None
+                    _ = gc.collect()
+
             except Exception as e:  # noqa: BLE001
                 print(f"Error in stream: {e}")
+            finally:
+                if writer:
+                    try:
+                        writer.close()
+                        await writer.wait_closed()
+                    except Exception:  # noqa: BLE001, S110
+                        pass
+                _ = gc.collect()
                 await asyncio.sleep(5)
 
-    def _parse_response(self, response: bytearray) -> dict[str, Any]:  # pyright: ignore[reportExplicitAny]
+    def _parse_response(self, response: bytearray) -> dict:
         parts = response.split(b"\r\n\r\n", 1)
         if len(parts) < 2:
             return {}

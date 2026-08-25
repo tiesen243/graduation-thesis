@@ -64,10 +64,12 @@ export class AppModule {
 
     const cli = Command.run(
       Command.make(pkgJson.name).pipe(
-        Command.withSubcommands([userModule.command])
+        Command.withSubcommands([userModule.command, deviceModule.command])
       ),
       { version: pkgJson.version }
-    ).pipe(Effect.provide([userModule.exports.layer]))
+    ).pipe(
+      Effect.provide([userModule.exports.layer, deviceModule.exports.layer])
+    )
 
     return { routes, cli }
   }
