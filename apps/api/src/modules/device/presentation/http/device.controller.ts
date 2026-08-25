@@ -73,10 +73,10 @@ export const deviceController = HttpApiBuilder.group(
         ).pipe(Effect.map((data) => UpdateCompartmentDto.make({ data })))
       )
 
-      .handle('subscribe', ({ params }) =>
+      .handle('subscribe', ({ params: { id } }) =>
         CurrentUser.pipe(
           Effect.flatMap(({ userId }) =>
-            DeviceStreamUseCase.use((s) => s.subcribe({ ...params, userId }))
+            DeviceStreamUseCase.use((s) => s.subcribe({ id, userId }))
           ),
           Effect.map((stream) =>
             HttpServerResponse.stream(stream.pipe(encodeText as never), {

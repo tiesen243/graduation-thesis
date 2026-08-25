@@ -12,13 +12,31 @@ class ApiClient:
         config = load_config()
         self.config = config.get("api")
 
+    def _get_host_and_port(self) -> tuple[str, int]:
+        if not self.config:
+            raise ValueError("API configuration is not set.")
+
+        host = (
+            str(self.config.get("host", ""))
+            .replace("http://", "")
+            .replace("https://", "")
+            .split("/")[0]
+        )
+        port = int(self.config.get("port", 80))
+        return host, port
+
     def _headers(self, method: str, path: str, is_stream: bool = False) -> str:
         if not self.config:
             return ""
 
+        host, port = self._get_host_and_port()
+        host_header = host if port in (80, 443) else f"{host}:{port}"
+
+        print(f"[{method}] {path} (Host: {host_header})")
+
         headers = [
             f"{method.upper()} {path} HTTP/1.1",
-            f"Host: {self.config.get('host')}:{self.config.get('port')}",
+            f"Host: {host_header}",
             f"Authorization: Bearer {self.config.get('token')}",
             f"x-vercel-protection-bypass: {self.config.get('bypass_token')}",
             "Content-Type: application/json",
@@ -34,20 +52,30 @@ class ApiClient:
 
         return "\r\n".join(headers) + "\r\n\r\n"
 
+    async def _connect(self) -> tuple[asyncio.StreamReader, asyncio.StreamWriter]:
+        host, port = self._get_host_and_port()
+        is_ssl = port == 443
+
+        if is_ssl:
+            return await asyncio.open_connection(
+                host, port, ssl=True, server_hostname=host
+            )
+
+        return await asyncio.open_connection(host, port)
+
     async def get(self, path: str) -> dict:
         if not self.config:
             raise ValueError("API configuration is not set.")
 
-        reader, writer = await asyncio.open_connection(
-            self.config.get("host"),
-            self.config.get("port"),
-            ssl=self.config.get("port") == 443,
-        )
+        reader, writer = await self._connect()
 
         request = self._headers("GET", path)
-
         writer.write(request.encode("utf-8"))
         await writer.drain()
+
+        status_line = await reader.readline()
+        if status_line:
+            print(f"[STREAM STATUS] {status_line.decode('utf-8').strip()}")
 
         response = bytearray()
         while True:
@@ -66,14 +94,10 @@ class ApiClient:
             raise ValueError("API configuration is not set.")
 
         body = ujson.dumps(data).encode("utf-8")
-        reader, writer = await asyncio.open_connection(
-            self.config.get("host"),
-            self.config.get("port"),
-            ssl=self.config.get("port") == 443,
-        )
+        reader, writer = await self._connect()
 
-        request = self._headers("POST", path)
-        request += f"Content-Length: {len(body)}\r\n\r\n"
+        request = self._headers("POST", path).rstrip("\r\n")
+        request = f"{request}\r\nContent-Length: {len(body)}\r\n\r\n"
 
         writer.write(request.encode("utf-8"))
         writer.write(body)
@@ -95,23 +119,21 @@ class ApiClient:
         if not self.config:
             raise ValueError("API configuration is not set.")
 
-        print(
-            f"Starting stream: {self.config.get('host')}:{self.config.get('port')}{path}"
-        )
-
         while True:
             reader = None
             writer = None
+
             try:
-                reader, writer = await asyncio.open_connection(
-                    self.config.get("host"),
-                    self.config.get("port"),
-                    ssl=self.config.get("port") == 443,
-                )
+                reader, writer = await self._connect()
 
                 request = self._headers("GET", path, is_stream=True)
                 writer.write(request.encode("utf-8"))
                 await writer.drain()
+
+                while True:
+                    header_line = await reader.readline()
+                    if not header_line or header_line in (b"\r\n", b"\n"):
+                        break
 
                 while True:
                     line = await reader.readline()
@@ -146,6 +168,9 @@ class ApiClient:
 
         headers_raw = parts[0].decode("utf-8", errors="ignore")
         body_raw = parts[1]
+
+        status_line = headers_raw.split("\r\n", 1)[0]
+        print(f"[RESP STATUS] {status_line}")
 
         if "transfer-encoding: chunked" in headers_raw.lower():
             decoded_body = bytearray()

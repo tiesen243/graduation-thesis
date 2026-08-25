@@ -1,6 +1,9 @@
+import ujson
+import urequests
 from machine import Pin
 
 from lib.api_client import ApiClient
+from lib.config import load_config
 
 led = Pin("LED", Pin.OUT)
 
@@ -19,10 +22,62 @@ class Streaming:
 
         if action == "led":
             print(f"Setting LED state to: {payload}")
-            led.value(int(payload))
+            led.value(int(payload))  # pyright: ignore[reportArgumentType]
 
     async def start(self) -> None:
-        if not self.api_client:
-            raise ValueError("API client is not initialized.")
+        config = load_config()
+        api_config: dict = config.get("api", {})
 
-        await self.api_client.stream("/api/devices/subscribe", self._handle_payload)
+        headers = {
+            "Authorization": f"Bearer {api_config.get('token')}",
+            "x-vercel-protection-bypass": api_config.get("bypass_token"),
+            "Accept": "text/event-stream",
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+        }
+
+        res = None
+
+        url = f"https://{api_config.get('host')}/api/devices/subscribe"
+        print(f"Connecting to streaming endpoint: {url}")
+
+        try:
+            res = urequests.get(
+                url,
+                headers=headers,
+                stream=True,
+            )
+
+            if res.status_code != 200:
+                print("Failed to connect to the streaming endpoint:", res.status_code)
+                return
+
+            while True:
+                line = res.raw.readline()
+                if not line:
+                    break
+
+                line = line.decode("utf-8").strip()
+
+                if not line:
+                    continue
+
+                if line.startswith(":keep-alive"):
+                    continue
+
+                if line.startswith("data:"):
+                    line = line[5:].strip()
+
+                try:
+                    print("Raw data received:", line)
+                    payload = ujson.loads(line)  # pyright: ignore[reportAny]
+                    await self._handle_payload(payload)  # pyright: ignore[reportAny]
+                except Exception as e:  # noqa: BLE001
+                    print("Error processing line:", e)
+
+        except Exception as e:  # noqa: BLE001
+            print("Error in streaming:", e)
+
+        finally:
+            if res:
+                res.close()
