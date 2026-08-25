@@ -3,7 +3,7 @@ import asyncio
 import ubluetooth
 import ujson
 
-from lib.config import load_config
+from lib.config import load_config, save_wifi_config
 
 _CONFIG_SERVICE_UUID = ubluetooth.UUID("ffaa5bd2-45cd-4512-bf35-c5d4276a0c7a")
 _CHAR_RX_UUID = ubluetooth.UUID("3d8cffcb-69d3-41d3-8f9e-fafed0bcce6b")
@@ -42,9 +42,12 @@ class BLE:
             (CONFIG_SERVICE,)
         )
 
-        self._start_advertising()
-
-    def _start_advertising(self) -> None:
+    def start_advertising(self) -> None:
+        """
+        Start advertising the BLE device with the specified name.
+        The advertising payload includes the device name and is broadcasted at a
+        regular interval of 1000 milliseconds.
+        """
         if not self.ble or not self.device:
             return
 
@@ -56,6 +59,12 @@ class BLE:
         print(f"Advertising as {self.device.get('name')}...")
 
     def _irq(self, event: int, data: tuple[memoryview[int], ...]) -> None:
+        """
+        Handle BLE events triggered by the BLE stack.
+        This method is called when a BLE event occurs, such as a device connecting,
+        disconnecting, or receiving data. It processes the event and takes appropriate
+        actions based on the event type.
+        """
         if not self.ble:
             return
 
@@ -65,7 +74,7 @@ class BLE:
         elif event == 2:
             print("Device disconnected")
             self.conn_handle = None
-            self._start_advertising()
+            self.start_advertising()
         elif event == 3:
             _, value_handle = data
             if self.handle_rx is not None and value_handle == self.handle_rx:
@@ -73,6 +82,12 @@ class BLE:
                 _ = asyncio.create_task(self._handle(raw_data))
 
     def send(self, data: dict[str, str]) -> None:
+        """
+        Send a JSON-encoded message to the connected BLE device.
+        The message is serialized to JSON, encoded as UTF-8 bytes, and sent via the
+        BLE characteristic. If the device is not connected or the necessary handles are
+        not available, the method returns without sending any data.
+        """
         if self.ble is None or self.conn_handle is None or self.handle_tx is None:
             return
 
@@ -81,12 +96,30 @@ class BLE:
         self.ble.gatts_notify(self.conn_handle, _bytes)
 
     async def _handle(self, raw_data: bytes) -> None:
+        """
+        Handle incoming BLE messages by decoding the raw data and processing the JSON content.
+        """
         try:
-            json: dict[str, str] = ujson.loads(raw_data.decode("utf-8"))  # pyright: ignore[reportAny]
-            print(f"Received message: {json.get('message')}")
+            json: dict[str, str] = ujson.loads(raw_data.decode("utf-8"))
+            action = json.get("action", "")
+            payload: dict[str, str] = {}
 
-            if json.get("message") == "ping":
-                self.send({"message": "pong"})
+            print(f"Received message: {action}")
+
+            if action == "ping":
+                self.send({"action": "pong"})
+
+            elif action == "set_wifi":
+                payload = json.get("payload", {})  # pyright: ignore[reportAssignmentType]
+
+                ssid = payload.get("ssid", "")
+                password = payload.get("password", "")
+                if ssid and password:
+                    save_wifi_config({"ssid": ssid, "password": password})
+                    self.send({"action": "wifi_saved"})
+                else:
+                    self.send({"action": "invalid_payload"})
+
         except Exception as e:  # noqa: BLE001
             print(f"Error handling message: {e}")
 

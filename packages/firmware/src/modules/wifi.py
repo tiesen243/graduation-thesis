@@ -1,5 +1,4 @@
 import asyncio
-import time
 
 import network
 import ntptime
@@ -16,14 +15,14 @@ class WiFi:
         self.wifi = config.get("wifi")
         self.utc = config.get("utc")
 
-    async def connect(self):
+    async def connect(self, force: bool = False) -> None:
         if self.wifi is None:
             return
 
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
 
-        if wlan.isconnected():
+        if force:
             wlan.disconnect()
             await asyncio.sleep(1)
 
@@ -45,9 +44,3 @@ class WiFi:
             except OSError as e:
                 print(f"Failed to sync time: {e}. Retrying in 2 seconds...")
                 await asyncio.sleep(2)
-
-    @classmethod
-    def get_time(cls) -> time.struct_time:
-        return time.localtime(
-            time.time() + ((cls.utc * 3600) if cls.utc is not None else 1)
-        )

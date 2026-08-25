@@ -21,7 +21,7 @@ def load_config(file_path: str = "data/config.json", force: bool = False) -> dic
 
     try:
         with open(file_path, "r") as f:
-            CONFIG_CACHE = ujson.load(f)  # pyright: ignore[reportConstantRedefinition, reportAny]
+            CONFIG_CACHE = ujson.load(f)  # pyright: ignore[reportConstantRedefinition]
             if CONFIG_CACHE is None:
                 CONFIG_CACHE = {}  # pyright: ignore[reportConstantRedefinition]
             return CONFIG_CACHE
@@ -38,7 +38,9 @@ def save_wifi_config(wifi_config: dict, file_path: str = "data/config.json") -> 
         wifi_config (dict): The Wi-Fi configuration to save.
         file_path (str): The path to the configuration file. Defaults to "data/config.json".
     """
+
     config = load_config(file_path)
     config["wifi"] = wifi_config
+
     with open(file_path, "w") as f:
         ujson.dump(config, f)

@@ -3,7 +3,7 @@ import asyncio
 import ujson
 
 from lib.config import load_config
-from modules.wifi import WiFi
+from lib.utils import get_current_time
 
 
 class Schedules:
@@ -22,7 +22,7 @@ class Schedules:
 
         while True:
             try:
-                now = WiFi.get_time()
+                now = get_current_time()
                 current_time: str = f"{now[3]:02d}:{now[4]:02d}"
 
                 if current_time != last_executed_time:
@@ -41,11 +41,11 @@ class Schedules:
             except Exception as e:  # noqa: BLE001
                 print(f"Error in schedule execution: {e}")
 
-            await asyncio.sleep(60)  # Check every minute
+            await asyncio.sleep(60)
 
     def _read_schedule(self) -> list:
         try:
             with open(self.path, "r") as f:
-                return ujson.load(f)  # pyright: ignore[reportAny]
+                return ujson.load(f)
         except Exception:  # noqa: BLE001
             return []

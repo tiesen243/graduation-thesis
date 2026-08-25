@@ -65,7 +65,6 @@ export class DeviceStreamUseCase extends Context.Service<
             ...(input.userId ? { userId: { eq: input.userId } } : {}),
           },
         })
-        yield* Effect.logInfo(device)
         if (!device)
           return yield* Effect.fail(
             new DeviceNotFound({ error: { id: input.id } })
