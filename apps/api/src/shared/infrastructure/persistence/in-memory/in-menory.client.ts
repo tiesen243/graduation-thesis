@@ -9,6 +9,10 @@ import type { Account } from '@/modules/auth/domain/entities/account.entity'
 import type { Session } from '@/modules/auth/domain/entities/session.entity'
 import type { Compartment } from '@/modules/device/domain/entities/compartment.entity'
 import type { Device } from '@/modules/device/domain/entities/device.entity'
+import type {
+  Schedule,
+  ScheduleItem,
+} from '@/modules/schedule/domain/entities/schedule.entity'
 import type { User } from '@/modules/user/domain/entities/user.entity'
 import type { IRepository } from '@/shared/repository'
 
@@ -23,6 +27,9 @@ export class InMemoryClient extends Context.Service<
 
       devices: Ref.Ref<Map<Device['id'], Device>>
       compartments: Ref.Ref<Map<string, Compartment>>
+
+      schedules: Ref.Ref<Map<Schedule['id'], Schedule>>
+      scheduleItems: Ref.Ref<Map<ScheduleItem['id'], ScheduleItem>>
     }
 
     buildCriteria: <TEntity>(
@@ -45,6 +52,11 @@ export class InMemoryClient extends Context.Service<
 
       devices: yield* Ref.make(new Map<Device['id'], Device>()),
       compartments: yield* Ref.make(new Map<string, Compartment>()),
+
+      schedules: yield* Ref.make(new Map<Schedule['id'], Schedule>()),
+      scheduleItems: yield* Ref.make(
+        new Map<ScheduleItem['id'], ScheduleItem>()
+      ),
     }
 
     return {

@@ -5,6 +5,7 @@ import { OAuthGroup } from '@/auth/group.oauth'
 import { DeviceGroup } from '@/device/group.device'
 import { IotGroup } from '@/device/group.iot'
 import { HomeGroup } from '@/home/group'
+import { ScheduleGroup } from '@/schedule/group'
 import { UserGroup } from '@/user/group'
 
 export class Api extends HttpApi.make('api')
@@ -17,4 +18,6 @@ export class Api extends HttpApi.make('api')
   .add(DeviceGroup)
   .add(IotGroup)
 
-  .add(HomeGroup) {}
+  .add(HomeGroup)
+
+  .add(ScheduleGroup) {}

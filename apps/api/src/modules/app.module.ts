@@ -11,6 +11,7 @@ import type { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers
 import { AuthModule } from '@/modules/auth/auth.module'
 import { DeviceModule } from '@/modules/device/device.module'
 import { HomeModule } from '@/modules/home/home.module'
+import { ScheduleModule } from '@/modules/schedule/schedule.module'
 import { UserModule } from '@/modules/user/user.module'
 
 import * as pkgJson from '../../package.json' with { type: 'json' }
@@ -27,12 +28,18 @@ export class AppModule {
     )
 
     const deviceModule = DeviceModule.create({ persistence })
+    const scheduleModule = ScheduleModule.create({ persistence })
+
+    const deviceControllerWithSchedule = deviceModule.controller.pipe(
+      Layer.provide(scheduleModule.exports.layer)
+    )
 
     const controllerLayer = Layer.mergeAll(
       homeModule.controller,
       userModule.controller,
       authModule.controller,
-      deviceModule.controller
+      deviceControllerWithSchedule,
+      scheduleModule.controller
     ).pipe(
       Layer.provide([
         authModule.exports.middlewares.auth,

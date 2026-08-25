@@ -43,7 +43,7 @@ export const compartments = snakeCase.table(
     medicine: t.varchar({ length: 255 }),
     capacity: t.integer().notNull(),
     dosage: t.numeric({ precision: 8, scale: 2, mode: 'number' }).notNull(),
-    position: t.varchar({ length: 4 }).notNull(),
+    position: t.varchar({ length: 3 }).notNull(),
     lastRefillAt: t.timestamp(),
     deviceId: t
       .varchar({ length: 24 })
