@@ -36,7 +36,7 @@ export class ApiClient extends Context.Service<
             let response = yield* effect
 
             if (response.status === 401) {
-              yield* Effect.promise((signal) =>
+              const res = yield* Effect.promise((signal) =>
                 fetch(`${getApiUrl()}/api/auth/refresh`, {
                   method: 'POST',
                   credentials: 'include',
@@ -44,7 +44,7 @@ export class ApiClient extends Context.Service<
                 })
               )
 
-              response = yield* effect
+              if (res.ok) response = yield* effect
             }
 
             return response
