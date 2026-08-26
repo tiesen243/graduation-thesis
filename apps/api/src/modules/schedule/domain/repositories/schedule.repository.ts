@@ -6,7 +6,6 @@ import type { Effect } from 'effect/Effect'
 
 import * as Context from 'effect/Context'
 
-import type { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import type { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 import type { IRepository } from '@/shared/repository'
 
@@ -21,15 +20,6 @@ interface IScheduleRepository extends IRepository<Schedule> {
     startDate: string
     endDate: string
   }) => Effect<ScheduleAggregate[]>
-
-  readonly findByDevice: (deviceId: DeviceId) => Effect<ScheduleAggregate[]>
-
-  readonly saveWithItems: (
-    schedule: Schedule,
-    items: ScheduleItem[]
-  ) => Effect<void>
-
-  readonly deleteWithItems: (scheduleId: ScheduleId) => Effect<void>
 }
 
 export class ScheduleRepository extends Context.Service<

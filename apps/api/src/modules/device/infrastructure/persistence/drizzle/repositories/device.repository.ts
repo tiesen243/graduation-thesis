@@ -1,12 +1,10 @@
-import type { DeviceSchema } from '@rozumari/contract/device/schemas/device.schema'
-
-import {
-  DeviceId,
-  DeviceStatus,
-} from '@rozumari/contract/device/schemas/device.schema'
+import { DeviceSchema } from '@rozumari/contract/device/schemas/device.schema'
 import { eq, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
+import { encodeSync } from 'effect/Schema'
+
+import type { DrizzleMapper } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
 
 import { DeviceCompartmentsAggregate } from '@/modules/device/domain/entities/device-compartments.aggregate'
 import { Device } from '@/modules/device/domain/entities/device.entity'
@@ -18,14 +16,9 @@ import {
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
 
-export const DrizzleDeviceMapper = {
-  toEntity: (entity: typeof DeviceSchema.Type) =>
-    Device.make({
-      ...entity,
-      id: DeviceId.make(entity.id),
-      status: DeviceStatus.make(entity.status),
-    }),
-  toRow: structuredClone,
+export const DrizzleDeviceMapper: DrizzleMapper<Device, DeviceSchema> = {
+  toEntity: (entity) => Device.make(entity),
+  toRow: encodeSync(DeviceSchema) as never,
 }
 
 export const DrizzleDeviceRepository = Layer.effect(

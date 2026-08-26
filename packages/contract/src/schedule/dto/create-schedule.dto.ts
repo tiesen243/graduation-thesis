@@ -31,14 +31,14 @@ export namespace CreateScheduleDto {
     deviceId: ScheduleSchema.fields.deviceId,
     startDate: Schema.String.check(
       Schema.isPattern(
-        /^(?<day>0[1-9]|[12][0-9]|3[01])\/(?<month>0[1-9]|1[0-2])\/\d{4}$/u,
-        { message: 'Start date must be in dd/MM/yyyy format' }
+        /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/u,
+        { message: 'startDate must be in the format YYYY-MM-DD' }
       )
     ),
     endDate: Schema.String.check(
       Schema.isPattern(
-        /^(?<day>0[1-9]|[12][0-9]|3[01])\/(?<month>0[1-9]|1[0-2])\/\d{4}$/u,
-        { message: 'End date must be in dd/MM/yyyy format' }
+        /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])$/u,
+        { message: 'endDate must be in the format YYYY-MM-DD' }
       )
     ),
     daysOfWeek: Schema.Array(dayOfWeek),

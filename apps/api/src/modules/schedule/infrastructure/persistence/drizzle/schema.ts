@@ -19,23 +19,25 @@ export const schedules = snakeCase.table(
     id: t.varchar({ length: 24 }).primaryKey().$type<ScheduleId>(),
     userId: t
       .varchar({ length: 24 })
-      .references(() => users.id, { onDelete: 'cascade' })
       .notNull()
+      .references(() => users.id, { onDelete: 'cascade' })
       .$type<UserId>(),
     deviceId: t
       .varchar({ length: 24 })
-      .references(() => devices.id, { onDelete: 'cascade' })
       .notNull()
+      .references(() => devices.id, { onDelete: 'cascade' })
       .$type<DeviceId>(),
+
     date: t.date().notNull(),
     time: t.time().notNull(),
     status: scheduleStatusEnum().notNull().$type<ScheduleStatus>(),
-    createdAt: t.timestamp().notNull(),
-    updatedAt: t.timestamp().notNull(),
   }),
   (t) => [
     index('schedules_user_id_index').on(t.userId),
     index('schedules_device_id_index').on(t.deviceId),
+
+    index('schedules_user_id_date_index').on(t.userId, t.date),
+    index('schedules_device_id_date_index').on(t.deviceId, t.date),
   ]
 )
 
@@ -44,11 +46,14 @@ export const scheduleItems = snakeCase.table(
   (t) => ({
     scheduleId: t
       .varchar({ length: 24 })
-      .references(() => schedules.id, { onDelete: 'cascade' })
       .notNull()
+      .references(() => schedules.id, { onDelete: 'cascade' })
       .$type<ScheduleId>(),
     slot: t.varchar({ length: 3 }).notNull(),
     quantity: t.integer().notNull(),
   }),
-  (t) => [primaryKey({ columns: [t.scheduleId, t.slot] })]
+  (t) => [
+    primaryKey({ columns: [t.scheduleId, t.slot] }),
+    index('schedule_items_schedule_id_index').on(t.scheduleId),
+  ]
 )

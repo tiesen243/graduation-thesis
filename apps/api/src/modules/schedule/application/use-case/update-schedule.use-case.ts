@@ -7,7 +7,9 @@ import * as Layer from 'effect/Layer'
 
 import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
+import { ScheduleItemRepository } from '@/modules/schedule/domain/repositories/schedule-item.repository'
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { withTransaction } from '@/shared/utils'
 
 export class UpdateScheduleUseCase extends Context.Service<
   UpdateScheduleUseCase,
@@ -19,6 +21,7 @@ export class UpdateScheduleUseCase extends Context.Service<
 >()('schedule/application/UpdateScheduleUseCase', {
   make: Effect.gen(function* make() {
     const scheduleRepository = yield* ScheduleRepository
+    const scheduleItemRepository = yield* ScheduleItemRepository
 
     return {
       execute: Effect.fn(function* execute({ id, ...input }) {
@@ -48,9 +51,12 @@ export class UpdateScheduleUseCase extends Context.Service<
               })
             )
 
-        yield* scheduleRepository.saveWithItems(updatedSchedule, items)
+        return yield* Effect.gen(function* tx() {
+          yield* scheduleRepository.save(updatedSchedule)
+          yield* scheduleItemRepository.save(items)
 
-        return { schedule: updatedSchedule, items }
+          return { schedule: updatedSchedule, items }
+        }).pipe(withTransaction)
       }),
     }
   }),

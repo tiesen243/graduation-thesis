@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": false,
   "scripts": {
+    "clean": "git clean -xdf .venv __pycache__",
     "upload": "mpremote soft-reset fs cp -r src/* :"
   }
 }
