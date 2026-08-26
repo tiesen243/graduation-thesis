@@ -10,6 +10,8 @@ led = Pin("LED", Pin.OUT)
 
 
 class Streaming:
+    __instance: Streaming | None = None
+
     def __init__(self):
         pass
 
@@ -88,3 +90,9 @@ class Streaming:
             await asyncio.sleep(retry_delay)
 
             retry_delay = min(retry_delay * 2, max_delay)
+
+    @classmethod
+    def create(cls) -> Streaming:
+        if cls.__instance is None:
+            cls.__instance = Streaming()
+        return cls.__instance

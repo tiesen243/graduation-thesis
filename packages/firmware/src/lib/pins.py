@@ -1,14 +1,39 @@
-from machine import Pin
+from machine import PWM, Pin
 
 from lib.config import load_config
 
-__config = load_config()
-pins = __config.get("pins", {})
 
-led = Pin(pins.get("led"), Pin.OUT)
-switch = Pin(pins.get("switch"), Pin.IN, Pin.PULL_UP)
+class Pins:
+    __instance: Pins | None = None
 
-servo00 = Pin(pins.get("servo-0-0"), Pin.OUT)
-servo01 = Pin(pins.get("servo-0-1"), Pin.OUT)
-servo10 = Pin(pins.get("servo-1-0"), Pin.OUT)
-servo11 = Pin(pins.get("servo-1-1"), Pin.OUT)
+    def __init__(self):
+        __config = load_config()
+        pins = __config.get("pins", {})
+
+        self.led = Pin(pins.get("led"), Pin.OUT)
+        self.switch = Pin(int(pins.get("switch")), Pin.IN, Pin.PULL_UP)
+
+        self.servos: list[PWM] = []
+        servo_pins = [
+            pins.get("servo-0-0"),
+            pins.get("servo-0-1"),
+            pins.get("servo-1-0"),
+            pins.get("servo-1-1"),
+        ]
+        for pin in servo_pins:
+            _servo = PWM(Pin(int(pin)))
+            _servo.freq(50)
+            _servo.duty_u16(0)
+            self.servos.append(_servo)
+
+        self.sensor = Pin(int(pins.get("sensor")), Pin.IN, Pin.PULL_UP)
+
+        self.led_r = Pin(int(pins.get("led-r")), Pin.OUT)
+        self.led_g = Pin(int(pins.get("led-g")), Pin.OUT)
+        self.led_b = Pin(int(pins.get("led-b")), Pin.OUT)
+
+    @classmethod
+    def create(cls) -> Pins:
+        if cls.__instance is None:
+            cls.__instance = Pins()
+        return cls.__instance

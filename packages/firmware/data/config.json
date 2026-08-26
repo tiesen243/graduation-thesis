@@ -20,10 +20,17 @@
 
   "pins": {
     "led": "LED",
-    "switch": "1",
-    "servo-0-0": "2",
-    "servo-0-1": "3",
-    "servo-1-0": "4",
-    "servo-1-1": "5"
+    "switch": 1,
+
+    "servo-0-0": 2,
+    "servo-0-1": 3,
+    "servo-1-0": 4,
+    "servo-1-1": 5,
+
+    "sensor": 14,
+
+    "led-r": 10,
+    "led-g": 11,
+    "led-b": 12
   }
 }

@@ -1,14 +1,14 @@
 [
   {
-    "time": "08:00",
-    "slots": [
+    "id": "",
+    "deviceId": "",
+    "date": "",
+    "time": "",
+    "status": "pending",
+    "items": [
       {
-        "position": "0-0",
+        "slot": "0-0",
         "quantity": 1
-      },
-      {
-        "position": "0-1",
-        "quantity": 2
       }
     ]
   }

@@ -15,6 +15,8 @@ _FLAG_NOTIFY = 0x0010
 
 
 class BLE:
+    __instance: BLE | None = None
+
     ble: ubluetooth.BLE | None = None
     device: dict | None = None
 
@@ -128,3 +130,9 @@ class BLE:
             return
 
         self.ble.active(False)
+
+    @classmethod
+    def create(cls) -> BLE:
+        if cls.__instance is None:
+            cls.__instance = BLE()
+        return cls.__instance
