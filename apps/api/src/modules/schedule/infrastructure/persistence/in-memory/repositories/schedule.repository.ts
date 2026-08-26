@@ -12,7 +12,6 @@ import type { Schedule } from '@/modules/schedule/domain/entities/schedule.entit
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
-import { toDateString } from '@/shared/utils'
 
 export const InMemoryScheduleRepository = Layer.effect(
   ScheduleRepository,
@@ -74,9 +73,6 @@ export const InMemoryScheduleRepository = Layer.effect(
         startDate,
         endDate,
       }) {
-        const startStr = toDateString(startDate)
-        const endStr = toDateString(endDate)
-
         const schedules = yield* Ref.get(db.schedules).pipe(
           Effect.map((dict) => [...dict.values()])
         )
@@ -87,9 +83,9 @@ export const InMemoryScheduleRepository = Layer.effect(
 
           const scheduleDate = schedule.date
 
-          if (startStr === endStr) return scheduleDate === startStr
+          if (startDate === endDate) return scheduleDate === startDate
 
-          return scheduleDate >= startStr && scheduleDate <= endStr
+          return scheduleDate >= startDate && scheduleDate <= endDate
         })
 
         return yield* mapSchedulesWithItems(filteredSchedules)

@@ -16,7 +16,7 @@ import {
 } from '@/modules/schedule/infrastructure/persistence/drizzle/schema'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
-import { toDateString, withTransaction } from '@/shared/utils'
+import { withTransaction } from '@/shared/utils'
 
 export const DrizzleScheduleMapper = {
   toEntity: (entity: (typeof schedules)['$inferSelect']) =>
@@ -94,16 +94,14 @@ export const DrizzleScheduleRepository = Layer.effect(
         startDate,
         endDate,
       }) {
-        const startStr = toDateString(startDate)
-        const endStr = toDateString(endDate)
-
         const conditions = []
 
         if (userId) conditions.push(eq(schedules.userId, userId))
         if (deviceId) conditions.push(eq(schedules.deviceId, deviceId))
 
-        if (startDate === endDate) conditions.push(eq(schedules.date, startStr))
-        else conditions.push(between(schedules.date, startStr, endStr))
+        if (startDate === endDate)
+          conditions.push(eq(schedules.date, startDate))
+        else conditions.push(between(schedules.date, startDate, endDate))
 
         const subQuery = db
           .select({ id: schedules.id })

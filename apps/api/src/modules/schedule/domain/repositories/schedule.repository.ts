@@ -18,8 +18,8 @@ interface IScheduleRepository extends IRepository<Schedule> {
   readonly findManyWithItems: (options: {
     userId?: UserId
     deviceId?: DeviceId
-    startDate: Date
-    endDate: Date
+    startDate: string
+    endDate: string
   }) => Effect<ScheduleAggregate[]>
 
   readonly findByDevice: (deviceId: DeviceId) => Effect<ScheduleAggregate[]>
