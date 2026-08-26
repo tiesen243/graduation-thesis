@@ -23,7 +23,8 @@ const formatDate = (date: Date): string => {
  * individual `yyyy-MM-dd` dates that fall on those days.
  *
  * - `startDate` / `endDate` are inclusive `yyyy-MM-dd` bounds.
- * - `daysOfWeek` is an array of integers `0` (Sunday) .. `6` (Saturday).
+ * - `daysOfWeek` is an array of integers:
+ *   1 = Sunday, 2 = Monday, 3 = Tuesday, ..., 7 = Saturday.
  *
  * @returns an array of `yyyy-MM-dd` strings, one per matching day.
  */
@@ -34,14 +35,15 @@ export const expandDateRange = (
 ): string[] => {
   const start = parseDate(startDate)
   const end = parseDate(endDate)
+  const endTime = end.getTime()
   const daySet = new Set(daysOfWeek)
 
   const result: string[] = []
   const cursor = new Date(start)
 
-  // oxlint-disable-next-line no-unmodified-loop-condition
-  while (cursor <= end) {
-    if (daySet.has(cursor.getDay())) result.push(formatDate(cursor))
+  while (cursor.getTime() <= endTime) {
+    const currentDayOfWeek = cursor.getDay() + 1
+    if (daySet.has(currentDayOfWeek)) result.push(formatDate(cursor))
     cursor.setDate(cursor.getDate() + 1)
   }
 
