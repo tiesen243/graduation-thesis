@@ -29,24 +29,6 @@ export class InvalidCredentials extends Schema.TaggedError<InvalidCredentials>()
   { httpApiStatus: 401 }
 ) {}
 
-export class InvalidToken extends Schema.TaggedError<InvalidToken>()(
-  'auth/domain/InvalidToken',
-  ApiResponse({
-    status: 401,
-    message: 'Invalid token',
-  }),
-  { httpApiStatus: 401 }
-) {}
-
-export class TokenExpired extends Schema.TaggedError<TokenExpired>()(
-  'auth/domain/TokenExpired',
-  ApiResponse({
-    status: 401,
-    message: 'Token expired',
-  }),
-  { httpApiStatus: 401 }
-) {}
-
 export class ProviderError extends Schema.TaggedError<ProviderError>()(
   'auth/domain/ProviderError',
   ApiResponse({ status: 400 }),
@@ -60,8 +42,6 @@ export class AuthError extends Schema.TaggedError<AuthError>()(
       Unauthorized,
       Forbidden,
       InvalidCredentials,
-      InvalidToken,
-      TokenExpired,
       ProviderError,
     ]),
   }

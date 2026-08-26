@@ -24,7 +24,14 @@ export const deviceMiddleware = Layer.effect(
             new DeviceNotFound({ error: { id: '' as DeviceId } })
           )
 
-        const { sub } = yield* jwt.verify(token).pipe(Effect.orDie)
+        const { sub } = yield* jwt
+          .verify(token)
+          .pipe(
+            Effect.catchTag('shared/infrastructure/jwt/JwtError', () =>
+              Effect.fail(new DeviceNotFound({ error: { id: '' as DeviceId } }))
+            )
+          )
+
         return yield* Effect.provideService(httpEffect, CurrentDevice, sub)
       }),
     }

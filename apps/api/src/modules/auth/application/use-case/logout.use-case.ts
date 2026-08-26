@@ -1,7 +1,7 @@
 import type { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
 import type { Crypto } from 'effect/Crypto'
 
-import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
+import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
@@ -20,7 +20,7 @@ export class LogoutUseCase extends Context.Service<
       input: LogoutDto.Input
     ) => Effect.Effect<
       LogoutDto.Output,
-      InvalidToken,
+      Unauthorized,
       Crypto | HttpServerRequest.HttpServerRequest
     >
   }
@@ -43,7 +43,7 @@ export class LogoutUseCase extends Context.Service<
         const { session } = yield* authService.verifyRefreshToken(
           RefreshToken.make(token)
         )
-        if (!session) return yield* Effect.fail(new InvalidToken())
+        if (!session) return yield* Effect.fail(new Unauthorized())
 
         yield* sessionRepository.delete(session)
 

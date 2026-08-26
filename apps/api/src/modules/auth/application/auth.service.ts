@@ -5,7 +5,7 @@ import type {
 } from '@rozumari/contract/user/schemas/user.schema'
 import type { Crypto } from 'effect/Crypto'
 
-import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
+import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import { SessionId } from '@rozumari/contract/auth/schemas/session.schema'
 import {
   AccessToken,
@@ -38,7 +38,7 @@ export class AuthService extends Context.Service<
 
     readonly verifyAccessToken: (
       token: AccessToken
-    ) => Effect.Effect<{ userId: UserId; userRole: UserRole }>
+    ) => Effect.Effect<{ userId: UserId; userRole: UserRole }, Unauthorized>
 
     readonly createRefreshToken: (
       userId: UserId,
@@ -47,7 +47,7 @@ export class AuthService extends Context.Service<
 
     readonly verifyRefreshToken: (
       token: RefreshToken
-    ) => Effect.Effect<SessionUserAggregate, InvalidToken, Crypto>
+    ) => Effect.Effect<SessionUserAggregate, Unauthorized, Crypto>
   }
 >()('auth/application/AuthService', {
   make: Effect.gen(function* make() {
@@ -70,10 +70,13 @@ export class AuthService extends Context.Service<
       createAccessToken,
 
       verifyAccessToken: Effect.fn(function* verifyAccessToken(token) {
-        const { userId, userRole } = yield* jwt.verify(token).pipe(
-          Effect.tapError((e) => Effect.log(e)),
-          Effect.orDie
-        )
+        const { userId, userRole } = yield* jwt
+          .verify(token)
+          .pipe(
+            Effect.catchTag('shared/infrastructure/jwt/JwtError', () =>
+              Effect.fail(new Unauthorized({ message: 'Invalid access token' }))
+            )
+          )
         return { userId: userId as UserId, userRole: userRole as UserRole }
       }),
 
@@ -112,13 +115,13 @@ export class AuthService extends Context.Service<
         const [id, secret] = refreshToken.split('.')
         if (!id || !secret)
           return yield* Effect.fail(
-            new InvalidToken({ message: 'Invalid refresh token' })
+            new Unauthorized({ message: 'Invalid refresh token' })
           )
 
         const agg = yield* sessionRepository.findWithUser(SessionId.make(id))
         if (agg === null)
           return yield* Effect.fail(
-            new InvalidToken({ message: 'Invalid refresh token' })
+            new Unauthorized({ message: 'Invalid refresh token' })
           )
         let { session } = agg
 
@@ -126,7 +129,7 @@ export class AuthService extends Context.Service<
         const storedSecret = Encoding.decodeHex(session.token)
         if (storedSecret._tag === 'Failure')
           return yield* Effect.fail(
-            new InvalidToken({ message: 'Invalid refresh token' })
+            new Unauthorized({ message: 'Invalid refresh token' })
           )
 
         const isValid = constantTimeEqual(hashedSecret, storedSecret.success)
@@ -137,7 +140,7 @@ export class AuthService extends Context.Service<
         if (!isValid || DateTime.isGreaterThanOrEqualTo(now, expiresTime)) {
           yield* sessionRepository.delete(session)
           return yield* Effect.fail(
-            new InvalidToken({ message: 'Invalid refresh token' })
+            new Unauthorized({ message: 'Invalid refresh token' })
           )
         }
 

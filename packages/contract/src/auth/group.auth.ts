@@ -10,7 +10,7 @@ import { RegisterDto } from '@/auth/dto/register.dto'
 import { ResetPasswordDto } from '@/auth/dto/reset-password.dto'
 import { WhoAmIDto } from '@/auth/dto/whoami.dto'
 import { AuthMiddleware } from '@/auth/middleware'
-import { InvalidCredentials, InvalidToken } from '@/auth/schemas/auth.error'
+import { InvalidCredentials, Unauthorized } from '@/auth/schemas/auth.error'
 import { UserAlreadyExists, UserNotFound } from '@/user/schemas/user.error'
 
 export class AuthGroup extends HttpApiGroup.make('auth')
@@ -35,7 +35,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('logout', '/logout', {
       headers: LogoutDto.Input,
       success: LogoutDto,
-      error: InvalidToken,
+      error: Unauthorized,
     })
   )
 
@@ -43,7 +43,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('refresh', '/refresh', {
       headers: RefreshTokenDto.Input,
       success: RefreshTokenDto,
-      error: InvalidToken,
+      error: Unauthorized,
     })
   )
 

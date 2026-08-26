@@ -6,12 +6,7 @@ import * as HttpApiSecurity from 'effect/unstable/httpapi/HttpApiSecurity'
 
 import type { UserId, UserRole } from '@/user/schemas/user.schema'
 
-import {
-  Forbidden,
-  InvalidToken,
-  TokenExpired,
-  Unauthorized,
-} from '@/auth/schemas/auth.error'
+import { Forbidden, Unauthorized } from '@/auth/schemas/auth.error'
 
 export interface JwtPayload {
   userId: UserId
@@ -53,7 +48,7 @@ export class AuthMiddleware extends HttpApiMiddleware.Service<
   },
 
   // Middlware can specify errors that it may raise
-  error: [InvalidToken, TokenExpired, Unauthorized],
+  error: Unauthorized,
 }) {}
 
 export class AdminMiddleware extends HttpApiMiddleware.Service<

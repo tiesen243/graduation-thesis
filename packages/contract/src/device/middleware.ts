@@ -36,5 +36,5 @@ export class DeviceMiddleware extends HttpApiMiddleware.Service<
     bearer: HttpApiSecurity.bearer,
   },
 
-  error: [DeviceNotFound],
+  error: DeviceNotFound,
 }) {}

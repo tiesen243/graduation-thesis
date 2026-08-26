@@ -1,7 +1,7 @@
 import type { Crypto } from 'effect/Crypto'
 
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
-import { InvalidToken } from '@rozumari/contract/auth/schemas/auth.error'
+import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
@@ -19,7 +19,7 @@ export class RefreshTokenUseCase extends Context.Service<
       input: RefreshTokenDto.Input
     ) => Effect.Effect<
       RefreshTokenDto.Output,
-      InvalidToken,
+      Unauthorized,
       Crypto | HttpServerRequest.HttpServerRequest
     >
   }
@@ -40,7 +40,7 @@ export class RefreshTokenUseCase extends Context.Service<
         const refreshToken = RefreshToken.make(
           cookies[COOKIE_KEYS.REFRESH_TOKEN] ?? authorization ?? ''
         )
-        if (!refreshToken) return yield* Effect.fail(new InvalidToken())
+        if (!refreshToken) return yield* Effect.fail(new Unauthorized())
 
         const {
           user,
