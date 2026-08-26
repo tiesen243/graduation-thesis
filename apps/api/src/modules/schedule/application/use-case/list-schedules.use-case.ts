@@ -22,14 +22,12 @@ export class ListSchedulesUseCase extends Context.Service<
       execute: Effect.fn(function* execute(input) {
         const { userId, deviceId, startDate, endDate } = input
 
-        const results = yield* scheduleRepository.findManyWithItems({
+        return yield* scheduleRepository.findManyWithItems({
           userId,
           deviceId,
           startDate,
           endDate,
         })
-
-        return results
       }),
     }
   }),

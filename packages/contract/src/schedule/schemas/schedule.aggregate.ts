@@ -5,13 +5,13 @@ import { ScheduleSchema } from '@/schedule/schemas/schedule.schema'
 
 export const ScheduleAggregateSchema = Schema.Struct({
   id: ScheduleSchema.fields.id,
-  deviceId: ScheduleSchema.fields.deviceId,
   date: ScheduleSchema.fields.date,
   time: ScheduleSchema.fields.time,
   status: ScheduleSchema.fields.status,
   items: Schema.Array(
     Schema.Struct({
       slot: ScheduleItemSchema.fields.slot,
+      medicine: Schema.String,
       quantity: ScheduleItemSchema.fields.quantity,
     })
   ),

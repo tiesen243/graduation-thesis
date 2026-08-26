@@ -2,14 +2,12 @@ import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
 
-import { DrizzleScheduleItemRepository } from '@/modules/schedule/infrastructure/persistence/drizzle/repositories/schedule-item.repository'
-import { DrizzleScheduleRepository } from '@/modules/schedule/infrastructure/persistence/drizzle/repositories/schedule.repository'
-import { InMemoryScheduleItemRepository } from '@/modules/schedule/infrastructure/persistence/in-memory/repositories/schedule-item.repository'
-import { InMemoryScheduleRepository } from '@/modules/schedule/infrastructure/persistence/in-memory/repositories/schedule.repository'
+import { DrizzleNotificationRepository } from '@/modules/notification/infrastructure/persistence/drizzle/repositories/notification.repository'
+import { InMemoryNotificationRepository } from '@/modules/notification/infrastructure/persistence/in-memory/repositories/notification.repository'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 
-export class ScheduleInfrastructureModule {
+export class NotificationInfrastructureModule {
   public static create(driver: AppModule.Config['persistence']) {
     const layer = driver === 'in-memory' ? this.inMemory : this.drizzle
 
@@ -17,16 +15,14 @@ export class ScheduleInfrastructureModule {
   }
 
   private static get inMemory() {
-    return Layer.merge(
-      InMemoryScheduleRepository,
-      InMemoryScheduleItemRepository
-    ).pipe(Layer.provideMerge(InMemoryClient.layer))
+    return InMemoryNotificationRepository.pipe(
+      Layer.provideMerge(InMemoryClient.layer)
+    )
   }
 
   private static get drizzle() {
-    return Layer.merge(
-      DrizzleScheduleRepository,
-      DrizzleScheduleItemRepository
-    ).pipe(Layer.provideMerge(DrizzleClient.layer))
+    return DrizzleNotificationRepository.pipe(
+      Layer.provideMerge(DrizzleClient.layer)
+    )
   }
 }

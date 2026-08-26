@@ -36,12 +36,29 @@ export const InMemoryScheduleRepository = Layer.effect(
         where: { scheduleId: { in: [...scheduleIds] } },
       })
 
+      const compartmentsMap = yield* Ref.get(db.compartments)
+
       const itemsBySchedule = Map.groupBy(allItems, (item) => item.scheduleId)
 
-      return schedules.map((schedule) => ({
-        ...schedule,
-        items: itemsBySchedule.get(schedule.id) ?? [],
-      })) as ScheduleAggregate[]
+      return schedules.map((schedule) => {
+        const scheduleItemsList = itemsBySchedule.get(schedule.id) ?? []
+
+        const items = scheduleItemsList.map((item) => {
+          const compartmentKey = `${schedule.deviceId}:${item.slot}`
+          const compartment = compartmentsMap.get(compartmentKey)
+
+          return {
+            slot: item.slot,
+            quantity: item.quantity,
+            medicine: compartment?.medicine ?? '',
+          }
+        })
+
+        return {
+          ...schedule,
+          items,
+        } as ScheduleAggregate
+      })
     })
 
     return {

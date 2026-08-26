@@ -38,4 +38,4 @@ export const NotificationSchema = Schema.Struct({
     Schema.withConstructorDefault(DateTime.nowAsDate)
   ),
 })
-export type Notification = typeof NotificationSchema.Type
+export type NotificationSchema = typeof NotificationSchema.Type

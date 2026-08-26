@@ -1,15 +1,14 @@
 import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
-import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
 import { ScheduleSchema } from '@rozumari/contract/schedule/schemas/schedule.schema'
-import { and, between, eq } from 'drizzle-orm'
+import { and, between, eq, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import { encodeSync } from 'effect/Schema'
 
 import type { DrizzleMapper } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
 
-import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
+import { compartments } from '@/modules/device/infrastructure/persistence/drizzle/schema'
 import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
 import {
@@ -25,30 +24,6 @@ export const DrizzleScheduleMapper: DrizzleMapper<Schedule, ScheduleSchema> = {
   toRow: encodeSync(ScheduleSchema) as never,
 }
 
-const groupJoinRows = (
-  rows: {
-    schedules: typeof schedules.$inferSelect
-    schedule_items: typeof scheduleItems.$inferSelect | null
-  }[]
-): ScheduleAggregate[] => {
-  const resultMap = new Map<ScheduleId, ScheduleAggregate>()
-  for (const { schedules: schedule, schedule_items: _item } of rows) {
-    let entry = resultMap.get(schedule.id)
-
-    if (!entry) {
-      entry = { ...schedule, items: [] }
-      resultMap.set(schedule.id, entry)
-    }
-
-    if (_item) {
-      const item = ScheduleItem.make(_item)
-      ;(entry.items as ScheduleItem[]).push(item)
-    }
-  }
-
-  return [...resultMap.values()]
-}
-
 export const DrizzleScheduleRepository = Layer.effect(
   ScheduleRepository,
   Effect.gen(function* DrizzleScheduleRepository() {
@@ -60,21 +35,40 @@ export const DrizzleScheduleRepository = Layer.effect(
       DrizzleScheduleMapper
     )
 
+    const selector = {
+      id: schedules.id,
+      date: schedules.date,
+      time: schedules.time,
+      status: schedules.status,
+      items: sql<ScheduleAggregate['items']>`COALESCE(
+        json_agg(json_build_object(
+          'slot', ${scheduleItems.slot},
+          'medicine', ${compartments.medicine},
+          'quantity', ${scheduleItems.quantity}
+        )) FILTER (WHERE ${scheduleItems.slot} IS NOT NULL),
+      '[]'::json)`,
+    }
+
     return {
       ...schedulesRepo,
 
       findWithItems: Effect.fn(function* findWithItems(scheduleId) {
-        const rows = yield* db
-          .select()
+        const [row] = yield* db
+          .select(selector)
           .from(schedules)
+          .leftJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .leftJoin(
+            compartments,
+            and(
+              eq(compartments.deviceId, schedules.deviceId),
+              eq(compartments.position, scheduleItems.slot)
+            )
+          )
           .where(eq(schedules.id, scheduleId))
-          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
+          .groupBy(schedules.id)
           .pipe(Effect.orDie)
 
-        if (rows.length === 0) return null
-
-        const grouped = groupJoinRows(rows)
-        return grouped[0] ?? null
+        return row ?? null
       }),
 
       findManyWithItems: Effect.fn(function* findManyWithItems({
@@ -92,20 +86,22 @@ export const DrizzleScheduleRepository = Layer.effect(
           conditions.push(eq(schedules.date, startDate))
         else conditions.push(between(schedules.date, startDate, endDate))
 
-        const subQuery = db
-          .select({ id: schedules.id })
-          .from(schedules)
-          .where(and(...conditions))
-          .as('sq')
-
         const rows = yield* db
-          .select()
+          .select(selector)
           .from(schedules)
-          .innerJoin(subQuery, eq(schedules.id, subQuery.id))
-          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
+          .leftJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .leftJoin(
+            compartments,
+            and(
+              eq(compartments.deviceId, schedules.deviceId),
+              eq(compartments.position, scheduleItems.slot)
+            )
+          )
+          .where(and(...conditions))
+          .groupBy(schedules.id)
           .pipe(Effect.orDie)
 
-        return groupJoinRows(rows)
+        return rows
       }),
     }
   })
