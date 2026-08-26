@@ -18,7 +18,6 @@
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
-    "@types/bun": "catalog:dev",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   },
