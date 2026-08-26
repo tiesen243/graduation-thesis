@@ -11,7 +11,7 @@ export class ListSchedulesUseCase extends Context.Service<
   ListSchedulesUseCase,
   {
     readonly execute: (
-      input: ListSchedulesDto.Input & { userId: UserId }
+      input: ListSchedulesDto.Input & { userId?: UserId }
     ) => Effect.Effect<ListSchedulesDto.Output>
   }
 >()('schedule/application/ListSchedulesUseCase', {
@@ -19,27 +19,17 @@ export class ListSchedulesUseCase extends Context.Service<
     const scheduleRepository = yield* ScheduleRepository
 
     return {
-      execute: Effect.fn(function* execute({ userId, deviceId, ...input }) {
-        const { page = 1, limit = 10 } = input
-        const offset = (page - 1) * limit
+      execute: Effect.fn(function* execute(input) {
+        const { userId, deviceId, startDate, endDate } = input
 
         const results = yield* scheduleRepository.findManyWithItems({
           userId,
           deviceId,
-          limit,
-          offset,
+          startDate,
+          endDate,
         })
 
-        const total = yield* scheduleRepository.count({
-          userId: { eq: userId },
-        })
-
-        const totalPages = Math.max(1, Math.ceil(total / limit))
-
-        return {
-          schedules: results,
-          meta: { page, pageSize: limit, total, totalPages },
-        }
+        return results
       }),
     }
   }),

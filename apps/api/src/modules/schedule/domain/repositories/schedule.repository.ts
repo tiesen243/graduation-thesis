@@ -16,10 +16,10 @@ interface IScheduleRepository extends IRepository<Schedule> {
   ) => Effect<ScheduleAggregate | null>
 
   readonly findManyWithItems: (options: {
-    userId: UserId
+    userId?: UserId
     deviceId?: DeviceId
-    limit: number
-    offset: number
+    startDate: Date
+    endDate: Date
   }) => Effect<ScheduleAggregate[]>
 
   readonly findByDevice: (deviceId: DeviceId) => Effect<ScheduleAggregate[]>
@@ -28,10 +28,6 @@ interface IScheduleRepository extends IRepository<Schedule> {
     schedule: Schedule,
     items: ScheduleItem[]
   ) => Effect<void>
-
-  readonly findTodayByDevice: (
-    deviceId: DeviceId
-  ) => Effect<ScheduleAggregate[]>
 
   readonly deleteWithItems: (scheduleId: ScheduleId) => Effect<void>
 }

@@ -3,21 +3,20 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
-import { and, eq } from 'drizzle-orm'
+import { and, between, eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
 import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
-import { formatToday } from '@/modules/schedule/domain/utils/format-today'
 import {
   scheduleItems,
   schedules,
 } from '@/modules/schedule/infrastructure/persistence/drizzle/schema'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
-import { withTransaction } from '@/shared/utils'
+import { toDateString, withTransaction } from '@/shared/utils'
 
 export const DrizzleScheduleMapper = {
   toEntity: (entity: (typeof schedules)['$inferSelect']) =>
@@ -92,22 +91,24 @@ export const DrizzleScheduleRepository = Layer.effect(
       findManyWithItems: Effect.fn(function* findManyWithItems({
         userId,
         deviceId,
-        limit,
-        offset,
+        startDate,
+        endDate,
       }) {
+        const startStr = toDateString(startDate)
+        const endStr = toDateString(endDate)
+
+        const conditions = []
+
+        if (userId) conditions.push(eq(schedules.userId, userId))
+        if (deviceId) conditions.push(eq(schedules.deviceId, deviceId))
+
+        if (startDate === endDate) conditions.push(eq(schedules.date, startStr))
+        else conditions.push(between(schedules.date, startStr, endStr))
+
         const subQuery = db
           .select({ id: schedules.id })
           .from(schedules)
-          .where(
-            deviceId
-              ? and(
-                  eq(schedules.userId, userId),
-                  eq(schedules.deviceId, deviceId)
-                )
-              : eq(schedules.userId, userId)
-          )
-          .limit(limit)
-          .offset(offset)
+          .where(and(...conditions))
           .as('sq')
 
         const rows = yield* db
@@ -135,21 +136,6 @@ export const DrizzleScheduleRepository = Layer.effect(
         yield* schedulesRepo.save(schedule)
         yield* itemsRepo.save(items)
       }, withTransaction),
-
-      findTodayByDevice: Effect.fn(function* findTodayByDevice(deviceId) {
-        const today = formatToday()
-
-        const rows = yield* db
-          .select()
-          .from(schedules)
-          .where(
-            and(eq(schedules.deviceId, deviceId), eq(schedules.date, today))
-          )
-          .leftJoin(scheduleItems, eq(schedules.id, scheduleItems.scheduleId))
-          .pipe(Effect.orDie)
-
-        return groupJoinRows(rows)
-      }),
 
       deleteWithItems: Effect.fn(function* deleteWithItems(scheduleId) {
         yield* db

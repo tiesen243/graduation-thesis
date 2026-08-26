@@ -4,9 +4,8 @@ import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { DeviceMiddleware } from '@/device/middleware'
-import { TodayScheduleDto } from '@/schedule/dto/today-schedule.dto'
 
-export class IotGroup extends HttpApiGroup.make('iot')
+export class DeviceIotGroup extends HttpApiGroup.make('device-iot')
 
   .add(
     HttpApiEndpoint.get('subscribe', '/subscribe', {
@@ -18,12 +17,6 @@ export class IotGroup extends HttpApiGroup.make('iot')
     HttpApiEndpoint.post('emit', '/emit', {
       payload: DeviceStreamDto.Emit,
       success: DeviceStreamDto,
-    })
-  )
-
-  .add(
-    HttpApiEndpoint.get('schedule-today', '/schedule/today', {
-      success: TodayScheduleDto,
     })
   )
 

@@ -4,14 +4,15 @@ import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.sc
 
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
+import * as Ref from 'effect/Ref'
 
 import type { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import type { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 
 import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
-import { formatToday } from '@/modules/schedule/domain/utils/format-today'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
+import { toDateString } from '@/shared/utils'
 
 export const InMemoryScheduleRepository = Layer.effect(
   ScheduleRepository,
@@ -70,32 +71,33 @@ export const InMemoryScheduleRepository = Layer.effect(
       findManyWithItems: Effect.fn(function* findManyWithItems({
         userId,
         deviceId,
-        limit,
-        offset,
+        startDate,
+        endDate,
       }) {
-        const schedules = yield* schedulesRepo.findMany({
-          where: deviceId
-            ? { userId: { eq: userId }, deviceId: { eq: deviceId } }
-            : { userId: { eq: userId } },
-          limit,
-          offset,
+        const startStr = toDateString(startDate)
+        const endStr = toDateString(endDate)
+
+        const schedules = yield* Ref.get(db.schedules).pipe(
+          Effect.map((dict) => [...dict.values()])
+        )
+
+        const filteredSchedules = schedules.filter((schedule) => {
+          if (userId && schedule.userId !== userId) return false
+          if (deviceId && schedule.deviceId !== deviceId) return false
+
+          const scheduleDate = schedule.date
+
+          if (startStr === endStr) return scheduleDate === startStr
+
+          return scheduleDate >= startStr && scheduleDate <= endStr
         })
 
-        return yield* mapSchedulesWithItems(schedules)
+        return yield* mapSchedulesWithItems(filteredSchedules)
       }),
 
       saveWithItems: Effect.fn(function* saveWithItems(schedule, items) {
         yield* schedulesRepo.save(schedule)
         yield* itemsRepo.save(items)
-      }),
-
-      findTodayByDevice: Effect.fn(function* findTodayByDevice(deviceId) {
-        const today = formatToday()
-        const schedules = yield* schedulesRepo.findMany({
-          where: { deviceId: { eq: deviceId }, date: { eq: today } },
-        })
-
-        return yield* mapSchedulesWithItems(schedules)
       }),
 
       deleteWithItems: Effect.fn(function* deleteWithItems(scheduleId) {

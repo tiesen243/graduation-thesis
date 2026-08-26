@@ -27,8 +27,8 @@ export const schedules = snakeCase.table(
       .references(() => devices.id, { onDelete: 'cascade' })
       .notNull()
       .$type<DeviceId>(),
-    date: t.varchar({ length: 10 }).notNull(),
-    time: t.varchar({ length: 5 }).notNull(),
+    date: t.date().notNull(),
+    time: t.time().notNull(),
     status: scheduleStatusEnum().notNull().$type<ScheduleStatus>(),
     createdAt: t.timestamp().notNull(),
     updatedAt: t.timestamp().notNull(),
