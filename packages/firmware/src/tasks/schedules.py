@@ -23,6 +23,7 @@ class Schedules:
     async def _set_color_with_timeout(
         self, r: int, g: int, b: int, timeout: int = 10
     ) -> None:
+        """Đổi màu LED và tự động tắt sau [timeout] giây."""
         if self._led_timer_task and not self._led_timer_task.done():
             _ = self._led_timer_task.cancel()
 
@@ -39,7 +40,6 @@ class Schedules:
 
     async def start(self) -> None:
         last_executed_time = ""
-        schedules: list = []
 
         while True:
             try:
@@ -57,6 +57,11 @@ class Schedules:
                     for schedule in schedules:
                         item_date = schedule.get("date")
                         item_time = schedule.get("time")
+                        item_status = schedule.get("status", "pending")
+
+                        # Bỏ qua các lịch trình đã chạy xong hoặc thất bại từ trước
+                        if item_status != "pending":
+                            continue
 
                         if item_time == current_time and (
                             not item_date or item_date == current_date
@@ -66,7 +71,7 @@ class Schedules:
 
                             if self._led_timer_task and not self._led_timer_task.done():
                                 _ = self._led_timer_task.cancel()
-                            self.rgb.set_color(1, 1, 0)
+                            self.rgb.set_color(1, 1, 0)  # VÀNG khi chạy
 
                             items = schedule.get("items", [])
                             schedule_success = True
@@ -91,14 +96,22 @@ class Schedules:
                                 else:
                                     print(f"[INFO] Successfully dispensed slot {slot}")
 
+                            # Cập nhật status và ghi lại vào file JSON
+                            new_status = "completed" if schedule_success else "failed"
+                            self._update_schedule_status(schedule_id, new_status)
+
                             if schedule_success:
                                 print(
                                     f"[SUCCESS] Schedule {schedule_id} completed successfully."
                                 )
-                                await self._set_color_with_timeout(0, 1, 0, timeout=10)
+                                await self._set_color_with_timeout(
+                                    0, 1, 0, timeout=10
+                                )  # XANH LÁ
                             else:
                                 print(f"[FAILED] Schedule {schedule_id} failed.")
-                                await self._set_color_with_timeout(1, 0, 0, timeout=10)
+                                await self._set_color_with_timeout(
+                                    1, 0, 0, timeout=10
+                                )  # ĐỎ
 
             except Exception as e:  # noqa: BLE001
                 print(f"Error in schedule loop: {e}")
@@ -119,6 +132,21 @@ class Schedules:
         except Exception as e:  # noqa: BLE001
             print(f"Error reading file {self.path}: {e}")
             return []
+
+    def _update_schedule_status(self, schedule_id: str, new_status: str) -> None:
+        """Đọc file, cập nhật trạng thái của schedule_id và ghi đè lại file JSON."""
+        try:
+            schedules = self._read_schedule()
+            for item in schedules:
+                if item.get("id") == schedule_id:
+                    item["status"] = new_status
+                    break
+
+            with open(self.path, "w") as f:
+                ujson.dump(schedules, f)
+            print(f"[DB] Updated schedule {schedule_id} status to '{new_status}'")
+        except Exception as e:  # noqa: BLE001
+            print(f"[ERROR] Failed to update schedule status: {e}")
 
     @classmethod
     def create(cls) -> Schedules:

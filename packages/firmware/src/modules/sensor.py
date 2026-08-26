@@ -10,7 +10,7 @@ class Sensor:
     __instance: Sensor | None = None
 
     def __init__(self) -> None:
-        self._states = States()
+        self._states = States.create()
 
         pins = Pins.create()
         _ = pins.sensor.irq(trigger=Pin.IRQ_FALLING, handler=self._irq)

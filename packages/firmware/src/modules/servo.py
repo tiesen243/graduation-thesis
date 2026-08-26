@@ -9,7 +9,8 @@ class Servo:
     _instance = None
 
     def __init__(self) -> None:
-        self._states = States()
+        self._states = States.create()
+
         pins = Pins.create()
         self._servos = pins.servos
 

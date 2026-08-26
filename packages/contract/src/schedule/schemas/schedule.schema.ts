@@ -8,7 +8,7 @@ import { UserId } from '@/user/schemas/user.schema'
 export const ScheduleId = Cuid2.pipe(Schema.brand('schedule/domain/ScheduleId'))
 export type ScheduleId = typeof ScheduleId.Type
 
-export const scheduleStatuses = ['pending', 'completed', 'cancelled'] as const
+export const scheduleStatuses = ['pending', 'completed', 'failed'] as const
 export const ScheduleStatus = Schema.Literals(scheduleStatuses).pipe(
   Schema.brand('schedule/domain/ScheduleStatus')
 )
