@@ -1,6 +1,5 @@
 import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
-import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { DeviceMiddleware } from '@/device/middleware'
@@ -22,5 +21,4 @@ export class DeviceIotGroup extends HttpApiGroup.make('device-iot')
 
   .middleware(DeviceMiddleware)
 
-  .prefix('/api/devices')
-  .annotateMerge(OpenApi.annotations({ exclude: true })) {}
+  .prefix('/api/devices') {}
