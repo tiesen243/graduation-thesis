@@ -1,5 +1,4 @@
-import asyncio
-
+import uasyncio
 import ubluetooth
 import ujson
 
@@ -81,7 +80,7 @@ class BLE:
             _, value_handle = data
             if self.handle_rx is not None and value_handle == self.handle_rx:
                 raw_data: bytes = self.ble.gatts_read(self.handle_rx)
-                _ = asyncio.create_task(self._handle(raw_data))
+                _ = uasyncio.create_task(self._handle(raw_data))
 
     def send(self, data: dict[str, str]) -> None:
         """

@@ -1,6 +1,5 @@
-import asyncio
-
 import network
+import uasyncio
 
 from lib.config import load_config
 
@@ -31,10 +30,10 @@ class WiFi:
         password = self.wifi.get("password")
         print(f"Connecting to WiFi SSID: {ssid}...", end="")
 
-        timeout = 10  # seconds
+        timeout = 20
         wlan.connect(ssid, password)
         while not wlan.isconnected() and timeout > 0:
-            await asyncio.sleep(1)
+            await uasyncio.sleep(1)
             print(".", end="")
             timeout -= 1
 

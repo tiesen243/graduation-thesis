@@ -1,5 +1,6 @@
-import asyncio
 import time
+
+import uasyncio
 
 from lib.pins import Pins
 from lib.states import States
@@ -40,7 +41,7 @@ class Servo:
                 if self._states.drop_count >= 1:
                     pill_dropped = True
                     break
-                await asyncio.sleep(0.01)
+                await uasyncio.sleep(0.01)
 
             self.control(servo_index, 0)
 
@@ -51,7 +52,7 @@ class Servo:
                 return False
 
             print(f"[INFO] Slot {slot} dropped pill {i + 1}/{quantity}.")
-            await asyncio.sleep(1.0)
+            await uasyncio.sleep(1.0)
 
         print(f"[SUCCESS] Slot {slot} successfully dropped {quantity} pills.")
         return True

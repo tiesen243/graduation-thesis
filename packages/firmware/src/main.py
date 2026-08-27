@@ -1,6 +1,5 @@
-import asyncio
-
 import ntptime
+import uasyncio
 from machine import Pin
 
 from lib.config import load_config
@@ -34,7 +33,7 @@ class Bootstrap:
         self.ble.start_advertising()
 
         while self.switch.value() == 0:
-            await asyncio.sleep(1)
+            await uasyncio.sleep(1)
 
         self.ble.stop()
 
@@ -55,14 +54,11 @@ class Bootstrap:
                 break
             except Exception as e:  # noqa: BLE001
                 print(f"Failed to sync time: {e}")
-                await asyncio.sleep(5)
+                await uasyncio.sleep(5)
 
         _ = RGB.create()
 
-        gather = asyncio.gather(
-            # self.streaming.start(),
-            self.schedules.start()
-        )
+        gather = uasyncio.gather(self.streaming.start(), self.schedules.start())
         await gather
 
     async def start(self) -> None:
@@ -76,6 +72,6 @@ if __name__ == "__main__":
     bootstrap = Bootstrap()
 
     try:
-        asyncio.run(bootstrap.start())
+        uasyncio.run(bootstrap.start())
     except KeyboardInterrupt:
         print("Program interrupted by user.")

@@ -2,11 +2,14 @@ import time
 
 import framebuf
 
+from modules.buzzer import Buzzer
 from modules.st7735 import ST7735
 
 # 1. Khởi tạo màn hình
 tft = ST7735.create()
 tft.init()
+
+buzzer = Buzzer.create()
 
 # 2. Thông số
 WIDTH = 128
@@ -21,6 +24,8 @@ buffer = bytearray(WIDTH * HEIGHT_BOX * 2)
 fb = framebuf.FrameBuffer(buffer, WIDTH, HEIGHT_BOX, framebuf.RGB565)
 
 x_pos = WIDTH
+
+buzzer.ring(count=10, freq=3500, delay_ms=100)
 
 while True:
     # Xóa nền RAM buffer màu đen

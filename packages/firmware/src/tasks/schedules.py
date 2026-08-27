@@ -1,5 +1,4 @@
-import asyncio
-
+import uasyncio
 import ujson
 
 from lib.utils import get_current_time, print_table
@@ -13,7 +12,7 @@ class Schedules:
     path: str
     servo: Servo
     rgb: RGB
-    _led_timer_task: asyncio.Task | None = None
+    _led_timer_task: uasyncio.Task | None = None
 
     def __init__(self, path: str = "data/schedules.json"):
         self.path = path
@@ -31,12 +30,12 @@ class Schedules:
 
         async def _turn_off_after_delay():
             try:
-                await asyncio.sleep(timeout)
+                await uasyncio.sleep(timeout)
                 self.rgb.set_color(0, 0, 0)
-            except asyncio.CancelledError:
+            except uasyncio.CancelledError:
                 pass
 
-        self._led_timer_task = asyncio.create_task(_turn_off_after_delay())
+        self._led_timer_task = uasyncio.create_task(_turn_off_after_delay())
 
     async def start(self) -> None:
         last_executed_time = ""
@@ -122,7 +121,7 @@ class Schedules:
             if seconds_to_next_minute <= 0:
                 seconds_to_next_minute = 60
 
-            await asyncio.sleep(seconds_to_next_minute)
+            await uasyncio.sleep(seconds_to_next_minute)
 
     def _read_schedule(self) -> list:
         try:

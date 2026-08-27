@@ -26,6 +26,8 @@
 
     "stepper-discard": [4, 5, 6, 7],
 
+    "buzzer": 9,
+
     "tft-sck": 10,
     "tft-sda": 11,
     "tft-dc": 12,
