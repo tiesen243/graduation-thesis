@@ -4,6 +4,7 @@
   "private": false,
   "scripts": {
     "clean": "git clean -xdf .venv __pycache__",
-    "upload": "mpremote soft-reset fs cp -r src/* :"
+    "clean:board": "uv run scripts/clean.py",
+    "upload:board": "uv run scripts/upload.py"
   }
 }
