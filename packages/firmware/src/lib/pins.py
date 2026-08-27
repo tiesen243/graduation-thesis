@@ -29,6 +29,14 @@ class Pins:
         self.sensor_drop = Pin(int(pins.get("sensor-1")), Pin.IN, Pin.PULL_UP)
         self.sensor_check = Pin(int(pins.get("sensor-2")), Pin.IN, Pin.PULL_UP)
 
+        self.stepper_discard: list[Pin] = []
+        for pin in pins.get("stepper-discard", []):
+            self.stepper_discard.append(Pin(int(pin), Pin.OUT))
+
+        self.stepper_drawer: list[Pin] = []
+        for pin in pins.get("stepper-drawer", []):
+            self.stepper_drawer.append(Pin(int(pin), Pin.OUT))
+
         self.led_r = Pin(int(pins.get("led-r")), Pin.OUT)
         self.led_g = Pin(int(pins.get("led-g")), Pin.OUT)
         self.led_b = Pin(int(pins.get("led-b")), Pin.OUT)

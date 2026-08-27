@@ -13,16 +13,27 @@ class Sensor:
         self._states = States.create()
 
         pins = Pins.create()
-        _ = pins.sensor.irq(trigger=Pin.IRQ_FALLING, handler=self._irq)
+        _ = pins.sensor_drop.irq(trigger=Pin.IRQ_FALLING, handler=self._drop_irq)
+        _ = pins.sensor_check.irq(trigger=Pin.IRQ_FALLING, handler=self._check_irq)
 
-    def _irq(self, _pin: Pin) -> None:
+    def _drop_irq(self, _pin: Pin) -> None:
         current_time: int = time.ticks_ms()  # pyright: ignore[reportAttributeAccessIssue]
 
-        if time.ticks_diff(current_time, self._states.last_trigger_time) > 80:  # pyright: ignore[reportAttributeAccessIssue]
-            self._states.pill_count += 1
-            self._states.last_trigger_time = current_time
+        if time.ticks_diff(current_time, self._states.drop_last_trigger_time) > 80:  # pyright: ignore[reportAttributeAccessIssue]
+            self._states.drop_count += 1
+            self._states.drop_last_trigger_time = current_time
             print(
-                f"\n[SENSOR IRQ] Pill detected! Total count: {self._states.pill_count}"
+                f"\n[DROP SENSOR] Pill detected! Total count: {self._states.drop_count}"
+            )
+
+    def _check_irq(self, _pin: Pin) -> None:
+        current_time: int = time.ticks_ms()  # pyright: ignore[reportAttributeAccessIssue]
+
+        if time.ticks_diff(current_time, self._states.check_last_trigger_time) > 80:  # pyright: ignore[reportAttributeAccessIssue]
+            self._states.check_count += 1
+            self._states.check_last_trigger_time = current_time
+            print(
+                f"\n[CHECK SENSOR] Pill detected! Total count: {self._states.check_count}"
             )
 
     @classmethod

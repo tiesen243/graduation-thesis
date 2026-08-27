@@ -29,7 +29,7 @@ class Servo:
 
         for i in range(quantity):
             # Reset đếm thuốc ngay trước mỗi viên
-            self._states.pill_count = 0
+            self._states.drop_count = 0
             start_time = time.ticks_ms()  # pyright: ignore[reportAttributeAccessIssue]
             timeout_ms = timeout_per_pill * 1000
 
@@ -37,7 +37,7 @@ class Servo:
 
             pill_dropped = False
             while time.ticks_diff(time.ticks_ms(), start_time) < timeout_ms:  # pyright: ignore[reportAttributeAccessIssue]
-                if self._states.pill_count >= 1:
+                if self._states.drop_count >= 1:
                     pill_dropped = True
                     break
                 await asyncio.sleep(0.01)
@@ -46,7 +46,7 @@ class Servo:
 
             if not pill_dropped:
                 print(
-                    f"[ERROR] Slot {slot} timeout! Target: 1, Current count: {self._states.pill_count}"
+                    f"[ERROR] Slot {slot} timeout! Target: 1, Current count: {self._states.drop_count}"
                 )
                 return False
 

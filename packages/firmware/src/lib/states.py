@@ -2,8 +2,11 @@ class States:
     _instance = None
 
     def __init__(self) -> None:
-        self.pill_count: int = 0
-        self.last_trigger_time: int = 0
+        self.drop_count: int = 0
+        self.drop_last_trigger_time: int = 0
+
+        self.check_count: int = 0
+        self.check_last_trigger_time: int = 0
 
     @classmethod
     def create(cls) -> States:

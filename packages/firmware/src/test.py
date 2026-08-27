@@ -39,4 +39,4 @@ while True:
     if x_pos < -TEXT_WIDTH:
         x_pos = WIDTH
 
-    time.sleep_ms(15)
+    time.sleep_ms(15)  # pyright: ignore[reportAttributeAccessIssue]
