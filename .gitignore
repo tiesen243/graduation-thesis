@@ -25,6 +25,7 @@ logs/
 .vscode/
 .DS_Store
 *.bak
+*.tgz
 
 # infrastructure
 .alchemy/

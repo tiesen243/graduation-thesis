@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 
-import { PublishPlan, tegami } from 'tegami'
+import { tegami } from 'tegami'
 import { runCli } from 'tegami/cli'
 import { github } from 'tegami/plugins/github'
 
@@ -21,6 +21,4 @@ const paper = tegami({
   ignore: ['docs'],
 })
 
-await runCli(paper, {
-  publish: () => paper.publish({ dryRun: true }) as Promise<PublishPlan>,
-})
+await runCli(paper)

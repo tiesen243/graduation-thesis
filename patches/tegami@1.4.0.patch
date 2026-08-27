@@ -1,0 +1,20 @@
+diff --git a/dist/npm-UXaE236Y.js b/dist/npm-UXaE236Y.js
+index ef90c5ef20e68ab31e5606a4e4cd87429dada8b9..c0827e1fbef2d2d9d5e5ba6d0e604700d8202524 100644
+--- a/dist/npm-UXaE236Y.js
++++ b/dist/npm-UXaE236Y.js
+@@ -1546,10 +1546,11 @@ async function publish(client, pkg, distTag) {
+ 		if (packResult.exitCode !== 0) throw execFailure(`Failed to pack ${pkg.name}@${pkg.version}.`, packResult);
+ 		const publishArgs = ["publish", tarballPath];
+ 		if (distTag) publishArgs.push("--tag", distTag);
+-		const publishResult = await x("npm", publishArgs, { nodeOptions: {
+-			cwd: pkg.path,
+-			...!isCI() && process.stdin.isTTY ? { stdio: "inherit" } : {}
+-		} });
++		// const publishResult = await x("npm", publishArgs, { nodeOptions: {
++		// 	cwd: pkg.path,
++		// 	...!isCI() && process.stdin.isTTY ? { stdio: "inherit" } : {}
++		// } });
++		const publishResult = { exitCode: 0 } // Skipping actual publish for bun
+ 		if (publishResult.exitCode !== 0) throw execFailure(`Failed to publish ${pkg.name}@${pkg.version}${distTag ? ` with dist-tag "${distTag}"` : ""}.`, publishResult);
+ 		return { type: "published" };
+ 	}
