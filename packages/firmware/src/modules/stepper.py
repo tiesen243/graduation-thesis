@@ -1,5 +1,4 @@
-import asyncio
-
+import uasyncio
 from machine import Pin
 
 from lib.pins import Pins
@@ -39,7 +38,7 @@ class StepperMotor:
 
             step_index = (step_index + direction) % 8
 
-            await asyncio.sleep_ms(delay_ms)  # pyright: ignore[reportAttributeAccessIssue]
+            await uasyncio.sleep_ms(delay_ms)  # pyright: ignore[reportAttributeAccessIssue]
 
         self.off()
 
