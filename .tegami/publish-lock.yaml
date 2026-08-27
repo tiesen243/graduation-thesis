@@ -1,56 +1,53 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Added user management feature\n\n- Added UpdateUserDto and DeleteUserDto, PATCH /api/users/:id and DELETE /api/users/:id endpoints in contract\n- Added email and role fields to ListUsersDto output\n- Implemented UpdateUserUseCase (update user role) and DeleteUserUseCase (soft delete) in apps/api\n- Added users management page with DataTable in apps/web, edit user role dialog (RadioGroup) and delete user dialog (AlertDialog)\n"
-    filename: 2026-08-20-mt16l0lc.md
-    v: 0.0.0
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Heading\n"
-    filename: 2026-08-20-mt16wfs4.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Added core features and database migrations\n\n- **Firmware**: Implemented core firmware functionalities for device interaction.\n- **Schedule**: Added full schedule management support across API, Web, and Contracts.\n- **Database**: Applied new database migrations.\n"
+    filename: 2026-08-26-mta4tupb.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - changelogIds:
-      - 2026-08-20-mt16l0lc.md
+      - 2026-08-26-mta4tupb.md
     id: npm:@rozumari/web
     updated: true
   - changelogIds:
-      - 2026-08-20-mt16l0lc.md
-      - 2026-08-20-mt16wfs4.md
+      - 2026-08-26-mta4tupb.md
     id: npm:@rozumari/api
     updated: true
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/pcb
+    updated: false
+  - id: npm:@rozumari/ui
+    updated: false
+  - id: npm:@rozumari/lib
     updated: false
   - id: npm:@rozumari/oxlint
     updated: false
+  - changelogIds:
+      - 2026-08-26-mta4tupb.md
+    id: npm:@rozumari/firmware
+    updated: true
+  - id: npm:@rozumari/proteus
+    updated: false
+  - changelogIds:
+      - 2026-08-26-mta4tupb.md
+    id: npm:@rozumari/contract
+    updated: true
   - id: npm:@rozumari/tsconfig
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/proteus
-    updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/pcb
-    updated: false
-  - changelogIds:
-      - 2026-08-20-mt16l0lc.md
-      - 2026-08-20-mt16wfs4.md
-    id: npm:@rozumari/contract
-    updated: true
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/mobile
     updated: false
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/web
   - id: npm:@rozumari/api
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
   - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/contract
   - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/proteus
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/pcb
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/mobile
