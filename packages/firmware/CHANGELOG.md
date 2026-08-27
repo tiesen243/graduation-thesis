@@ -1,3 +1,11 @@
+## @rozumari/firmware@0.0.4
+
+### Add core hardware and network components:
+
+- Add buzzer module support
+- Integrate API client for HTTP communication
+- Implement real-time SSE streaming handler
+
 ## @rozumari/firmware@0.0.3
 
 ### Summary of Changes

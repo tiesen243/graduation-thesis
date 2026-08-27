@@ -1,59 +1,47 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n  npm:@rozumari/lib:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Summary of Changes\n\n- **`@rozumari/firmware`**: Added core firmware modules and essential hardware communication logic.\n- **`@rozumari/api`**: Completed core functional APIs and main endpoint implementations.\n- **Packages Patch Bump**: Patch update across `@rozumari/web`, `@rozumari/contract`, `@rozumari/ui`, `@rozumari/lib`, and `@rozumari/mobile` to align dependency versions.\n"
-    filename: 2026-08-27-mtb695t8.md
+  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Add core hardware and network components:\n\n- Add buzzer module support\n- Integrate API client for HTTP communication\n- Implement real-time SSE streaming handler\n"
+    filename: 2026-08-27-mtba0k1q.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
-  - changelogIds:
-      - 2026-08-27-mtb695t8.md
-    id: npm:@rozumari/web
-    updated: true
-  - changelogIds:
-      - 2026-08-27-mtb695t8.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - changelogIds:
-      - 2026-08-27-mtb695t8.md
-    id: npm:@rozumari/api
-    updated: true
-  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/github
+    updated: false
+  - id: npm:@rozumari/tsconfig
+    updated: false
+  - id: npm:@rozumari/ui
     updated: false
   - changelogIds:
-      - 2026-08-27-mtb695t8.md
-    id: npm:@rozumari/ui
-    updated: true
-  - changelogIds:
-      - 2026-08-27-mtb695t8.md
-    id: npm:@rozumari/contract
-    updated: true
-  - id: npm:@rozumari/pcb
-    updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - changelogIds:
-      - 2026-08-27-mtb695t8.md
+      - 2026-08-27-mtba0k1q.md
     id: npm:@rozumari/firmware
     updated: true
-  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/lib
     updated: false
-  - id: npm:@rozumari/github
+  - id: npm:@rozumari/oxlint
     updated: false
-  - changelogIds:
-      - 2026-08-27-mtb695t8.md
-    id: npm:@rozumari/lib
-    updated: true
+  - id: npm:@rozumari/pcb
+    updated: false
+  - id: npm:@rozumari/proteus
+    updated: false
+  - id: npm:@rozumari/mobile
+    updated: false
+  - id: npm:@rozumari/api
+    updated: false
+  - id: npm:@rozumari/contract
+    updated: false
+  - id: npm:@rozumari/web
+    updated: false
 npm:packages:
   - id: npm:graduation-thesis
-  - id: npm:@rozumari/web
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/pcb
+  - id: npm:@rozumari/proteus
   - id: npm:@rozumari/mobile
   - id: npm:@rozumari/api
-  - id: npm:@rozumari/proteus
-  - id: npm:@rozumari/ui
   - id: npm:@rozumari/contract
-  - id: npm:@rozumari/pcb
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/github
-  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/web
