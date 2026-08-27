@@ -61,7 +61,6 @@ export const env = createEnv({
     AUTH_GOOGLE_ID: Schema.String.pipe(Schema.toStandardSchemaV1),
     AUTH_GOOGLE_SECRET: Schema.String.pipe(Schema.toStandardSchemaV1),
 
-    RESEND_API_URL: Schema.String.pipe(Schema.toStandardSchemaV1),
     RESEND_API_KEY: Schema.String.pipe(Schema.toStandardSchemaV1),
 
     TIMEZONE: Schema.TimeZoneFromString.pipe(

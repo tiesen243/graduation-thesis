@@ -7,16 +7,18 @@ import type { IRepository } from '@/shared/repository'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
+export interface DrizzleMapper<TEntity, TInput> {
+  toEntity: (row: TInput) => TEntity
+  toRow: (entity: TEntity) => TInput
+}
+
 export const makeDrizzleRepository = Effect.fn(function* makeDrizzleRepository<
   TEntity,
   TInput = Record<string, unknown>,
 >(
   table: AnyPgTable,
   primaryKey: IndexColumn | IndexColumn[],
-  mapper: {
-    toEntity: (row: TInput) => TEntity
-    toRow: (entity: TEntity) => TInput
-  }
+  mapper: DrizzleMapper<TEntity, TInput>
 ) {
   const { db, buildCriteria, buildOrderBy } = yield* DrizzleClient
 

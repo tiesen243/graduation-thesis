@@ -1,19 +1,43 @@
 import * as Schema from 'effect/Schema'
 import * as HttpApiSchema from 'effect/unstable/httpapi/HttpApiSchema'
 
-import { DeviceError } from '@/device/schemas/device.error'
+import { DeviceNotFound } from '@/device/schemas/device.error'
+import { DeviceId } from '@/device/schemas/device.schema'
+import { ApiResponse } from '@/schema'
+
+export class DeviceStreamDto extends Schema.TaggedClass<DeviceStreamDto>()(
+  'device/application/DeviceStreamDto',
+  ApiResponse({
+    message: 'Device emit successfully',
+    dataSchema: Schema.Struct({
+      deviceId: DeviceId,
+      action: Schema.String,
+      payload: Schema.Unknown,
+    }),
+  })
+) {}
 
 export namespace DeviceStreamDto {
-  export const Data = HttpApiSchema.StreamSse({
-    data: Schema.Struct({
-      id: Schema.String,
-    }),
-    error: DeviceError,
+  export const Params = Schema.Struct({
+    id: DeviceId,
   })
-  export type Data = typeof Data.Type
+  export type Params = typeof Params.Type
+
+  export const Stream = HttpApiSchema.StreamSse({
+    data: Schema.Struct({
+      action: Schema.String,
+      payload: Schema.Unknown,
+    }),
+    error: DeviceNotFound,
+  })
+  export type Stream = typeof Stream.Type
 
   export const Emit = Schema.Struct({
-    message: Schema.String.check(Schema.isMaxLength(255)),
+    action: DeviceStreamDto.fields.data.fields.action,
+    payload: DeviceStreamDto.fields.data.fields.payload,
   })
   export type Emit = typeof Emit.Type
+
+  export const EmitSuccess = DeviceStreamDto.fields.data
+  export type EmitSuccess = typeof EmitSuccess.Type
 }

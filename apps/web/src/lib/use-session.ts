@@ -1,5 +1,6 @@
 import type { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
 
+import { toast } from '@rozumari/ui/components/toast'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
@@ -21,6 +22,7 @@ export const useSession = () => {
     retry: 1,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 
   const { mutate: logout } = useMutation({
@@ -28,7 +30,12 @@ export const useSession = () => {
     onSettled: () =>
       queryClient.setQueryData(api.auth.whoami.getQueryKey(), { data: null }),
     onSuccess: () => navigate('/login', { replace: true }),
-    onError: (e) => console.error(e),
+    onError: ({ message }) =>
+      toast.add({
+        type: 'error',
+        title: 'Logout failed',
+        description: message,
+      }),
   })
 
   return useMemo(() => {

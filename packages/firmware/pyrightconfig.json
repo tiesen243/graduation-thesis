@@ -1,0 +1,10 @@
+{
+  "reportAny": "none",
+  "reportUnknownArgumentType": "none",
+  "reportMissingModuleSource": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownVariableType": "none",
+  "reportMissingTypeArgument": "none",
+  "reportUnannotatedClassAttribute": "none"
+}

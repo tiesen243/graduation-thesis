@@ -11,6 +11,7 @@ import type { BaseProvider } from '@/modules/auth/infrastructure/oauth/providers
 import { AuthModule } from '@/modules/auth/auth.module'
 import { DeviceModule } from '@/modules/device/device.module'
 import { HomeModule } from '@/modules/home/home.module'
+import { ScheduleModule } from '@/modules/schedule/schedule.module'
 import { UserModule } from '@/modules/user/user.module'
 
 import * as pkgJson from '../../package.json' with { type: 'json' }
@@ -27,16 +28,24 @@ export class AppModule {
     )
 
     const deviceModule = DeviceModule.create({ persistence })
+    const scheduleModule = ScheduleModule.create({ persistence })
+
+    const deviceControllerWithSchedule = deviceModule.controller.pipe(
+      Layer.provide(scheduleModule.exports.layer)
+    )
 
     const controllerLayer = Layer.mergeAll(
       homeModule.controller,
       userModule.controller,
       authModule.controller,
-      deviceModule.controller
+      deviceControllerWithSchedule,
+      scheduleModule.controller
     ).pipe(
       Layer.provide([
         authModule.exports.middlewares.auth,
         authModule.exports.middlewares.admin,
+
+        deviceModule.exports.middlewares.device,
       ])
     )
 
@@ -62,10 +71,12 @@ export class AppModule {
 
     const cli = Command.run(
       Command.make(pkgJson.name).pipe(
-        Command.withSubcommands([userModule.command])
+        Command.withSubcommands([userModule.command, deviceModule.command])
       ),
       { version: pkgJson.version }
-    ).pipe(Effect.provide([userModule.exports.layer]))
+    ).pipe(
+      Effect.provide([userModule.exports.layer, deviceModule.exports.layer])
+    )
 
     return { routes, cli }
   }

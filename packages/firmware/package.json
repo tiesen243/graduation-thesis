@@ -1,5 +1,10 @@
 {
   "name": "@rozumari/firmware",
   "version": "0.0.1",
-  "private": false
+  "private": false,
+  "scripts": {
+    "clean": "git clean -xdf .venv __pycache__",
+    "clean:board": "uv run scripts/clean.py",
+    "upload:board": "uv run scripts/upload.py"
+  }
 }

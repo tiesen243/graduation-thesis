@@ -40,8 +40,10 @@ export const ExchangeCard: React.FC<{ token: string }> = ({ token }) => {
 
   return (
     <CardHeader>
-      <CardTitle>Authenticating...</CardTitle>
-      <CardDescription>Please wait while we log you in...</CardDescription>
+      <CardTitle>Almost there!</CardTitle>
+      <CardDescription>
+        Authenticating your details and taking you in...
+      </CardDescription>
 
       <CardContent className='flex items-center justify-center py-6'>
         <Loader2Icon className='size-8 animate-spin' />

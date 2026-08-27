@@ -21,7 +21,7 @@ export class ResendService extends Context.Service<
     return {
       sendEmail: Effect.fn(function* sendEmail(options) {
         const request = yield* HttpClientRequest.post(
-          `${env.RESEND_API_URL}/emails`
+          'https://api.resend.com/emails'
         ).pipe(
           HttpClientRequest.setHeader(
             'Authorization',

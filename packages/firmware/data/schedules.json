@@ -1,0 +1,15 @@
+[
+  {
+    "id": "",
+    "deviceId": "",
+    "date": "",
+    "time": "",
+    "status": "pending",
+    "items": [
+      {
+        "slot": "0-0",
+        "quantity": 1
+      }
+    ]
+  }
+]

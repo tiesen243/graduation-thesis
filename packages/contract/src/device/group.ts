@@ -75,15 +75,17 @@ export class DeviceGroup extends HttpApiGroup.make('device')
   )
 
   .add(
-    HttpApiEndpoint.get('stream', '/:id/stream', {
-      params: ShowDeviceDto.Input,
-      success: DeviceStreamDto.Data,
+    HttpApiEndpoint.get('subscribe', '/:id/subscribe', {
+      params: DeviceStreamDto.Params,
+      success: DeviceStreamDto.Stream,
     })
   )
 
   .add(
     HttpApiEndpoint.post('emit', '/:id/emit', {
+      params: DeviceStreamDto.Params,
       payload: DeviceStreamDto.Emit,
+      success: DeviceStreamDto,
       error: [DeviceNotFound],
     })
   )

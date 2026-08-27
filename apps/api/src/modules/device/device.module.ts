@@ -10,7 +10,10 @@ import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-de
 import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
 import { UpdateDeviceUseCase } from '@/modules/device/application/use-case/update-device.use-case'
 import { DeviceInfrastructureModule } from '@/modules/device/infrastructure/infrastructure.module'
+import { deviceCommand } from '@/modules/device/presentation/cli/device.command'
 import { deviceController } from '@/modules/device/presentation/http/device.controller'
+import { iotController } from '@/modules/device/presentation/http/iot.controller'
+import { deviceMiddleware } from '@/modules/device/presentation/middleware/device.middleware'
 
 export class DeviceModule {
   public static create(config: Pick<AppModule.Config, 'persistence'>) {
@@ -31,10 +34,18 @@ export class DeviceModule {
     const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)
 
     return {
-      controller: deviceController.pipe(Layer.provide(layer)),
+      controller: Layer.merge(deviceController, iotController).pipe(
+        Layer.provide(layer)
+      ),
+
+      command: deviceCommand,
 
       exports: {
         layer,
+
+        middlewares: {
+          device: deviceMiddleware.pipe(Layer.provide(layer)),
+        },
       },
     }
   }

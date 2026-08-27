@@ -35,7 +35,9 @@ export function NavSingleItem({ item }: { item: NavItem }) {
             {({ isActive, isPending }) => (
               <>
                 {Icon && <Icon className={isActive ? 'stroke-primary' : ''} />}
-                <span className='truncate'>{item.title}</span>
+                <span className={`truncate ${isActive ? 'text-primary' : ''}`}>
+                  {item.title}
+                </span>
 
                 {isPending && <Loader2Icon className='ml-auto animate-spin' />}
               </>

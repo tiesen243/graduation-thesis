@@ -1,0 +1,38 @@
+version = 1
+revision = 3
+requires-python = ">=3.14"
+
+[[package]]
+name = "firmware"
+version = "0.0.0"
+source = { virtual = "." }
+
+[package.dev-dependencies]
+dev = [
+    { name = "micropython-rp2-rpi-pico2-w-stubs" },
+]
+
+[package.metadata]
+
+[package.metadata.requires-dev]
+dev = [{ name = "micropython-rp2-rpi-pico2-w-stubs", specifier = ">=1.28.0.post4" }]
+
+[[package]]
+name = "micropython-rp2-rpi-pico2-w-stubs"
+version = "1.28.0.post4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "micropython-stdlib-stubs" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/06/df/4942dc015dacf5196b5b5ac67fd40f208f6463ab981a82da851826c5ec36/micropython_rp2_rpi_pico2_w_stubs-1.28.0.post4.tar.gz", hash = "sha256:da2f89c1da2a125ebf1844e5e25bd5ae7c161b12f2fde96a8595ba090e146a9f", size = 98192, upload-time = "2026-05-20T12:35:48.219Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d1/26/0c62b6f98a1ceb87fcfd5cbde82ec805add4bf3af06e48f43a9449b1a2c4/micropython_rp2_rpi_pico2_w_stubs-1.28.0.post4-py2.py3-none-any.whl", hash = "sha256:57713fda3f9124a4510e363d26dd9c3fe8ee359a19a210ecaf2690b9058eafcb", size = 125736, upload-time = "2026-05-20T12:35:49.351Z" },
+]
+
+[[package]]
+name = "micropython-stdlib-stubs"
+version = "1.28.0.post6"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cd/e3/4edfda3791ea58edb220e319e9be9511545aa4c02e280bbe087c21c36038/micropython_stdlib_stubs-1.28.0.post6-py3-none-any.whl", hash = "sha256:b0a707f852365f03792b23964b48a0304cbb18eecc1b743e0d5b96712b775909", size = 150306, upload-time = "2026-07-19T21:10:22.02Z" },
+]

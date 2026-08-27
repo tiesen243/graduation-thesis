@@ -4,9 +4,9 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { Jwt } from '@/modules/auth/application/security/jwt'
 import { UserService } from '@/modules/user/application/user.service'
 import { env } from '@/shared/env'
+import { Jwt } from '@/shared/infrastructure/jwt'
 import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
 
 export class ForgotPasswordUseCase extends Context.Service<

@@ -12,7 +12,10 @@ export const CompartmentSchema = Schema.Struct({
 
   dosage: Schema.Number.pipe(Schema.withConstructorDefault(Effect.succeed(0))),
 
-  position: Schema.String.check(Schema.isMaxLength(4)),
+  position: Schema.String.check(
+    Schema.isMaxLength(4),
+    Schema.isPattern(/^(?<row>[0-9])-(?<column>[0-1])$/u)
+  ),
 
   lastRefillAt: Schema.NullOr(Schema.Date).pipe(
     Schema.withConstructorDefault(Effect.succeed(null))

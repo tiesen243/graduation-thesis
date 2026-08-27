@@ -1,6 +1,7 @@
 import { Api } from '@rozumari/contract'
 import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
+import { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
 import { LinkDeviceDto } from '@rozumari/contract/device/dto/link-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
@@ -8,7 +9,7 @@ import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compa
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
-import { HttpServerResponse } from 'effect/unstable/http'
+import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
@@ -73,8 +74,11 @@ export const deviceController = HttpApiBuilder.group(
         ).pipe(Effect.map((data) => UpdateCompartmentDto.make({ data })))
       )
 
-      .handle('stream', ({ params }) =>
-        DeviceStreamUseCase.use((s) => s.subcribe(params)).pipe(
+      .handle('subscribe', ({ params: { id } }) =>
+        CurrentUser.pipe(
+          Effect.flatMap(({ userId }) =>
+            DeviceStreamUseCase.use((s) => s.subcribe({ id, userId }))
+          ),
           Effect.map((stream) =>
             HttpServerResponse.stream(stream.pipe(encodeText as never), {
               contentType: 'text/event-stream',
@@ -88,7 +92,14 @@ export const deviceController = HttpApiBuilder.group(
         )
       )
 
-      .handle('emit', ({ payload }) =>
-        DeviceStreamUseCase.use((s) => s.emit(payload))
+      .handle('emit', ({ params, payload }) =>
+        CurrentUser.pipe(
+          Effect.flatMap(({ userId }) =>
+            DeviceStreamUseCase.use((s) =>
+              s.emit({ ...params, ...payload, userId })
+            )
+          ),
+          Effect.map((data) => DeviceStreamDto.make({ data }))
+        )
       )
 )

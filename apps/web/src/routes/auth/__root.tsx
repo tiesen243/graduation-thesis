@@ -4,9 +4,8 @@ import { Navigate, Outlet } from 'react-router'
 import { useSession } from '@/lib/use-session'
 
 export default function AuthRoot() {
-  const { status } = useSession()
-  if (status === 'loading') return null
-  if (status === 'authenticated') return <Navigate to='/dashboard' replace />
+  const { user } = useSession()
+  if (user) return <Navigate to='/dashboard' replace />
 
   return (
     <main className='grid min-h-dvh place-items-center md:px-4'>

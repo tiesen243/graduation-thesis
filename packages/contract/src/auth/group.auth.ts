@@ -1,8 +1,5 @@
-// oxlint-disable eslint/max-classes-per-file
-
 import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
-import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 
 import { ChangePasswordDto } from '@/auth/dto/change-password.dto'
 import { ForgotPasswordDto } from '@/auth/dto/forgot-password.dto'
@@ -13,12 +10,7 @@ import { RegisterDto } from '@/auth/dto/register.dto'
 import { ResetPasswordDto } from '@/auth/dto/reset-password.dto'
 import { WhoAmIDto } from '@/auth/dto/whoami.dto'
 import { AuthMiddleware } from '@/auth/middleware'
-import {
-  InvalidCredentials,
-  InvalidToken,
-  ProviderError,
-} from '@/auth/schemas/auth.error'
-import { OAuthSchema } from '@/auth/schemas/oauth.schema'
+import { InvalidCredentials, Unauthorized } from '@/auth/schemas/auth.error'
 import { UserAlreadyExists, UserNotFound } from '@/user/schemas/user.error'
 
 export class AuthGroup extends HttpApiGroup.make('auth')
@@ -43,7 +35,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('logout', '/logout', {
       headers: LogoutDto.Input,
       success: LogoutDto,
-      error: InvalidToken,
+      error: Unauthorized,
     })
   )
 
@@ -51,7 +43,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('refresh', '/refresh', {
       headers: RefreshTokenDto.Input,
       success: RefreshTokenDto,
-      error: InvalidToken,
+      error: Unauthorized,
     })
   )
 
@@ -85,33 +77,3 @@ export class AuthGroup extends HttpApiGroup.make('auth')
   )
 
   .prefix('/api/auth') {}
-
-export class OAuthGroup extends HttpApiGroup.make('oauth')
-
-  .add(
-    HttpApiEndpoint.get('authorize', '/:provider', {
-      params: OAuthSchema.Params,
-      query: OAuthSchema.Query,
-      error: [ProviderError],
-    })
-  )
-
-  .add(
-    HttpApiEndpoint.get('callback', '/:provider/callback', {
-      params: OAuthSchema.Params,
-      query: OAuthSchema.Query,
-      error: [ProviderError],
-    })
-  )
-
-  .add(
-    HttpApiEndpoint.post('exchange', '/oauth/exchange', {
-      payload: OAuthSchema.Payload,
-      success: OAuthSchema.Success,
-      error: [ProviderError, InvalidToken],
-    })
-  )
-
-  .prefix('/api/auth')
-
-  .annotateMerge(OpenApi.annotations({ exclude: true })) {}

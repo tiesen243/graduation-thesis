@@ -36,3 +36,10 @@ export const withTransaction = <A, E, R>(
 
     return yield* effectToRun
   }) as Effect.Effect<A, E, Exclude<R, DrizzleClient>>
+
+export const toDateString = (d: Date) => {
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}

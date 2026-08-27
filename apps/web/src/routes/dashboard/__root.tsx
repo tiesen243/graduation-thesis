@@ -10,11 +10,8 @@ import { useSession } from '@/lib/use-session'
 import { DashboardSidebar } from '@/routes/dashboard/_components/dashboard-sidebar'
 
 export default function DashboardRoot() {
-  const { status } = useSession()
-
-  if (status === 'loading') return null
-
-  if (status === 'unauthenticated') return <Navigate to='/login' replace />
+  const { user } = useSession()
+  if (!user) return <Navigate to='/login' replace />
 
   return (
     <SidebarProvider>
