@@ -31,7 +31,7 @@
       "typescript": "^7.0.2"
     },
     "prod": {
-      "@tanstack/react-query": "^5.102.5"
+      "@tanstack/react-query": "^5.102.6"
     },
     "effect": {
       "@effect/platform-bun": ">=4.0.0-rc.112",
@@ -50,5 +50,8 @@
       "@tailwindcss/vite": "^4.3.3",
       "tailwindcss": "^4.3.3"
     }
+  },
+  "patchedDependencies": {
+    "tegami@1.4.0": "patches/tegami@1.4.0.patch"
   }
 }
