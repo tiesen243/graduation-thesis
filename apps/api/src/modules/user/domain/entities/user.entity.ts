@@ -10,16 +10,10 @@ export class User extends Schema.TaggedClass<User>()(
   }
 
   public markDeleted(now = new Date()): User {
-    return new User({
-      ...structuredClone(this),
-      deletedAt: now,
-    })
+    return new User({ ...structuredClone(this), deletedAt: now })
   }
 
   public update(props: Pick<User, 'role'>): User {
-    return User.make({
-      ...structuredClone(this),
-      ...props,
-    })
+    return new User({ ...structuredClone(this), ...props })
   }
 }

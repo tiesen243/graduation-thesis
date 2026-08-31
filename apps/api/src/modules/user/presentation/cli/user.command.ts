@@ -28,9 +28,7 @@ const showUser = Command.make(
   },
   Effect.fn(function* showUserFn(input) {
     const user = yield* ShowUserUseCase.use((s) =>
-      s.execute({
-        id: UserId.make(input.id),
-      })
+      s.execute({ id: UserId.make(input.id) })
     )
 
     yield* Effect.log(`User: ${JSON.stringify(user, null, 2)}`)

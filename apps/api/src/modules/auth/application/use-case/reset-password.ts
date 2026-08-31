@@ -9,8 +9,8 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { Password } from '@/modules/auth/application/security/password'
-import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
+import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
+import { PasswordService } from '@/modules/auth/application/ports/password.service'
 
 export class ResetPasswordUseCase extends Context.Service<
   ResetPasswordUseCase,
@@ -23,7 +23,7 @@ export class ResetPasswordUseCase extends Context.Service<
   make: Effect.gen(function* make() {
     const accountRepository = yield* AccountRepository
 
-    const password = yield* Password
+    const passwordService = yield* PasswordService
 
     return {
       execute: Effect.fn(function* execute(input) {
@@ -37,7 +37,7 @@ export class ResetPasswordUseCase extends Context.Service<
         })
         if (!account) return null
 
-        const hashedPassword = yield* password.hash(input.password)
+        const hashedPassword = yield* passwordService.hash(input.password)
         account = account.updatePassword(hashedPassword)
         yield* accountRepository.save(account)
 

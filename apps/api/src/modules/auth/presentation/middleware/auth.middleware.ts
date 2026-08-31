@@ -4,7 +4,7 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as Redacted from 'effect/Redacted'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
+import { AuthService } from '@/modules/auth/application/ports/auth.service'
 
 export const authMiddleware = Layer.effect(
   AuthMiddleware,

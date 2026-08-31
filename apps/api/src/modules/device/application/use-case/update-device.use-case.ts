@@ -8,7 +8,7 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
+import { DeviceRepository } from '@/modules/device/application/ports/device.repository'
 
 export class UpdateDeviceUseCase extends Context.Service<
   UpdateDeviceUseCase,

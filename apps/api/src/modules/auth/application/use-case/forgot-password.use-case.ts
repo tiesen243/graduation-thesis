@@ -4,10 +4,10 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { UserService } from '@/modules/user/application/user.service'
+import { UserService } from '@/modules/user/application/ports/user.service'
+import { Jwt } from '@/shared/application/services/jwt.service'
+import { ResendService } from '@/shared/application/services/resend.service'
 import { env } from '@/shared/env'
-import { Jwt } from '@/shared/infrastructure/jwt'
-import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
 
 export class ForgotPasswordUseCase extends Context.Service<
   ForgotPasswordUseCase,
@@ -18,14 +18,14 @@ export class ForgotPasswordUseCase extends Context.Service<
   }
 >()('auth/application/ForgotPasswordUseCase', {
   make: Effect.gen(function* make() {
-    const userService = yield* UserService
     const jwt = yield* Jwt
 
-    const resend = yield* Effect.option(ResendService)
+    const userService = yield* UserService
+    const resendService = yield* Effect.option(ResendService)
 
     return {
       execute: Effect.fn(function* execute(input) {
-        if (resend._tag === 'None') return null
+        if (resendService._tag === 'None') return null
 
         const user = yield* userService.findByIdentifier({
           email: input.email,
@@ -36,7 +36,7 @@ export class ForgotPasswordUseCase extends Context.Service<
           { userId: user.id, userRole: user.role },
           { expiresIn: 5 * 60 /* 5 minutes */ }
         )
-        yield* resend.value.sendEmail({
+        yield* resendService.value.sendEmail({
           to: [user.email],
           subject: 'Reset your password',
           html: /* HTML */ `

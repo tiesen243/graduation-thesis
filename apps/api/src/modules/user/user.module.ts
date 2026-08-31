@@ -1,4 +1,5 @@
 import * as Layer from 'effect/Layer'
+import * as Command from 'effect/unstable/cli/Command'
 
 import type { AppModule } from '@/modules/app.module'
 
@@ -6,8 +7,8 @@ import { DeleteUserUseCase } from '@/modules/user/application/use-case/delete-us
 import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case'
 import { ShowUserUseCase } from '@/modules/user/application/use-case/show-user.use-case'
 import { UpdateUserUseCase } from '@/modules/user/application/use-case/update-user.use-case'
-import { UserService } from '@/modules/user/application/user.service'
 import { UserInfrastructureModule } from '@/modules/user/infrastructure/infrastructure.module'
+import { UserServiceLayer } from '@/modules/user/infrastructure/services/user.service'
 import { userCommand } from '@/modules/user/presentation/cli/user.command'
 import { userController } from '@/modules/user/presentation/http/user.controller'
 
@@ -24,23 +25,15 @@ export class UserModule {
       UpdateUserUseCase.layer
     )
 
-    const serviceLayer = Layer.mergeAll(UserService.layer)
-
-    const applicationLayer = Layer.provideMerge(useCaseLayer, serviceLayer)
-
-    const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
+    const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)
 
     return {
       controller: userController.pipe(Layer.provide(layer)),
 
-      command: userCommand,
+      command: userCommand.pipe(Command.provide(layer)),
 
       exports: {
-        layer,
-
-        services: {
-          userService: UserService.layer.pipe(Layer.provide(layer)),
-        },
+        userService: UserServiceLayer.pipe(Layer.provide(layer)),
       },
     }
   }

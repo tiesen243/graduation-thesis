@@ -11,7 +11,7 @@ import * as Layer from 'effect/Layer'
 import * as Redacted from 'effect/Redacted'
 import { types } from 'pg'
 
-import type { IRepository } from '@/shared/repository'
+import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
 import { env } from '@/shared/env'
 
@@ -36,37 +36,18 @@ export class DrizzleClient extends Context.Service<
 
     buildCriteria: <TEntity>(
       table: AnyPgTable,
-      criteria?: IRepository.Criteria<TEntity>
+      criteria?: IBaseRepository.Criteria<TEntity>
     ) => Effect.Effect<orm.SQL | undefined>
 
     buildOrderBy: <TEntity>(
       table: AnyPgTable,
-      orderBy?: IRepository.OrderBy<TEntity>
+      orderBy?: IBaseRepository.OrderBy<TEntity>
     ) => Effect.Effect<orm.SQL[]>
   }
 >()('shared/infrastructure/persistence/drizzle/DrizzleClient', {
   make: Effect.gen(function* DrizzleClientMake() {
-    const CYAN = '\u001B[36m'
-    const RESET = '\u001B[0m'
-
-    const logger = Layer.succeed(PgDrizzle.EffectLogger, {
-      logQuery: (sql, params) => {
-        const prettySql = sql
-          .replaceAll(/\s+/gu, ' ')
-          .replaceAll(
-            /\b(?<sql>SELECT|FROM|WHERE|ORDER BY|LIMIT|GROUP BY|LEFT JOIN|RIGHT JOIN|INNER JOIN)\b/giu,
-            '\n  $1'
-          )
-
-        return Effect.logDebug(
-          `\n${CYAN}query:${RESET}  ${prettySql}\n${CYAN}params:${RESET} ${JSON.stringify(params)}`
-        ).pipe(Effect.withLogSpan('DrizzleClient'))
-      },
-    })
-
     return {
       db: yield* PgDrizzle.make().pipe(
-        Effect.provide(logger),
         Effect.provide(PgDrizzle.DefaultServices)
       ),
 
@@ -75,7 +56,7 @@ export class DrizzleClient extends Context.Service<
 
       buildOrderBy: Effect.fn(function* buildOrderByFn<TEntity>(
         table: AnyPgTable,
-        orderBy: IRepository.OrderBy<TEntity> = {}
+        orderBy: IBaseRepository.OrderBy<TEntity> = {}
       ) {
         if (!orderBy) return []
 
@@ -106,7 +87,7 @@ export class DrizzleClient extends Context.Service<
 
 const buildCriteria = <TEntity>(
   table: AnyPgTable,
-  criteria: IRepository.Criteria<TEntity> = {}
+  criteria: IBaseRepository.Criteria<TEntity> = {}
 ): Effect.Effect<orm.SQL | undefined> =>
   Effect.gen(function* buildCriteriaFn() {
     if (!criteria) return
@@ -145,7 +126,7 @@ const buildCriteria = <TEntity>(
 
           const orConditions = yield* Effect.forEach(
             orList,
-            (c) => buildCriteria(table, c as IRepository.Criteria<TEntity>),
+            (c) => buildCriteria(table, c as IBaseRepository.Criteria<TEntity>),
             { concurrency: 'unbounded' }
           ).pipe(
             Effect.flatMap((items) =>
@@ -183,12 +164,10 @@ const buildCriteria = <TEntity>(
           typeof value !== 'object' ||
           value === null ||
           value instanceof Date
-        ) {
-          conditions.push(orm.eq(column, value))
-          return
-        }
+        )
+          return conditions.push(orm.eq(column, value))
 
-        const opObj = value as IRepository.Operator<unknown>
+        const opObj = value as IBaseRepository.Operator<unknown>
 
         if ('eq' in opObj) conditions.push(orm.eq(column, opObj.eq))
         if ('in' in opObj && opObj.in)
@@ -209,13 +188,12 @@ const buildCriteria = <TEntity>(
           conditions.push(orm.between(column, from, to))
         }
 
-        if ('like' in opObj && typeof opObj.like === 'string') {
+        if ('like' in opObj && typeof opObj.like === 'string')
           conditions.push(
             opObj.mode === 'insensitive'
               ? orm.ilike(column, opObj.like)
               : orm.like(column, opObj.like)
           )
-        }
       }),
       { concurrency: 'unbounded', discard: true }
     )

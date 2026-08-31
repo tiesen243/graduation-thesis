@@ -5,7 +5,7 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
 
 export class ListSchedulesUseCase extends Context.Service<
   ListSchedulesUseCase,

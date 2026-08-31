@@ -6,7 +6,7 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { UserService } from '@/modules/user/application/user.service'
+import { UserService } from '@/modules/user/application/ports/user.service'
 
 export class WhoAmIUseCase extends Context.Service<
   WhoAmIUseCase,

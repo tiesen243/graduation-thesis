@@ -11,11 +11,11 @@ import * as Layer from 'effect/Layer'
 
 import type { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
-import { Password } from '@/modules/auth/application/security/password'
+import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
+import { PasswordService } from '@/modules/auth/application/ports/password.service'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
-import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { UserService } from '@/modules/user/application/user.service'
-import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
+import { UserService } from '@/modules/user/application/ports/user.service'
+import { ResendService } from '@/shared/application/services/resend.service'
 import { withTransaction } from '@/shared/utils'
 
 export class RegisterUseCase extends Context.Service<
@@ -29,10 +29,9 @@ export class RegisterUseCase extends Context.Service<
   make: Effect.gen(function* make() {
     const accountRepository = yield* AccountRepository
 
+    const passwordService = yield* PasswordService
     const userService = yield* UserService
-    const password = yield* Password
-
-    const resend = yield* Effect.option(ResendService)
+    const resendService = yield* Effect.option(ResendService)
 
     return {
       execute: Effect.fn(function* execute(input) {
@@ -44,7 +43,7 @@ export class RegisterUseCase extends Context.Service<
             new UserAlreadyExists({ error: { username, email } })
           )
 
-        const hashedPassword = yield* password.hash(plainPassword)
+        const hashedPassword = yield* passwordService.hash(plainPassword)
 
         yield* Effect.gen(function* executeTx() {
           const user = yield* userService.create({ username, email })
@@ -58,8 +57,8 @@ export class RegisterUseCase extends Context.Service<
           yield* accountRepository.save(account)
         }).pipe(withTransaction)
 
-        if (resend._tag === 'Some')
-          yield* resend.value.sendEmail({
+        if (resendService._tag === 'Some')
+          yield* resendService.value.sendEmail({
             to: [email],
             subject: 'Welcome to Rozumari!',
             html: `<h1>Welcome to Rozumari!</h1><p>Hi ${username}, thank you for registering at Rozumari. We're excited to have you on board!</p>`,

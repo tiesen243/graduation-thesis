@@ -13,7 +13,7 @@ import type { Notification } from '@/modules/notification/domain/entities/notifi
 import type { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import type { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 import type { User } from '@/modules/user/domain/entities/user.entity'
-import type { IRepository } from '@/shared/repository'
+import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
 export class InMemoryClient extends Context.Service<
   InMemoryClient,
@@ -35,12 +35,12 @@ export class InMemoryClient extends Context.Service<
 
     buildCriteria: <TEntity>(
       item: TEntity,
-      criteria?: IRepository.Criteria<TEntity>
+      criteria?: IBaseRepository.Criteria<TEntity>
     ) => Effect.Effect<boolean>
 
     buildOrderBy: <TEntity>(
       items: TEntity[],
-      orderBy: IRepository.OrderBy<TEntity>
+      orderBy: IBaseRepository.OrderBy<TEntity>
     ) => Effect.Effect<TEntity[]>
   }
 >()('shared/infrastructure/persistence/in-memory/InMemoryClient', {
@@ -141,7 +141,7 @@ function matchOperator(itemValue: unknown, expr: unknown): boolean {
 
 const buildCriteria = <TEntity>(
   item: TEntity,
-  criteria?: IRepository.Criteria<TEntity>
+  criteria?: IBaseRepository.Criteria<TEntity>
 ): Effect.Effect<boolean> =>
   Effect.gen(function* buildCriteriaGen() {
     if (!criteria) return true

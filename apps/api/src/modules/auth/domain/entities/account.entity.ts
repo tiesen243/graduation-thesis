@@ -6,9 +6,6 @@ export class Account extends Schema.TaggedClass<Account>()(
   AccountSchema
 ) {
   public updatePassword(password: string) {
-    return new Account({
-      ...structuredClone(this),
-      password,
-    })
+    return new Account({ ...structuredClone(this), password })
   }
 }

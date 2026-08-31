@@ -6,8 +6,6 @@ import * as Effect from 'effect/Effect'
 
 import { AppModule } from '@/modules/app.module'
 import { env } from '@/shared/env'
-import { Jwt } from '@/shared/infrastructure/jwt'
-import { StreamService } from '@/shared/stream.service'
 
 const { cli } = AppModule.create({
   persistence: 'drizzle',
@@ -17,12 +15,4 @@ const { cli } = AppModule.create({
   },
 })
 
-cli.pipe(
-  Effect.provide([
-    StreamService.layer,
-    Jwt.layer,
-
-    BunServices.layer,
-  ]),
-  BunRuntime.runMain
-)
+BunRuntime.runMain(Effect.provide(cli, BunServices.layer))

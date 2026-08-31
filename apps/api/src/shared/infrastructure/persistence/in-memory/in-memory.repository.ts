@@ -3,7 +3,7 @@
 import * as Effect from 'effect/Effect'
 import * as Ref from 'effect/Ref'
 
-import type { IRepository } from '@/shared/repository'
+import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 
@@ -72,6 +72,6 @@ export const makeInMemoryRepository = Effect.fn(
           return next
         })
       }),
-    } satisfies IRepository<TEntity>
+    } satisfies IBaseRepository<TEntity>
   }
 )

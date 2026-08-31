@@ -2,8 +2,8 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as Ref from 'effect/Ref'
 
+import { SessionRepository } from '@/modules/auth/application/ports/session.repository'
 import { SessionUserAggregate } from '@/modules/auth/domain/entities/session-user.aggregate'
-import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

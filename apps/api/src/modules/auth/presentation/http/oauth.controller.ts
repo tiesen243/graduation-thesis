@@ -4,18 +4,17 @@ import { Api } from '@rozumari/contract'
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
 import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Effect from 'effect/Effect'
-import * as FetchHttpClient from 'effect/unstable/http/FetchHttpClient'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
-import { OAuth } from '@/modules/auth/application/security/oauth'
-import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/constants'
+import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
+import { AuthService } from '@/modules/auth/application/ports/auth.service'
+import { OAuthService } from '@/modules/auth/application/ports/oauth.service'
+import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/domain/constants'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
-import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { generateStateOrCode } from '@/modules/auth/infrastructure/security/crypto'
-import { UserService } from '@/modules/user/application/user.service'
-import { ResendService } from '@/shared/infrastructure/third-party/resend/resend.service'
+import { generateStateOrCode } from '@/modules/auth/domain/utils/crypto'
+import { UserService } from '@/modules/user/application/ports/user.service'
+import { ResendService } from '@/shared/application/services/resend.service'
 import { withTransaction } from '@/shared/utils'
 
 export const oauthController = HttpApiBuilder.group(
@@ -26,14 +25,13 @@ export const oauthController = HttpApiBuilder.group(
 
     const authService = yield* AuthService
     const userService = yield* UserService
-
-    const resend = yield* Effect.option(ResendService)
+    const resendService = yield* Effect.option(ResendService)
 
     return handlers
       .handle(
         'authorize',
         Effect.fn(function* authorizeHandler({ params, query }) {
-          const provider = yield* OAuth.forProvider(params.provider)
+          const provider = yield* OAuthService.forProvider(params.provider)
 
           const state = yield* generateStateOrCode
           const code = yield* generateStateOrCode
@@ -69,7 +67,7 @@ export const oauthController = HttpApiBuilder.group(
       .handle(
         'callback',
         Effect.fn(function* callbackHandler({ params, query, request }) {
-          const provider = yield* OAuth.forProvider(params.provider)
+          const provider = yield* OAuthService.forProvider(params.provider)
 
           const { code, state } = query
           const storedCode = request.cookies[COOKIE_KEYS.OAUTH_CODE]
@@ -83,7 +81,6 @@ export const oauthController = HttpApiBuilder.group(
 
           const { id, email } = yield* provider
             .fetchUserData(code, storedCode)
-            .pipe(Effect.provide(FetchHttpClient.layer))
             .pipe(Effect.orDie)
 
           const { accessToken, refreshToken, expiresAt, isNewUser } =
@@ -141,8 +138,8 @@ export const oauthController = HttpApiBuilder.group(
               return { ...result, isNewUser: _isNewUser }
             }).pipe(withTransaction)
 
-          if (isNewUser && resend._tag === 'Some')
-            yield* resend.value.sendEmail({
+          if (isNewUser && resendService._tag === 'Some')
+            yield* resendService.value.sendEmail({
               to: [email],
               subject: 'Welcome to Rozumari!',
               html: `<p>Welcome to Rozumari! Your account has been created successfully.</p>`,

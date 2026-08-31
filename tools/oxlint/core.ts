@@ -1,7 +1,7 @@
 import { defineConfig } from 'oxlint'
 
 const message =
-  'Use `import { env } from "@/lib/env"` instead to ensure validated types.'
+  'Use `import { env } from "@/{lib,shared}/env"` instead to ensure validated types.'
 export const restrictedEnvVars = defineConfig({
   overrides: [
     {

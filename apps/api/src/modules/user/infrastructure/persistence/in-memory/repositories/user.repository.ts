@@ -1,7 +1,7 @@
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { UserRepository } from '@/modules/user/domain/repositoties/user.repository'
+import { UserRepository } from '@/modules/user/application/ports/user.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

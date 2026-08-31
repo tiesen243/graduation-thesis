@@ -1,41 +1,48 @@
 import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
+import type { AccountRepository } from '@/modules/auth/application/ports/account.repository'
+import type { SessionRepository } from '@/modules/auth/application/ports/session.repository'
 
-import { OAuthLayer } from '@/modules/auth/infrastructure/oauth/oauth.layer'
 import { DrizzleAccountRepository } from '@/modules/auth/infrastructure/persistence/drizzle/repositories/account.repository'
 import { DrizzleSessionRepository } from '@/modules/auth/infrastructure/persistence/drizzle/repositories/session.repository'
 import { InMemoryAccountRepository } from '@/modules/auth/infrastructure/persistence/in-memory/repositories/account.repository'
 import { InMemorySessionRepository } from '@/modules/auth/infrastructure/persistence/in-memory/repositories/session.repository'
-import { PasswordLayer } from '@/modules/auth/infrastructure/security/password'
-import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
-import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
+import { AuthServiceLayer } from '@/modules/auth/infrastructure/services/auth.service'
+import { OAuthServiceLayer } from '@/modules/auth/infrastructure/services/oauth.layer'
+import { PasswordServiceLayer } from '@/modules/auth/infrastructure/services/password.service'
 
 export class AuthInfrastructureModule {
   public static create(
     driver: AppModule.Config['persistence'],
     { secret, providers }: AppModule.Config['auth']
   ) {
-    const layer = driver === 'in-memory' ? this.inMemory : this.drizzle
+    const infrasLayer = driver === 'in-memory' ? this.inMemory : this.drizzle
 
-    return Layer.mergeAll(
-      layer,
-      PasswordLayer({ secret }),
-      OAuthLayer(providers)
+    const serviceLayer = Layer.mergeAll(
+      AuthServiceLayer,
+      OAuthServiceLayer(providers),
+      PasswordServiceLayer({ secret })
     )
+
+    return Layer.provideMerge(serviceLayer, infrasLayer)
   }
 
-  private static get inMemory() {
+  private static get inMemory(): Layer.Layer<
+    AccountRepository | SessionRepository
+  > {
     return Layer.mergeAll(
       InMemoryAccountRepository,
       InMemorySessionRepository
-    ).pipe(Layer.provideMerge(InMemoryClient.layer))
+    ) as never
   }
 
-  private static get drizzle() {
+  private static get drizzle(): Layer.Layer<
+    AccountRepository | SessionRepository
+  > {
     return Layer.mergeAll(
       DrizzleAccountRepository,
       DrizzleSessionRepository
-    ).pipe(Layer.provideMerge(DrizzleClient.layer))
+    ) as never
   }
 }

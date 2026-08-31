@@ -1,7 +1,7 @@
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { CompartmentRepository } from '@/modules/device/domain/repositories/compartment.repository'
+import { CompartmentRepository } from '@/modules/device/application/ports/compartment.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

@@ -9,9 +9,6 @@ export class Session extends Schema.TaggedClass<Session>()(
     if (expiresAt <= new Date())
       throw new Error('Expiration date must be in the future')
 
-    return new Session({
-      ...structuredClone(this),
-      expiresAt,
-    })
+    return new Session({ ...structuredClone(this), expiresAt })
   }
 }

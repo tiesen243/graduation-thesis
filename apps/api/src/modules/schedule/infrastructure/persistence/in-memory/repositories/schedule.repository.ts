@@ -8,7 +8,7 @@ import * as Ref from 'effect/Ref'
 import type { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import type { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 
-import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

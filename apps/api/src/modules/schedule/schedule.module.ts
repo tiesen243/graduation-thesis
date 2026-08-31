@@ -29,10 +29,6 @@ export class ScheduleModule {
       controller: Layer.merge(scheduleController, iotController).pipe(
         Layer.provide(layer)
       ),
-
-      exports: {
-        layer,
-      },
     }
   }
 }

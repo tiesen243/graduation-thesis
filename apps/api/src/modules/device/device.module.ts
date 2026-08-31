@@ -1,4 +1,5 @@
 import * as Layer from 'effect/Layer'
+import * as Command from 'effect/unstable/cli/Command'
 
 import type { AppModule } from '@/modules/app.module'
 
@@ -38,14 +39,10 @@ export class DeviceModule {
         Layer.provide(layer)
       ),
 
-      command: deviceCommand,
+      command: deviceCommand.pipe(Command.provide(layer)),
 
       exports: {
-        layer,
-
-        middlewares: {
-          device: deviceMiddleware.pipe(Layer.provide(layer)),
-        },
+        middleware: deviceMiddleware.pipe(Layer.provide(layer)),
       },
     }
   }

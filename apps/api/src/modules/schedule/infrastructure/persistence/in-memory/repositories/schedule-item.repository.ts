@@ -1,7 +1,7 @@
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { ScheduleItemRepository } from '@/modules/schedule/domain/repositories/schedule-item.repository'
+import { ScheduleItemRepository } from '@/modules/schedule/application/ports/schedule-item.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

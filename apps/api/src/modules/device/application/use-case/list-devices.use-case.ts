@@ -6,9 +6,9 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
 import type { Device } from '@/modules/device/domain/entities/device.entity'
-import type { IRepository } from '@/shared/repository'
+import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
-import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
+import { DeviceRepository } from '@/modules/device/application/ports/device.repository'
 
 export class ListDevicesUseCase extends Context.Service<
   ListDevicesUseCase,
@@ -27,7 +27,7 @@ export class ListDevicesUseCase extends Context.Service<
         const offset = (page - 1) * limit
 
         let where: NonNullable<
-          Parameters<IRepository<Device>['findMany']>[0]
+          Parameters<IBaseRepository<Device>['findMany']>[0]
         >['where']
         if (query)
           where = {
