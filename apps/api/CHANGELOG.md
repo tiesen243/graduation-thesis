@@ -1,3 +1,10 @@
+## @rozumari/api@0.0.15
+
+### Restructure application architecture:
+
+- Reorganize directory structure and module layout for better maintainability.
+- Refactor infrastructure layers and dependency injection logic.
+
 ## @rozumari/api@0.0.14
 
 ### Summary of Changes
