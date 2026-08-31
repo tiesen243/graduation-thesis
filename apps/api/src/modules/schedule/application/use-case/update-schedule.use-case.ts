@@ -5,10 +5,10 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
+import { ScheduleItemRepository } from '@/modules/schedule/application/ports/schedule-item.repository'
+import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
 import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
 import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
-import { ScheduleItemRepository } from '@/modules/schedule/domain/repositories/schedule-item.repository'
-import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
 import { withTransaction } from '@/shared/utils'
 
 export class UpdateScheduleUseCase extends Context.Service<
@@ -20,8 +20,8 @@ export class UpdateScheduleUseCase extends Context.Service<
   }
 >()('schedule/application/UpdateScheduleUseCase', {
   make: Effect.gen(function* make() {
-    const scheduleRepository = yield* ScheduleRepository
     const scheduleItemRepository = yield* ScheduleItemRepository
+    const scheduleRepository = yield* ScheduleRepository
 
     return {
       execute: Effect.fn(function* execute({ id, ...input }) {

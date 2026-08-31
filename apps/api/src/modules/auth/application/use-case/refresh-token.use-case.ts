@@ -9,8 +9,8 @@ import * as Layer from 'effect/Layer'
 import * as Schema from 'effect/Schema'
 import * as HttpServerRequest from 'effect/unstable/http/HttpServerRequest'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
-import { COOKIE_KEYS } from '@/modules/auth/constants'
+import { AuthService } from '@/modules/auth/application/ports/auth.service'
+import { COOKIE_KEYS } from '@/modules/auth/domain/constants'
 
 export class RefreshTokenUseCase extends Context.Service<
   RefreshTokenUseCase,

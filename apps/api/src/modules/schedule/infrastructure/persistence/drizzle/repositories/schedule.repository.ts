@@ -1,28 +1,18 @@
 import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 
-import { ScheduleSchema } from '@rozumari/contract/schedule/schemas/schedule.schema'
 import { and, between, eq, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import { encodeSync } from 'effect/Schema'
-
-import type { DrizzleMapper } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
 
 import { compartments } from '@/modules/device/infrastructure/persistence/drizzle/schema'
-import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
-import { ScheduleRepository } from '@/modules/schedule/domain/repositories/schedule.repository'
+import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
+import { DrizzleScheduleMapper } from '@/modules/schedule/infrastructure/persistence/drizzle/mappers/schedule.mapper'
 import {
   scheduleItems,
   schedules,
 } from '@/modules/schedule/infrastructure/persistence/drizzle/schema'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
-
-export const DrizzleScheduleMapper: DrizzleMapper<Schedule, ScheduleSchema> = {
-  toEntity: (entity) =>
-    Schedule.make({ ...entity, time: entity.time.slice(0, 5) }),
-  toRow: encodeSync(ScheduleSchema) as never,
-}
 
 export const DrizzleScheduleRepository = Layer.effect(
   ScheduleRepository,

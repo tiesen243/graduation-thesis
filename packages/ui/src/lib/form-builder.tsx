@@ -15,7 +15,7 @@ import * as SchemaIssue from 'effect/SchemaIssue'
 import * as Atom from 'effect/unstable/reactivity/Atom'
 import * as React from 'react'
 
-import { cn } from '@/lib/utils'
+import { useIsomorphicLayoutEffect } from '@/hooks/use-isomorphic-layout-effect'
 
 type Issues = {
   path?: readonly unknown[]
@@ -127,6 +127,10 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
     const FormContext = React.createContext<{
       formId: string
       defaultValues: TValues
+      handleSubmit: <A, E>(
+        onSubmit: (values: TValues) => Effect.Effect<A, E>,
+        options?: SubmitOptions<A, E>
+      ) => void
     } | null>(null)
 
     const useSubmit = () => {
@@ -172,16 +176,8 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
           }))
 
           await onSubmit(result.success).pipe(
-            Effect.tap((a) =>
-              Effect.sync(() => {
-                opts?.onSuccess?.(a)
-              })
-            ),
-            Effect.catch((error) =>
-              Effect.sync(() => {
-                opts?.onError?.(error)
-              })
-            ),
+            Effect.tap((a) => Effect.sync(() => opts?.onSuccess?.(a))),
+            Effect.catch((error) => Effect.sync(() => opts?.onError?.(error))),
             Effect.runPromise
           )
 
@@ -199,41 +195,34 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
             onSubmit: (values: TValues) => Effect.Effect<A, E>,
             options?: SubmitOptions<A, E>
           ) => void
-          meta: { formId: string; isPending: boolean }
+          meta: { formId: string }
         }) => useRender.ComponentProps<'div'>['render']
       }
-    > = ({ defaultValues, render, className, ...props }) => {
+    > = ({ defaultValues, render, ...props }) => {
       const id = React.useId()
       const formId = `form-${id}`
 
       const setDefaultValues = useAtomSet(defaultValuesAtom)
-      React.useMemo(() => {
-        setDefaultValues(defaultValues)
-      }, [defaultValues, setDefaultValues])
+      useIsomorphicLayoutEffect(
+        () => setDefaultValues(defaultValues),
+        [defaultValues, setDefaultValues]
+      )
 
       const handleSubmit = useSubmit()
-      const isPending = useAtomValue(formAtom.use(), (s) => s.isPending)
 
       const memoizedValue = React.useMemo(
-        () => ({ formId, defaultValues }),
-        [formId, defaultValues]
+        () => ({ formId, defaultValues, handleSubmit }),
+        [formId, defaultValues, handleSubmit]
       )
 
       return (
         <FormContext value={memoizedValue}>
           {useRender({
             defaultTagName: 'div',
-            props: mergeProps<'div'>(
-              {
-                id: formId,
-                className: cn('group/form', className),
-              },
-              props
-            ),
-            render: render({ handleSubmit, meta: { formId, isPending } }),
+            props: mergeProps<'div'>({ id: formId }, props),
+            render: render({ handleSubmit, meta: { formId } }),
             state: {
               slot: 'form',
-              pending: isPending,
             },
           })}
         </FormContext>
@@ -316,26 +305,24 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
         (
           index: number,
           newValue: TValues[TFieldName] extends (infer U)[] ? U : never
-        ) => {
+        ) =>
           setValue((prev: unknown[]) =>
             Array.isArray(prev)
               ? ((prev as unknown[]).map((v, i) =>
                   i === index ? newValue : v
                 ) as never)
               : prev
-          )
-        },
+          ),
         [setValue]
       )
 
       const remove = React.useCallback(
-        (index: number) => {
+        (index: number) =>
           setValue((prev: unknown[]) =>
             Array.isArray(prev)
               ? ((prev as unknown[]).filter((_, i) => i !== index) as never)
               : prev
-          )
-        },
+          ),
         [setValue]
       )
 
@@ -407,14 +394,13 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
       if (!ctx) throw new Error('Submit must be used within a Form')
 
       const isPending = useAtomValue(formAtom.use(), (s) => s.isPending)
-      const handleSubmit = useSubmit()
 
       const memoizedValue = React.useMemo(
         () => ({
-          handleSubmit,
+          handleSubmit: ctx.handleSubmit,
           meta: { formId: ctx.formId, isPending },
         }),
-        [ctx.formId, handleSubmit, isPending]
+        [ctx.formId, ctx.handleSubmit, isPending]
       )
 
       return props.render(memoizedValue)

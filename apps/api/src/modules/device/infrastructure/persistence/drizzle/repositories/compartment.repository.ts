@@ -1,22 +1,10 @@
-import { CompartmentSchema } from '@rozumari/contract/device/schemas/compartment.schema'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
-import { encodeSync } from 'effect/Schema'
 
-import type { DrizzleMapper } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
-
-import { Compartment } from '@/modules/device/domain/entities/compartment.entity'
-import { CompartmentRepository } from '@/modules/device/domain/repositories/compartment.repository'
+import { CompartmentRepository } from '@/modules/device/application/ports/compartment.repository'
+import { DrizzleCompartmentMapper } from '@/modules/device/infrastructure/persistence/drizzle/mappers/compartment.mapper'
 import { compartments } from '@/modules/device/infrastructure/persistence/drizzle/schema'
 import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizzle/drizzle.repository'
-
-export const DrizzleCompartmentMapper: DrizzleMapper<
-  Compartment,
-  CompartmentSchema
-> = {
-  toEntity: (entity) => Compartment.make(entity),
-  toRow: encodeSync(CompartmentSchema) as never,
-}
 
 export const DrizzleCompartmentRepository = Layer.effect(
   CompartmentRepository,

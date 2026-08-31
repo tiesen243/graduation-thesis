@@ -20,7 +20,7 @@ import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { ResetPasswordUseCase } from '@/modules/auth/application/use-case/reset-password'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
-import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/constants'
+import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/domain/constants'
 
 export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
   handlers

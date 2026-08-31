@@ -5,10 +5,10 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
+import { CompartmentRepository } from '@/modules/device/application/ports/compartment.repository'
+import { DeviceRepository } from '@/modules/device/application/ports/device.repository'
 import { Compartment } from '@/modules/device/domain/entities/compartment.entity'
 import { Device } from '@/modules/device/domain/entities/device.entity'
-import { CompartmentRepository } from '@/modules/device/domain/repositories/compartment.repository'
-import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
 import { withTransaction } from '@/shared/utils'
 
 export class AddDeviceUseCase extends Context.Service<
@@ -20,8 +20,8 @@ export class AddDeviceUseCase extends Context.Service<
   }
 >()('device/application/AddDeviceUseCase', {
   make: Effect.gen(function* make() {
-    const deviceRepository = yield* DeviceRepository
     const compartmentRepository = yield* CompartmentRepository
+    const deviceRepository = yield* DeviceRepository
 
     return {
       execute: Effect.fn(function* execute(input) {

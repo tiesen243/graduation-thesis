@@ -7,7 +7,7 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { UserRepository } from '@/modules/user/domain/repositoties/user.repository'
+import { UserRepository } from '@/modules/user/application/ports/user.repository'
 
 export class DeleteUserUseCase extends Context.Service<
   DeleteUserUseCase,
@@ -29,9 +29,7 @@ export class DeleteUserUseCase extends Context.Service<
         const { userId } = yield* CurrentUser
         if (userId === id)
           return yield* Effect.fail(
-            new Forbidden({
-              message: 'You cannot delete your own account',
-            })
+            new Forbidden({ message: 'You cannot delete your own account' })
           )
 
         const [user] = yield* userRepository.findMany({

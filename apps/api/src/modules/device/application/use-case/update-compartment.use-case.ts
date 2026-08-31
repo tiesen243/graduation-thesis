@@ -5,7 +5,7 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { CompartmentRepository } from '@/modules/device/domain/repositories/compartment.repository'
+import { CompartmentRepository } from '@/modules/device/application/ports/compartment.repository'
 
 export class UpdateCompartmentUseCase extends Context.Service<
   UpdateCompartmentUseCase,

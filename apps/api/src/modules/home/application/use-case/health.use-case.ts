@@ -4,8 +4,6 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { env } from '@/shared/env'
-
 export class HealthUseCase extends Context.Service<
   HealthUseCase,
   {
@@ -16,7 +14,8 @@ export class HealthUseCase extends Context.Service<
     execute: () =>
       Effect.succeed({
         status: 'ok',
-        environment: env.NODE_ENV,
+        // oxlint-disable-next-line no-restricted-properties
+        environment: process.env.NODE_ENV ?? 'development',
         uptime: process.uptime(),
         memory: {
           used: process.memoryUsage().heapUsed / 1024 / 1024,

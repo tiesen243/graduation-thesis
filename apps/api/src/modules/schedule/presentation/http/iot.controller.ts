@@ -1,7 +1,7 @@
 import { Api } from '@rozumari/contract'
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
-import { Effect } from 'effect'
+import * as Effect from 'effect/Effect'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { ListSchedulesUseCase } from '@/modules/schedule/application/use-case/list-schedules.use-case'

@@ -9,9 +9,9 @@ import * as Layer from 'effect/Layer'
 import * as Schema from 'effect/Schema'
 import * as HttpServerRequest from 'effect/unstable/http/HttpServerRequest'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
-import { COOKIE_KEYS } from '@/modules/auth/constants'
-import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
+import { AuthService } from '@/modules/auth/application/ports/auth.service'
+import { SessionRepository } from '@/modules/auth/application/ports/session.repository'
+import { COOKIE_KEYS } from '@/modules/auth/domain/constants'
 
 export class LogoutUseCase extends Context.Service<
   LogoutUseCase,
@@ -26,8 +26,9 @@ export class LogoutUseCase extends Context.Service<
   }
 >()('auth/application/LogoutUseCase', {
   make: Effect.gen(function* make() {
-    const authService = yield* AuthService
     const sessionRepository = yield* SessionRepository
+
+    const authService = yield* AuthService
 
     return {
       execute: Effect.fn(function* execute(input) {

@@ -3,7 +3,7 @@ import * as Command from 'effect/unstable/cli/Command'
 import * as Flag from 'effect/unstable/cli/Flag'
 
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
-import { Jwt } from '@/shared/infrastructure/jwt'
+import { Jwt } from '@/shared/application/services/jwt.service'
 
 const listDevices = Command.make(
   'list',

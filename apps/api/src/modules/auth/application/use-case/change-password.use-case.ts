@@ -10,10 +10,10 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { Password } from '@/modules/auth/application/security/password'
+import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
+import { PasswordService } from '@/modules/auth/application/ports/password.service'
+import { SessionRepository } from '@/modules/auth/application/ports/session.repository'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
-import { AccountRepository } from '@/modules/auth/domain/repositories/account.repository'
-import { SessionRepository } from '@/modules/auth/domain/repositories/session.repository'
 
 export class ChangePasswordUseCase extends Context.Service<
   ChangePasswordUseCase,
@@ -30,7 +30,8 @@ export class ChangePasswordUseCase extends Context.Service<
   make: Effect.gen(function* make() {
     const accountRepository = yield* AccountRepository
     const sessionRepository = yield* SessionRepository
-    const password = yield* Password
+
+    const passwordService = yield* PasswordService
 
     return {
       execute: Effect.fn(function* execute(input) {
@@ -45,7 +46,7 @@ export class ChangePasswordUseCase extends Context.Service<
         })
 
         if (!account?.password) {
-          const hashedPassword = yield* password.hash(input.newPassword)
+          const hashedPassword = yield* passwordService.hash(input.newPassword)
           yield* accountRepository.save(
             Account.make({
               provider: AccountProvider.make('credentials'),
@@ -61,14 +62,14 @@ export class ChangePasswordUseCase extends Context.Service<
         if (!input.currentPassword)
           return yield* Effect.fail(new InvalidCredentials())
 
-        const isPasswordValid = yield* password.verify(
+        const isPasswordValid = yield* passwordService.verify(
           input.currentPassword,
           account.password
         )
         if (!isPasswordValid)
           return yield* Effect.fail(new InvalidCredentials())
 
-        const hashedPassword = yield* password.hash(input.newPassword)
+        const hashedPassword = yield* passwordService.hash(input.newPassword)
         yield* accountRepository.save(account.updatePassword(hashedPassword))
         yield* sessionRepository.deleteManyByUser(userId)
 

@@ -2,8 +2,8 @@ import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as Ref from 'effect/Ref'
 
+import { DeviceRepository } from '@/modules/device/application/ports/device.repository'
 import { DeviceCompartmentsAggregate } from '@/modules/device/domain/entities/device-compartments.aggregate'
-import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 

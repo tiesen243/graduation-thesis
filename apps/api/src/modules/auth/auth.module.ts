@@ -1,9 +1,8 @@
 import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
-import type { UserService } from '@/modules/user/application/user.service'
+import type { UserService } from '@/modules/user/application/ports/user.service'
 
-import { AuthService } from '@/modules/auth/application/auth.service'
 import { ChangePasswordUseCase } from '@/modules/auth/application/use-case/change-password.use-case'
 import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
@@ -21,7 +20,7 @@ import { authMiddleware } from '@/modules/auth/presentation/middleware/auth.midd
 export class AuthModule {
   public static create(
     config: Pick<AppModule.Config, 'persistence' | 'auth'>,
-    imports: { userService: Layer.Layer<UserService, unknown> }
+    imports: Layer.Layer<UserService>
   ) {
     const infrastructureLayer = AuthInfrastructureModule.create(
       config.persistence,
@@ -39,12 +38,7 @@ export class AuthModule {
       WhoAmIUseCase.layer
     )
 
-    const serviceLayer = Layer.provideMerge(
-      AuthService.layer,
-      imports.userService
-    )
-
-    const applicationLayer = Layer.provideMerge(useCaseLayer, serviceLayer)
+    const applicationLayer = Layer.provideMerge(useCaseLayer, imports)
 
     const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
 
@@ -54,16 +48,9 @@ export class AuthModule {
       ),
 
       exports: {
-        layer,
-
-        middlewares: {
-          auth: authMiddleware.pipe(Layer.provide(layer)),
-          admin: adminMiddleware.pipe(Layer.provide(layer)),
-        },
-
-        services: {
-          authService: AuthService.layer,
-        },
+        middleware: Layer.merge(authMiddleware, adminMiddleware).pipe(
+          Layer.provide(layer)
+        ),
       },
     }
   }

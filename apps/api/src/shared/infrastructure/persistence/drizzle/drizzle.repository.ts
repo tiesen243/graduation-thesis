@@ -3,7 +3,7 @@ import type { IndexColumn, AnyPgTable } from 'drizzle-orm/pg-core'
 import { and, eq } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 
-import type { IRepository } from '@/shared/repository'
+import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
@@ -89,5 +89,5 @@ export const makeDrizzleRepository = Effect.fn(function* makeDrizzleRepository<
 
       yield* db.delete(table).where(whereSql).pipe(Effect.orDie)
     }),
-  } satisfies IRepository<TEntity>
+  } satisfies IBaseRepository<TEntity>
 })

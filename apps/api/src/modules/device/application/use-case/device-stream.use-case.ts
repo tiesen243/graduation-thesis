@@ -10,8 +10,8 @@ import * as Layer from 'effect/Layer'
 import * as Schedule from 'effect/Schedule'
 import * as Stream from 'effect/Stream'
 
-import { DeviceRepository } from '@/modules/device/domain/repositories/device.repository'
-import { StreamService } from '@/shared/stream.service'
+import { DeviceRepository } from '@/modules/device/application/ports/device.repository'
+import { StreamService } from '@/shared/application/services/stream.service'
 
 export class DeviceStreamUseCase extends Context.Service<
   DeviceStreamUseCase,

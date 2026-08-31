@@ -1,7 +1,7 @@
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { NotificationRepository } from '@/modules/notification/domain/repositories/notification.repository'
+import { NotificationRepository } from '@/modules/notification/application/ports/notification.repository'
 import { makeInMemoryRepository } from '@/shared/infrastructure/persistence/in-memory/in-memory.repository'
 import { InMemoryClient } from '@/shared/infrastructure/persistence/in-memory/in-menory.client'
 
