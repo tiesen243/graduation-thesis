@@ -1,7 +1,9 @@
 import type { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
-import type { Token,
+import type {
+  Token,
   AccessToken,
-  RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
+  RefreshToken,
+} from '@rozumari/contract/auth/schemas/token.schema'
 import type {
   UserId,
   UserRole,
