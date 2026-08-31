@@ -1,47 +1,49 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Add core hardware and network components:\n\n- Add buzzer module support\n- Integrate API client for HTTP communication\n- Implement real-time SSE streaming handler\n"
-    filename: 2026-08-27-mtba0k1q.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Restructure application architecture:\n\n- Reorganize directory structure and module layout for better maintainability.\n- Refactor infrastructure layers and dependency injection logic.\n"
+    filename: 2026-08-31-mtgvwzqd.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/eda:\n    type: patch\n---\n\n## Merge pcb and proteus package\n\n- Consolidated `@rozumari/pcb` and `@rozumari/proteus` into a single unified `@rozumari/eda` package.\n- Updated internal asset paths and component footprint references to use `@rozumari/eda`.\n"
+    filename: 2026-08-29-mte7ydjy.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
-  - id: npm:@rozumari/github
+  - id: npm:@rozumari/web
     updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/firmware
     updated: false
   - changelogIds:
-      - 2026-08-27-mtba0k1q.md
-    id: npm:@rozumari/firmware
+      - 2026-08-31-mtgvwzqd.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-08-29-mte7ydjy.md
+    id: npm:@rozumari/eda
     updated: true
   - id: npm:@rozumari/lib
     updated: false
-  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/pcb
-    updated: false
-  - id: npm:@rozumari/proteus
+  - id: npm:@rozumari/github
     updated: false
   - id: npm:@rozumari/mobile
     updated: false
-  - id: npm:@rozumari/api
+  - id: npm:@rozumari/ui
     updated: false
   - id: npm:@rozumari/contract
     updated: false
-  - id: npm:@rozumari/web
+  - id: npm:@rozumari/oxlint
     updated: false
 npm:packages:
   - id: npm:graduation-thesis
-  - id: npm:@rozumari/github
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/pcb
-  - id: npm:@rozumari/proteus
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/contract
   - id: npm:@rozumari/web
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/eda
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/oxlint
