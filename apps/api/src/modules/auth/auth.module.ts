@@ -7,6 +7,7 @@ import { ChangePasswordUseCase } from '@/modules/auth/application/use-case/chang
 import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
 import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-case'
+import { OAuthUseCase } from '@/modules/auth/application/use-case/oauth.use-case'
 import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { ResetPasswordUseCase } from '@/modules/auth/application/use-case/reset-password'
@@ -25,22 +26,21 @@ export class AuthModule {
     const infrastructureLayer = AuthInfrastructureModule.create(
       config.persistence,
       config.auth
-    )
+    ).pipe(Layer.merge(imports))
 
     const useCaseLayer = Layer.mergeAll(
       ChangePasswordUseCase.layer,
       ForgotPasswordUseCase.layer,
       LoginUseCase.layer,
       LogoutUseCase.layer,
+      OAuthUseCase.layer,
       RefreshTokenUseCase.layer,
       RegisterUseCase.layer,
       ResetPasswordUseCase.layer,
       WhoAmIUseCase.layer
     )
 
-    const applicationLayer = Layer.provideMerge(useCaseLayer, imports)
-
-    const layer = Layer.provideMerge(applicationLayer, infrastructureLayer)
+    const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)
 
     return {
       controller: Layer.mergeAll(authController, oauthController).pipe(

@@ -28,7 +28,7 @@ export class AppModule {
     const scheduleModule = ScheduleModule.create({ persistence })
     const authModule = AuthModule.create(
       { persistence, auth },
-      userModule.exports.userService as never
+      userModule.exports.userService
     )
 
     const controllerLayer = Layer.mergeAll(

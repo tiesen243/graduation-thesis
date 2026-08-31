@@ -1,44 +1,26 @@
-import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
-
 import { Api } from '@rozumari/contract'
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
-import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Effect from 'effect/Effect'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
-import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
-import { AuthService } from '@/modules/auth/application/ports/auth.service'
-import { OAuthService } from '@/modules/auth/application/ports/oauth.service'
+import { OAuthUseCase } from '@/modules/auth/application/use-case/oauth.use-case'
 import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/domain/constants'
-import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { generateStateOrCode } from '@/modules/auth/domain/utils/crypto'
-import { UserService } from '@/modules/user/application/ports/user.service'
-import { ResendService } from '@/shared/application/services/resend.service'
-import { withTransaction } from '@/shared/utils'
 
 export const oauthController = HttpApiBuilder.group(
   Api,
   'oauth',
-  Effect.fn(function* oauthController(handlers) {
-    const accountRepository = yield* AccountRepository
-
-    const authService = yield* AuthService
-    const userService = yield* UserService
-    const resendService = yield* Effect.option(ResendService)
-
-    return handlers
+  (handlers) => 
+    handlers
       .handle(
         'authorize',
         Effect.fn(function* authorizeHandler({ params, query }) {
-          const provider = yield* OAuthService.forProvider(params.provider)
-
           const state = yield* generateStateOrCode
           const code = yield* generateStateOrCode
 
-          const authorizeUrl = yield* provider.createAuthorizationUrl(
-            state,
-            code
+          const authorizeUrl = yield* OAuthUseCase.use((s) =>
+            s.authorize(params.provider, state, code)
           )
 
           return yield* HttpServerResponse.redirect(authorizeUrl).pipe(
@@ -67,8 +49,6 @@ export const oauthController = HttpApiBuilder.group(
       .handle(
         'callback',
         Effect.fn(function* callbackHandler({ params, query, request }) {
-          const provider = yield* OAuthService.forProvider(params.provider)
-
           const { code, state } = query
           const storedCode = request.cookies[COOKIE_KEYS.OAUTH_CODE]
           const storedState = request.cookies[COOKIE_KEYS.OAUTH_STATE]
@@ -79,71 +59,10 @@ export const oauthController = HttpApiBuilder.group(
               new ProviderError({ message: 'Invalid state parameter' })
             )
 
-          const { id, email } = yield* provider
-            .fetchUserData(code, storedCode)
-            .pipe(Effect.orDie)
-
-          const { accessToken, refreshToken, expiresAt, isNewUser } =
-            yield* Effect.gen(function* tx() {
-              const [[account], user] = yield* Effect.all([
-                accountRepository.findMany({
-                  where: {
-                    provider: { eq: params.provider },
-                    providerId: { eq: id },
-                  },
-                  limit: 1,
-                }),
-                userService.findByIdentifier({ email }),
-              ])
-
-              let _isNewUser = false,
-                userId: UserId,
-                userRole: UserRole
-
-              if (account) {
-                ;({ userId } = account)
-                userRole = user?.role ?? UserRole.make('user')
-              } else {
-                if (user) {
-                  if (user.deletedAt !== null)
-                    return yield* Effect.fail(
-                      new ProviderError({ message: 'User account is deleted' })
-                    )
-
-                  userId = user.id
-                  userRole = user.role
-                } else {
-                  const newUser = yield* userService.create({
-                    username: crypto.randomUUID().slice(0, 8),
-                    email,
-                  })
-                  userId = newUser.id
-                  userRole = newUser.role
-                  _isNewUser = true
-                }
-
-                const newAccount = Account.make({
-                  provider: params.provider,
-                  providerId: id,
-                  userId,
-                })
-                yield* accountRepository.save(newAccount)
-              }
-
-              const result = yield* authService.createRefreshToken(
-                userId,
-                userRole
-              )
-
-              return { ...result, isNewUser: _isNewUser }
-            }).pipe(withTransaction)
-
-          if (isNewUser && resendService._tag === 'Some')
-            yield* resendService.value.sendEmail({
-              to: [email],
-              subject: 'Welcome to Rozumari!',
-              html: `<p>Welcome to Rozumari! Your account has been created successfully.</p>`,
-            })
+          const { accessToken, refreshToken, expiresAt } =
+            yield* OAuthUseCase.use((s) =>
+              s.callback(params.provider, code, storedCode)
+            )
 
           const original = new URL(request.originalUrl)
           const redirectUri = new URL(
@@ -196,22 +115,16 @@ export const oauthController = HttpApiBuilder.group(
       .handle(
         'exchange',
         Effect.fn(function* exchangeHandler({ payload }) {
-          const { token } = payload
-
-          const { session, user } = yield* authService.verifyRefreshToken(token)
-
-          const accessToken = yield* authService.createAccessToken(
-            user.id,
-            user.role
-          )
+          const { accessToken, refreshToken, expiresAt } =
+            yield* OAuthUseCase.use((s) => s.exchange(payload.token))
 
           return yield* HttpServerResponse.json({ success: true }).pipe(
             Effect.flatMap(
               HttpServerResponse.setCookies([
                 [
                   COOKIE_KEYS.REFRESH_TOKEN,
-                  token,
-                  { ...COOKIE_OPTIONS, expires: session.expiresAt },
+                  refreshToken,
+                  { ...COOKIE_OPTIONS, expires: expiresAt },
                 ],
                 [
                   COOKIE_KEYS.ACCESS_TOKEN,
@@ -224,5 +137,5 @@ export const oauthController = HttpApiBuilder.group(
           )
         })
       )
-  })
+  
 )
