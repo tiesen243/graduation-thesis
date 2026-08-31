@@ -13,13 +13,10 @@ import { env } from '@/shared/env'
 function bootstrap() {
   const { routes } = AppModule.create({
     persistence: 'drizzle',
-    auth: {
-      secret: env.AUTH_SECRET,
-      providers: [
-        new FacebookProvider(env.AUTH_FACEBOOK_ID, env.AUTH_FACEBOOK_SECRET),
-        new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET),
-      ],
-    },
+    providers: [
+      new FacebookProvider(env.AUTH_FACEBOOK_ID, env.AUTH_FACEBOOK_SECRET),
+      new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET),
+    ],
   })
 
   const { handler } = HttpRouter.toWebHandler(

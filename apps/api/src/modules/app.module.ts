@@ -18,7 +18,7 @@ import * as pkgJson from '../../package.json' with { type: 'json' }
 
 export class AppModule {
   public static create(config: AppModule.Config) {
-    const { persistence, auth } = config
+    const { persistence, providers } = config
 
     const infrastructureLayer = InfrastructureModule.create(persistence)
 
@@ -27,7 +27,7 @@ export class AppModule {
     const deviceModule = DeviceModule.create({ persistence })
     const scheduleModule = ScheduleModule.create({ persistence })
     const authModule = AuthModule.create(
-      { persistence, auth },
+      { persistence, providers },
       userModule.exports.userService
     )
 
@@ -81,9 +81,6 @@ export namespace AppModule {
   export interface Config {
     persistence: 'in-memory' | 'drizzle'
 
-    auth: {
-      secret: string
-      providers: BaseProvider[]
-    }
+    providers: BaseProvider[]
   }
 }

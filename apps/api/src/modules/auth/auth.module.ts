@@ -20,12 +20,12 @@ import { authMiddleware } from '@/modules/auth/presentation/middleware/auth.midd
 
 export class AuthModule {
   public static create(
-    config: Pick<AppModule.Config, 'persistence' | 'auth'>,
+    config: Pick<AppModule.Config, 'persistence' | 'providers'>,
     imports: Layer.Layer<UserService>
   ) {
     const infrastructureLayer = AuthInfrastructureModule.create(
       config.persistence,
-      config.auth
+      config.providers
     ).pipe(Layer.merge(imports))
 
     const useCaseLayer = Layer.mergeAll(

@@ -13,7 +13,7 @@
     },
     "apps/api": {
       "name": "@rozumari/api",
-      "version": "0.0.14",
+      "version": "0.0.15",
       "bin": "./dist/cli.mjs",
       "dependencies": {
         "@effect/platform-bun": "catalog:effect",
@@ -88,7 +88,7 @@
     },
     "packages/eda": {
       "name": "@rozumari/eda",
-      "version": "0.0.0",
+      "version": "0.0.1",
     },
     "packages/firmware": {
       "name": "@rozumari/firmware",
@@ -116,7 +116,7 @@
         "@rozumari/lib": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "cnfast": "^0.1.0",
-        "lucide-react": "^1.37.0",
+        "lucide-react": "^1.38.0",
       },
       "devDependencies": {
         "@rozumari/oxlint": "workspace:*",
@@ -827,7 +827,7 @@
 
     "lru-cache": ["lru-cache@5.1.1", "", { "dependencies": { "yallist": "^3.0.2" } }, "sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w=="],
 
-    "lucide-react": ["lucide-react@1.37.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-LPsB4rD1TD6wZu1djKOf9vUnS1jTNaHbolXebXDgiTdb6jeA1agIJhJsIybCmjKmQClcOaal1o1OaiYahEftyQ=="],
+    "lucide-react": ["lucide-react@1.38.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-xZCyBd/wiVUDactoCc+42TjL0aB7EBOXsuX+tjz+W/sGzw2KhHpL1NOH3FIaVUcpimvUBpIYfz34Ofj9S5JEzQ=="],
 
     "magic-string": ["magic-string@0.30.21", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.5" } }, "sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ=="],
 

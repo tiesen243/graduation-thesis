@@ -5,12 +5,13 @@ import { scrypt } from 'node:crypto'
 
 import { PasswordService } from '@/modules/auth/application/ports/password.service'
 import { constantTimeEqual } from '@/modules/auth/domain/utils/crypto'
+import { env } from '@/shared/env'
 
 export const PasswordServiceLayer = ({
-  secret = '',
+  secret = env.AUTH_SECRET,
   dkLen = 64,
   ...config
-}: PasswordService.Config) =>
+}: PasswordService.Config = {}) =>
   Layer.effect(
     PasswordService,
     Effect.sync(() => {
