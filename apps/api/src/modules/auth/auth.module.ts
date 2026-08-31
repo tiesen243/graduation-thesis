@@ -20,13 +20,18 @@ import { authMiddleware } from '@/modules/auth/presentation/middleware/auth.midd
 
 export class AuthModule {
   public static create(
-    config: Pick<AppModule.Config, 'persistence' | 'auth'>,
+    config: Pick<AppModule.Config, 'persistence' | 'providers'>,
     imports: Layer.Layer<UserService>
   ) {
     const infrastructureLayer = AuthInfrastructureModule.create(
       config.persistence,
+<<<<<<< Updated upstream
       config.auth
     ).pipe(Layer.merge(imports))
+=======
+      config.providers
+    )
+>>>>>>> Stashed changes
 
     const useCaseLayer = Layer.mergeAll(
       ChangePasswordUseCase.layer,

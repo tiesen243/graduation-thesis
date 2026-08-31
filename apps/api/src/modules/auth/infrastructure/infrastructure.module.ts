@@ -15,14 +15,14 @@ import { PasswordServiceLayer } from '@/modules/auth/infrastructure/services/pas
 export class AuthInfrastructureModule {
   public static create(
     driver: AppModule.Config['persistence'],
-    { secret, providers }: AppModule.Config['auth']
+    providers: AppModule.Config['providers']
   ) {
     const infrasLayer = driver === 'in-memory' ? this.inMemory : this.drizzle
 
     const serviceLayer = Layer.mergeAll(
       AuthServiceLayer,
       OAuthServiceLayer(providers),
-      PasswordServiceLayer({ secret })
+      PasswordServiceLayer()
     )
 
     return Layer.provideMerge(serviceLayer, infrasLayer)

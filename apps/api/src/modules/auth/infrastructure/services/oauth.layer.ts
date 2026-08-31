@@ -6,9 +6,7 @@ import type { AppModule } from '@/modules/app.module'
 
 import { OAuthService } from '@/modules/auth/application/ports/oauth.service'
 
-export const OAuthServiceLayer = (
-  providers: AppModule.Config['auth']['providers']
-) =>
+export const OAuthServiceLayer = (providers: AppModule.Config['providers']) =>
   Layer.succeed(OAuthService, {
     forProvider: Effect.fn(function* forProvider(provider) {
       for (const p of providers)
