@@ -27,13 +27,8 @@ export class AppModule {
     const deviceModule = DeviceModule.create({ persistence })
     const scheduleModule = ScheduleModule.create({ persistence })
     const authModule = AuthModule.create(
-<<<<<<< Updated upstream
-      { persistence, auth },
-      userModule.exports.userService
-=======
       { persistence, providers },
-      userModule.exports.userService as never
->>>>>>> Stashed changes
+      userModule.exports.userService
     )
 
     const controllerLayer = Layer.mergeAll(

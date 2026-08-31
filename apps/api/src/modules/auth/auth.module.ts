@@ -25,13 +25,8 @@ export class AuthModule {
   ) {
     const infrastructureLayer = AuthInfrastructureModule.create(
       config.persistence,
-<<<<<<< Updated upstream
-      config.auth
-    ).pipe(Layer.merge(imports))
-=======
       config.providers
-    )
->>>>>>> Stashed changes
+    ).pipe(Layer.merge(imports))
 
     const useCaseLayer = Layer.mergeAll(
       ChangePasswordUseCase.layer,
