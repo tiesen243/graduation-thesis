@@ -1,3 +1,14 @@
+## @rozumari/api@0.0.16
+
+### Add Notification API
+
+- Introduced new Notification API endpoints for managing and delivering notifications.
+- Added API contracts, schemas, and request/response DTOs for notification payloads.
+
+### Add Notification UI
+
+- Implemented a new Notification UI component for displaying notifications to users.
+
 ## @rozumari/api@0.0.15
 
 ### Restructure application architecture:
