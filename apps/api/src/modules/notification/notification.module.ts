@@ -5,7 +5,7 @@ import type { DeviceService } from '@/modules/device/application/ports/device.se
 import type { StreamService } from '@/shared/application/services/stream.service'
 
 import { CreateNotificationUseCase } from '@/modules/notification/application/use-case/create-notification.use-case'
-import { ListNotificationUseCase } from '@/modules/notification/application/use-case/list-notification.use-case'
+import { ListNotificationsUseCase } from '@/modules/notification/application/use-case/list-notifications.use-case'
 import { ShowNotificationUseCase } from '@/modules/notification/application/use-case/show-notification.use-case'
 import { NotificationInfrastructureModule } from '@/modules/notification/infrastructure/infrastructure.module'
 import { notificationIoTController } from '@/modules/notification/presentation/http/notification-iot.controller'
@@ -21,7 +21,7 @@ export class NotificationModule {
     ).pipe(Layer.merge(imports))
 
     const useCaseLayer = Layer.mergeAll(
-      ListNotificationUseCase.layer,
+      ListNotificationsUseCase.layer,
       ShowNotificationUseCase.layer,
       CreateNotificationUseCase.layer
     )

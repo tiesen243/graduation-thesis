@@ -1,11 +1,16 @@
 import { Card } from '@rozumari/ui/components/card'
-import { Navigate, Outlet } from 'react-router'
+import { useLayoutEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router'
 
 import { useSession } from '@/lib/use-session'
 
 export default function AuthRoot() {
   const { user } = useSession()
-  if (user) return <Navigate to='/dashboard' replace />
+  const navigate = useNavigate()
+
+  useLayoutEffect(() => {
+    if (user) navigate('/dashboard', { replace: true })
+  }, [user, navigate])
 
   return (
     <main className='grid min-h-dvh place-items-center md:px-4'>

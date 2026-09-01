@@ -2,15 +2,15 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { AuthMiddleware } from '@/auth/middleware'
-import { ListNotificationDto } from '@/notification/dto/list-notification.dto'
+import { ListNotificationsDto } from '@/notification/dto/list-notifications.dto'
 import { ShowNotificationDto } from '@/notification/dto/show-notification.dto'
 import { NotificationNotFound } from '@/notification/schemas/notification.error'
 
 export class NotificationGroup extends HttpApiGroup.make('notification')
   .add(
     HttpApiEndpoint.get('list', '/', {
-      query: ListNotificationDto.Input,
-      success: ListNotificationDto,
+      query: ListNotificationsDto.Input,
+      success: ListNotificationsDto,
     })
   )
 

@@ -25,19 +25,22 @@ export class ShowNotificationUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const { userId } = yield* CurrentUser
+        const { userId, userRole } = yield* CurrentUser
 
         const { id } = input
 
         const [notification] = yield* notificationRepository.findMany({
           where: {
             id: { eq: id },
-            userId: { eq: userId },
+            ...(userRole === 'user' ? { userId: { eq: userId } } : {}),
           },
           limit: 1,
         })
         if (!notification)
           return yield* Effect.fail(new NotificationNotFound({ error: { id } }))
+
+        const readedNotification = notification.markAsRead()
+        yield* notificationRepository.save(readedNotification)
 
         return notification
       }),

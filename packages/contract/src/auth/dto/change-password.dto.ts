@@ -11,7 +11,7 @@ export class ChangePasswordDto extends Schema.TaggedClass<ChangePasswordDto>()(
 
 export namespace ChangePasswordDto {
   export const Input = Schema.Struct({
-    currentPassword: Schema.optionalKey(Password),
+    currentPassword: Schema.optional(Password),
     newPassword: Password,
   })
   export type Input = typeof Input.Type
