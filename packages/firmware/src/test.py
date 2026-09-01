@@ -8,7 +8,7 @@ from modules.st7735 import ST7735
 # 1. Khởi tạo màn hình
 tft = ST7735.create()
 tft.init()
-
+#helloconchim
 buzzer = Buzzer.create()
 
 # 2. Thông số
