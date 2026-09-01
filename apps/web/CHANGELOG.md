@@ -1,3 +1,9 @@
+## @rozumari/web@0.0.15
+
+### Add Notification UI
+
+- Implemented a new Notification UI component for displaying notifications to users.
+
 ## @rozumari/web@0.0.14
 
 ### Summary of Changes

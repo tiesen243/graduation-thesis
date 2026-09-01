@@ -1,49 +1,53 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Restructure application architecture:\n\n- Reorganize directory structure and module layout for better maintainability.\n- Refactor infrastructure layers and dependency injection logic.\n"
-    filename: 2026-08-31-mtgvwzqd.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Add Notification API\n\n- Introduced new Notification API endpoints for managing and delivering notifications.\n- Added API contracts, schemas, and request/response DTOs for notification payloads.\n"
+    filename: 2026-09-01-mtiiktz6.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:@rozumari/eda:\n    type: patch\n---\n\n## Merge pcb and proteus package\n\n- Consolidated `@rozumari/pcb` and `@rozumari/proteus` into a single unified `@rozumari/eda` package.\n- Updated internal asset paths and component footprint references to use `@rozumari/eda`.\n"
-    filename: 2026-08-29-mte7ydjy.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Add Notification UI\n\n- Implemented a new Notification UI component for displaying notifications to users.\n"
+    filename: 2026-09-01-mtiriw7a.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
-  - changelogIds:
-      - 2026-08-31-mtgvwzqd.md
-    id: npm:@rozumari/api
-    updated: true
-  - changelogIds:
-      - 2026-08-29-mte7ydjy.md
-    id: npm:@rozumari/eda
-    updated: true
-  - id: npm:@rozumari/lib
-    updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/mobile
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
-  - id: npm:@rozumari/contract
-    updated: false
   - id: npm:@rozumari/oxlint
     updated: false
+  - id: npm:@rozumari/mobile
+    updated: false
+  - id: npm:@rozumari/firmware
+    updated: false
+  - changelogIds:
+      - 2026-09-01-mtiiktz6.md
+      - 2026-09-01-mtiriw7a.md
+    id: npm:@rozumari/api
+    updated: true
+  - id: npm:@rozumari/eda
+    updated: false
+  - changelogIds:
+      - 2026-09-01-mtiriw7a.md
+    id: npm:@rozumari/web
+    updated: true
+  - id: npm:@rozumari/ui
+    updated: false
+  - id: npm:@rozumari/lib
+    updated: false
+  - changelogIds:
+      - 2026-09-01-mtiiktz6.md
+      - 2026-09-01-mtiriw7a.md
+    id: npm:@rozumari/contract
+    updated: true
 npm:packages:
   - id: npm:graduation-thesis
-  - id: npm:@rozumari/web
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/mobile
   - id: npm:@rozumari/firmware
   - id: npm:@rozumari/api
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/github
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/web
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
   - id: npm:@rozumari/contract
-  - id: npm:@rozumari/oxlint

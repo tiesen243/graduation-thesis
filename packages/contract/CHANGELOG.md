@@ -1,3 +1,14 @@
+## @rozumari/contract@0.0.11
+
+### Add Notification API
+
+- Introduced new Notification API endpoints for managing and delivering notifications.
+- Added API contracts, schemas, and request/response DTOs for notification payloads.
+
+### Add Notification UI
+
+- Implemented a new Notification UI component for displaying notifications to users.
+
 ## @rozumari/contract@0.0.10
 
 ### Summary of Changes
