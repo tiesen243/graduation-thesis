@@ -1,7 +1,7 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "2c4ff005-3766-4e0a-ab9d-0c200772e89b",
+  "id": "a0c7a870-f0e3-4829-b043-d6ac8f873dd1",
   "prevIds": ["00000000-0000-0000-0000-000000000000"],
   "ddl": [
     {
@@ -384,6 +384,19 @@
       "generated": null,
       "identity": null,
       "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "notifications"
+    },
+    {
+      "type": "varchar(24)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "device_id",
       "entityType": "columns",
       "schema": "public",
       "table": "notifications"
@@ -1104,6 +1117,19 @@
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "notifications_user_id_users_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "notifications"
+    },
+    {
+      "nameExplicit": false,
+      "columns": ["device_id"],
+      "schemaTo": "public",
+      "tableTo": "devices",
+      "columnsTo": ["id"],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "name": "notifications_device_id_devices_id_fkey",
       "entityType": "fks",
       "schema": "public",
       "table": "notifications"

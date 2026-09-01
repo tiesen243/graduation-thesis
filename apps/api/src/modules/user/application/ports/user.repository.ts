@@ -8,4 +8,4 @@ interface IUserRepository extends IBaseRepository<User> {}
 export class UserRepository extends Context.Service<
   UserRepository,
   IUserRepository
->()('user/domain/UserRepository') {}
+>()('user/application/UserRepository') {}

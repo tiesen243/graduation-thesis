@@ -3,8 +3,8 @@ CREATE TYPE "notification_level" AS ENUM('info', 'warning', 'error');--> stateme
 CREATE TYPE "schedule_status" AS ENUM('pending', 'completed', 'failed');--> statement-breakpoint
 CREATE TYPE "user_role" AS ENUM('user', 'admin');--> statement-breakpoint
 CREATE TABLE "accounts" (
-	"provider" varchar(255) NOT NULL,
-	"provider_id" varchar(255) NOT NULL,
+	"provider" varchar(255),
+	"provider_id" varchar(255),
 	"password" varchar(255),
 	"user_id" varchar(24) NOT NULL,
 	CONSTRAINT "accounts_pkey" PRIMARY KEY("provider","provider_id")
@@ -22,9 +22,9 @@ CREATE TABLE "compartments" (
 	"medicine" varchar(255),
 	"capacity" integer NOT NULL,
 	"dosage" numeric(8,2) NOT NULL,
-	"position" varchar(3) NOT NULL,
+	"position" varchar(3),
 	"last_refill_at" timestamp,
-	"device_id" varchar(24) NOT NULL,
+	"device_id" varchar(24),
 	CONSTRAINT "compartments_pkey" PRIMARY KEY("device_id","position")
 );
 --> statement-breakpoint
@@ -41,6 +41,7 @@ CREATE TABLE "devices" (
 CREATE TABLE "notifications" (
 	"id" varchar(24) PRIMARY KEY,
 	"user_id" varchar(24) NOT NULL,
+	"device_id" varchar(24),
 	"schedule_id" varchar(24),
 	"level" "notification_level" NOT NULL,
 	"title" varchar(255) NOT NULL,
@@ -51,8 +52,8 @@ CREATE TABLE "notifications" (
 );
 --> statement-breakpoint
 CREATE TABLE "schedule_items" (
-	"schedule_id" varchar(24) NOT NULL,
-	"slot" varchar(3) NOT NULL,
+	"schedule_id" varchar(24),
+	"slot" varchar(3),
 	"quantity" integer NOT NULL,
 	CONSTRAINT "schedule_items_pkey" PRIMARY KEY("schedule_id","slot")
 );
@@ -97,6 +98,7 @@ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fkey" FOREIGN K
 ALTER TABLE "compartments" ADD CONSTRAINT "compartments_device_id_devices_id_fkey" FOREIGN KEY ("device_id") REFERENCES "devices"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "devices" ADD CONSTRAINT "devices_user_id_users_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE SET NULL;--> statement-breakpoint
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_users_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;--> statement-breakpoint
+ALTER TABLE "notifications" ADD CONSTRAINT "notifications_device_id_devices_id_fkey" FOREIGN KEY ("device_id") REFERENCES "devices"("id") ON DELETE SET NULL;--> statement-breakpoint
 ALTER TABLE "notifications" ADD CONSTRAINT "notifications_schedule_id_schedules_id_fkey" FOREIGN KEY ("schedule_id") REFERENCES "schedules"("id") ON DELETE SET NULL;--> statement-breakpoint
 ALTER TABLE "schedule_items" ADD CONSTRAINT "schedule_items_schedule_id_schedules_id_fkey" FOREIGN KEY ("schedule_id") REFERENCES "schedules"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "schedules" ADD CONSTRAINT "schedules_user_id_users_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;--> statement-breakpoint

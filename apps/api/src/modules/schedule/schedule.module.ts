@@ -7,7 +7,7 @@ import { ListSchedulesUseCase } from '@/modules/schedule/application/use-case/li
 import { ShowScheduleUseCase } from '@/modules/schedule/application/use-case/show-schedule.use-case'
 import { UpdateScheduleUseCase } from '@/modules/schedule/application/use-case/update-schedule.use-case'
 import { ScheduleInfrastructureModule } from '@/modules/schedule/infrastructure/infrastructure.module'
-import { iotController } from '@/modules/schedule/presentation/http/iot.controller'
+import { scheduleIoTController } from '@/modules/schedule/presentation/http/schedule-iot.controller'
 import { scheduleController } from '@/modules/schedule/presentation/http/schedule.controller'
 
 export class ScheduleModule {
@@ -26,7 +26,7 @@ export class ScheduleModule {
     const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)
 
     return {
-      controller: Layer.merge(scheduleController, iotController).pipe(
+      controller: Layer.merge(scheduleController, scheduleIoTController).pipe(
         Layer.provide(layer)
       ),
     }

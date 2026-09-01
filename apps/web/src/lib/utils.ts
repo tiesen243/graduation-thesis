@@ -14,3 +14,10 @@ export function getBaseUrl() {
   if (env.VITE_VERCEL_URL) return `https://${env.VITE_VERCEL_URL}`
   return `http://localhost:${env.PORT}`
 }
+
+export function formatDate(value: Date) {
+  return new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'long',
+    timeStyle: 'short',
+  }).format(value)
+}

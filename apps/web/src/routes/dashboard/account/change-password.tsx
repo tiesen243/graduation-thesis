@@ -2,7 +2,6 @@ import { ChangePasswordDto } from '@rozumari/contract/auth/dto/change-password.d
 import { Button } from '@rozumari/ui/components/button'
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
   FieldSet,
@@ -44,7 +43,7 @@ export default function ChangePasswordPage() {
         }}
         render={({ handleSubmit }) => (
           <form
-            className='mt-4 max-w-md'
+            className='mt-4'
             onSubmit={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -143,11 +142,6 @@ export default function ChangePasswordPage() {
                 </Button>
               )}
             />
-
-            <FieldDescription>
-              Make sure your new password is at least 8 characters long and
-              includes uppercase, lowercase, a number, and a symbol.
-            </FieldDescription>
           </Field>
         </FieldSet>
       </changePasswordForm.Root>

@@ -21,10 +21,17 @@ export default [
       route('/pill-boxes', './routes/dashboard/pill-boxes/_index.tsx'),
       route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),
 
-      route('/schedules', './routes/dashboard/schedules.tsx'),
+      route('/schedules', './routes/dashboard/schedules/_index.tsx'),
+      route('/schedules/:id', './routes/dashboard/schedules/[id].tsx'),
 
-      route('/account', './routes/dashboard/account.tsx'),
-      route('/change-password', './routes/dashboard/change-password.tsx'),
+      route('/notifications', './routes/dashboard/notifications/_index.tsx'),
+      route('/notifications/:id', './routes/dashboard/notifications/[id].tsx'),
+
+      route('/account', './routes/dashboard/account/_index.tsx'),
+      route(
+        '/account/change-password',
+        './routes/dashboard/account/change-password.tsx'
+      ),
 
       route('/*', './routes/dashboard/[...catch-all].tsx'),
     ])

@@ -12,3 +12,10 @@ export class ScheduleNotFound extends Schema.TaggedError<ScheduleNotFound>()(
   }),
   { httpApiStatus: 404 }
 ) {}
+
+export class ScheduleError extends Schema.TaggedError<ScheduleError>()(
+  'schedule/domain/ScheduleError',
+  {
+    reason: Schema.Union([ScheduleNotFound]),
+  }
+) {}

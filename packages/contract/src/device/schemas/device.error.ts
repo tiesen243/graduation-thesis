@@ -36,6 +36,16 @@ export class DeviceAlreadyLinked extends Schema.TaggedError<DeviceAlreadyLinked>
   { httpApiStatus: 400 }
 ) {}
 
+export class DeviceNotLinked extends Schema.TaggedError<DeviceNotLinked>()(
+  'device/domain/DeviceNotLinked',
+  ApiResponse({
+    status: 400,
+    message: 'Device not linked',
+    errorSchema: Schema.Struct({ id: DeviceId }),
+  }),
+  { httpApiStatus: 400 }
+) {}
+
 export class DeviceError extends Schema.TaggedError<DeviceError>()(
   'device/domain/DeviceError',
   {
@@ -43,6 +53,7 @@ export class DeviceError extends Schema.TaggedError<DeviceError>()(
       DeviceNotFound,
       DeviceAlreadyExists,
       DeviceAlreadyLinked,
+      DeviceNotLinked,
     ]),
   }
 ) {}

@@ -6,7 +6,7 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { ListSchedulesUseCase } from '@/modules/schedule/application/use-case/list-schedules.use-case'
 
-export const iotController = HttpApiBuilder.group(
+export const scheduleIoTController = HttpApiBuilder.group(
   Api,
   'schedule-iot',
   (handlers) =>

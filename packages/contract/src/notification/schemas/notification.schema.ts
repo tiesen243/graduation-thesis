@@ -2,6 +2,7 @@ import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
+import { DeviceId } from '@/device/schemas/device.schema'
 import { ScheduleId } from '@/schedule/schemas/schedule.schema'
 import { Cuid2 } from '@/schema'
 import { UserId } from '@/user/schemas/user.schema'
@@ -20,7 +21,8 @@ export type NotificationLevel = typeof NotificationLevel.Type
 export const NotificationSchema = Schema.Struct({
   id: NotificationId,
   userId: UserId,
-  sheduleId: Schema.NullOr(ScheduleId),
+  deviceId: Schema.NullOr(DeviceId),
+  scheduleId: Schema.NullOr(ScheduleId),
 
   level: NotificationLevel.pipe(
     Schema.withConstructorDefault(Effect.succeed('info'))

@@ -8,7 +8,7 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 
-export const iotController = HttpApiBuilder.group(
+export const DeviceIoTController = HttpApiBuilder.group(
   Api,
   'device-iot',
   (handlers) =>

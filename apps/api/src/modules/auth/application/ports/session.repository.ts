@@ -17,4 +17,4 @@ interface ISessionRepository extends IBaseRepository<Session> {
 export class SessionRepository extends Context.Service<
   SessionRepository,
   ISessionRepository
->()('auth/domain/SessionRepository') {}
+>()('auth/application/SessionRepository') {}

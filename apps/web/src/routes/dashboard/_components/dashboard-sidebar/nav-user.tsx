@@ -101,7 +101,7 @@ export function NavUser() {
               />
               <DropdownMenuItem
                 render={
-                  <Link to='/dashboard/change-password'>
+                  <Link to='/dashboard/account/change-password'>
                     <KeyRoundIcon /> Change Password
                   </Link>
                 }

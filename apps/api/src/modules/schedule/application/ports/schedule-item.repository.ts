@@ -8,4 +8,4 @@ interface IScheduleItemRepository extends IBaseRepository<ScheduleItem> {}
 export class ScheduleItemRepository extends Context.Service<
   ScheduleItemRepository,
   IScheduleItemRepository
->()('schedule/domain/ScheduleItemRepository') {}
+>()('schedule/application/ScheduleItemRepository') {}

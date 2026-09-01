@@ -45,6 +45,7 @@ export class LinkDeviceUseCase extends Context.Service<
         const linkedDevice = Device.make({
           ...device,
           status: 'linked' as Device['status'],
+          activatedAt: device.activatedAt ?? new Date(),
           userId,
         })
         yield* deviceRepository.save(linkedDevice)

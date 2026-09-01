@@ -4,14 +4,20 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@rozumari/ui/components/sidebar'
-import { Navigate, Outlet } from 'react-router'
+import { useLayoutEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router'
 
 import { useSession } from '@/lib/use-session'
+import { Breadcrumbs } from '@/routes/dashboard/_components/breadcrumbs'
 import { DashboardSidebar } from '@/routes/dashboard/_components/dashboard-sidebar'
 
 export default function DashboardRoot() {
   const { user } = useSession()
-  if (!user) return <Navigate to='/login' replace />
+  const navigate = useNavigate()
+
+  useLayoutEffect(() => {
+    if (!user) navigate('/login', { replace: true })
+  }, [user, navigate])
 
   return (
     <SidebarProvider>
@@ -25,12 +31,7 @@ export default function DashboardRoot() {
             className='mr-2 h-4 data-vertical:self-center'
           />
 
-          <div className='flex flex-col'>
-            <h1 className='text-sm leading-none font-semibold'>Dashboard</h1>
-            <p className='text-xs text-muted-foreground'>
-              Medication adherence overview
-            </p>
-          </div>
+          <Breadcrumbs />
         </header>
 
         <section className='px-4 py-6'>
