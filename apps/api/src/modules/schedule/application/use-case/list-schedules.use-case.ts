@@ -1,7 +1,6 @@
 import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
-import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -13,7 +12,7 @@ export class ListSchedulesUseCase extends Context.Service<
   {
     readonly execute: (
       input: ListSchedulesDto.Input & { userId?: UserId }
-    ) => Effect.Effect<ListSchedulesDto.Output, never, CurrentDevice>
+    ) => Effect.Effect<ListSchedulesDto.Output, never>
   }
 >()('schedule/application/ListSchedulesUseCase', {
   make: Effect.gen(function* make() {
@@ -21,9 +20,7 @@ export class ListSchedulesUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const deviceId = yield* CurrentDevice
-
-        const { userId, startDate, endDate } = input
+        const { userId, deviceId, startDate, endDate } = input
 
         return yield* scheduleRepository.findManyWithItems({
           userId,
