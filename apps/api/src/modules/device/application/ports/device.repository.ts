@@ -16,4 +16,4 @@ interface IDeviceRepository extends IBaseRepository<Device> {
 export class DeviceRepository extends Context.Service<
   DeviceRepository,
   IDeviceRepository
->()('device/domain/DeviceRepository') {}
+>()('device/application/DeviceRepository') {}

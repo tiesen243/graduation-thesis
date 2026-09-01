@@ -8,4 +8,4 @@ interface IAccountRepository extends IBaseRepository<Account> {}
 export class AccountRepository extends Context.Service<
   AccountRepository,
   IAccountRepository
->()('auth/domain/AccountRepository') {}
+>()('auth/application/AccountRepository') {}

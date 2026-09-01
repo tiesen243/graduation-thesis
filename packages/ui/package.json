@@ -28,7 +28,7 @@
     "@base-ui/react": "^1.7.0",
     "@rozumari/lib": "workspace:*",
     "class-variance-authority": "^0.7.1",
-    "cnfast": "^0.1.0",
+    "cnfast": "^0.2.0",
     "lucide-react": "^1.38.0"
   },
   "devDependencies": {

@@ -4,13 +4,6 @@ import { ScheduleItemSchema } from '@/schedule/schemas/schedule-item.schema'
 import { ScheduleSchema } from '@/schedule/schemas/schedule.schema'
 import { ApiResponse } from '@/schema'
 
-export const dayOfWeek = Schema.Int.check(
-  Schema.isBetween(
-    { minimum: 1, maximum: 7 },
-    { message: 'Day of week must be between 1 (Sunday) and 7 (Saturday)' }
-  )
-)
-
 export class CreateScheduleDto extends Schema.TaggedClass<CreateScheduleDto>()(
   'schedule/application/CreateScheduleDto',
   ApiResponse({
@@ -39,7 +32,14 @@ export namespace CreateScheduleDto {
         message: 'End date must be in the format YYYY-MM-DD',
       })
     ),
-    daysOfWeek: Schema.Array(dayOfWeek),
+    daysOfWeek: Schema.Array(
+      Schema.Int.check(
+        Schema.isBetween(
+          { minimum: 1, maximum: 7 },
+          { message: 'Day of week must be between 1 (Sunday) and 7 (Saturday)' }
+        )
+      )
+    ),
     time: ScheduleSchema.fields.time,
     items: Schema.Array(
       Schema.Struct({

@@ -4,7 +4,7 @@ import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { DeviceMiddleware } from '@/device/middleware'
 
-export class DeviceIotGroup extends HttpApiGroup.make('device-iot')
+export class DeviceIoTGroup extends HttpApiGroup.make('device-iot')
 
   .add(
     HttpApiEndpoint.get('subscribe', '/subscribe', {

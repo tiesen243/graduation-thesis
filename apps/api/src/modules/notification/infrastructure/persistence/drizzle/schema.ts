@@ -1,3 +1,4 @@
+import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import type {
   NotificationId,
   NotificationLevel,
@@ -8,6 +9,7 @@ import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 import { notificationLevels } from '@rozumari/contract/notification/schemas/notification.schema'
 import { index, pgEnum, snakeCase } from 'drizzle-orm/pg-core'
 
+import { devices } from '@/modules/device/infrastructure/persistence/drizzle/schema'
 import { schedules } from '@/modules/schedule/infrastructure/persistence/drizzle/schema'
 import { users } from '@/modules/user/infrastructure/persistence/drizzle/schema'
 
@@ -25,6 +27,10 @@ export const notifications = snakeCase.table(
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' })
       .$type<UserId>(),
+    deviceId: t
+      .varchar({ length: 24 })
+      .references(() => devices.id, { onDelete: 'set null' })
+      .$type<DeviceId>(),
     scheduleId: t
       .varchar({ length: 24 })
       .references(() => schedules.id, { onDelete: 'set null' })

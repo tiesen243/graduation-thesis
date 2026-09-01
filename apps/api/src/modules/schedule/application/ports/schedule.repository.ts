@@ -25,4 +25,4 @@ interface IScheduleRepository extends IBaseRepository<Schedule> {
 export class ScheduleRepository extends Context.Service<
   ScheduleRepository,
   IScheduleRepository
->()('schedule/domain/ScheduleRepository') {}
+>()('schedule/application/ScheduleRepository') {}

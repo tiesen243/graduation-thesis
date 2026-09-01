@@ -8,12 +8,15 @@ import { DrizzleCompartmentRepository } from '@/modules/device/infrastructure/pe
 import { DrizzleDeviceRepository } from '@/modules/device/infrastructure/persistence/drizzle/repositories/device.repository'
 import { InMemoryCompartmentRepository } from '@/modules/device/infrastructure/persistence/in-memory/repositories/compartment.repository'
 import { InMemoryDeviceRepository } from '@/modules/device/infrastructure/persistence/in-memory/repositories/device.repository'
+import { DeviceServiceLayer } from '@/modules/device/infrastructure/services/device.service'
 
 export class DeviceInfrastructureModule {
   public static create(driver: AppModule.Config['persistence']) {
     const infrasLayer = driver === 'in-memory' ? this.inMemory : this.drizzle
 
-    return infrasLayer
+    const serviceLayer = DeviceServiceLayer
+
+    return Layer.provideMerge(serviceLayer, infrasLayer)
   }
 
   private static get inMemory(): Layer.Layer<

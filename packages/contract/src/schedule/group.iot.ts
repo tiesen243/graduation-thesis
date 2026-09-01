@@ -4,7 +4,7 @@ import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 import { DeviceMiddleware } from '@/device/middleware'
 import { ListSchedulesDto } from '@/schedule/dto/list-schedules.dto'
 
-export class ScheduleIotGroup extends HttpApiGroup.make('schedule-iot')
+export class ScheduleIoTGroup extends HttpApiGroup.make('schedule-iot')
   .add(
     HttpApiEndpoint.get('today', '/today', {
       success: ListSchedulesDto,

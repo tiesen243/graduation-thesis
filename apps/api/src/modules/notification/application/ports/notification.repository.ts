@@ -6,6 +6,6 @@ import type { IBaseRepository } from '@/shared/application/repositories/base.rep
 interface INotificationRepository extends IBaseRepository<Notification> {}
 
 export class NotificationRepository extends Context.Service<
-  Notification,
+  NotificationRepository,
   INotificationRepository
->()('notification/domain/NotificationRepository') {}
+>()('notification/application/NotificationRepository') {}

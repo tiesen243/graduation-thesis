@@ -10,6 +10,7 @@ import type { BaseProvider } from '@/modules/auth/infrastructure/services/provid
 import { AuthModule } from '@/modules/auth/auth.module'
 import { DeviceModule } from '@/modules/device/device.module'
 import { HomeModule } from '@/modules/home/home.module'
+import { NotificationModule } from '@/modules/notification/notification.module'
 import { ScheduleModule } from '@/modules/schedule/schedule.module'
 import { UserModule } from '@/modules/user/user.module'
 import { InfrastructureModule } from '@/shared/infrastructure/infrastructure.module'
@@ -23,9 +24,13 @@ export class AppModule {
     const infrastructureLayer = InfrastructureModule.create(persistence)
 
     const homeModule = HomeModule.create()
-    const userModule = UserModule.create({ persistence })
     const deviceModule = DeviceModule.create({ persistence })
+    const notificationModule = NotificationModule.create(
+      { persistence },
+      deviceModule.exports.deviceService
+    )
     const scheduleModule = ScheduleModule.create({ persistence })
+    const userModule = UserModule.create({ persistence })
     const authModule = AuthModule.create(
       { persistence, providers },
       userModule.exports.userService
@@ -33,10 +38,11 @@ export class AppModule {
 
     const controllerLayer = Layer.mergeAll(
       homeModule.controller,
-      userModule.controller,
-      authModule.controller,
       deviceModule.controller,
-      scheduleModule.controller
+      notificationModule.controller,
+      scheduleModule.controller,
+      userModule.controller,
+      authModule.controller
     ).pipe(
       Layer.provide([
         authModule.exports.middleware,
@@ -67,7 +73,7 @@ export class AppModule {
 
     const cli = Command.run(
       Command.make(pkgJson.name).pipe(
-        Command.withSubcommands([userModule.command, deviceModule.command]),
+        Command.withSubcommands([deviceModule.command, userModule.command]),
         Command.provide(infrastructureLayer)
       ),
       { version: pkgJson.version }
