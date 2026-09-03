@@ -1,3 +1,11 @@
+## @rozumari/api@0.0.18
+
+### Fix various UI errors and component rendering glitches:
+
+- Resolved layout alignment and spacing issues in core UI components.
+- Updated skeleton fallbacks to match exact component structures.
+- Improved overall visual stability and edge-case handling.
+
 ## @rozumari/api@0.0.17
 
 ### Add schedules management and schedule creation pages

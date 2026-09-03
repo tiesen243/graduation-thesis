@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/api",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "private": false,
   "bin": "./dist/cli.mjs",
   "type": "module",

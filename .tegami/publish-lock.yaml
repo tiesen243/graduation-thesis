@@ -1,57 +1,48 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Add schedules management and schedule creation pages\n\n- Added schedules view with weekly navigation, skeleton loading, and empty states\n- Created form for setting up medication dispensing schedules with compartment items and time pickers\n- Updated API contracts and UI components to support schedule management\n"
-    filename: 2026-09-03-mtlgxkqm.md
-    v: 0.0.0
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Implement user and admin dashboards with real-time analytics charts and low stock alerts.\n\n- Added `AdminDashboard` component featuring medication schedule metrics, device connectivity status, and alert logs using Shadcn Charts.\n- Added `UserDashboard` component displaying daily dose schedules, device status, notifications, and low-stock medicine compartment alerts.\n- Added in-memory repository implementations and contracts for dashboard data querying.\n"
-    filename: 2026-09-03-mtlju8ms.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Fix various UI errors and component rendering glitches:\n\n- Resolved layout alignment and spacing issues in core UI components.\n- Updated skeleton fallbacks to match exact component structures.\n- Improved overall visual stability and edge-case handling.\n"
+    filename: 2026-09-04-mtm1c6va.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - changelogIds:
-      - 2026-09-03-mtlgxkqm.md
-      - 2026-09-03-mtlju8ms.md
+      - 2026-09-04-mtm1c6va.md
     id: npm:@rozumari/web
     updated: true
-  - changelogIds:
-      - 2026-09-03-mtlgxkqm.md
-      - 2026-09-03-mtlju8ms.md
-    id: npm:@rozumari/api
-    updated: true
-  - changelogIds:
-      - 2026-09-03-mtlgxkqm.md
-      - 2026-09-03-mtlju8ms.md
-    id: npm:@rozumari/ui
-    updated: true
-  - id: npm:@rozumari/mobile
-    updated: false
-  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/contract
     updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
+  - changelogIds:
+      - 2026-09-04-mtm1c6va.md
+    id: npm:@rozumari/ui
+    updated: true
+  - changelogIds:
+      - 2026-09-04-mtm1c6va.md
+    id: npm:@rozumari/api
+    updated: true
   - id: npm:@rozumari/oxlint
+    updated: false
+  - id: npm:@rozumari/firmware
     updated: false
   - id: npm:@rozumari/github
     updated: false
+  - id: npm:@rozumari/lib
+    updated: false
   - id: npm:@rozumari/eda
     updated: false
-  - changelogIds:
-      - 2026-09-03-mtlgxkqm.md
-      - 2026-09-03-mtlju8ms.md
-    id: npm:@rozumari/contract
-    updated: true
+  - id: npm:@rozumari/mobile
+    updated: false
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/web
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/github
-  - id: npm:@rozumari/eda
   - id: npm:@rozumari/contract
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/eda
+  - id: npm:@rozumari/mobile
