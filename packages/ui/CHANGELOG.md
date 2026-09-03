@@ -1,3 +1,17 @@
+## @rozumari/ui@0.0.3
+
+### Add schedules management and schedule creation pages
+
+- Added schedules view with weekly navigation, skeleton loading, and empty states
+- Created form for setting up medication dispensing schedules with compartment items and time pickers
+- Updated API contracts and UI components to support schedule management
+
+### Implement user and admin dashboards with real-time analytics charts and low stock alerts.
+
+- Added `AdminDashboard` component featuring medication schedule metrics, device connectivity status, and alert logs using Shadcn Charts.
+- Added `UserDashboard` component displaying daily dose schedules, device status, notifications, and low-stock medicine compartment alerts.
+- Added in-memory repository implementations and contracts for dashboard data querying.
+
 ## @rozumari/ui@0.0.2
 
 ### Summary of Changes
