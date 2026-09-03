@@ -55,8 +55,8 @@ export const DrizzleScheduleRepository = Layer.effect(
         const [row] = yield* db
           .select(selector)
           .from(schedules)
-          .leftJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
-          .leftJoin(devices, eq(devices.id, schedules.deviceId))
+          .innerJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .innerJoin(devices, eq(devices.id, schedules.deviceId))
           .leftJoin(
             compartments,
             and(
@@ -90,8 +90,8 @@ export const DrizzleScheduleRepository = Layer.effect(
         const rows = yield* db
           .select(selector)
           .from(schedules)
-          .leftJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
-          .leftJoin(devices, eq(devices.id, schedules.deviceId))
+          .innerJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .innerJoin(devices, eq(devices.id, schedules.deviceId))
           .leftJoin(
             compartments,
             and(
