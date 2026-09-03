@@ -76,6 +76,15 @@ export default function UsersPage() {
         columns={{
           username: 'Username',
           email: 'Email',
+          deletedAt: {
+            header: 'Status',
+            action: (item) =>
+              item.deletedAt ? (
+                <Badge variant='destructive'>Deleted</Badge>
+              ) : (
+                <Badge variant='success'>Active</Badge>
+              ),
+          },
           role: {
             header: 'Role',
             action: (item) => (

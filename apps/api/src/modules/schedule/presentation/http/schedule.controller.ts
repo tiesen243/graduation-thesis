@@ -19,8 +19,10 @@ export const scheduleController = HttpApiBuilder.group(
     handlers
       .handle('list', ({ query }) =>
         CurrentUser.pipe(
-          Effect.flatMap(({ userId }) =>
-            ListSchedulesUseCase.use((s) => s.execute({ ...query, userId }))
+          Effect.flatMap(({ userId, userRole }) =>
+            ListSchedulesUseCase.use((s) =>
+              s.execute({ ...query, userId, userRole })
+            )
           ),
           Effect.map((data) => ListSchedulesDto.make({ data }))
         )

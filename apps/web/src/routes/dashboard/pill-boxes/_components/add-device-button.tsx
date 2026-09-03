@@ -31,19 +31,19 @@ const SIZE_OPTIONS = [
     value: 'sm',
     id: 'size-sm',
     title: 'Small',
-    description: '6 compartments – Compact size for personal or travel use.',
+    description: '4 compartments – Compact size for personal or travel use.',
   },
   {
     value: 'md',
     id: 'size-md',
     title: 'Medium',
-    description: '12 compartments – Standard size suitable for general needs.',
+    description: '8 compartments – Standard size suitable for general needs.',
   },
   {
     value: 'lg',
     id: 'size-lg',
     title: 'Large',
-    description: '16 compartments – High capacity for extended treatment.',
+    description: '12 compartments – High capacity for extended treatment.',
   },
 ] as const
 

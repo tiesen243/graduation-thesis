@@ -3,10 +3,13 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 import { api } from '@/lib/runtime'
-import { NotificationList } from '@/routes/dashboard/_components/notification-list'
+import {
+  NotificationList,
+  NotificationListSkeleton,
+} from '@/routes/dashboard/_components/notification-list'
 
 export default function NotificationsPage() {
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: api.notification.list.getQueryKey({ query: {} }),
       initialPageParam: 1,
@@ -26,7 +29,11 @@ export default function NotificationsPage() {
         Stay up to date with your medication schedule, refills, and care plan.
       </Typography>
 
-      <NotificationList notifications={data?.pages ?? []} />
+      {isLoading ? (
+        <NotificationListSkeleton />
+      ) : (
+        <NotificationList notifications={data?.pages ?? []} />
+      )}
 
       {hasNextPage && (
         <Button

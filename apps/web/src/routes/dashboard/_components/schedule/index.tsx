@@ -76,7 +76,11 @@ export const Schedules: React.FC<{
             <EmptyContent className='flex-row justify-center gap-2'>
               <Button
                 nativeButton={false}
-                render={<Link to='/dashboard/schedules/create' />}
+                render={
+                  <Link
+                    to={`/dashboard/schedules/create?id=${deviceId ?? ''}`}
+                  />
+                }
               >
                 Create Schedule
               </Button>

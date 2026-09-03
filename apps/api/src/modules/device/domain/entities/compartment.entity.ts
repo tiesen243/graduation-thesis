@@ -9,9 +9,9 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
   CompartmentSchema
 ) {
   private static SIZE_MAP = {
-    sm: 6,
-    md: 12,
-    lg: 16,
+    sm: 4,
+    md: 8,
+    lg: 12,
   } as const
   private static COLS = 2
 

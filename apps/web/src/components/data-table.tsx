@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@rozumari/ui/components/pagination'
+import { Skeleton } from '@rozumari/ui/components/skeleton'
 import {
   Table,
   TableBody,
@@ -75,9 +76,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             <TableRow key={index}>
               {Array.from({ length: activeKeys.length ?? 1 }, (__, idx) => (
                 <TableCell key={idx}>
-                  <div className='animate-pulse rounded-sm bg-muted-foreground'>
-                    &nbsp;
-                  </div>
+                  <Skeleton>&nbsp;</Skeleton>
                 </TableCell>
               ))}
             </TableRow>

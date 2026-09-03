@@ -161,7 +161,9 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
 
           await onSubmit(result.success).pipe(
             Effect.tap((a) => Effect.sync(() => opts?.onSuccess?.(a))),
-            Effect.catch((error) => Effect.sync(() => opts?.onError?.(error))),
+            Effect.catch((error) =>
+              Effect.sync(() => opts?.onError?.(this.makeMatchableError(error)))
+            ),
             Effect.runPromise
           )
 
@@ -404,6 +406,38 @@ export class FormBuilder<TFields extends Schema.Struct.Fields> {
       state: formAtom.use,
     }
   }
+
+  // oxlint-disable-next-line class-methods-use-this
+  private makeMatchableError<E>(error: E): FormBuilder.MatchableError<E> {
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const match = (cases: Record<string, (err: any) => void>) => {
+      if (
+        error &&
+        typeof error === 'object' &&
+        '_tag' in error &&
+        typeof error._tag === 'string' &&
+        cases[error._tag]
+      )
+        return cases[error._tag]?.(error)
+
+      if (cases._) return cases._(error)
+    }
+
+    if (typeof error === 'object' && error !== null) {
+      Object.defineProperty(error, 'match', {
+        value: match,
+        enumerable: false,
+        writable: true,
+        configurable: true,
+      })
+      return error as FormBuilder.MatchableError<E>
+    }
+
+    return {
+      error,
+      match,
+    } as unknown as FormBuilder.MatchableError<E>
+  }
 }
 
 export namespace FormBuilder {
@@ -418,8 +452,20 @@ export namespace FormBuilder {
     isPending: boolean
   }
 
+  export type MatchableError<E> = E & {
+    match: <
+      Cases extends (E extends { _tag: string }
+        ? { [K in E['_tag']]?: (error: Extract<E, { _tag: K }>) => void } & {
+            _?: (error: E) => void
+          }
+        : { _?: (error: E) => void }),
+    >(
+      cases: Cases
+    ) => void
+  }
+
   export interface SubmitOptions<A, E> {
     onSuccess?: (data: NoInfer<A>) => void
-    onError?: (error: NoInfer<E>) => void
+    onError?: (error: MatchableError<NoInfer<E>>) => void
   }
 }

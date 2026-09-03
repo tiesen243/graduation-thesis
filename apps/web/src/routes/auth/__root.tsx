@@ -1,4 +1,5 @@
 import { Card } from '@rozumari/ui/components/card'
+import { Loader2Icon } from '@rozumari/ui/components/icons'
 import { useLayoutEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router'
 
@@ -11,6 +12,13 @@ export default function AuthRoot() {
   useLayoutEffect(() => {
     if (status === 'authenticated') navigate('/dashboard', { replace: true })
   }, [navigate, status])
+
+  if (status === 'loading')
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <Loader2Icon className='size-8 animate-spin' />
+      </div>
+    )
 
   return (
     <main className='grid min-h-dvh place-items-center md:px-4'>

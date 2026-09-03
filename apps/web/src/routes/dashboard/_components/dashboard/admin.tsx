@@ -20,15 +20,16 @@ import {
   ChartTooltipContent,
 } from '@rozumari/ui/components/chart'
 import {
-  AlertTriangle,
-  Clock,
-  Cpu,
-  Info,
-  Link,
-  Users,
+  AlertTriangleIcon,
+  ClockIcon,
+  CpuIcon,
+  InfoIcon,
+  LinkIcon,
+  Loader2Icon,
+  UsersIcon,
 } from '@rozumari/ui/components/icons'
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
+import { Link } from 'react-router'
 
 import { api } from '@/lib/runtime'
 
@@ -54,7 +55,7 @@ const deviceChartConfig = {
   },
   unlinked: {
     label: 'Unlinked',
-    color: 'var(--color-muted)',
+    color: 'var(--color-chart-1)',
   },
 } satisfies ChartConfig
 
@@ -65,8 +66,8 @@ export const AdminDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className='flex h-64 items-center justify-center'>
-        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent' />
+      <div className='flex min-h-[calc(100dvh-8rem)] items-center justify-center'>
+        <Loader2Icon className='size-8 animate-spin' />
       </div>
     )
   }
@@ -112,37 +113,30 @@ export const AdminDashboard: React.FC = () => {
     {
       name: 'Unlinked',
       value: unlinkedDevices,
-      fill: 'var(--color-muted-foreground)',
+      fill: 'var(--color-chart-5)',
     },
   ]
 
   return (
-    <div className='space-y-6 p-6'>
-      <div>
-        <h1 className='text-2xl font-bold tracking-tight'>Admin Dashboard</h1>
-        <p className='text-sm text-muted-foreground'>
-          System overview, performance analytics, and recent alerts.
-        </p>
-      </div>
-
-      <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+    <>
+      <div className='my-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>Total Users</CardTitle>
-            <Users className='h-4 w-4 text-muted-foreground' />
+            <UsersIcon className='size-4 text-muted-foreground' />
           </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{metrics.totalUsers}</div>
+          <CardContent className='text-2xl font-bold'>
+            {metrics.totalUsers}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>Total Devices</CardTitle>
-            <Cpu className='h-4 w-4 text-muted-foreground' />
+            <CpuIcon className='size-4 text-muted-foreground' />
           </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{metrics.totalDevices}</div>
+          <CardContent className='text-2xl font-bold'>
+            {metrics.totalDevices}
           </CardContent>
         </Card>
 
@@ -151,15 +145,15 @@ export const AdminDashboard: React.FC = () => {
             <CardTitle className='text-sm font-medium'>
               Linked Devices
             </CardTitle>
-            <Link className='h-4 w-4 text-muted-foreground' />
+            <LinkIcon className='size-4 text-muted-foreground' />
           </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{metrics.linkedDevices}</div>
+          <CardContent className='text-2xl font-bold'>
+            {metrics.linkedDevices}
           </CardContent>
         </Card>
       </div>
 
-      <div className='grid gap-6 md:grid-cols-2'>
+      <div className='grid gap-4 md:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle>Schedule Analytics</CardTitle>
@@ -220,7 +214,7 @@ export const AdminDashboard: React.FC = () => {
         </Card>
       </div>
 
-      <Card>
+      <Card className='mt-4'>
         <CardHeader>
           <CardTitle>Recent Alerts</CardTitle>
         </CardHeader>
@@ -230,44 +224,47 @@ export const AdminDashboard: React.FC = () => {
           ) : (
             <div className='divide-y'>
               {recentAlerts.map((alert) => (
-                <div
+                <Link
                   key={alert.id}
-                  className='flex items-start justify-between py-3 first:pt-0 last:pb-0'
+                  to={`/dashboard/notifications/${alert.id}`}
+                  className='flex items-start justify-between p-3 transition-colors hover:bg-accent/50 hover:text-accent-foreground'
                 >
-                  <div className='flex items-start space-x-3'>
+                  <div className='flex items-start space-x-3 [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0'>
                     {alert.level === 'error' && (
-                      <AlertTriangle className='mt-0.5 h-5 w-5 shrink-0 text-destructive' />
+                      <AlertTriangleIcon className='text-destructive' />
                     )}
                     {alert.level === 'warning' && (
-                      <AlertTriangle className='mt-0.5 h-5 w-5 shrink-0 text-warning' />
+                      <AlertTriangleIcon className='text-warning' />
                     )}
                     {alert.level === 'info' && (
-                      <Info className='mt-0.5 h-5 w-5 shrink-0 text-info' />
+                      <InfoIcon className='text-info' />
                     )}
 
                     <div>
-                      <p className='text-sm font-medium'>{alert.title}</p>
-                      <p className='text-xs text-muted-foreground'>
+                      <p className='font-medium'>{alert.title}</p>
+                      <p className='text-sm text-muted-foreground'>
                         {alert.body}
                       </p>
                     </div>
                   </div>
 
                   <div className='flex shrink-0 items-center pl-4 text-xs text-muted-foreground'>
-                    <Clock className='mr-1 h-3 w-3' />
-                    {new Date(alert.createdAt).toLocaleString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
+                    <ClockIcon className='mr-1 size-3' />
+                    <span className='min-w-32'>
+                      {new Date(alert.createdAt).toLocaleString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </>
   )
 }
