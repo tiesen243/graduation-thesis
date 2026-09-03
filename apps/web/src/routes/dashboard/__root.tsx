@@ -23,8 +23,8 @@ export default function DashboardRoot() {
     <SidebarProvider>
       <DashboardSidebar />
 
-      <SidebarInset>
-        <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4'>
+      <SidebarInset className='min-w-0' suppressHydrationWarning>
+        <header className='sticky inset-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border bg-sidebar px-4'>
           <SidebarTrigger className='-ml-1' />
           <Separator
             orientation='vertical'

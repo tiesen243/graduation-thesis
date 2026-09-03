@@ -28,8 +28,10 @@
     "@base-ui/react": "^1.7.0",
     "@rozumari/lib": "workspace:*",
     "class-variance-authority": "^0.7.1",
-    "cnfast": "^0.2.0",
-    "lucide-react": "^1.38.0"
+    "cn": "^0.2.4",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.39.0",
+    "react-day-picker": "^10.0.1"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
