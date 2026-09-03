@@ -39,6 +39,11 @@ export class DeleteUserUseCase extends Context.Service<
         if (!user)
           return yield* Effect.fail(new UserNotFound({ error: { id } }))
 
+        if (user.deletedAt)
+          return yield* Effect.fail(
+            new Forbidden({ message: 'User is already deleted' })
+          )
+
         const deletedUser = user.markDeleted()
         yield* userRepository.save(deletedUser)
 

@@ -37,7 +37,6 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({ user }) => {
         api.user.delete.mutateEffect({ params: { id: user.id as UserId } })
       )
       toast.add({ type: 'success', title: 'User deleted successfully' })
-      setIsOpen(false)
       await queryClient.invalidateQueries({
         queryKey: api.user.list.getQueryKey(),
       })
@@ -49,12 +48,15 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({ user }) => {
       })
     } finally {
       setIsPending(false)
+      setIsOpen(false)
     }
   }
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger render={<Button variant='link' />}>
+      <AlertDialogTrigger
+        render={<Button variant='link' className='text-destructive' />}
+      >
         Delete
       </AlertDialogTrigger>
 

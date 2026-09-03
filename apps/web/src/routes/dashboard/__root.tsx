@@ -23,7 +23,7 @@ export default function DashboardRoot() {
   if (status === 'loading')
     return (
       <div className='flex h-screen items-center justify-center'>
-        <Loader2Icon className='h-8 w-8 animate-spin text-primary' />
+        <Loader2Icon className='size-8 animate-spin' />
       </div>
     )
 

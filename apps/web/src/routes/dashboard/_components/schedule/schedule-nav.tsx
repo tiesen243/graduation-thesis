@@ -39,7 +39,7 @@ export const ScheduleNav: React.FC<{
   }, [startDate, endDate])
 
   return (
-    <nav className='flex items-center gap-4'>
+    <nav className='mt-4 flex flex-wrap items-center gap-4'>
       <div className='flex flex-1 items-center gap-3 text-xs text-muted-foreground'>
         <span className='flex items-center gap-1.5'>
           <span className='size-2 rounded-full bg-success' />

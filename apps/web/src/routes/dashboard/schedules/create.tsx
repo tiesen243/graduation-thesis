@@ -10,6 +10,7 @@ import {
   FieldLegend,
   FieldSet,
 } from '@rozumari/ui/components/field'
+import { Loader2Icon } from '@rozumari/ui/components/icons'
 import {
   Select,
   SelectContent,
@@ -20,9 +21,10 @@ import {
 import { toast } from '@rozumari/ui/components/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 
 import { api } from '@/lib/runtime'
+import { useSession } from '@/lib/use-session'
 import {
   CreateScheduleForm,
   DAYS_OF_WEEK,
@@ -32,11 +34,16 @@ import { ItemField } from '@/routes/dashboard/schedules/_components/item-field'
 import { ScheduleDateRangeField } from '@/routes/dashboard/schedules/_components/schedule-date-range-field'
 
 export default function SchedulesCreatePage() {
+  const [searchParams] = useSearchParams()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
+  const { user, status } = useSession()
+
   const { data, isLoading } = useQuery(
-    api.device.me.queryOptions({ query: { limit: 100 } })
+    user?.role === 'admin'
+      ? api.device.list.queryOptions({ query: { limit: 100 } })
+      : api.device.me.queryOptions({ query: { limit: 100 } })
   )
 
   const deviceOptions = useMemo(
@@ -48,15 +55,20 @@ export default function SchedulesCreatePage() {
     [data]
   )
 
-  if (isLoading || !data) return <div>Loading...</div>
+  if (status === 'unauthenticated' || isLoading || !data)
+    return (
+      <div className='flex h-64 min-h-[calc(100dvh-8rem)] items-center justify-center'>
+        <Loader2Icon className='size-8 animate-spin' />
+      </div>
+    )
 
   return (
     <CreateScheduleForm.Root
       defaultValues={{
-        deviceId: '' as DeviceId,
+        deviceId: (searchParams.get('id') ?? '') as DeviceId,
         startDate: '',
         endDate: '',
-        time: '',
+        time: '00:00:00',
         daysOfWeek: [],
         items: [],
       }}
@@ -76,6 +88,12 @@ export default function SchedulesCreatePage() {
                   toast.add({ type: 'success', title: 'Schedule created' })
                   navigate('/dashboard/schedules')
                 },
+                onError: (error) =>
+                  toast.add({
+                    type: 'error',
+                    title: 'Failed to create schedule',
+                    description: error,
+                  }),
               }
             )
           }}
@@ -109,7 +127,7 @@ export default function SchedulesCreatePage() {
                   <SelectContent>
                     {data.data.devices.map((device) => (
                       <SelectItem key={device.id} value={device.id}>
-                        {device.name}
+                        {device.name ?? device.factoryModel}
                       </SelectItem>
                     ))}
                   </SelectContent>

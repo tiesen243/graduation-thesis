@@ -1,6 +1,7 @@
 import { Tabs, TabsList, TabsTrigger } from '@rozumari/ui/components/tabs'
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 
+import { DevicesShowPageSkeleton } from '@/routes/dashboard/pill-boxes/[id].skeleton'
 import { DeviceInfo } from '@/routes/dashboard/pill-boxes/_components/device-info'
 import { NotificationsTab } from '@/routes/dashboard/pill-boxes/_components/tabs/notifications'
 import { OverviewTab } from '@/routes/dashboard/pill-boxes/_components/tabs/overview'
@@ -18,7 +19,7 @@ export default function DevicesShowPage() {
     ]).withDefault('overview')
   )
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <DevicesShowPageSkeleton />
 
   return (
     <>

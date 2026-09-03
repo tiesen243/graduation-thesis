@@ -5,6 +5,7 @@ import {
   Clock3Icon,
   InfoIcon,
 } from '@rozumari/ui/components/icons'
+import { Skeleton } from '@rozumari/ui/components/skeleton'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useMemo } from 'react'
@@ -133,3 +134,54 @@ export const NotificationList: React.FC<{
     </section>
   ))
 }
+
+export const NotificationListSkeleton: React.FC<{ count?: number }> = ({
+  count = 2,
+}) => (
+  <>
+    {Array.from({ length: count }, (_, groupIndex) => (
+      <section key={groupIndex} className='mt-2 flex flex-col gap-3'>
+        <Skeleton className='w-40 text-lg font-semibold'>&nbsp;</Skeleton>
+
+        <section className='overflow-hidden rounded-xl border border-border bg-card shadow-sm'>
+          {Array.from({ length: 3 }, (__, itemIndex) => (
+            <div
+              key={itemIndex}
+              className='relative flex gap-4 border-b border-border p-4 last:border-b-0'
+            >
+              {/* Skeleton for Icon Box */}
+              <Skeleton className='size-10 shrink-0 rounded-lg' />
+
+              {/* Skeleton for Content Area */}
+              <div className='flex min-w-0 flex-1 flex-col gap-2'>
+                <div className='flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4'>
+                  <div className='flex items-center gap-2'>
+                    {/* Skeleton for Title (h5) */}
+                    <Skeleton className='w-40 text-base font-semibold'>
+                      &nbsp;
+                    </Skeleton>
+                  </div>
+                </div>
+
+                {/* Skeleton for Body Text */}
+                <div className='flex max-w-2xl flex-col gap-1'>
+                  <Skeleton className='w-full text-sm leading-6'>
+                    &nbsp;
+                  </Skeleton>
+                  <Skeleton className='w-2/3 text-sm leading-6'>
+                    &nbsp;
+                  </Skeleton>
+                </div>
+
+                {/* Skeleton for Time Stamp */}
+                <Skeleton className='absolute top-4 right-4 w-12 text-xs'>
+                  &nbsp;
+                </Skeleton>
+              </div>
+            </div>
+          ))}
+        </section>
+      </section>
+    ))}
+  </>
+)

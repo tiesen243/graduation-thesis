@@ -1,7 +1,6 @@
 import type { LucideIcon } from '@rozumari/ui/components/icons'
 
 import {
-  ActivityIcon,
   BellIcon,
   CalendarClockIcon,
   CreditCardIcon,
@@ -36,12 +35,6 @@ export const navGroups: NavGroupConfig[] = [
     label: 'Overview',
     items: [
       { title: 'Dashboard', icon: LayoutDashboardIcon, url: '/dashboard' },
-      {
-        title: 'Adherence',
-        icon: ActivityIcon,
-        url: '/dashboard/adherence',
-        isAdminOnly: true,
-      },
     ],
   },
   {

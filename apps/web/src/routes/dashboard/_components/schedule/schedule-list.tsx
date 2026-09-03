@@ -1,19 +1,11 @@
 import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
 
 import { Badge } from '@rozumari/ui/components/badge'
-import { CardContent, CardHeader } from '@rozumari/ui/components/card'
-import {
-  ClockIcon,
-  HardDriveIcon,
-  PillIcon,
-} from '@rozumari/ui/components/icons'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useCallback, useMemo } from 'react'
 
-import {
-  STATUS_CONFIG,
-  useDateRange,
-} from '@/routes/dashboard/_components/schedule/_shared'
+import { useDateRange } from '@/routes/dashboard/_components/schedule/_use-date-range'
+import { ScheduleCard } from '@/routes/dashboard/_components/schedule/schedule-card'
 
 export const ScheduleList: React.FC<{
   schedules: ListSchedulesDto.Output
@@ -49,35 +41,37 @@ export const ScheduleList: React.FC<{
     <section className='flex flex-col md:hidden'>
       <h3 className='sr-only'>Schedule List section</h3>
 
-      <ul className='sticky inset-16 z-40 -mx-4 grid grid-cols-7 gap-2 bg-background p-4 shadow-sm'>
-        {dateRange.map(({ iso, weekday, dayNumber }) => {
-          const isToday = iso === today
+      <nav className='sticky inset-16 z-40 -mx-4 bg-background px-4'>
+        <ul className='flex gap-2 overflow-x-auto px-px py-4'>
+          {dateRange.map(({ iso, weekday, dayNumber }) => {
+            const isToday = iso === today
 
-          return (
-            // oxlint-disable-next-line jsx-a11y/click-events-have-key-events jsx-a11y/no-noninteractive-element-interactions
-            <li
-              key={iso}
-              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role jsx-a11y/no-noninteractive-element-to-interactive-role
-              role='button'
-              tabIndex={0}
-              className={cn(
-                'flex aspect-square flex-col items-center justify-center gap-1 rounded-md ring-1 select-none',
-                isToday
-                  ? 'bg-ring/10 text-ring ring-ring/50'
-                  : 'cursor-pointer bg-card ring-foreground/10 transition-colors hover:bg-accent/50'
-              )}
-              aria-label={`Scroll to schedule for ${iso}`}
+            return (
+              // oxlint-disable-next-line jsx-a11y/click-events-have-key-events jsx-a11y/no-noninteractive-element-interactions
+              <li
+                key={iso}
+                // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role jsx-a11y/no-noninteractive-element-to-interactive-role
+                role='button'
+                tabIndex={0}
+                className={cn(
+                  'flex aspect-square min-w-20 flex-1 shrink-0 flex-col items-center justify-center gap-1 rounded-md ring-1 select-none',
+                  isToday
+                    ? 'bg-ring/10 text-ring ring-ring/50'
+                    : 'cursor-pointer bg-card ring-foreground/10 transition-colors hover:bg-accent/50'
+                )}
+                aria-label={`Scroll to schedule for ${iso}`}
 
-              onClick={() => scrollToDate(iso)}
-            >
-              <span className='text-xs text-muted-foreground uppercase'>
-                {weekday}
-              </span>
-              <span className='text-sm font-semibold'>{dayNumber}</span>
-            </li>
-          )
-        })}
-      </ul>
+                onClick={() => scrollToDate(iso)}
+              >
+                <span className='text-xs text-muted-foreground uppercase'>
+                  {weekday}
+                </span>
+                <span className='text-sm font-semibold'>{dayNumber}</span>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
 
       {Object.entries(groupedSchedules).map(([date, group], idx) => {
         const isToday = date === today
@@ -104,60 +98,9 @@ export const ScheduleList: React.FC<{
             </div>
 
             <ul className='grid gap-3'>
-              {group?.map((schedule) => {
-                const statusConfig =
-                  STATUS_CONFIG[schedule.status as keyof typeof STATUS_CONFIG]
-
-                return (
-                  <li
-                    key={schedule.id}
-                    className={cn(
-                      'group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-xl bg-card py-(--card-spacing) text-sm text-card-foreground ring-1 ring-foreground/10 [--card-spacing:--spacing(4)] has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl',
-                      'border-l-2',
-                      statusConfig.borderClass
-                    )}
-                  >
-                    <CardHeader className='flex flex-wrap items-center gap-3'>
-                      <span className='flex items-center gap-1.5 text-base font-bold'>
-                        <ClockIcon className='size-4 text-muted-foreground' />
-                        {schedule.time}
-                      </span>
-
-                      {schedule.device && (
-                        <Badge variant='secondary'>
-                          <HardDriveIcon className='size-3' />
-                          {schedule.device.name}
-                          {schedule.device.position &&
-                            ` (${schedule.device.position})`}
-                        </Badge>
-                      )}
-                    </CardHeader>
-
-                    <CardContent className='mx-4 divide-y divide-border/50 rounded-lg bg-muted/40'>
-                      {schedule.items.map((item) => (
-                        <div
-                          key={`${schedule.id}-slot-${item.slot}`}
-                          className='flex flex-wrap items-center justify-between gap-4 py-2 text-sm'
-                        >
-                          <div className='flex items-center gap-2'>
-                            <PillIcon className='h-4 w-4 shrink-0 text-primary' />
-                            <span className='font-medium'>{item.medicine}</span>
-                            {item.dosage && (
-                              <span className='text-xs text-muted-foreground'>
-                                ({item.dosage})
-                              </span>
-                            )}
-                          </div>
-
-                          <Badge variant='outline'>
-                            Slot {item.slot} • Quantity: {item.quantity}
-                          </Badge>
-                        </div>
-                      ))}
-                    </CardContent>
-                  </li>
-                )
-              })}
+              {group?.map((schedule) => (
+                <ScheduleCard key={schedule.id} schedule={schedule} as='li' />
+              ))}
             </ul>
           </section>
         )

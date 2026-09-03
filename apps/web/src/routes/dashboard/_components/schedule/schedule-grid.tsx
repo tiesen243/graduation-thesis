@@ -1,12 +1,6 @@
 import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
 
-import { Badge } from '@rozumari/ui/components/badge'
-import { Card, CardContent, CardHeader } from '@rozumari/ui/components/card'
-import {
-  ClockIcon,
-  HardDriveIcon,
-  PillIcon,
-} from '@rozumari/ui/components/icons'
+import { SunIcon, SunsetIcon, MoonIcon } from '@rozumari/ui/components/icons'
 import {
   Table,
   TableBody,
@@ -18,11 +12,29 @@ import {
 import { cn } from '@rozumari/ui/lib/utils'
 import { useMemo } from 'react'
 
-import {
-  STATUS_CONFIG,
-  TIME_SLOTS,
-  useDateRange,
-} from '@/routes/dashboard/_components/schedule/_shared'
+import { useDateRange } from '@/routes/dashboard/_components/schedule/_use-date-range'
+import { ScheduleCard } from '@/routes/dashboard/_components/schedule/schedule-card'
+
+export const TIME_SLOTS = [
+  {
+    key: 'morning',
+    label: 'Morning',
+    period: '05:00 - 11:59',
+    icon: SunIcon,
+  },
+  {
+    key: 'afternoon',
+    label: 'Afternoon',
+    period: '12:00 - 17:59',
+    icon: SunsetIcon,
+  },
+  {
+    key: 'night',
+    label: 'Night',
+    period: '18:00 - 04:59',
+    icon: MoonIcon,
+  },
+] as const
 
 const getTimeSlotKey = (timeStr: string): 'morning' | 'afternoon' | 'night' => {
   const hour = Math.trunc(Number(timeStr.split(':')[0] ?? '0'))
@@ -119,63 +131,13 @@ export const ScheduleGrid: React.FC<{
                         isToday && 'bg-primary/5'
                       )}
                     >
-                      {daySchedules.map((schedule) => {
-                        const statusConfig =
-                          STATUS_CONFIG[
-                            schedule.status as keyof typeof STATUS_CONFIG
-                          ] ?? STATUS_CONFIG.pending
-
-                        return (
-                          <Card
-                            key={schedule.id}
-                            className={cn(
-                              'border-l-2',
-                              statusConfig.borderClass
-                            )}
-                          >
-                            <CardHeader className='flex flex-wrap items-center gap-3'>
-                              <span className='flex items-center gap-1.5 text-base font-bold'>
-                                <ClockIcon className='size-4 text-muted-foreground' />
-                                {schedule.time}
-                              </span>
-
-                              {schedule.device && (
-                                <Badge variant='secondary'>
-                                  <HardDriveIcon className='size-3' />
-                                  {schedule.device.name}
-                                  {schedule.device.position &&
-                                    ` (${schedule.device.position})`}
-                                </Badge>
-                              )}
-                            </CardHeader>
-
-                            <CardContent className='mx-4 divide-y divide-border/50 rounded-lg bg-muted/40'>
-                              {schedule.items.map((item) => (
-                                <div
-                                  key={`${schedule.id}-slot-${item.slot}`}
-                                  className='flex flex-wrap items-center justify-between gap-4 py-2 text-sm'
-                                >
-                                  <div className='flex items-center gap-2'>
-                                    <PillIcon className='h-4 w-4 shrink-0 text-primary' />
-                                    <span className='font-medium'>
-                                      {item.medicine}
-                                    </span>
-                                    {item.dosage && (
-                                      <span className='text-xs text-muted-foreground'>
-                                        ({item.dosage})
-                                      </span>
-                                    )}
-                                  </div>
-
-                                  <Badge variant='outline'>
-                                    Slot {item.slot} • Quantity: {item.quantity}
-                                  </Badge>
-                                </div>
-                              ))}
-                            </CardContent>
-                          </Card>
-                        )
-                      })}
+                      {daySchedules.map((schedule) => (
+                        <ScheduleCard
+                          key={schedule.id}
+                          schedule={schedule}
+                          as='div'
+                        />
+                      ))}
                     </TableCell>
                   )
                 })}

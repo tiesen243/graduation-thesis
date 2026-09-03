@@ -18,16 +18,17 @@ import {
   ChartTooltipContent,
 } from '@rozumari/ui/components/chart'
 import {
-  AlertCircle,
-  AlertTriangle,
-  CalendarClock,
-  Clock,
-  Cpu,
-  Info,
-  Pill,
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  CalendarClockIcon,
+  ClockIcon,
+  CpuIcon,
+  InfoIcon,
+  Loader2Icon,
+  PillIcon,
 } from '@rozumari/ui/components/icons'
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
+import { Link } from 'react-router'
 
 import { api } from '@/lib/runtime'
 
@@ -53,8 +54,8 @@ export const UserDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className='flex h-64 items-center justify-center'>
-        <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent' />
+      <div className='flex min-h-[calc(100dvh-8rem)] items-center justify-center'>
+        <Loader2Icon className='size-8 animate-spin' />
       </div>
     )
   }
@@ -89,22 +90,15 @@ export const UserDashboard: React.FC = () => {
   ]
 
   return (
-    <div className='space-y-6 p-6'>
-      <div>
-        <h1 className='text-2xl font-bold tracking-tight'>User Dashboard</h1>
-        <p className='text-sm text-muted-foreground'>
-          Track your medication schedules, device connectivity, and inventory.
-        </p>
-      </div>
-
-      <div className='grid gap-4 sm:grid-cols-3'>
+    <>
+      <div className='my-4 grid gap-4 sm:grid-cols-3'>
         <Card>
           <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
             <CardTitle className='text-sm font-medium'>My Devices</CardTitle>
-            <Cpu className='h-4 w-4 text-muted-foreground' />
+            <CpuIcon className='text-info' />
           </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{metrics.totalDevices}</div>
+          <CardContent className='text-2xl font-bold'>
+            {metrics.totalDevices}
           </CardContent>
         </Card>
 
@@ -113,12 +107,10 @@ export const UserDashboard: React.FC = () => {
             <CardTitle className='text-sm font-medium'>
               Today&apos;s Pending Dose
             </CardTitle>
-            <CalendarClock className='h-4 w-4 text-warning' />
+            <CalendarClockIcon className='text-warning' />
           </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>
-              {metrics.todaySchedules.pending}
-            </div>
+          <CardContent className='text-2xl font-bold'>
+            {metrics.todaySchedules.pending}
           </CardContent>
         </Card>
 
@@ -127,15 +119,15 @@ export const UserDashboard: React.FC = () => {
             <CardTitle className='text-sm font-medium'>
               Low Stock Alerts
             </CardTitle>
-            <AlertCircle className='h-4 w-4 text-destructive' />
+            <AlertCircleIcon className='text-destructive' />
           </CardHeader>
-          <CardContent>
-            <div className='text-2xl font-bold'>{metrics.lowStockCount}</div>
+          <CardContent className='text-2xl font-bold'>
+            {metrics.lowStockCount}
           </CardContent>
         </Card>
       </div>
 
-      <div className='grid gap-6 md:grid-cols-2'>
+      <div className='grid gap-4 md:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle>Today&apos;s Schedule</CardTitle>
@@ -165,7 +157,7 @@ export const UserDashboard: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle className='flex items-center space-x-2'>
-              <Pill className='h-5 w-5 text-warning' />
+              <PillIcon className='size-4 text-warning' />
               <span>Low Stock Medicine</span>
             </CardTitle>
             <CardDescription>
@@ -199,7 +191,7 @@ export const UserDashboard: React.FC = () => {
         </Card>
       </div>
 
-      <div className='grid gap-6 md:grid-cols-2'>
+      <div className='my-4 grid gap-4 md:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle>My Devices</CardTitle>
@@ -213,9 +205,10 @@ export const UserDashboard: React.FC = () => {
             ) : (
               <div className='space-y-3'>
                 {devices.map((device) => (
-                  <div
+                  <Link
                     key={device.id}
-                    className='flex items-center justify-between rounded-lg border p-3'
+                    to={`/dashboard/pill-boxes/${device.id}`}
+                    className='flex items-center justify-between rounded-lg border p-3 transition-colors hover:bg-accent/50 hover:text-accent-foreground'
                   >
                     <div>
                       <p className='font-medium'>{device.name}</p>
@@ -223,16 +216,7 @@ export const UserDashboard: React.FC = () => {
                         Model: {device.factoryModel}
                       </p>
                     </div>
-                    <Badge
-                      className={
-                        device.status === 'linked'
-                          ? 'bg-success text-primary-foreground'
-                          : 'bg-muted text-muted-foreground'
-                      }
-                    >
-                      {device.status}
-                    </Badge>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -252,48 +236,46 @@ export const UserDashboard: React.FC = () => {
             ) : (
               <div className='divide-y'>
                 {recentNotifications.map((notification) => (
-                  <div
+                  <Link
                     key={notification.id}
-                    className='flex items-start justify-between py-3 first:pt-0 last:pb-0'
+                    to={`/dashboard/notifications/${notification.id}`}
+                    className='flex items-start justify-between p-3 transition-colors hover:bg-accent/50 hover:text-accent-foreground'
                   >
-                    <div className='flex items-start space-x-3'>
+                    <div className='flex items-start space-x-3 [&>svg]:mt-0.5 [&>svg]:size-4 [&>svg]:shrink-0'>
                       {notification.level === 'error' && (
-                        <AlertTriangle className='mt-0.5 h-4 w-4 shrink-0 text-destructive' />
+                        <AlertTriangleIcon className='text-destructive' />
                       )}
                       {notification.level === 'warning' && (
-                        <AlertTriangle className='mt-0.5 h-4 w-4 shrink-0 text-warning' />
+                        <AlertTriangleIcon className='text-warning' />
                       )}
                       {notification.level === 'info' && (
-                        <Info className='mt-0.5 h-4 w-4 shrink-0 text-info' />
+                        <InfoIcon className='text-info' />
                       )}
 
                       <div>
-                        <p className='text-sm font-medium'>
-                          {notification.title}
-                        </p>
-                        <p className='text-xs text-muted-foreground'>
+                        <p className='font-medium'>{notification.title}</p>
+                        <p className='text-sm text-muted-foreground'>
                           {notification.body}
                         </p>
                       </div>
                     </div>
 
                     <div className='flex shrink-0 items-center pl-3 text-xs text-muted-foreground'>
-                      <Clock className='mr-1 h-3 w-3' />
-                      {new Date(notification.createdAt).toLocaleString(
-                        'en-US',
-                        {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        }
-                      )}
+                      <ClockIcon className='mr-1 size-3' />
+                      <span className='min-w-16'>
+                        {new Date(notification.createdAt).toLocaleString(
+                          'en-US',
+                          { hour: '2-digit', minute: '2-digit' }
+                        )}
+                      </span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   )
 }
