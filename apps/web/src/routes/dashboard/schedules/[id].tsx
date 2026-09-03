@@ -32,6 +32,12 @@ import { api } from '@/lib/runtime'
 
 import type { Route } from './+types/[id]'
 
+const statusVariantMap = {
+  completed: 'success',
+  pending: 'warning',
+  failed: 'destructive',
+} as const
+
 export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
   const { data, isLoading, isError } = useQuery(
     api.schedule.show.queryOptions({ params: params as never })
@@ -54,14 +60,7 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
         <Typography variant='h2'>Schedule Details</Typography>
 
         <Badge
-          variant={
-            // oxlint-disable-next-line no-nested-ternary
-            status === 'completed'
-              ? 'success'
-              : (status === 'pending'
-                ? 'warning'
-                : 'destructive')
-          }
+          variant={statusVariantMap[status as keyof typeof statusVariantMap]}
         >
           {status === 'completed' && (
             <>
