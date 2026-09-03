@@ -8,6 +8,7 @@ import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 import type { BaseProvider } from '@/modules/auth/infrastructure/services/providers/base.provider'
 
 import { AuthModule } from '@/modules/auth/auth.module'
+import { DashboardModule } from '@/modules/dashboard/dashboard.module'
 import { DeviceModule } from '@/modules/device/device.module'
 import { HomeModule } from '@/modules/home/home.module'
 import { NotificationModule } from '@/modules/notification/notification.module'
@@ -36,13 +37,17 @@ export class AppModule {
       userModule.exports.userService
     )
 
+    const dashboardModule = DashboardModule.create({ persistence })
+
     const controllerLayer = Layer.mergeAll(
       homeModule.controller,
       deviceModule.controller,
       notificationModule.controller,
       scheduleModule.controller,
       userModule.controller,
-      authModule.controller
+      authModule.controller,
+
+      dashboardModule.controller
     ).pipe(
       Layer.provide([
         authModule.exports.middleware,

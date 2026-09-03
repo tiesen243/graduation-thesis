@@ -40,7 +40,7 @@ export const notifications = snakeCase.table(
 
     title: t.varchar({ length: 255 }).notNull(),
     body: t.text().notNull(),
-    payload: t.jsonb(),
+    payload: t.jsonb().$type<Record<string, unknown> | null>(),
 
     readAt: t.timestamp(),
 

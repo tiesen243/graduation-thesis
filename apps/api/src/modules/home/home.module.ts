@@ -9,10 +9,6 @@ export class HomeModule {
 
     return {
       controller: homeController.pipe(Layer.provide(layer)),
-
-      exports: {
-        layer,
-      },
     }
   }
 }

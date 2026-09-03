@@ -31,7 +31,8 @@
     "cn": "^0.2.4",
     "date-fns": "^4.4.0",
     "lucide-react": "^1.39.0",
-    "react-day-picker": "^10.0.1"
+    "react-day-picker": "^10.0.1",
+    "recharts": "3.8.0"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
