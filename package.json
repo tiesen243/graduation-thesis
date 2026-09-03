@@ -18,8 +18,8 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "oxfmt": "^0.65.0",
-    "oxlint": "^1.80.0",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "tegami": "^1.4.0",
     "turbo": "^2.10.12"
   },
@@ -27,7 +27,7 @@
   "catalogs": {
     "dev": {
       "@types/bun": "^1.4.0",
-      "tsdown": "^0.22.13",
+      "tsdown": "^0.22.14",
       "typescript": "^7.0.2"
     },
     "prod": {

@@ -7,10 +7,8 @@ import {
   CreditCardIcon,
   FileTextIcon,
   LayoutDashboardIcon,
-  LifeBuoyIcon,
   PillBottleIcon,
   ReceiptIcon,
-  SettingsIcon,
   UsersIcon,
 } from '@rozumari/ui/components/icons'
 
@@ -94,6 +92,4 @@ export const navGroups: NavGroupConfig[] = [
 
 export const secondaryNavItems: NavItem[] = [
   { title: 'Notifications', icon: BellIcon, url: '/dashboard/notifications' },
-  { title: 'Settings', icon: SettingsIcon, url: '/dashboard/settings' },
-  { title: 'Support', icon: LifeBuoyIcon, url: '/dashboard/support' },
 ]

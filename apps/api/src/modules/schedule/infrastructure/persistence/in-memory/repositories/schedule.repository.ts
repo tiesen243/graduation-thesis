@@ -1,4 +1,4 @@
-import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
+import type { ScheduleAggregateSchema } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
 import * as Effect from 'effect/Effect'
@@ -37,11 +37,14 @@ export const InMemoryScheduleRepository = Layer.effect(
       })
 
       const compartmentsMap = yield* Ref.get(db.compartments)
+      const devicesMap = yield* Ref.get(db.devices)
 
       const itemsBySchedule = Map.groupBy(allItems, (item) => item.scheduleId)
 
       return schedules.map((schedule) => {
         const scheduleItemsList = itemsBySchedule.get(schedule.id) ?? []
+
+        const device = devicesMap.get(schedule.deviceId)
 
         const items = scheduleItemsList.map((item) => {
           const compartmentKey = `${schedule.deviceId}:${item.slot}`
@@ -51,13 +54,19 @@ export const InMemoryScheduleRepository = Layer.effect(
             slot: item.slot,
             quantity: item.quantity,
             medicine: compartment?.medicine ?? '',
+            dosage: compartment?.dosage ?? '',
           }
         })
 
         return {
           ...schedule,
+          device: {
+            id: device?.id ?? '',
+            name: device?.name ?? '',
+            position: device?.position ?? '',
+          },
           items,
-        } as ScheduleAggregate
+        } as ScheduleAggregateSchema
       })
     })
 

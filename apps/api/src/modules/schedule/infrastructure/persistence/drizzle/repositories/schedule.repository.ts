@@ -1,10 +1,13 @@
-import type { ScheduleAggregate } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
+import type { ScheduleAggregateSchema } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 
-import { and, between, eq, sql } from 'drizzle-orm'
+import { and, asc, between, eq, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import { compartments } from '@/modules/device/infrastructure/persistence/drizzle/schema'
+import {
+  compartments,
+  devices,
+} from '@/modules/device/infrastructure/persistence/drizzle/schema'
 import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
 import { DrizzleScheduleMapper } from '@/modules/schedule/infrastructure/persistence/drizzle/mappers/schedule.mapper'
 import {
@@ -30,10 +33,16 @@ export const DrizzleScheduleRepository = Layer.effect(
       date: schedules.date,
       time: schedules.time,
       status: schedules.status,
-      items: sql<ScheduleAggregate['items']>`COALESCE(
+      device: {
+        id: devices.id,
+        name: devices.name,
+        position: devices.position,
+      },
+      items: sql<ScheduleAggregateSchema['items']>`COALESCE(
         json_agg(json_build_object(
           'slot', ${scheduleItems.slot},
           'medicine', ${compartments.medicine},
+          'dosage', ${compartments.dosage},
           'quantity', ${scheduleItems.quantity}
         )) FILTER (WHERE ${scheduleItems.slot} IS NOT NULL),
       '[]'::json)`,
@@ -46,7 +55,8 @@ export const DrizzleScheduleRepository = Layer.effect(
         const [row] = yield* db
           .select(selector)
           .from(schedules)
-          .leftJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .innerJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .innerJoin(devices, eq(devices.id, schedules.deviceId))
           .leftJoin(
             compartments,
             and(
@@ -55,7 +65,8 @@ export const DrizzleScheduleRepository = Layer.effect(
             )
           )
           .where(eq(schedules.id, scheduleId))
-          .groupBy(schedules.id)
+          .groupBy(schedules.id, devices.id)
+          .orderBy(asc(schedules.date), asc(schedules.time))
           .pipe(Effect.orDie)
 
         return row ?? null
@@ -79,7 +90,8 @@ export const DrizzleScheduleRepository = Layer.effect(
         const rows = yield* db
           .select(selector)
           .from(schedules)
-          .leftJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .innerJoin(scheduleItems, eq(scheduleItems.scheduleId, schedules.id))
+          .innerJoin(devices, eq(devices.id, schedules.deviceId))
           .leftJoin(
             compartments,
             and(
@@ -88,7 +100,8 @@ export const DrizzleScheduleRepository = Layer.effect(
             )
           )
           .where(and(...conditions))
-          .groupBy(schedules.id)
+          .groupBy(schedules.id, devices.id)
+          .orderBy(asc(schedules.date), asc(schedules.time))
           .pipe(Effect.orDie)
 
         return rows

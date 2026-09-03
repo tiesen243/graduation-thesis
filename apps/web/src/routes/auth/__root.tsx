@@ -5,12 +5,12 @@ import { Outlet, useNavigate } from 'react-router'
 import { useSession } from '@/lib/use-session'
 
 export default function AuthRoot() {
-  const { user } = useSession()
+  const { status } = useSession()
   const navigate = useNavigate()
 
   useLayoutEffect(() => {
-    if (user) navigate('/dashboard', { replace: true })
-  }, [user, navigate])
+    if (status === 'authenticated') navigate('/dashboard', { replace: true })
+  }, [navigate, status])
 
   return (
     <main className='grid min-h-dvh place-items-center md:px-4'>

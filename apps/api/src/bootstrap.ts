@@ -2,6 +2,7 @@ import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
 import * as BunServices from '@effect/platform-bun/BunServices'
 import * as DateTime from 'effect/DateTime'
 import * as Layer from 'effect/Layer'
+import * as References from 'effect/References'
 import * as Etag from 'effect/unstable/http/Etag'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
 
@@ -40,6 +41,10 @@ function bootstrap() {
       }),
 
       Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
+      Layer.succeed(
+        References.MinimumLogLevel,
+        env.NODE_ENV === 'development' ? 'Debug' : 'Info'
+      ),
 
       BunHttpPlatform.layer,
       BunServices.layer,

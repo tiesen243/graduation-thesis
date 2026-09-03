@@ -22,6 +22,7 @@ export default [
       route('/pill-boxes/:id', './routes/dashboard/pill-boxes/[id].tsx'),
 
       route('/schedules', './routes/dashboard/schedules/_index.tsx'),
+      route('/schedules/create', './routes/dashboard/schedules/create.tsx'),
       route('/schedules/:id', './routes/dashboard/schedules/[id].tsx'),
 
       route('/notifications', './routes/dashboard/notifications/_index.tsx'),

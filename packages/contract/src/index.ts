@@ -2,6 +2,7 @@ import * as HttpApi from 'effect/unstable/httpapi/HttpApi'
 
 import { AuthGroup } from '@/auth/group.auth'
 import { OAuthGroup } from '@/auth/group.oauth'
+import { DashboardGroup } from '@/dashboard/group'
 import { DeviceGroup } from '@/device/group'
 import { DeviceIoTGroup } from '@/device/group.iot'
 import { HomeGroup } from '@/home/group'
@@ -26,5 +27,7 @@ export class Api extends HttpApi.make('api')
 
   .add(NotificationGroup)
   .add(NotificationIoTGroup)
+
+  .add(DashboardGroup)
 
   .add(HomeGroup) {}

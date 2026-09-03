@@ -1,1 +1,2 @@
-export { cn } from 'cnfast'
+export { cn } from 'cn'
+export { clsx } from 'cn/lite'

@@ -1,3 +1,4 @@
+import { Loader2Icon } from '@rozumari/ui/components/icons'
 import { Separator } from '@rozumari/ui/components/separator'
 import {
   SidebarInset,
@@ -12,19 +13,26 @@ import { Breadcrumbs } from '@/routes/dashboard/_components/breadcrumbs'
 import { DashboardSidebar } from '@/routes/dashboard/_components/dashboard-sidebar'
 
 export default function DashboardRoot() {
-  const { user } = useSession()
+  const { status } = useSession()
   const navigate = useNavigate()
 
   useLayoutEffect(() => {
-    if (!user) navigate('/login', { replace: true })
-  }, [user, navigate])
+    if (status === 'unauthenticated') navigate('/login', { replace: true })
+  }, [navigate, status])
+
+  if (status === 'loading')
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <Loader2Icon className='h-8 w-8 animate-spin text-primary' />
+      </div>
+    )
 
   return (
     <SidebarProvider>
       <DashboardSidebar />
 
-      <SidebarInset>
-        <header className='flex h-16 shrink-0 items-center gap-2 border-b px-4'>
+      <SidebarInset className='min-w-0' suppressHydrationWarning>
+        <header className='sticky inset-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border bg-sidebar px-4'>
           <SidebarTrigger className='-ml-1' />
           <Separator
             orientation='vertical'

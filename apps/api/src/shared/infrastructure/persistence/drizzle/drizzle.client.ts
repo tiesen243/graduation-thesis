@@ -46,8 +46,25 @@ export class DrizzleClient extends Context.Service<
   }
 >()('shared/infrastructure/persistence/drizzle/DrizzleClient', {
   make: Effect.gen(function* DrizzleClientMake() {
+    const loggerLayer = Layer.succeed(PgDrizzle.EffectLogger, {
+      logQuery: Effect.fn(function* logQuery(query, _params) {
+        // oxlint-disable-next-line unicorn/no-array-method-this-argument
+        const params = yield* Effect.forEach(_params, (p) =>
+          Effect.try(() => JSON.stringify(p)).pipe(
+            Effect.orElseSucceed(() => String(p))
+          )
+        )
+
+        yield* Effect.logDebug().pipe(
+          Effect.annotateLogs({ query, params }),
+          Effect.withLogSpan('DrizzleClient.logQuery')
+        )
+      }),
+    })
+
     return {
       db: yield* PgDrizzle.make().pipe(
+        Effect.provide(loggerLayer),
         Effect.provide(PgDrizzle.DefaultServices)
       ),
 

@@ -1,18 +1,15 @@
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@rozumari/ui/components/card'
 import { TabsContent } from '@rozumari/ui/components/tabs'
 
-export const SchedulesTab: React.FC = () => (
-  <TabsContent value='schedules'>
-    <Card className='mt-4'>
-      <CardHeader>
-        <CardTitle>Device schedules</CardTitle>
-        <CardDescription>Manage schedules</CardDescription>
-      </CardHeader>
-    </Card>
-  </TabsContent>
-)
+import { Schedules } from '@/routes/dashboard/_components/schedule'
+import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
+
+export const SchedulesTab: React.FC = () => {
+  const { device } = useDevice()
+  if (!device) return null
+
+  return (
+    <TabsContent value='schedules'>
+      <Schedules deviceId={device.id} />
+    </TabsContent>
+  )
+}
