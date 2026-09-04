@@ -16,10 +16,11 @@ export const getBaseUrl = () => {
   const debuggerHost = Constants.expoConfig?.hostUri
   const localhost = debuggerHost?.split(':')[0]
 
-  if (!localhost)
-    throw new Error(
-      'Failed to get localhost. Please point to your production server.'
-    )
+  if (localhost) return `http://${localhost}:3000`
 
-  return `http://${localhost}:3000`
+  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL
+
+  throw new Error(
+    'Could not determine the base URL. Please set the EXPO_PUBLIC_API_URL environment variable.'
+  )
 }

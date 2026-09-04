@@ -7,6 +7,7 @@ import {
   FieldGroup,
   FieldLabel,
   FieldLegend,
+  FieldSeparator,
   FieldSet,
 } from '@rozumari/ui/components/field'
 import { Input } from '@rozumari/ui/components/input'
@@ -15,6 +16,7 @@ import { useRouter } from 'expo-router'
 import { useLayoutEffect } from 'react'
 import { View } from 'react-native'
 
+import { OAuthButton } from '@/components/oauth-button'
 import { useRuntime } from '@/hooks/use-runtime'
 import { useSession } from '@/hooks/use-session'
 import { setTokens } from '@/lib/secure-store'
@@ -98,6 +100,15 @@ export default function LoginScreen() {
               </Field>
             )}
           />
+
+          <FieldSeparator>
+            <FieldLabel>Or</FieldLabel>
+          </FieldSeparator>
+
+          <Field orientation='horizontal'>
+            <OAuthButton provider='facebook' />
+            <OAuthButton provider='google' />
+          </Field>
         </FieldGroup>
       </loginForm.Root>
     </View>

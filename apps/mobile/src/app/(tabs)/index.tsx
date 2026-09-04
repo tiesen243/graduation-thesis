@@ -11,6 +11,7 @@ import { useSession } from '@/hooks/use-session'
 
 export default function TabsIndexScreen() {
   const { user, logout } = useSession()
+  if (!user) return null
 
   return (
     <View className='flex-1 items-center justify-center gap-4 bg-background px-4'>
