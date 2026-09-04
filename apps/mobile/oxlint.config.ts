@@ -5,4 +5,5 @@ import { defineConfig } from 'oxlint'
 
 export default defineConfig({
   extends: [core, effect, react, restrictedEnvVars],
+  ignorePatterns: ['uniwind-types.d.ts'],
 })
