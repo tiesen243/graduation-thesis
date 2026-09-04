@@ -9,6 +9,10 @@ dist/
 # react router
 .react-router/
 
+# expo
+.expo/
+expo-env.d.ts
+
 # python
 __pycache__/
 

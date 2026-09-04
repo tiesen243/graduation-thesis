@@ -1,9 +1,16 @@
 import { ScheduleSchema } from '@rozumari/contract/schedule/schemas/schedule.schema'
+import { createId } from '@rozumari/lib/create-id'
+import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 export class Schedule extends Schema.TaggedClass<Schedule>()(
   'schedule/domain/Schedule',
-  ScheduleSchema
+  {
+    ...ScheduleSchema.fields,
+    id: ScheduleSchema.fields.id.pipe(
+      Schema.withConstructorDefault(Effect.sync(createId))
+    ),
+  }
 ) {
   public update(props: Partial<Pick<Schedule, 'date' | 'time' | 'status'>>) {
     return Schedule.make({

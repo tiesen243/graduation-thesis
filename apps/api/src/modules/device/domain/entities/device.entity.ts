@@ -1,4 +1,5 @@
 import { DeviceSchema } from '@rozumari/contract/device/schemas/device.schema'
+import { createId } from '@rozumari/lib/create-id'
 import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Random from 'effect/Random'
@@ -6,7 +7,12 @@ import * as Schema from 'effect/Schema'
 
 export class Device extends Schema.TaggedClass<Device>()(
   'device/domain/Device',
-  DeviceSchema
+  {
+    ...DeviceSchema.fields,
+    id: DeviceSchema.fields.id.pipe(
+      Schema.withConstructorDefault(Effect.sync(createId))
+    ),
+  }
 ) {
   /**
    * Generates a unique factory model for the device using current timestamp and random sequence.

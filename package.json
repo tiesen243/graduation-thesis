@@ -20,18 +20,19 @@
   "devDependencies": {
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
-    "tegami": "^1.4.0",
+    "tegami": "^1.5.0",
     "turbo": "^2.10.12"
   },
   "packageManager": "bun@1.3.0",
   "catalogs": {
     "dev": {
-      "@types/bun": "^1.4.0",
-      "tsdown": "^0.22.14",
+      "@types/bun": "^1.4.1",
+      "tsdown": "^0.23.0",
       "typescript": "^7.0.2"
     },
     "prod": {
-      "@tanstack/react-query": "^5.102.8"
+      "@tanstack/react-query": "^5.102.8",
+      "@tiesen/effect-tanstack-query": "^0.0.20"
     },
     "effect": {
       "@effect/platform-bun": ">=4.0.0-rc.112",
@@ -42,16 +43,17 @@
     "react": {
       "@types/react": "^19.2.18",
       "@types/react-dom": "^19.2.5",
-      "react": "^19.2.8",
+      "react": "19.2.3",
       "react-dom": "^19.2.8",
       "react-native": "^0.86.2"
     },
     "tailwind": {
       "@tailwindcss/vite": "^4.3.3",
-      "tailwindcss": "^4.3.3"
+      "tailwindcss": "^4.3.3",
+      "uniwind": "^1.12.0"
     }
   },
   "patchedDependencies": {
-    "tegami@1.4.0": "patches/tegami@1.4.0.patch"
+    "tegami@1.5.0": "patches/tegami@1.5.0.patch"
   }
 }

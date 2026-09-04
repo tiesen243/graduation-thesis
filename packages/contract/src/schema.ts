@@ -1,13 +1,10 @@
-import { createId } from '@rozumari/lib/create-id'
 import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 export const Cuid2 = Schema.String.check(
-  Schema.isPattern(/^[0-9a-z]+$/u, {
-    message: 'Invalid CUID2 format',
-  })
-).pipe(Schema.withConstructorDefault(Effect.sync(createId)))
+  Schema.isPattern(/^[0-9a-z]+$/u, { message: 'Invalid CUID2 format' })
+)
 
 export const Username = Schema.String.check(
   Schema.isMinLength(4, {
