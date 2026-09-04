@@ -1,4 +1,3 @@
-import { createId } from '@rozumari/lib/create-id'
 import { describe, expect, it } from 'bun:test'
 import * as Schema from 'effect/Schema'
 
@@ -22,7 +21,7 @@ describe('CreateScheduleDto.Input Schema', () => {
   const yesterday = getFormattedDate(-1)
 
   const validPayload = {
-    deviceId: createId(),
+    deviceId: 'dsah3djh6jwqh6ehas7dhsja',
     startDate: today,
     endDate: nextWeek,
     daysOfWeek: [1, 2, 7], // CN, T2, T7

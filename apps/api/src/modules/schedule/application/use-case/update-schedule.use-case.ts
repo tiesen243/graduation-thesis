@@ -25,12 +25,18 @@ export class UpdateScheduleUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute({ id, ...input }) {
-        const found = yield* scheduleRepository.findWithItems(id)
-        if (!found)
+        const [found, [schedule]] = yield* Effect.all([
+          scheduleRepository.findWithItems(id),
+          scheduleRepository.findMany({
+            where: { id: { eq: id } },
+            limit: 1,
+          }),
+        ])
+        if (!found || !schedule)
           return yield* Effect.fail(new ScheduleNotFound({ error: { id } }))
 
         const updatedSchedule = Schedule.make({
-          ...found,
+          ...schedule,
           date: input.date ?? found.date,
           time: input.time ?? found.time,
           status: input.status ?? found.status,
