@@ -1,0 +1,7 @@
+@import '@rozumari/ui/tailwind.css';
+@import 'uniwind';
+
+@source '../../../packages/ui/dist/components/*.mjs';
+@source '../../../packages/ui/dist/native/*.mjs';
+
+@source not '../../../packages/ui/dist/components/{dialog,input-group,sidebar,tooltip,switch,toast,tabs}.mjs';

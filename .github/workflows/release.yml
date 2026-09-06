@@ -4,12 +4,6 @@ on:
   push:
     branches:
       - dev
-    paths:
-      - '.changeset/**'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/dev' }}
 
 # You can leverage Vercel Remote Caching with Turbo to speed up your builds
 # @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
@@ -20,25 +14,15 @@ env:
 
 jobs:
   release:
-    if: ${{ github.repository_owner == 'tiesen243' }}
-    name: Create a PR for release workflow
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v6
+      - uses: ./tools/github/actions/setup
 
-      - name: Setup
-        uses: ./tools/github/setup
-
-      - name: Create Version PR
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          commit: 'chore(release): version packages'
-          title: 'chore(release): version packages'
-          version: bun tools/github/scripts/changeset-version.js
-          publish: bun run changeset tag
+      - name: Version & publish packages
+        run: bun tegami ci
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}

@@ -1,0 +1,76 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - '@rozumari/mobile@*.*.*'
+
+# You can leverage Vercel Remote Caching with Turbo to speed up your builds
+# @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
+env:
+  FORCE_COLOR: 3
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./tools/github/actions/setup
+
+      - name: Extract Tag Name and Version
+        id: get_tag
+        run: |
+          TAG_NAME="${GITHUB_REF#refs/tags/}"
+          VERSION="${TAG_NAME##*@}"
+
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "APP_VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          packager: bun
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Build APK & IPA on EAS Cloud
+        working-directory: ./apps/mobile
+        env:
+          EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+        run: |
+          eas build --platform android --profile production --non-interactive
+
+      - name: Download Artifacts from EAS Build
+        working-directory: ./apps/mobile
+        run: |
+          mkdir -p ./build-artifacts
+          eas build:list --limit=2 --json --non-interactive > builds.json
+
+          jq -c '.[] | select(.artifacts.buildUrl != null) | {platform: .platform, url: .artifacts.buildUrl}' builds.json | while read -r item; do
+            PLATFORM=$(echo "$item" | jq -r '.platform | ascii_downcase')
+            URL=$(echo "$item" | jq -r '.url')
+
+            if [ "$PLATFORM" = "android" ]; then
+              EXT="apk"
+            else
+              EXT="ipa"
+            fi
+
+            FILENAME="./build-artifacts/rozumari-v${{ env.APP_VERSION }}.${EXT}"
+            echo "Downloading $PLATFORM build to $FILENAME..."
+            curl -L "$URL" -o "$FILENAME"
+          done
+
+      - name: Upload Build Artifacts to Existing GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          gh release upload "${{ env.TAG_NAME }}" \
+            apps/mobile/build-artifacts/rozumari-v*.apk \
+            apps/mobile/build-artifacts/rozumari-v*.ipa \
+            --clobber

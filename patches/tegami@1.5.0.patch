@@ -1,0 +1,20 @@
+diff --git a/dist/npm-CN6OT66I.js b/dist/npm-CN6OT66I.js
+index 4e6cc153e822952eee0a0aacb490f401acae7340..08d1b455434e2281157bac14431194a8baa2acb5 100644
+--- a/dist/npm-CN6OT66I.js
++++ b/dist/npm-CN6OT66I.js
+@@ -1575,10 +1575,11 @@ async function runPublish(client, pkg, name, distTag) {
+ 		if (packResult.exitCode !== 0) throw execFailure(`Failed to pack ${name}@${pkg.version}.`, packResult);
+ 		const publishArgs = ["publish", tarballPath];
+ 		if (distTag) publishArgs.push("--tag", distTag);
+-		const publishResult = await x("npm", publishArgs, { nodeOptions: {
+-			cwd: pkg.path,
+-			...!isCI() && process.stdin.isTTY ? { stdio: "inherit" } : {}
+-		} });
++		// const publishResult = await x("npm", publishArgs, { nodeOptions: {
++		// 	cwd: pkg.path,
++		// 	...!isCI() && process.stdin.isTTY ? { stdio: "inherit" } : {}
++		// } });
++		const publishResult = { exitCode: 0, stdout: "", stderr: "" }; // skip actual publish
+ 		if (publishResult.exitCode !== 0) throw execFailure(`Failed to publish ${name}@${pkg.version}${distTag ? ` with dist-tag "${distTag}"` : ""}.`, publishResult);
+ 		return;
+ 	}

@@ -1,0 +1,120 @@
+import { Badge } from '@rozumari/ui/components/badge'
+import { buttonVariants } from '@rozumari/ui/components/button'
+import { SearchIcon } from '@rozumari/ui/components/icons'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@rozumari/ui/components/input-group'
+import { Typography } from '@rozumari/ui/components/typography'
+import { useQuery } from '@tanstack/react-query'
+import { parseAsInteger, parseAsString, useQueryStates } from 'nuqs'
+import { Link } from 'react-router'
+
+import { DataTable } from '@/components/data-table'
+import { useSession } from '@/hooks/use-session'
+import { api } from '@/lib/runtime'
+import { AddDeviceButton } from '@/routes/dashboard/pill-boxes/_components/add-device-button'
+import { LinkDeviceButton } from '@/routes/dashboard/pill-boxes/_components/link-device-button'
+
+const STATUS_VARIANTS = {
+  unlinked: 'warning',
+  linked: 'success',
+  suspended: 'destructive',
+} as const
+
+export default function PillBoxesIndexPage() {
+  const [query, setQuery] = useQueryStates(
+    {
+      query: parseAsString.withDefault(''),
+      page: parseAsInteger.withDefault(1),
+      limit: parseAsInteger.withDefault(10),
+    },
+    { urlKeys: { query: 'q' } }
+  )
+
+  const { user } = useSession()
+  const { data, isLoading } = useQuery(
+    user?.role === 'admin'
+      ? api.device.list.queryOptions({ query })
+      : api.device.me.queryOptions({ query })
+  )
+
+  return (
+    <>
+      <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+        <div>
+          <Typography variant='h2'>PillBoxes</Typography>
+          <Typography>
+            Manage your pill-boxes, check status, and handle refills.
+          </Typography>
+        </div>
+
+        {user?.role === 'admin' ? <AddDeviceButton /> : <LinkDeviceButton />}
+      </div>
+
+      <InputGroup
+        className='my-4'
+        render={
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              setQuery({ query: e.currentTarget.query.value, page: 1 })
+            }}
+          />
+        }
+      >
+        <InputGroupAddon align='inline-start'>
+          <SearchIcon />
+        </InputGroupAddon>
+
+        <InputGroupInput
+          name='query'
+          defaultValue={query.query}
+          placeholder='Search pill-boxes...'
+          type='search'
+        />
+      </InputGroup>
+
+      <DataTable
+        data={data?.data.devices ?? []}
+        keyExtractor={(item) => item.id}
+        columns={{
+          factoryModel: 'Factory Model',
+          name: 'Name',
+          status: {
+            header: 'Status',
+            action: (item) => (
+              <Badge
+                className='capitalize'
+                variant={
+                  STATUS_VARIANTS[item.status as keyof typeof STATUS_VARIANTS]
+                }
+              >
+                {item.status}
+              </Badge>
+            ),
+          },
+          _: {
+            header: 'Actions',
+            action: ({ id }) => (
+              <Link
+                to={`/dashboard/pill-boxes/${id}`}
+                className={buttonVariants({ variant: 'link' })}
+              >
+                View
+              </Link>
+            ),
+          },
+        }}
+
+        isLoading={isLoading}
+
+        page={query.page}
+        pageSize={data?.data.meta.pageSize}
+        totalPages={data?.data.meta.totalPages}
+        setPage={(page) => setQuery({ page })}
+      />
+    </>
+  )
+}

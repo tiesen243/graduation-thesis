@@ -5,11 +5,13 @@ runs:
   steps:
     - name: Setup Bun
       uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: 1.4.x
 
     - name: Install Dependencies
       shell: bash
-      run: bun ci
+      run: bun ci --ignore-scripts
 
-    # - name: Build Packages
-    #   shell: bash
-    #   run: bun --filter '*' build
+    - name: Build Packages
+      shell: bash
+      run: bun run build -F './packages/*'

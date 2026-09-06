@@ -1,0 +1,6 @@
+smol = true
+telemetry = false
+
+[install]
+linkWorkspacePackages = true
+linker = "isolated"

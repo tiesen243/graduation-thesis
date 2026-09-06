@@ -1,6 +1,6 @@
 [English](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.en.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.vi.md)
 
-# Đồ án Tốt nghiệp: Thiết kế hộp thuốc thông minh cho người cao tuổi
+# Rozumari (ローズマリー): Thiết kế hộp thuốc thông minh hổ trợ người cao tuổi
 
 <p align="center">
     <a href="https://github.com/tiesen243/graduation-thesis/releases">
@@ -24,7 +24,7 @@
 
 Hệ thống tự động mở ngăn thuốc được chỉ định theo lịch, phát lời nhắc bằng âm thanh và gửi thông báo cho người chăm sóc nếu bệnh nhân bỏ lỡ liều hoặc lấy thuốc từ sai ngăn.
 
-**Mã môn học:** [code]
+**Mã môn học:** 422001423801
 
 **Giảng viên hướng dẫn:** Trần Hồng Vinh
 

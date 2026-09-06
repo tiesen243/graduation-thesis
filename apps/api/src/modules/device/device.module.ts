@@ -1,0 +1,52 @@
+import * as Layer from 'effect/Layer'
+import * as Command from 'effect/unstable/cli/Command'
+
+import type { AppModule } from '@/modules/app.module'
+
+import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
+import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
+import { LinkDeviceUseCase } from '@/modules/device/application/use-case/link-device.use-case'
+import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
+import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
+import { UpdateDeviceUseCase } from '@/modules/device/application/use-case/update-device.use-case'
+import { DeviceInfrastructureModule } from '@/modules/device/infrastructure/infrastructure.module'
+import { DeviceServiceLayer } from '@/modules/device/infrastructure/services/device.service'
+import { deviceCommand } from '@/modules/device/presentation/cli/device.command'
+import { DeviceIoTController } from '@/modules/device/presentation/http/device-iot.controller'
+import { deviceController } from '@/modules/device/presentation/http/device.controller'
+import { deviceMiddleware } from '@/modules/device/presentation/middleware/device.middleware'
+
+export class DeviceModule {
+  public static create(config: Pick<AppModule.Config, 'persistence'>) {
+    const infrastructureLayer = DeviceInfrastructureModule.create(
+      config.persistence
+    )
+
+    const useCaseLayer = Layer.mergeAll(
+      AddDeviceUseCase.layer,
+      DeviceStreamUseCase.layer,
+      LinkDeviceUseCase.layer,
+      ListDevicesUseCase.layer,
+      ShowDeviceUseCase.layer,
+      UpdateCompartmentUseCase.layer,
+      UpdateDeviceUseCase.layer
+    )
+
+    const layer = Layer.provideMerge(useCaseLayer, infrastructureLayer)
+
+    return {
+      controller: Layer.merge(deviceController, DeviceIoTController).pipe(
+        Layer.provide(layer)
+      ),
+
+      command: deviceCommand.pipe(Command.provide(layer)),
+
+      exports: {
+        middleware: deviceMiddleware.pipe(Layer.provide(layer)),
+
+        deviceService: DeviceServiceLayer.pipe(Layer.provide(layer)),
+      },
+    }
+  }
+}

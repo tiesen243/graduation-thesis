@@ -1,6 +1,6 @@
 [English](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.en.md) | [Tiếng Việt](https://github.com/tiesen243/graduation-thesis/blob/dev/docs/README.vi.md)
 
-# Graduation Thesis: Design of a Smart Pillbox for Seniors
+# Rozumari (ローズマリー): Design of an Assistive Smart Pillbox for the Elderly
 
 <p align="center">
   <a href="https://github.com/tiesen243/graduation-thesis/releases">
@@ -24,7 +24,7 @@
 
 The system automatically opens the designated pill compartment at scheduled times, broadcasts audio reminders, and sends notifications to caregivers if the patient misses a dose or takes medication from the incorrect compartment.
 
-**Course Code:** [code]
+**Course Code:** 422001423801
 
 **Supervisor:** Tran Hong Vinh
 

@@ -4,13 +4,19 @@
   "compilerOptions": {
     /** Base Options */
     "esModuleInterop": true,
-    "skipLibCheck": true,
+    "lib": ["es2024"],
     "target": "es2024",
-    "lib": ["es2024", "dom"],
+    "module": "preserve",
+    "moduleDetection": "force",
     "allowJs": true,
     "resolveJsonModule": true,
-    "moduleDetection": "force",
     "isolatedModules": true,
+
+    /** Transpile using Bundler (not tsc) */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
 
     /** Keep TSC performant in monorepos */
     "incremental": true,
@@ -19,13 +25,16 @@
 
     /** Strictness */
     "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
     "checkJs": true,
 
-    /** Transpile using Bundler (not tsc) */
-    "module": "Preserve",
-    "moduleResolution": "Bundler",
-    "noEmit": true
+    /** Relaxed Strictness */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false
   },
   "exclude": ["node_modules", "build", "dist", ".next", ".expo"]
 }

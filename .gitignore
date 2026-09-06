@@ -1,9 +1,20 @@
 # dependencies
 node_modules/
+.venv/
 
 # production
 build/
 dist/
+
+# react router
+.react-router/
+
+# expo
+.expo/
+expo-env.d.ts
+
+# python
+__pycache__/
 
 # environment variables
 .env*
@@ -14,9 +25,15 @@ logs/
 *.log
 
 # misc
+.cache/
 .vscode/
 .DS_Store
+*.bak
+*.tgz
 
 # infrastructure
 .alchemy/
+.turbo/
+.vercel/
 .wrangler/
+.vercel

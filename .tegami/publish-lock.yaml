@@ -1,0 +1,57 @@
+core:changelogs:
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Feature Additions & Mobile Navigation Restructuring\n\n### `@rozumari/api`\n\n- Added endpoint for fetching unread notifications count.\n\n### `@rozumari/web`\n\n- Fixed and polished UI layouts and styling across core components.\n\n### `@rozumari/mobile`\n\n- Added schedule viewing feature.\n- Implemented notification management flow (list view and detail inspector).\n- Restructured navigation architecture: organized root-level tabs with nested stack navigators for improved screen isolation and deep linking.\n"
+    filename: 2026-09-06-mtp0sntg.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Setup & Migration\n\n- Set up the mobile app architecture with Expo, React Native, and Uniwind, and migrated key UI components from Web (Shadcn UI / Base-UI) to React Native.\n- **Expo & Uniwind Integration**: Initialized Expo architecture with Uniwind styling and Metro bundler configuration.\n\n### Component Migration\n\n- **`Typography`**: Added `TypographyContext` to prevent style recursion and implemented native A11y roles (`header`, `aria-level`).\n- **`Card`**: Converted layout from CSS Grid to Flexbox; isolated `CardTitle` and `CardDescription` via `Typography` to eliminate selector recursion.\n- **`Avatar`**: Refactored to Flexbox with auto-scaling container support (`size-*`) and active image load state handling (`isLoaded`, `hasError`).\n- **`Checkbox`**: Replaced Web primitives with `Pressable` and `lucide-react-native`; added native touch target sizes and A11y states.\n- **`Input`**: Migrated to `TextInput` with explicit padding resets (`p-0`), JS-driven focus rings, and proper `placeholderTextColor` mapping.\n- **`RadioGroup`**: Introduced context-driven state management and expanded touch target bounds across both control and label.\n"
+    filename: 2026-09-05-mtn9ybax.md
+    v: 0.0.0
+core:packages:
+  - id: npm:graduation-thesis
+    updated: false
+  - id: npm:@rozumari/github
+    updated: false
+  - id: npm:@rozumari/tsconfig
+    updated: false
+  - changelogIds:
+      - 2026-09-06-mtp0sntg.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-09-06-mtp0sntg.md
+      - 2026-09-05-mtn9ybax.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - id: npm:@rozumari/firmware
+    updated: false
+  - changelogIds:
+      - 2026-09-06-mtp0sntg.md
+      - 2026-09-05-mtn9ybax.md
+    id: npm:@rozumari/ui
+    updated: true
+  - id: npm:@rozumari/eda
+    updated: false
+  - id: npm:@rozumari/lib
+    updated: false
+  - changelogIds:
+      - 2026-09-06-mtp0sntg.md
+    id: npm:@rozumari/contract
+    updated: true
+  - id: npm:@rozumari/oxlint
+    updated: false
+  - changelogIds:
+      - 2026-09-06-mtp0sntg.md
+    id: npm:@rozumari/web
+    updated: true
+npm:packages:
+  - id: npm:graduation-thesis
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/eda
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/web
