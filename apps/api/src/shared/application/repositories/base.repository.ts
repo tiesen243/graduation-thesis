@@ -17,7 +17,7 @@ export interface IBaseRepository<TEntity> {
 
   readonly save: (entity: TEntity | TEntity[]) => Effect<void>
 
-  readonly delete: (entity: TEntity) => Effect<void>
+  readonly delete: (entity: TEntity | TEntity[]) => Effect<void>
 }
 
 export namespace IBaseRepository {

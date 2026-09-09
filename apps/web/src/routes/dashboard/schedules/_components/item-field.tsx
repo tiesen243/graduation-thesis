@@ -1,4 +1,5 @@
-import { useAtomValue } from '@effect/atom-react'
+import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
@@ -20,23 +21,20 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { useMemo, useCallback } from 'react'
 
+import type { CreateScheduleForm } from '@/routes/dashboard/schedules/_components/_config'
+
 import { api } from '@/lib/runtime'
-import { CreateScheduleForm } from '@/routes/dashboard/schedules/_components/_config'
 
 export const ItemField = ({
   field,
   meta,
+  deviceId,
 }: Parameters<
   Extract<
     React.ComponentProps<typeof CreateScheduleForm.Field<'items'>>,
     { name: 'items' }
   >['render']
->[0]) => {
-  const deviceId = useAtomValue(
-    CreateScheduleForm.state(),
-    (s) => s.values.deviceId
-  )
-
+>[0] & { deviceId: DeviceId }) => {
   const { data: compartments } = useQuery({
     ...api.device.show.queryOptions({
       params: { id: deviceId },

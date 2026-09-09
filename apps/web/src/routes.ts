@@ -25,6 +25,10 @@ export default [
       route('/schedules', './routes/dashboard/schedules/_index.tsx'),
       route('/schedules/create', './routes/dashboard/schedules/create.tsx'),
       route('/schedules/:id', './routes/dashboard/schedules/[id].tsx'),
+      route(
+        '/schedules/:id/edit',
+        './routes/dashboard/schedules/[id].edit.tsx'
+      ),
 
       route('/notifications', './routes/dashboard/notifications/_index.tsx'),
       route('/notifications/:id', './routes/dashboard/notifications/[id].tsx'),

@@ -64,11 +64,14 @@ export const makeInMemoryRepository = Effect.fn(
       }),
 
       delete: Effect.fn(function* deleteEntity(entity) {
-        const key = primaryKey(entity)
+        const items = Array.isArray(entity) ? entity : [entity]
+        if (items.length === 0) return
+
+        const keysToRemove = new Set(items.map((item) => primaryKey(item)))
 
         yield* Ref.update(dictRef, (dict) => {
           const next = new Map(dict)
-          next.delete(key)
+          for (const key of keysToRemove) next.delete(key)
           return next
         })
       }),

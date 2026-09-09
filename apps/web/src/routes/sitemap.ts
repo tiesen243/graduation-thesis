@@ -1,9 +1,15 @@
+// oxlint-disable no-restricted-properties
 import type { RouteConfig } from '@react-router/dev/routes'
 
-import { getBaseUrl } from '@/lib/utils'
 import routesConfig from '@/routes'
 
-const url = (path: string): string => new URL(path, getBaseUrl()).toString()
+const url = (path: string): string =>
+  new URL(
+    path,
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : `http://localhost:${process.env.PORT ?? 5173}`
+  ).toString()
 
 function extractPaths(routes: Awaited<RouteConfig>): string[] {
   const paths: string[] = []

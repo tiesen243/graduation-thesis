@@ -42,24 +42,38 @@ export class UpdateScheduleUseCase extends Context.Service<
           status: input.status ?? found.status,
         })
 
-        const items = input.items
-          ? input.items.map((item) =>
-              ScheduleItem.make({
-                scheduleId: updatedSchedule.id,
-                slot: item.slot,
-                quantity: item.quantity,
-              })
-            )
-          : found.items.map((item) =>
-              ScheduleItem.make({
-                ...item,
-                scheduleId: updatedSchedule.id,
-              })
+        let itemsToDelete: ScheduleItem[] = []
+        let itemsToSave: ScheduleItem[] = []
+
+        if (input.items) {
+          const newSlotsSet = new Set(input.items.map((i) => i.slot))
+
+          itemsToDelete = found.items
+            .filter((oldItem) => !newSlotsSet.has(oldItem.slot))
+            .map((item) =>
+              ScheduleItem.make({ ...item, scheduleId: updatedSchedule.id })
             )
 
+          itemsToSave = input.items.map((item) =>
+            ScheduleItem.make({
+              scheduleId: updatedSchedule.id,
+              slot: item.slot,
+              quantity: item.quantity,
+            })
+          )
+        } else
+          itemsToSave = found.items.map((item) =>
+            ScheduleItem.make({ ...item, scheduleId: updatedSchedule.id })
+          )
+
+        yield* Effect.logDebug({ itemsToSave, itemsToDelete })
+
         return yield* Effect.gen(function* tx() {
+          if (itemsToDelete.length > 0)
+            yield* scheduleItemRepository.delete(itemsToDelete)
+
           yield* scheduleRepository.save(updatedSchedule)
-          yield* scheduleItemRepository.save(items)
+          yield* scheduleItemRepository.save(itemsToSave)
 
           return { id: updatedSchedule.id }
         }).pipe(withTransaction)
