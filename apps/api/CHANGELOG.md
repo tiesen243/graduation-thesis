@@ -1,3 +1,9 @@
+## @rozumari/api@0.0.20
+
+### Bug Fixes
+
+- Schedule mapper error
+
 ## @rozumari/api@0.0.19
 
 ### Feature Additions & Mobile Navigation Restructuring

@@ -1,3 +1,9 @@
+## @rozumari/contract@0.0.14
+
+### Bug Fixes
+
+- Schedule mapper error
+
 ## @rozumari/contract@0.0.13
 
 ### Feature Additions & Mobile Navigation Restructuring
