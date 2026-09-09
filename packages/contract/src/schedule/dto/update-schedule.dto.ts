@@ -9,8 +9,7 @@ export class UpdateScheduleDto extends Schema.TaggedClass<UpdateScheduleDto>()(
   ApiResponse({
     message: 'Update schedule successfully',
     dataSchema: Schema.Struct({
-      schedule: ScheduleSchema,
-      items: Schema.Array(ScheduleItemSchema),
+      id: ScheduleSchema.fields.id,
     }),
   })
 ) {}
