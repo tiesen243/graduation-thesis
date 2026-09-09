@@ -3,9 +3,11 @@ import { Button } from '@rozumari/ui/components/button'
 import { Calendar } from '@rozumari/ui/components/calendar'
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldLegend,
   FieldSet,
 } from '@rozumari/ui/components/field'
 import { ChevronDownIcon } from '@rozumari/ui/components/icons'
@@ -16,7 +18,6 @@ import {
   PopoverTrigger,
 } from '@rozumari/ui/components/popover'
 import { toast } from '@rozumari/ui/components/toast'
-import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQuery } from '@tanstack/react-query'
 
@@ -53,128 +54,131 @@ export default function ScheduleEditPage({ params }: Route.ComponentProps) {
   if (isLoading || isError || !data?.data) return <div>Loading...</div>
 
   return (
-    <>
-      <Typography variant='h2'>Edit Schedule</Typography>
-
-      <updateScheduleForm.Root
-        defaultValues={{
-          date: data.data.date,
-          time: data.data.time,
-          items: data.data.items,
-        }}
-        render={({ meta: { formId }, handleSubmit }) => (
-          <form
-            id={formId}
-            onSubmit={(e) => {
-              e.preventDefault()
-              handleSubmit(
-                (payload) =>
-                  api.schedule.update.mutateEffect({
-                    params: data.data,
-                    payload,
+    <updateScheduleForm.Root
+      defaultValues={{
+        date: data.data.date,
+        time: data.data.time,
+        items: data.data.items,
+      }}
+      render={({ meta: { formId }, handleSubmit }) => (
+        <form
+          id={formId}
+          onSubmit={(e) => {
+            e.preventDefault()
+            handleSubmit(
+              (payload) =>
+                api.schedule.update.mutateEffect({
+                  params: data.data,
+                  payload,
+                }),
+              {
+                onSuccess: async () => {
+                  await refetch()
+                  toast.add({
+                    type: 'success',
+                    title: 'Schedule updated successfully',
+                  })
+                },
+                onError: (error) =>
+                  toast.add({
+                    type: 'error',
+                    title: 'Failed to update schedule',
+                    description: error.message,
                   }),
-                {
-                  onSuccess: async () => {
-                    await refetch()
-                    toast.add({
-                      type: 'success',
-                      title: 'Schedule updated successfully',
-                    })
-                  },
-                  onError: (error) =>
-                    toast.add({
-                      type: 'error',
-                      title: 'Failed to update schedule',
-                      description: error.message,
-                    }),
-                }
+              }
+            )
+          }}
+        />
+      )}
+    >
+      <FieldSet>
+        <FieldLegend>Update Schedule</FieldLegend>
+        <FieldDescription>
+          Update the schedule for the device. You can change the date, time, and
+          items to be scheduled. Please note that changing the date or time may
+          affect the execution of the schedule.
+        </FieldDescription>
+
+        <FieldGroup>
+          <updateScheduleForm.Field
+            name='date'
+            render={({ field: { value, onChange, ...field }, meta }) => {
+              const selectedDate = parseLocalDate(value)
+
+              return (
+                <Field data-invalid={meta.errors.length > 0}>
+                  <FieldLabel htmlFor={field.id}>Date</FieldLabel>
+                  <Popover>
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          variant='outline'
+                          data-empty={!value}
+                          className='justify-between text-left font-normal data-[empty=true]:text-muted-foreground'
+                          {...field}
+                        >
+                          {selectedDate ? (
+                            selectedDate.toLocaleDateString()
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <ChevronDownIcon data-icon='inline-end' />
+                        </Button>
+                      }
+                    />
+                    <PopoverContent className='w-auto p-0' align='start'>
+                      <Calendar
+                        mode='single'
+                        selected={selectedDate}
+                        onSelect={(date) => onChange(formatDateString(date))}
+                        defaultMonth={selectedDate}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FieldError id={meta.errorId} errors={meta.errors} />
+                </Field>
               )
             }}
           />
-        )}
-      >
-        <FieldSet>
-          <FieldGroup>
-            <updateScheduleForm.Field
-              name='date'
-              render={({ field: { value, onChange, ...field }, meta }) => {
-                const selectedDate = parseLocalDate(value)
 
-                return (
-                  <Field data-invalid={meta.errors.length > 0}>
-                    <FieldLabel htmlFor={field.id}>Date</FieldLabel>
-                    <Popover>
-                      <PopoverTrigger
-                        render={
-                          <Button
-                            variant='outline'
-                            data-empty={!value}
-                            className='justify-between text-left font-normal data-[empty=true]:text-muted-foreground'
-                            {...field}
-                          >
-                            {selectedDate ? (
-                              selectedDate.toLocaleDateString()
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <ChevronDownIcon data-icon='inline-end' />
-                          </Button>
-                        }
-                      />
-                      <PopoverContent className='w-auto p-0' align='start'>
-                        <Calendar
-                          mode='single'
-                          selected={selectedDate}
-                          onSelect={(date) => onChange(formatDateString(date))}
-                          defaultMonth={selectedDate}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FieldError id={meta.errorId} errors={meta.errors} />
-                  </Field>
-                )
-              }}
-            />
+          <updateScheduleForm.Field
+            name='time'
+            render={({ field, meta }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Time</FieldLabel>
+                <Input
+                  {...field}
+                  type='time'
+                  step={300}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-            <updateScheduleForm.Field
-              name='time'
-              render={({ field, meta }) => (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Time</FieldLabel>
-                  <Input
-                    {...field}
-                    type='time'
-                    step={300}
-                    onChange={(e) => field.onChange(e.target.value)}
-                  />
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
+          <updateScheduleForm.Field
+            name='items'
+            render={(props) => (
+              <ItemField {...props} deviceId={data.data.device.id} />
+            )}
+          />
+
+          <Field>
+            <updateScheduleForm.Submit
+              render={({ meta }) => (
+                <Button
+                  type='submit'
+                  form={meta.formId}
+                  disabled={meta.isPending}
+                >
+                  {meta.isPending ? 'Saving...' : 'Save Changes'}
+                </Button>
               )}
             />
-
-            <updateScheduleForm.Field
-              name='items'
-              render={(props) => (
-                <ItemField {...props} deviceId={data.data.device.id} />
-              )}
-            />
-
-            <Field>
-              <updateScheduleForm.Submit
-                render={({ meta }) => (
-                  <Button
-                    type='submit'
-                    form={meta.formId}
-                    disabled={meta.isPending}
-                  >
-                    {meta.isPending ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                )}
-              />
-            </Field>
-          </FieldGroup>
-        </FieldSet>
-      </updateScheduleForm.Root>
-    </>
+          </Field>
+        </FieldGroup>
+      </FieldSet>
+    </updateScheduleForm.Root>
   )
 }
