@@ -12,15 +12,8 @@ import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 
+import { useDate } from '@/hooks/use-date'
 import { api } from '@/lib/runtime'
-
-const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
-
-const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
-  const date = new Date(currentStartDate)
-  date.setDate(date.getDate() + offsetDays)
-  return getCurrentWeekRange(date, timeZone)
-}
 
 const STATUSES = [
   { label: 'Completed', color: 'bg-success' },
@@ -28,12 +21,20 @@ const STATUSES = [
   { label: 'Missed', color: 'bg-destructive' },
 ]
 
+const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
+  const date = new Date(currentStartDate)
+  date.setDate(date.getDate() + offsetDays)
+  return getCurrentWeekRange(date)
+}
+
 export const ScheduleNav: React.FC<{
   startDate: string
   endDate: string
   setWeek: (week: { startDate: string; endDate: string }) => void
   deviceId?: DeviceId
 }> = ({ startDate, endDate, setWeek, deviceId }) => {
+  const today = useDate()
+
   const formattedRange = useMemo(() => {
     if (!startDate || !endDate) return ''
     const start = new Date(startDate)
@@ -99,7 +100,9 @@ export const ScheduleNav: React.FC<{
 
         <Button
           variant='outline'
-          onClick={() => setWeek(getCurrentWeekRange(new Date(), timeZone))}
+          onClick={() =>
+            setWeek(getCurrentWeekRange(new Date(today ?? Date.now())))
+          }
         >
           {formattedRange}
         </Button>

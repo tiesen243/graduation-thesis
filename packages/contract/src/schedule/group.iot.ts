@@ -5,7 +5,10 @@ import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 import { DeviceMiddleware } from '@/device/middleware'
 import { ListSchedulesDto } from '@/schedule/dto/list-schedules.dto'
 import { UpdateScheduleDto } from '@/schedule/dto/update-schedule.dto'
-import { ScheduleNotFound } from '@/schedule/schemas/schedule.error'
+import {
+  ScheduleInvalid,
+  ScheduleNotFound,
+} from '@/schedule/schemas/schedule.error'
 
 export class ScheduleIoTGroup extends HttpApiGroup.make('schedule-iot')
   .add(
@@ -24,7 +27,7 @@ export class ScheduleIoTGroup extends HttpApiGroup.make('schedule-iot')
         status: UpdateScheduleDto.Input.fields.status,
       }),
       success: UpdateScheduleDto,
-      error: [ScheduleNotFound],
+      error: [ScheduleNotFound, ScheduleInvalid],
     })
   )
 

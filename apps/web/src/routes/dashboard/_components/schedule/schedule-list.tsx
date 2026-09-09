@@ -4,7 +4,8 @@ import { Badge } from '@rozumari/ui/components/badge'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useCallback, useMemo } from 'react'
 
-import { useDateRange } from '@/routes/dashboard/_components/schedule/_use-date-range'
+import { useDate } from '@/hooks/use-date'
+import { useDateRange } from '@/hooks/use-date-range'
 import { ScheduleCard } from '@/routes/dashboard/_components/schedule/schedule-card'
 
 export const ScheduleList: React.FC<{
@@ -12,7 +13,7 @@ export const ScheduleList: React.FC<{
   startDate: string
   endDate: string
 }> = ({ schedules, startDate, endDate }) => {
-  const today = useMemo(() => new Date().toISOString().split('T')[0], [])
+  const today = useDate()
 
   const groupedSchedules = useMemo(
     () => Object.groupBy(schedules, (s) => s.date),
@@ -24,10 +25,7 @@ export const ScheduleList: React.FC<{
   const scrollToDate = useCallback((dateStr: string) => {
     const targetElement = document.querySelector(`#schedule-${dateStr}`)
     if (targetElement)
-      targetElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      })
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
 
   if (!schedules || schedules.length === 0)

@@ -12,28 +12,19 @@ import {
 import { cn } from '@rozumari/ui/lib/utils'
 import { useMemo } from 'react'
 
-import { useDateRange } from '@/routes/dashboard/_components/schedule/_use-date-range'
+import { useDate } from '@/hooks/use-date'
+import { useDateRange } from '@/hooks/use-date-range'
 import { ScheduleCard } from '@/routes/dashboard/_components/schedule/schedule-card'
 
 export const TIME_SLOTS = [
-  {
-    key: 'morning',
-    label: 'Morning',
-    period: '05:00 - 11:59',
-    icon: SunIcon,
-  },
+  { key: 'morning', label: 'Morning', period: '05:00 - 11:59', icon: SunIcon },
   {
     key: 'afternoon',
     label: 'Afternoon',
     period: '12:00 - 17:59',
     icon: SunsetIcon,
   },
-  {
-    key: 'night',
-    label: 'Night',
-    period: '18:00 - 04:59',
-    icon: MoonIcon,
-  },
+  { key: 'night', label: 'Night', period: '18:00 - 04:59', icon: MoonIcon },
 ] as const
 
 const getTimeSlotKey = (timeStr: string): 'morning' | 'afternoon' | 'night' => {
@@ -48,7 +39,7 @@ export const ScheduleGrid: React.FC<{
   startDate: string
   endDate: string
 }> = ({ schedules, startDate, endDate }) => {
-  const today = useMemo(() => new Date().toISOString().split('T')[0], [])
+  const today = useDate()
 
   const gridData = useMemo(() => {
     const map = new Map<

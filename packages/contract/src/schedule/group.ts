@@ -6,7 +6,10 @@ import { CreateScheduleDto } from '@/schedule/dto/create-schedule.dto'
 import { ListSchedulesDto } from '@/schedule/dto/list-schedules.dto'
 import { ShowScheduleDto } from '@/schedule/dto/show-schedule.dto'
 import { UpdateScheduleDto } from '@/schedule/dto/update-schedule.dto'
-import { ScheduleNotFound } from '@/schedule/schemas/schedule.error'
+import {
+  ScheduleInvalid,
+  ScheduleNotFound,
+} from '@/schedule/schemas/schedule.error'
 
 export class ScheduleGroup extends HttpApiGroup.make('schedule')
   .add(
@@ -28,6 +31,7 @@ export class ScheduleGroup extends HttpApiGroup.make('schedule')
     HttpApiEndpoint.post('create', '/', {
       payload: CreateScheduleDto.Input,
       success: CreateScheduleDto,
+      error: [ScheduleInvalid],
     })
   )
 
@@ -36,7 +40,7 @@ export class ScheduleGroup extends HttpApiGroup.make('schedule')
       params: UpdateScheduleDto.Params,
       payload: UpdateScheduleDto.Input,
       success: UpdateScheduleDto,
-      error: [ScheduleNotFound],
+      error: [ScheduleNotFound, ScheduleInvalid],
     })
   )
 

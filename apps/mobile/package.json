@@ -15,7 +15,7 @@
   "dependencies": {
     "@effect/atom-react": "catalog:effect",
     "@expo-google-fonts/geist": "^0.4.2",
-    "@react-native-community/datetimepicker": "9.1.0",
+    "@react-native-community/datetimepicker": "9.2.1",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
     "@rozumari/ui": "workspace:*",

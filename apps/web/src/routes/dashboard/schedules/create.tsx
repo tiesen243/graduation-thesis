@@ -105,7 +105,7 @@ export default function SchedulesCreatePage() {
                   toast.add({
                     type: 'error',
                     title: 'Failed to create schedule',
-                    description: error,
+                    description: error.message,
                   }),
               }
             )
@@ -199,7 +199,8 @@ export default function SchedulesCreatePage() {
                   </SelectContent>
                 </Select>
                 <FieldDescription>
-                  Select which days of the week this schedule repeats.
+                  Select which days of the week this schedule repeats. Ignored
+                  if the start and end dates are the same.
                 </FieldDescription>
                 <FieldError id={meta.errorId} errors={meta.errors} />
               </Field>
