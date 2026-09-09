@@ -61,7 +61,7 @@ export const ScheduleNav: React.FC<{
 
   return (
     <nav className='mt-4 flex flex-wrap items-center gap-4'>
-      <div className='flex flex-1 items-center gap-3 text-xs text-muted-foreground'>
+      <div className='order-1 flex flex-1 items-center gap-3 text-xs text-muted-foreground'>
         {STATUSES.map((status) => (
           <span key={status.label} className='flex items-center gap-1.5'>
             <span className={cn('size-2 rounded-full', status.color)} />
@@ -70,25 +70,7 @@ export const ScheduleNav: React.FC<{
         ))}
       </div>
 
-      <Button
-        nativeButton={false}
-        render={<Link to='/dashboard/schedules/create' />}
-      >
-        Create Schedule
-      </Button>
-
-      {deviceId && (
-        <Button
-          onClick={() =>
-            syncSchedule.mutate({ action: 'sync_schedule', payload: {} })
-          }
-          disabled={syncSchedule.isPending}
-        >
-          Sync Schedule
-        </Button>
-      )}
-
-      <ButtonGroup>
+      <ButtonGroup className='order-2 sm:order-3'>
         <Button
           variant='outline'
           size='icon'
@@ -115,6 +97,26 @@ export const ScheduleNav: React.FC<{
           <ChevronRightIcon />
           <span className='sr-only'>Next week</span>
         </Button>
+      </ButtonGroup>
+
+      <ButtonGroup className='order-3 sm:order-2'>
+        <Button
+          nativeButton={false}
+          render={<Link to={`/dashboard/schedules/create?id=${deviceId}`} />}
+        >
+          Create
+        </Button>
+
+        {deviceId && (
+          <Button
+            onClick={() =>
+              syncSchedule.mutate({ action: 'sync_schedule', payload: {} })
+            }
+            disabled={syncSchedule.isPending}
+          >
+            Sync
+          </Button>
+        )}
       </ButtonGroup>
     </nav>
   )
