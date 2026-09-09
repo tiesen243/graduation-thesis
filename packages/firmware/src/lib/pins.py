@@ -37,10 +37,6 @@ class Pins:
         for pin in pins.get("stepper-drawer", []):
             self.stepper_drawer.append(Pin(int(pin), Pin.OUT))
 
-        self.led_r = Pin(int(pins.get("led-r")), Pin.OUT)
-        self.led_g = Pin(int(pins.get("led-g")), Pin.OUT)
-        self.led_b = Pin(int(pins.get("led-b")), Pin.OUT)
-
         self.buzzer = Pin(int(pins.get("buzzer")), Pin.OUT, value=1)
 
         self.tft_spi = SPI(

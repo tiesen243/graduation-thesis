@@ -34,14 +34,14 @@ class WiFi:
         wlan.active(True)
 
         if wlan.isconnected() and not force:
-            print(f"Already connected to WiFi! IP: {wlan.ifconfig()[0]}")
+            print(f"[Setup] Already connected to WiFi! IP: {wlan.ifconfig()[0]}")
             return True
 
         ssid = self.wifi.get("ssid")
         password = self.wifi.get("password")
-        print(f"Connecting to WiFi SSID: {ssid}...", end="")
+        print(f"[Setup] Connecting to WiFi SSID: {ssid}...", end="")
 
-        timeout = 20
+        timeout = 30
         wlan.connect(ssid, password)
         while not wlan.isconnected() and timeout > 0:
             await uasyncio.sleep(1)
@@ -49,10 +49,10 @@ class WiFi:
             timeout -= 1
 
         if wlan.isconnected():
-            print(f"\nConnected to WiFi! IP: {wlan.ifconfig()[0]}")
+            print(f"\n[Setup] Connected to WiFi! IP: {wlan.ifconfig()[0]}")
             return True
         else:
-            print("\nFailed to connect to WiFi.")
+            print("\n[Setup] Failed to connect to WiFi.")
             return False
 
     @classmethod
@@ -88,7 +88,7 @@ class WiFi:
         try:
             wlan.connect(ssid, password)
         except Exception as e:  # noqa: BLE001
-            print(f"WiFi connect error: {e}")
+            print(f"[Setup] WiFi connect error: {e}")
             wlan.active(False)
             return False
 

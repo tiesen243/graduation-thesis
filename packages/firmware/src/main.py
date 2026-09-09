@@ -6,7 +6,6 @@ from lib.config import Config
 from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.ble import BLE
-from modules.sensor import Sensor
 from modules.wifi import WiFi
 from tasks.schedules import Schedules
 from tasks.streaming import Streaming
@@ -28,8 +27,6 @@ class Bootstrap:
         pins = Pins.create()
         self.switch = pins.switch
 
-        _ = Sensor.create()
-
     async def _config_mode(self) -> None:
         self.ble = BLE.create()
 
@@ -39,12 +36,12 @@ class Bootstrap:
         self.ble.start_advertising()
 
         try:
-            print("Config mode started. Waiting for switch to be released...")
+            print("[CONFIG] Started. Waiting for switch to be released...")
             while self.switch.value() == 0:
                 await uasyncio.sleep_ms(100)
         finally:
             self.ble.stop()
-            print("Config mode stopped.")
+            print("[CONFIG] Stopped.")
 
     async def _normal_mode(self) -> None:
         _ = Config.create(force=True)
@@ -57,25 +54,29 @@ class Bootstrap:
 
         is_connected = await self.wifi.connect(force=True)
 
-        print("Syncing time...")
+        print("[SETUP] Syncing time...")
         retry_count, max_retries = 0, 3
         while is_connected and retry_count < max_retries:
             try:
                 ntptime.settime()
-                print("Time synced successfully.")
+                print("[SETUP] Time synced successfully.")
                 break
             except Exception as e:  # noqa: BLE001
                 retry_count += 1
-                print(f"Failed to sync time (Attempt {retry_count}/{max_retries}): {e}")
+                print(
+                    f"[SETUP] Failed to sync time (Attempt {retry_count}/{max_retries}): {e}"
+                )
                 await uasyncio.sleep(2)
 
-        print("Syncing schedules...")
+        print("[SETUP] Syncing schedules...")
         _ = await self.sync_schedule.sync()
 
-        gather = uasyncio.gather(
-            self.streaming.start(), self.schedules.start(), self.sync_schedule.start()
+        gathered_tasks = uasyncio.gather(
+            self.sync_schedule.start(),
+            self.streaming.start(),
+            self.schedules.start(),
         )
-        await gather
+        await gathered_tasks
 
     async def start(self) -> None:
         switch_state = self.switch.value()

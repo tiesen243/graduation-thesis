@@ -21,7 +21,7 @@ class StepperMotor:
         for p in self.pins:
             p.value(0)
 
-    async def move(self, steps: int, delay_ms: int = 2) -> None:
+    async def move(self, steps: int, delay_ms: int = 3) -> None:
         direction = 1 if steps > 0 else -1
 
         for _ in range(abs(steps)):

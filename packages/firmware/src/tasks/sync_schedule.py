@@ -38,9 +38,9 @@ class SyncSchedule:
         is_saved = self.schedule.save_schedules(resp.get("data", []))
 
         if is_saved:
-            print(f"Schedules for {today} synced successfully.")
+            print(f"[SYNC] Schedules for {today} synced successfully.")
         else:
-            print(f"Failed to save schedules for {today}.")
+            print(f"[SYNC] Failed to save schedules for {today}.")
 
     async def start(self) -> None:
         """
@@ -63,13 +63,13 @@ class SyncSchedule:
 
                 if current_hour >= sync_hour and last_synced_date != today_str:
                     print(
-                        f"[{today_str}] It's past {sync_hour}:{sync_minute}. Starting daily schedule sync..."
+                        f"[SYNC] It's past {sync_hour}:{sync_minute}. Starting daily schedule sync..."
                     )
                     await self.sync()
                     last_synced_date = today_str
 
             except Exception as e:  # noqa: BLE001
-                print(f"Error in schedule monitor loop: {e}")
+                print(f"[SYNC] Error: {e}")
 
             await uasyncio.sleep(1800)
 

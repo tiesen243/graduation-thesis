@@ -40,10 +40,6 @@
 
     "stepper-drawer": [16, 17, 18, 19],
 
-    "led-r": 20,
-    "led-g": 21,
-    "led-b": 22,
-
     "sensor-1": 26,
     "sensor-2": 27
   }
