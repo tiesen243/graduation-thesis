@@ -1,46 +1,46 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Added BLE Device Configuration & Fixed Multi-byte Payload Transmission\n\n- Added BLE device configuration features and timezone-aware sync time selection.\n\n- Fixed multi-byte BLE frame handling on React Native to correctly parse 16-bit device info payloads without truncation\n\n- Upgraded firmware communication handlers to support 3-byte data frames for transmitting complete configuration states (UTC, language, and sync time)\n\n- Optimized configuration builder and parser logic with robust fallback mechanisms to eliminate default value bottlenecks and parsing errors\n"
-    filename: 2026-09-09-mttl8r2x.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Bug Fixes\n\n- Schedule mapper error\n"
+    filename: 2026-09-09-mtu1h5lq.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/contract
-    updated: false
-  - id: npm:@rozumari/eda
-    updated: false
   - id: npm:@rozumari/oxlint
     updated: false
   - changelogIds:
-      - 2026-09-09-mttl8r2x.md
-    id: npm:@rozumari/firmware
+      - 2026-09-09-mtu1h5lq.md
+    id: npm:@rozumari/contract
     updated: true
-  - id: npm:@rozumari/api
+  - id: npm:@rozumari/tsconfig
+    updated: false
+  - id: npm:@rozumari/eda
     updated: false
   - id: npm:@rozumari/ui
     updated: false
-  - changelogIds:
-      - 2026-09-09-mttl8r2x.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - id: npm:@rozumari/web
+  - id: npm:@rozumari/lib
     updated: false
+  - changelogIds:
+      - 2026-09-09-mtu1h5lq.md
+    id: npm:@rozumari/api
+    updated: true
+  - id: npm:@rozumari/mobile
+    updated: true
+  - id: npm:@rozumari/firmware
+    updated: false
+  - id: npm:@rozumari/web
+    updated: true
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/eda
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/api
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/eda
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/api
   - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/web
