@@ -61,7 +61,7 @@ export class UpdateScheduleUseCase extends Context.Service<
           yield* scheduleRepository.save(updatedSchedule)
           yield* scheduleItemRepository.save(items)
 
-          return { schedule: updatedSchedule, items }
+          return { id: updatedSchedule.id }
         }).pipe(withTransaction)
       }),
     }
