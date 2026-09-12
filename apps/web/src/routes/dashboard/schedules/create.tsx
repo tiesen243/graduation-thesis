@@ -1,5 +1,6 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
+import { useAtomValue } from '@effect/atom-react'
 import { Button } from '@rozumari/ui/components/button'
 import {
   Field,
@@ -11,6 +12,7 @@ import {
   FieldSet,
 } from '@rozumari/ui/components/field'
 import { Loader2Icon } from '@rozumari/ui/components/icons'
+import { Input } from '@rozumari/ui/components/input'
 import {
   Select,
   SelectContent,
@@ -32,6 +34,17 @@ import {
 } from '@/routes/dashboard/schedules/_components/_config'
 import { ItemField } from '@/routes/dashboard/schedules/_components/item-field'
 import { ScheduleDateRangeField } from '@/routes/dashboard/schedules/_components/schedule-date-range-field'
+
+const ProvidedItemField: React.FC<
+  Omit<Parameters<typeof ItemField>[0], 'deviceId'>
+> = (props) => {
+  const deviceId = useAtomValue(
+    CreateScheduleForm.state(),
+    (s) => s.values.deviceId
+  )
+
+  return <ItemField {...props} deviceId={deviceId} />
+}
 
 export default function SchedulesCreatePage() {
   const [searchParams] = useSearchParams()
@@ -92,7 +105,7 @@ export default function SchedulesCreatePage() {
                   toast.add({
                     type: 'error',
                     title: 'Failed to create schedule',
-                    description: error,
+                    description: error.message,
                   }),
               }
             )
@@ -144,73 +157,23 @@ export default function SchedulesCreatePage() {
 
           <CreateScheduleForm.Field
             name='time'
-            render={({ field, meta }) => {
-              const [hours = '08', minutes = '00'] = (
-                field.value || '08:00:00'
-              ).split(':')
+            render={({ field, meta }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Time</FieldLabel>
 
-              const handleTimeChange = (newHours: string, newMinutes: string) =>
-                field.onChange(`${newHours}:${newMinutes}:00`)
+                <Input
+                  {...field}
+                  type='time'
+                  step={300}
+                  onChange={(e) => field.onChange(e.target.value)}
+                />
 
-              return (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Time</FieldLabel>
-
-                  <div className='flex items-center gap-2'>
-                    <Select
-                      value={hours}
-                      onValueChange={(val) =>
-                        handleTimeChange(val ?? '', minutes)
-                      }
-                    >
-                      <SelectTrigger className='w-full sm:w-30'>
-                        <SelectValue placeholder='Hour' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 24 }, (_, i) => {
-                          const h = i.toString().padStart(2, '0')
-                          return (
-                            <SelectItem key={h} value={h}>
-                              {h}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-
-                    <span className='text-lg font-bold text-muted-foreground'>
-                      :
-                    </span>
-
-                    <Select
-                      value={minutes}
-                      onValueChange={(val) =>
-                        handleTimeChange(hours, val ?? '')
-                      }
-                    >
-                      <SelectTrigger className='w-full sm:w-30'>
-                        <SelectValue placeholder='Minute' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 60 }, (_, i) => {
-                          const m = i.toString().padStart(2, '0')
-                          return (
-                            <SelectItem key={m} value={m}>
-                              {m}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <FieldDescription>
-                    Set the daily time to dispense medication.
-                  </FieldDescription>
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
-              )
-            }}
+                <FieldDescription>
+                  Set the daily time to dispense medication.
+                </FieldDescription>
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
+            )}
           />
 
           <CreateScheduleForm.Field
@@ -236,7 +199,8 @@ export default function SchedulesCreatePage() {
                   </SelectContent>
                 </Select>
                 <FieldDescription>
-                  Select which days of the week this schedule repeats.
+                  Select which days of the week this schedule repeats. Ignored
+                  if the start and end dates are the same.
                 </FieldDescription>
                 <FieldError id={meta.errorId} errors={meta.errors} />
               </Field>
@@ -245,7 +209,7 @@ export default function SchedulesCreatePage() {
 
           <CreateScheduleForm.Field
             name='items'
-            render={(props) => <ItemField {...props} />}
+            render={(props) => <ProvidedItemField {...props} />}
           />
 
           <CreateScheduleForm.Submit

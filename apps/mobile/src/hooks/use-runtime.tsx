@@ -3,17 +3,26 @@
 import type { TanstackQueryOptionsProxy } from '@tiesen/effect-tanstack-query'
 
 import { createTanstackQueryOptionsProxy } from '@tiesen/effect-tanstack-query'
+import * as DateTime from 'effect/DateTime'
 import * as Layer from 'effect/Layer'
 import * as ManagedRuntime from 'effect/ManagedRuntime'
+import { getCalendars } from 'expo-localization'
 import * as React from 'react'
 
 import { ApiClient } from '@/lib/api-client'
 import { ApiClientLayer } from '@/lib/api-client.layer'
 
-const appLayer = Layer.mergeAll(ApiClientLayer)
+const [{ timeZone }] = getCalendars()
+const appLayer = Layer.mergeAll(
+  ApiClientLayer,
+  DateTime.layerCurrentZone(DateTime.zoneMakeNamedUnsafe(timeZone ?? 'UTC'))
+)
 
 const RuntimeContext = React.createContext<{
-  runtime: ManagedRuntime.ManagedRuntime<ApiClient, never>
+  runtime: ManagedRuntime.ManagedRuntime<
+    ApiClient | DateTime.CurrentTimeZone,
+    never
+  >
   api: TanstackQueryOptionsProxy<ApiClient['Service']>
 } | null>(null)
 

@@ -37,14 +37,14 @@
       "@tiesen/effect-tanstack-query": "^0.0.20"
     },
     "effect": {
-      "@effect/platform-bun": ">=4.0.0-rc.112",
-      "@effect/sql-pg": ">=4.0.0-rc.112",
-      "@effect/atom-react": ">=4.0.0-rc.112",
-      "effect": ">=4.0.0-rc.112"
+      "@effect/platform-bun": ">=4.0.0-rc.115",
+      "@effect/sql-pg": ">=4.0.0-rc.115",
+      "@effect/atom-react": ">=4.0.0-rc.115",
+      "effect": ">=4.0.0-rc.115"
     },
     "react": {
-      "@types/react": "^19.2.18",
-      "@types/react-dom": "^19.2.5",
+      "@types/react": "^19.3.0",
+      "@types/react-dom": "^19.3.0",
       "react": "19.2.3",
       "react-dom": "19.2.3",
       "react-native": "0.86.3"

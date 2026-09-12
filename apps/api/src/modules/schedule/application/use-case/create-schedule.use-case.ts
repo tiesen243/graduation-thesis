@@ -1,8 +1,11 @@
 import type { CreateScheduleDto } from '@rozumari/contract/schedule/dto/create-schedule.dto'
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
+import type { CurrentTimeZone } from 'effect/DateTime'
 
+import { ScheduleInvalid } from '@rozumari/contract/schedule/schemas/schedule.error'
 import { ScheduleStatus } from '@rozumari/contract/schedule/schemas/schedule.schema'
 import * as Context from 'effect/Context'
+import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -18,7 +21,11 @@ export class CreateScheduleUseCase extends Context.Service<
   {
     readonly execute: (
       input: CreateScheduleDto.Input & { userId: UserId }
-    ) => Effect.Effect<CreateScheduleDto.Output>
+    ) => Effect.Effect<
+      CreateScheduleDto.Output,
+      ScheduleInvalid,
+      CurrentTimeZone
+    >
   }
 >()('schedule/application/CreateScheduleUseCase', {
   make: Effect.gen(function* make() {
@@ -27,11 +34,42 @@ export class CreateScheduleUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute({ userId, ...input }) {
-        const dates = expandDateRange(
-          input.startDate,
-          input.endDate,
-          input.daysOfWeek
+        const now = yield* DateTime.nowInCurrentZone
+        const startDate = DateTime.makeZoned(
+          `${input.startDate}T${input.time}`,
+          { timeZone: yield* DateTime.CurrentTimeZone, adjustForTimeZone: true }
         )
+        const endDate = DateTime.makeZoned(`${input.endDate}T${input.time}`, {
+          timeZone: yield* DateTime.CurrentTimeZone,
+          adjustForTimeZone: true,
+        })
+
+        if (startDate._tag === 'None' || endDate._tag === 'None')
+          return yield* Effect.fail(
+            new ScheduleInvalid({ message: 'Invalid start or end date' })
+          )
+
+        const isStartDateInThePast = DateTime.isLessThan(startDate.value, now)
+        const isEndDateInThePast = DateTime.isLessThan(endDate.value, now)
+
+        if (isStartDateInThePast || isEndDateInThePast)
+          return yield* Effect.fail(
+            new ScheduleInvalid({ message: 'Start or end date is in the past' })
+          )
+
+        const isStartDateAfterEndDate = DateTime.isLessThan(
+          endDate.value,
+          startDate.value
+        )
+        if (isStartDateAfterEndDate)
+          return yield* Effect.fail(
+            new ScheduleInvalid({ message: 'Start date is after end date' })
+          )
+
+        const dates =
+          input.startDate === input.endDate
+            ? [input.startDate]
+            : expandDateRange(input.startDate, input.endDate, input.daysOfWeek)
 
         const results = dates.map((date) => {
           const schedule = Schedule.make({
