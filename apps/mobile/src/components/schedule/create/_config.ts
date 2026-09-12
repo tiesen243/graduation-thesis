@@ -1,5 +1,3 @@
-import type { MarkingProps } from 'react-native-calendars/src/calendar/day/marking'
-
 import { CreateScheduleDto } from '@rozumari/contract/schedule/dto/create-schedule.dto'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 
@@ -39,7 +37,15 @@ export const getMarkedDates = (
       [start]: { startingDay: true, endingDay: true, color, textColor },
     }
 
-  const marked: Record<string, MarkingProps> = {}
+  const marked: Record<
+    string,
+    {
+      startingDay?: boolean
+      endingDay?: boolean
+      color: string
+      textColor: string
+    }
+  > = {}
   const currentDate = new Date(start)
   const lastDate = new Date(end)
 
