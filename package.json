@@ -37,10 +37,10 @@
       "@tiesen/effect-tanstack-query": "^0.0.20"
     },
     "effect": {
-      "@effect/platform-bun": ">=4.0.0-rc.112",
-      "@effect/sql-pg": ">=4.0.0-rc.112",
-      "@effect/atom-react": ">=4.0.0-rc.112",
-      "effect": ">=4.0.0-rc.112"
+      "@effect/platform-bun": ">=4.0.0-rc.115",
+      "@effect/sql-pg": ">=4.0.0-rc.115",
+      "@effect/atom-react": ">=4.0.0-rc.115",
+      "effect": ">=4.0.0-rc.115"
     },
     "react": {
       "@types/react": "^19.3.0",

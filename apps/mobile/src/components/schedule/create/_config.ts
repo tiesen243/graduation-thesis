@@ -1,0 +1,59 @@
+import type { MarkingProps } from 'react-native-calendars/src/calendar/day/marking'
+
+import { CreateScheduleDto } from '@rozumari/contract/schedule/dto/create-schedule.dto'
+import { FormBuilder } from '@rozumari/ui/lib/form-builder'
+
+export const CreateScheduleForm = FormBuilder.empty
+  .add('deviceId', CreateScheduleDto.Input.fields.deviceId)
+  .add('startDate', CreateScheduleDto.Input.fields.startDate)
+  .add('endDate', CreateScheduleDto.Input.fields.endDate)
+  .add('daysOfWeek', CreateScheduleDto.Input.fields.daysOfWeek)
+  .add('time', CreateScheduleDto.Input.fields.time)
+  .add('items', CreateScheduleDto.Input.fields.items)
+  .make()
+
+export const DAYS_OF_WEEK = [
+  { value: 1, label: 'Sunday' },
+  { value: 2, label: 'Monday' },
+  { value: 3, label: 'Tuesday' },
+  { value: 4, label: 'Wednesday' },
+  { value: 5, label: 'Thursday' },
+  { value: 6, label: 'Friday' },
+  { value: 7, label: 'Saturday' },
+] as const
+
+export const DAYS_OF_WEEK_MAP = Object.fromEntries(
+  DAYS_OF_WEEK.map((d) => [d.value, d.label])
+)
+
+export const getMarkedDates = (
+  start?: string,
+  end?: string,
+  color = '#3b82f6',
+  textColor = '#ffffff'
+) => {
+  if (!start) return {}
+
+  if (!end || start === end)
+    return {
+      [start]: { startingDay: true, endingDay: true, color, textColor },
+    }
+
+  const marked: Record<string, MarkingProps> = {}
+  const currentDate = new Date(start)
+  const lastDate = new Date(end)
+
+  while (currentDate.getTime() <= lastDate.getTime()) {
+    const [dateString = ''] = currentDate.toISOString().split('T')
+
+    if (dateString === start)
+      marked[dateString] = { startingDay: true, color, textColor }
+    else if (dateString === end)
+      marked[dateString] = { endingDay: true, color, textColor }
+    else marked[dateString] = { color, textColor }
+
+    currentDate.setDate(currentDate.getDate() + 1)
+  }
+
+  return marked
+}

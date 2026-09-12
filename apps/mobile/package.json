@@ -15,30 +15,33 @@
   "dependencies": {
     "@effect/atom-react": "catalog:effect",
     "@expo-google-fonts/geist": "^0.4.2",
-    "@react-native-community/datetimepicker": "9.2.1",
+    "@react-native-community/datetimepicker": "9.1.0",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
     "@rozumari/ui": "workspace:*",
     "@tanstack/react-query": "catalog:prod",
     "@tiesen/effect-tanstack-query": "catalog:prod",
+    "dayjs": "^1.11.23",
     "effect": "catalog:effect",
-    "expo": "^57.0.21",
-    "expo-constants": "^57.0.17",
-    "expo-device": "^57.0.1",
-    "expo-font": "^57.0.3",
-    "expo-linking": "^57.0.9",
-    "expo-localization": "^57.0.1",
-    "expo-location": "^57.0.16",
-    "expo-router": "~57.0.20",
-    "expo-secure-store": "^57.0.3",
-    "expo-splash-screen": "^57.0.8",
-    "expo-system-ui": "^57.0.3",
-    "expo-web-browser": "^57.0.2",
+    "expo": "^57.0.22",
+    "expo-constants": "^57.0.18",
+    "expo-device": "^57.0.2",
+    "expo-font": "^57.0.4",
+    "expo-linking": "^57.0.10",
+    "expo-localization": "^57.0.2",
+    "expo-location": "^57.0.17",
+    "expo-router": "~57.0.21",
+    "expo-secure-store": "^57.0.4",
+    "expo-splash-screen": "^57.0.9",
+    "expo-system-ui": "^57.0.4",
+    "expo-web-browser": "^57.0.3",
     "react": "catalog:react",
     "react-native": "catalog:react",
     "react-native-ble-manager": "^12.5.2",
+    "react-native-calendars-datepicker": "^1.2.4",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-svg": "15.15.4"
+    "react-native-svg": "15.15.4",
+    "react-native-timer-picker": "^2.7.0"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
@@ -51,6 +54,7 @@
   "expo": {
     "install": {
       "exclude": [
+        "@types/react",
         "typescript"
       ]
     }

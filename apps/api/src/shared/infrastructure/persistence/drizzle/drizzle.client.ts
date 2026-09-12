@@ -9,7 +9,6 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as Redacted from 'effect/Redacted'
-import { types } from 'pg'
 
 import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
@@ -17,16 +16,6 @@ import { env } from '@/shared/env'
 
 const PgClientLive = PgClient.layer({
   url: Redacted.make(env.DATABASE_URL),
-  types: {
-    getTypeParser: (typeId, format) => {
-      if (
-        [1184, 1114, 1082, 1186, 1231, 1115, 1185, 1187, 1182].includes(typeId)
-      )
-        return (val: number) => val
-
-      return types.getTypeParser(typeId, format)
-    },
-  },
 })
 
 export class DrizzleClient extends Context.Service<

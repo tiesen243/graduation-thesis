@@ -16,7 +16,7 @@ import { ScheduleModule } from '@/modules/schedule/schedule.module'
 import { UserModule } from '@/modules/user/user.module'
 import { InfrastructureModule } from '@/shared/infrastructure/infrastructure.module'
 
-import * as pkgJson from '../../package.json' with { type: 'json' }
+import pkgJson from '../../package.json' with { type: 'json' }
 
 export class AppModule {
   public static create(config: AppModule.Config) {
