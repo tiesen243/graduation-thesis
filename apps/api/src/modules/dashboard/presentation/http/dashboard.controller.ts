@@ -15,13 +15,13 @@ export const dashboardController = HttpApiBuilder.group(
 
       .handle('admin', () =>
         AdminUseCase.use((s) => s.execute()).pipe(
-          Effect.map((data) => AdminDto.make({ data }))
+          Effect.map((data) => new AdminDto({ data }))
         )
       )
 
       .handle('user', () =>
         UserUseCase.use((s) => s.execute()).pipe(
-          Effect.map((data) => UserDto.make({ data }))
+          Effect.map((data) => new UserDto({ data }))
         )
       )
 )

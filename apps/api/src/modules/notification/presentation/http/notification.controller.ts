@@ -16,19 +16,19 @@ export const notificationController = HttpApiBuilder.group(
     handlers
       .handle('list', ({ query }) =>
         ListNotificationsUseCase.use((s) => s.execute(query)).pipe(
-          Effect.map((data) => ListNotificationsDto.make({ data }))
+          Effect.map((data) => new ListNotificationsDto({ data }))
         )
       )
 
       .handle('show', ({ params }) =>
         ShowNotificationUseCase.use((s) => s.execute(params)).pipe(
-          Effect.map((data) => ShowNotificationDto.make({ data }))
+          Effect.map((data) => new ShowNotificationDto({ data }))
         )
       )
 
       .handle('unread', () =>
         CountUnreadNotificationsUseCase.use((s) => s.execute()).pipe(
-          Effect.map((data) => CountUnreadNotificationsDto.make({ data }))
+          Effect.map((data) => new CountUnreadNotificationsDto({ data }))
         )
       )
 )

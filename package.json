@@ -25,6 +25,9 @@
     "tegami": "^1.5.0",
     "turbo": "^2.10.12"
   },
+  "overrides": {
+    "@effect/platform-node-shared": "4.0.0-rc.112"
+  },
   "packageManager": "bun@1.3.0",
   "catalogs": {
     "dev": {
@@ -37,10 +40,10 @@
       "@tiesen/effect-tanstack-query": "^0.0.20"
     },
     "effect": {
-      "@effect/platform-bun": ">=4.0.0-rc.115",
-      "@effect/sql-pg": ">=4.0.0-rc.115",
-      "@effect/atom-react": ">=4.0.0-rc.115",
-      "effect": ">=4.0.0-rc.115"
+      "@effect/platform-bun": "4.0.0-rc.112",
+      "@effect/sql-pg": "4.0.0-rc.112",
+      "@effect/atom-react": "4.0.0-rc.112",
+      "effect": "4.0.0-rc.112"
     },
     "react": {
       "@types/react": "^19.3.0",

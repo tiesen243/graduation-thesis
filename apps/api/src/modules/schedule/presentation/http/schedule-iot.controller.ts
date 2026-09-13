@@ -30,13 +30,13 @@ export const scheduleIoTController = HttpApiBuilder.group(
               return s.execute({ deviceId, startDate: today, endDate: today })
             })
           ),
-          Effect.map((data) => ListSchedulesDto.make({ data }))
+          Effect.map((data) => new ListSchedulesDto({ data }))
         )
       )
 
       .handle('update-status', ({ params, payload }) =>
         UpdateScheduleUseCase.use((s) =>
           s.execute({ id: params.id, status: payload.status })
-        ).pipe(Effect.map((data) => UpdateScheduleDto.make({ data })))
+        ).pipe(Effect.map((data) => new UpdateScheduleDto({ data })))
       )
 )

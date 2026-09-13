@@ -28,7 +28,7 @@ export const deviceController = HttpApiBuilder.group(
 
       .handle('list', ({ query }) =>
         ListDevicesUseCase.use((s) => s.execute(query)).pipe(
-          Effect.map((data) => ListDevicesDto.make({ data }))
+          Effect.map((data) => new ListDevicesDto({ data }))
         )
       )
 
@@ -37,19 +37,19 @@ export const deviceController = HttpApiBuilder.group(
           Effect.flatMap(({ userId }) =>
             ListDevicesUseCase.use((s) => s.execute({ ...query, userId }))
           ),
-          Effect.map((data) => ListDevicesDto.make({ data }))
+          Effect.map((data) => new ListDevicesDto({ data }))
         )
       )
 
       .handle('show', ({ params }) =>
         ShowDeviceUseCase.use((s) => s.execute(params)).pipe(
-          Effect.map((data) => ShowDeviceDto.make({ data }))
+          Effect.map((data) => new ShowDeviceDto({ data }))
         )
       )
 
       .handle('add', ({ payload }) =>
         AddDeviceUseCase.use((s) => s.execute(payload)).pipe(
-          Effect.map((data) => AddDeviceDto.make({ data }))
+          Effect.map((data) => new AddDeviceDto({ data }))
         )
       )
 
@@ -58,20 +58,20 @@ export const deviceController = HttpApiBuilder.group(
           Effect.flatMap(({ userId }) =>
             LinkDeviceUseCase.use((s) => s.execute({ ...params, userId }))
           ),
-          Effect.map((data) => LinkDeviceDto.make({ data }))
+          Effect.map((data) => new LinkDeviceDto({ data }))
         )
       )
 
       .handle('update', ({ params, payload }) =>
         UpdateDeviceUseCase.use((s) =>
           s.execute({ ...params, ...payload })
-        ).pipe(Effect.map((data) => UpdateDeviceDto.make({ data })))
+        ).pipe(Effect.map((data) => new UpdateDeviceDto({ data })))
       )
 
       .handle('update-compartment', ({ params, payload }) =>
         UpdateCompartmentUseCase.use((s) =>
           s.execute({ ...params, ...payload })
-        ).pipe(Effect.map((data) => UpdateCompartmentDto.make({ data })))
+        ).pipe(Effect.map((data) => new UpdateCompartmentDto({ data })))
       )
 
       .handle('subscribe', ({ params: { id } }) =>
@@ -99,7 +99,7 @@ export const deviceController = HttpApiBuilder.group(
               s.emit({ ...params, ...payload, userId })
             )
           ),
-          Effect.map((data) => DeviceStreamDto.make({ data }))
+          Effect.map((data) => new DeviceStreamDto({ data }))
         )
       )
 )

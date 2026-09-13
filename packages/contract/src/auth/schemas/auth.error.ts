@@ -7,7 +7,7 @@ export class Unauthorized extends Schema.TaggedError<Unauthorized>()(
   ApiResponse({
     status: 401,
     message: 'Unauthorized',
-  }).annotate({ httpApiStatus: 401 }),
+  }),
   { httpApiStatus: 401 }
 ) {}
 
