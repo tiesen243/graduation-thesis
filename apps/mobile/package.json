@@ -21,7 +21,6 @@
     "@rozumari/ui": "workspace:*",
     "@tanstack/react-query": "catalog:prod",
     "@tiesen/effect-tanstack-query": "catalog:prod",
-    "dayjs": "^1.11.23",
     "effect": "catalog:effect",
     "expo": "^57.0.22",
     "expo-constants": "^57.0.18",
@@ -40,8 +39,7 @@
     "react-native-ble-manager": "^12.5.2",
     "react-native-calendars-datepicker": "^1.2.4",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-svg": "15.15.4",
-    "react-native-timer-picker": "^2.7.0"
+    "react-native-svg": "15.15.4"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",

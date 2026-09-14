@@ -1,11 +1,13 @@
+// oxlint-disable react/jsx-handler-names
+
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
+import { Button } from '@rozumari/ui/components/button'
 import {
   Field,
-  FieldDescription,
   FieldError,
+  FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSet,
 } from '@rozumari/ui/components/field'
 import {
@@ -16,14 +18,18 @@ import {
   SelectValue,
 } from '@rozumari/ui/components/select'
 import { useQuery } from '@tanstack/react-query'
+import * as Effect from 'effect/Effect'
 
 import { CreateScheduleForm } from '@/components/schedule/create/_config'
+import { DaysOfWeekSelector } from '@/components/schedule/create/days-of-week-selector'
 import { PeriodSelector } from '@/components/schedule/create/period-selector'
+import { ScheduleItems } from '@/components/schedule/create/schedule-items'
 import { TimePicker } from '@/components/schedule/create/time-picker'
 import { useRuntime } from '@/hooks/use-runtime'
 
 export default function TabsSchedulesCreateScreen() {
   const { api } = useRuntime()
+
   const { data } = useQuery(api.device.me.queryOptions({ query: {} }))
   if (!data?.data) return null
 
@@ -39,76 +45,82 @@ export default function TabsSchedulesCreateScreen() {
       }}
       render={() => <FieldSet className='p-4' />}
     >
-      <FieldLegend>Create Schedule</FieldLegend>
-      <FieldDescription>
-        Create a new schedule for your medication dispenser. Select the device,
-        schedule period, time, days of the week, and items to dispense.
-      </FieldDescription>
+      <FieldGroup>
+        <CreateScheduleForm.Field
+          name='deviceId'
+          render={({ field, meta }) => (
+            <Field>
+              <FieldLabel>Device</FieldLabel>
 
-      <CreateScheduleForm.Field
-        name='deviceId'
-        render={({ field, meta }) => (
-          <Field>
-            <FieldLabel>Device</FieldLabel>
+              <Select
+                value={field.value}
+                onValueChange={field.onChange as (value: string | null) => void}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder='Select a device'
+                    items={data.data.devices.map((device) => ({
+                      value: device.id,
+                      label: device.name ?? device.factoryModel,
+                    }))}
+                  />
+                </SelectTrigger>
 
-            <Select
-              value={field.value}
-              onValueChange={field.onChange as (value: string | null) => void}
+                <SelectContent title='Select a device'>
+                  {data.data.devices.map((device) => (
+                    <SelectItem key={device.id} value={device.id}>
+                      {device.name ?? device.factoryModel}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <FieldError errors={meta.errors} />
+            </Field>
+          )}
+        />
+
+        <CreateScheduleForm.Field
+          name='startDate'
+          render={({ field: startDateField, meta: startDateMeta }) => (
+            <CreateScheduleForm.Field
+              name='endDate'
+              render={({ field: endDateField, meta: endDateMeta }) => (
+                <Field>
+                  <FieldLabel>Period</FieldLabel>
+
+                  <PeriodSelector
+                    startDate={startDateField.value}
+                    endDate={endDateField.value}
+                    onStartDateChange={startDateField.onChange}
+                    onEndDateChange={endDateField.onChange}
+                  />
+
+                  <FieldError errors={startDateMeta.errors} />
+                  <FieldError errors={endDateMeta.errors} />
+                </Field>
+              )}
+            />
+          )}
+        />
+
+        <TimePicker />
+
+        <DaysOfWeekSelector />
+
+        <ScheduleItems />
+
+        <CreateScheduleForm.Submit
+          render={({ handleSubmit, meta }) => (
+            <Button
+              onPress={() => handleSubmit(Effect.log)}
+              disabled={meta.isPending}
             >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder='Select a device'
-                  items={data.data.devices.map((device) => ({
-                    value: device.id,
-                    label: device.name ?? device.factoryModel,
-                  }))}
-                />
-              </SelectTrigger>
-
-              <SelectContent>
-                {data.data.devices.map((device) => (
-                  <SelectItem key={device.id} value={device.id}>
-                    {device.name ?? device.factoryModel}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <FieldError errors={meta.errors} />
-          </Field>
-        )}
-      />
-
-      <CreateScheduleForm.Field
-        name='startDate'
-        render={({ field: startDateField, meta: startDateMeta }) => (
-          <CreateScheduleForm.Field
-            name='endDate'
-            render={({ field: endDateField, meta: endDateMeta }) => (
-              <Field>
-                <FieldLabel>Schedule Period</FieldLabel>
-
-                <PeriodSelector
-                  startDate={startDateField.value}
-                  endDate={endDateField.value}
-                  // oxlint-disable-next-line react/jsx-handler-names
-                  onStartDateChange={startDateField.onChange}
-                  // oxlint-disable-next-line react/jsx-handler-names
-                  onEndDateChange={endDateField.onChange}
-                />
-
-                <FieldDescription>
-                  Select the start and end dates for this medication schedule.
-                </FieldDescription>
-                <FieldError errors={startDateMeta.errors} />
-                <FieldError errors={endDateMeta.errors} />
-              </Field>
-            )}
-          />
-        )}
-      />
-
-      <TimePicker />
+              Create Schedule
+            </Button>
+          )}
+        />
+      </FieldGroup>
     </CreateScheduleForm.Root>
   )
 }

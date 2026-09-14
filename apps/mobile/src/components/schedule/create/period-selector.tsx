@@ -1,13 +1,20 @@
 import type { DateType } from 'react-native-calendars-datepicker'
 
-import dayjs from 'dayjs'
-import { getCalendars } from 'expo-localization'
+import * as DateTime from 'effect/DateTime'
+import * as Duration from 'effect/Duration'
 import { useCallback } from 'react'
 import CalendarPicker, {
   useDefaultClassNames,
 } from 'react-native-calendars-datepicker'
 
-const [{ timeZone }] = getCalendars()
+const formatDate = (date: string) => {
+  if (!date) return ''
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 export const PeriodSelector: React.FC<{
   startDate: string
@@ -21,17 +28,14 @@ export const PeriodSelector: React.FC<{
     // oxlint-disable-next-line complexity
     (dates: { startDate: DateType; endDate: DateType }) => {
       const rawStart = dates.startDate
-        ? dayjs(dates.startDate).format('YYYY-MM-DD')
+        ? formatDate(dates.startDate.toString())
         : ''
-      const rawEnd = dates.endDate
-        ? dayjs(dates.endDate).format('YYYY-MM-DD')
-        : ''
+      const rawEnd = dates.endDate ? formatDate(dates.endDate.toString()) : ''
 
       let selected = ''
       if (rawStart !== startDate && rawStart) selected = rawStart
       else if (rawEnd !== endDate && rawEnd) selected = rawEnd
       else selected = rawStart || rawEnd
-
       if (!selected) return
 
       // Case 1: Both startDate and endDate are not set
@@ -70,12 +74,17 @@ export const PeriodSelector: React.FC<{
           onEndDateChange(selected)
         } else {
           // Case 3e. Selected is between start and end -> Determine which end to move based on proximity
-          const startDiff = Math.abs(
-            dayjs(selected).diff(dayjs(startDate), 'day')
-          )
-          const endDiff = Math.abs(dayjs(selected).diff(dayjs(endDate), 'day'))
+          const startDiff = DateTime.distance(
+            DateTime.makeUnsafe(selected),
+            DateTime.makeUnsafe(startDate)
+          ).pipe(Duration.abs)
+          const endDiff = DateTime.distance(
+            DateTime.makeUnsafe(selected),
+            DateTime.makeUnsafe(endDate)
+          ).pipe(Duration.abs)
 
-          if (startDiff <= endDiff) onStartDateChange(selected)
+          if (Duration.isLessThanOrEqualTo(startDiff, endDiff))
+            onStartDateChange(selected)
           else onEndDateChange(selected)
         }
       }
@@ -85,12 +94,11 @@ export const PeriodSelector: React.FC<{
 
   return (
     <CalendarPicker
-      calendar='gregory'
       mode='range'
+      firstDayOfWeek={1}
       startDate={startDate ? new Date(startDate) : undefined}
       endDate={endDate ? new Date(endDate) : undefined}
       onChange={handleRangePress}
-      timeZone={timeZone ?? 'UTC'}
       classNames={{
         ...classNames,
         range_start: 'rounded-r-none',

@@ -1,10 +1,11 @@
 import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
 import * as BunServices from '@effect/platform-bun/BunServices'
-import { NotFound } from '@rozumari/contract/home/schemas/home.error'
 import * as DateTime from 'effect/DateTime'
+import * as Deferred from 'effect/Deferred'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
+import * as HttpEffect from 'effect/unstable/http/HttpEffect'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
 import * as HttpServerRequest from 'effect/unstable/http/HttpServerRequest'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
@@ -22,7 +23,7 @@ const routes = AppModule.createHttp({
   ],
 })
 
-const httpEffect = HttpRouter.toHttpEffect(
+const handler = HttpRouter.toHttpEffect(
   Layer.provide(routes, [
     HttpRouter.cors({
       allowedOrigins:
@@ -53,20 +54,32 @@ const httpEffect = HttpRouter.toHttpEffect(
   ])
 )
 
+const program = Effect.gen(function* program() {
+  const httpEffect = yield* handler
+
+  const context = yield* Effect.context()
+  const webResponse = yield* Deferred.make<Response>()
+
+  yield* HttpEffect.toHandled(httpEffect, (request, response) =>
+    Deferred.succeed(
+      webResponse,
+      HttpServerResponse.toWeb(HttpEffect.scopeTransferToStream(response), {
+        withoutBody: request.method === 'HEAD',
+        context,
+      })
+    )
+  )
+
+  return yield* Deferred.await(webResponse)
+}).pipe(Effect.scoped)
+
 export default {
   fetch: (request: Request) =>
     Effect.runPromise(
-      httpEffect.pipe(
-        Effect.flatMap((_httpEffect) => _httpEffect),
-        Effect.catchReason('HttpServerError', 'RouteNotFound', () =>
-          HttpServerResponse.json(new NotFound(), { status: 404 })
-        ),
-        Effect.map((httpResponse) => HttpServerResponse.toWeb(httpResponse)),
-        Effect.provideService(
-          HttpServerRequest.HttpServerRequest,
-          HttpServerRequest.fromWeb(request)
-        ),
-        Effect.scoped
+      Effect.provideService(
+        program,
+        HttpServerRequest.HttpServerRequest,
+        HttpServerRequest.fromWeb(request)
       ) as Effect.Effect<Response>
     ),
 }
