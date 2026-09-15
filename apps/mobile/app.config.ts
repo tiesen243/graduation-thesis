@@ -26,6 +26,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 
   android: {
     package: `com.${appName}.mobile`,
+    intentFilters: [
+      {
+        action: 'VIEW',
+        data: [
+          {
+            scheme: 'https',
+            host: `${appName}.vercel.app`,
+            pathPrefix: '/',
+          },
+        ],
+        category: ['BROWSABLE', 'DEFAULT'],
+      },
+    ],
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#DBE4FF',
@@ -42,6 +55,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 
   ios: {
     bundleIdentifier: `com.${appName}.mobile`,
+    associatedDomains: [`applinks:${appName}.vercel.app`],
     supportsTablet: true,
     icon: {
       light: './assets/icon-light.png',
