@@ -1,3 +1,12 @@
+## @rozumari/web@0.0.23
+
+### Config Deep Linking for Web and Mobile
+
+- Add Universal Links and App Links configuration for Expo mobile app (`com.rozumari.mobile`) and Web (`rozumari.vercel.app`).
+- Add `.well-known` configuration files (`apple-app-site-association` and `assetlinks.json`) for deep link domain verification.
+- Implement URL route mapping between Web React Router (`/dashboard/*`) and Mobile Expo Router routes (`/(tabs)/*`).
+- Add `redirectSystemPath` handler to parse and map incoming web URLs to corresponding app screens seamlessly.
+
 ## @rozumari/web@0.0.22
 
 ### Schedule Management Enhancements
