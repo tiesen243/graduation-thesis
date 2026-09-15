@@ -1,3 +1,14 @@
+## @rozumari/mobile@0.0.12
+
+### Schedule Management Enhancements
+
+- Added full schedule management capabilities across Web and Mobile, including creating, editing, and listing schedules.
+- Supported compartment item slot selection with quantity and required flag configurations.
+- Refactored date range selection logic for seamless date picking.
+- Standardized UI components (`InputGroup`, form fields) for parity between Web and React Native.
+- Fixed `ON CONFLICT` database queries to properly update `is_required` status on existing schedule items.
+- Fixed pull-to-refresh behavior on empty schedule list views in Mobile.
+
 ## @rozumari/mobile@0.0.10
 
 ### Added BLE Device Configuration & Fixed Multi-byte Payload Transmission

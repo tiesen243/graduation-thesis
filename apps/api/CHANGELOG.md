@@ -1,3 +1,10 @@
+## @rozumari/api@0.0.21
+
+### Added update schedule
+
+- Added a form to update the schedule for the pill box, allowing users to set reminders for taking their medication.
+- Added check new schedule items is in the schedule before adding them to the schedule, preventing duplicates.
+
 ## @rozumari/api@0.0.20
 
 ### Bug Fixes
