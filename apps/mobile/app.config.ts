@@ -29,9 +29,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     intentFilters: [
       {
         action: 'VIEW',
+        autoVerify: true,
         data: [
           {
             scheme: 'https',
+            host: `${appName}.vercel.app`,
+            pathPrefix: '/',
+          },
+          {
+            scheme: 'http',
             host: `${appName}.vercel.app`,
             pathPrefix: '/',
           },
