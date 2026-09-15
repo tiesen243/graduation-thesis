@@ -19,7 +19,7 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
-  publish-mobile:
+  android:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,6 +35,8 @@ jobs:
 
       - name: Setup Android
         uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
 
       - name: Setup EAS CLI
         uses: expo/expo-github-action@v8
