@@ -1,44 +1,46 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug figs\n\n- Failed to install `tools` on `android-actions/setup-android`\n"
-    filename: 2026-09-16-mu2yanez.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Config Deep Linking for Web and Mobile\n\n- Add Universal Links and App Links configuration for Expo mobile app (`com.rozumari.mobile`) and Web (`rozumari.vercel.app`).\n- Add `.well-known` configuration files (`apple-app-site-association` and `assetlinks.json`) for deep link domain verification.\n- Implement URL route mapping between Web React Router (`/dashboard/*`) and Mobile Expo Router routes (`/(tabs)/*`).\n- Add `redirectSystemPath` handler to parse and map incoming web URLs to corresponding app screens seamlessly.\n"
+    filename: 2026-09-16-mu31ens9.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - id: npm:@rozumari/github
     updated: false
+  - changelogIds:
+      - 2026-09-16-mu31ens9.md
+    id: npm:@rozumari/mobile
+    updated: true
   - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/contract
-    updated: false
-  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/api
     updated: false
   - id: npm:@rozumari/lib
     updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - changelogIds:
-      - 2026-09-16-mu2yanez.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - id: npm:@rozumari/api
-    updated: false
   - id: npm:@rozumari/firmware
+    updated: false
+  - id: npm:@rozumari/contract
     updated: false
   - id: npm:@rozumari/ui
     updated: false
+  - id: npm:@rozumari/oxlint
+    updated: false
   - id: npm:@rozumari/eda
     updated: false
+  - changelogIds:
+      - 2026-09-16-mu31ens9.md
+    id: npm:@rozumari/web
+    updated: true
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/api
+  - id: npm:@rozumari/lib
   - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/contract
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/eda
+  - id: npm:@rozumari/web
