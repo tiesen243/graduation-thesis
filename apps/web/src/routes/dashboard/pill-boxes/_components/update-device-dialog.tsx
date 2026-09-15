@@ -33,7 +33,10 @@ const updateDeviceForm = FormBuilder.empty
   .add('position', UpdateDeviceDto.Input.fields.position)
   .make()
 
-function UpdateDeviceFormSubmit({ id }: { id: DeviceId }) {
+function UpdateDeviceFormSubmit({
+  id,
+  setIsOpen,
+}: Readonly<{ id: DeviceId; setIsOpen: (open: boolean) => void }>) {
   const isPending = updateDeviceForm.useValue((s) => s.isPending)
 
   const queryClient = useQueryClient()
@@ -46,8 +49,12 @@ function UpdateDeviceFormSubmit({ id }: { id: DeviceId }) {
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         toast.success('Device updated')
+        setIsOpen(false)
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) => {
+        toast.error(error.message)
+        setIsOpen(false)
+      },
     }
   )
 
@@ -134,7 +141,7 @@ export const UpdateDeviceDialog: React.FC = () => {
             )}
           />
 
-          <UpdateDeviceFormSubmit id={device.id} />
+          <UpdateDeviceFormSubmit id={device.id} setIsOpen={setIsOpen} />
         </DialogContent>
       </updateDeviceForm.Provider>
     </Dialog>

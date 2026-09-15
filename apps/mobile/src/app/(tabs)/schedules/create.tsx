@@ -21,13 +21,13 @@ import { toast } from '@rozumari/ui/components/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 
-import type { ScheduleItemsProps } from '@/components/schedule/create/schedule-items'
+import type { ScheduleItemsProps } from '@/components/schedule/schedule-items'
 
 import { CreateScheduleForm } from '@/components/schedule/create/_config'
 import { DaysOfWeekSelector } from '@/components/schedule/create/days-of-week-selector'
 import { PeriodSelector } from '@/components/schedule/create/period-selector'
-import { ScheduleItems } from '@/components/schedule/create/schedule-items'
-import { TimePicker } from '@/components/schedule/create/time-picker'
+import { CreateScheduleTimePicker } from '@/components/schedule/create/time-picker'
+import { ScheduleItems } from '@/components/schedule/schedule-items'
 import { useRuntime } from '@/hooks/use-runtime'
 
 function CreateScheduleFormSubmit() {
@@ -148,7 +148,7 @@ export default function TabsSchedulesCreateScreen() {
             )}
           />
 
-          <TimePicker />
+          <CreateScheduleTimePicker />
 
           <DaysOfWeekSelector />
 

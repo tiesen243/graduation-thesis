@@ -110,7 +110,9 @@ export const LoginForm: React.FC = () => (
         </FieldDescription>
       </Field>
 
-      <FieldSeparator>or</FieldSeparator>
+      <FieldSeparator className='md:[&>[data-slot=field-separator-content]]:bg-card'>
+        or
+      </FieldSeparator>
 
       <Field className='grid grid-cols-1 pt-5 md:grid-cols-2'>
         {PROVIDERS.map((provider) => (

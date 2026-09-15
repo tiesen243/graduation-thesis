@@ -172,6 +172,7 @@ export function ScheduleItems({
                 <Input
                   keyboardType='numeric'
                   className='w-2/3'
+                  value={item.quantity.toString()}
                   onChangeText={(text) =>
                     helpers.update(index, {
                       ...item,

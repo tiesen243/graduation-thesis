@@ -41,6 +41,13 @@ export class ApiClient extends Context.Service<
                   method: 'POST',
                   credentials: 'include',
                   signal,
+                  headers: {
+                    'x-requested-with': 'web',
+                    'x-vercel-protection-bypass':
+                      env.VERCEL_ENV === 'preview' && env.VITE_BYPASS_TOKEN
+                        ? env.VITE_BYPASS_TOKEN
+                        : '',
+                  },
                 })
               )
 

@@ -1,23 +1,18 @@
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { Button } from '@rozumari/ui/components/button'
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from '@rozumari/ui/components/field'
+import { Field, FieldError, FieldLabel } from '@rozumari/ui/components/field'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { Activity, useState } from 'react'
 import { useCSSVariable } from 'uniwind'
 
-import { CreateScheduleForm } from '@/components/schedule/create/_config'
+import { updateScheduleForm } from '@/components/schedule/update/_config'
 
-export function CreateScheduleTimePicker() {
+export const UpdateScheduleTimePicker = () => {
   const [isOpen, setIsOpen] = useState(false)
   const foregroundColor = useCSSVariable('--color-foreground') as string
 
   return (
-    <CreateScheduleForm.Field
+    <updateScheduleForm.Field
       name='time'
       render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
@@ -47,7 +42,7 @@ export function CreateScheduleTimePicker() {
                   : new Date()
               }
               onDismiss={() => setIsOpen(false)}
-              onValueChange={(_, date) => {
+              onValueChange={(_event, date) => {
                 if (!date) return setIsOpen(false)
                 handleChange(formatDate(date, 'HH:mm:ss'))
                 setIsOpen(false)
@@ -55,10 +50,6 @@ export function CreateScheduleTimePicker() {
               is24Hour
             />
           </Activity>
-
-          <FieldDescription>
-            Select the time when the schedule should run.
-          </FieldDescription>
 
           <FieldError errors={meta.errors} />
         </Field>
