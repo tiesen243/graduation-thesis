@@ -11,10 +11,18 @@ import { CreateScheduleForm } from '@/routes/dashboard/schedules/_components/_co
 export const ScheduleDateRangeField = () => (
   <CreateScheduleForm.Field
     name='startDate'
-    render={({ field: startField, meta: startMeta }) => (
+    render={({
+      field: startField,
+      meta: startMeta,
+      helpers: { handleChange: handleStartDateChange },
+    }) => (
       <CreateScheduleForm.Field
         name='endDate'
-        render={({ field: endField, meta: endMeta }) => {
+        render={({
+          field: endField,
+          meta: endMeta,
+          helpers: { handleChange: handleEndDateChange },
+        }) => {
           const hasError =
             startMeta.errors.length > 0 || endMeta.errors.length > 0
 
@@ -25,8 +33,8 @@ export const ScheduleDateRangeField = () => (
                 startDate={startField.value}
                 endDate={endField.value}
                 onChange={({ startDate, endDate }) => {
-                  startField.onChange(startDate)
-                  endField.onChange(endDate)
+                  handleStartDateChange(startDate)
+                  handleEndDateChange(endDate)
                 }}
               />
               <FieldDescription>

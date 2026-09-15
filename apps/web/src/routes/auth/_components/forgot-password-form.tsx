@@ -18,71 +18,57 @@ const forgotPasswordForm = FormBuilder.empty
   .add('email', ForgotPasswordDto.Input.fields.email)
   .make()
 
-export function ForgotPasswordForm() {
+function ForgotPasswordFormSubmit({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const formId = forgotPasswordForm.useValue((s) => s.formId)
+  const isPending = forgotPasswordForm.useValue((s) => s.isPending)
+
+  const handleSubmit = forgotPasswordForm.useSubmit(
+    (payload) => api.auth['forgot-password'].mutate({ payload }),
+    {
+      onSuccess: () =>
+        toast.success(
+          'If an account with that email exists, a reset link has been sent.'
+        ),
+    }
+  )
+
   return (
-    <forgotPasswordForm.Root
-      defaultValues={{ email: '' }}
-      render={({ handleSubmit }) => (
-        <form
-          className='px-4'
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-
-            handleSubmit(
-              (payload) =>
-                api.auth['forgot-password'].mutateEffect({ payload }),
-              {
-                onSuccess: () =>
-                  toast.add({
-                    type: 'success',
-                    description:
-                      'If an account with that email exists, a reset link has been sent.',
-                  }),
-              }
-            )
-          }}
-        />
-      )}
-    >
-      <FieldSet className='group-data-[pending=true]/form:pointer-events-none'>
-        <legend className='sr-only'>Forgot Password</legend>
-
-        <forgotPasswordForm.Field
-          name='email'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Email</FieldLabel>
-              <Input
-                {...field}
-                type='email'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Enter your email'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <Field>
-          <forgotPasswordForm.Submit
-            render={({ meta }) => (
-              <Button
-                type='submit'
-                form={meta.formId}
-                disabled={meta.isPending}
-              >
-                {meta.isPending ? 'Sending...' : 'Send Reset Link'}
-              </Button>
-            )}
-          />
-
-          <FieldDescription>
-            Remembered your password? <Link to='/login'>Login</Link>
-          </FieldDescription>
-        </Field>
+    <form id={formId} className='px-4' onSubmit={handleSubmit}>
+      <FieldSet className='px-4' disabled={isPending}>
+        {children}
       </FieldSet>
-    </forgotPasswordForm.Root>
+    </form>
   )
 }
+
+export const ForgotPasswordForm: React.FC = () => (
+  <forgotPasswordForm.Provider defaultValues={{ email: '' }}>
+    <ForgotPasswordFormSubmit>
+      <forgotPasswordForm.Field
+        name='email'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Email</FieldLabel>
+            <Input
+              {...field}
+              type='email'
+              placeholder='Enter your email'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <Field>
+        <Button type='submit'>Send Reset Link</Button>
+
+        <FieldDescription>
+          Remembered your password? <Link to='/login'>Login</Link>
+        </FieldDescription>
+      </Field>
+    </ForgotPasswordFormSubmit>
+  </forgotPasswordForm.Provider>
+)

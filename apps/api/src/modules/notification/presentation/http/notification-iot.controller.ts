@@ -11,7 +11,7 @@ export const notificationIoTController = HttpApiBuilder.group(
   (handlers) =>
     handlers.handle('send', ({ payload }) =>
       CreateNotificationUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.map((data) => CreateNotificationDto.make({ data }))
+        Effect.map((data) => new CreateNotificationDto({ data }))
       )
     )
 )

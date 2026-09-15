@@ -11,6 +11,7 @@ import {
   FieldSet,
 } from '@rozumari/ui/components/field'
 import { Loader2Icon } from '@rozumari/ui/components/icons'
+import { Input } from '@rozumari/ui/components/input'
 import {
   Select,
   SelectContent,
@@ -33,11 +34,45 @@ import {
 import { ItemField } from '@/routes/dashboard/schedules/_components/item-field'
 import { ScheduleDateRangeField } from '@/routes/dashboard/schedules/_components/schedule-date-range-field'
 
-export default function SchedulesCreatePage() {
-  const [searchParams] = useSearchParams()
+const ProvidedItemField: React.FC<
+  Omit<Parameters<typeof ItemField>[0], 'deviceId'>
+> = (props) => {
+  const deviceId = CreateScheduleForm.useValue((s) => s.values.deviceId)
+  return <ItemField {...props} deviceId={deviceId} />
+}
+
+function CreateScheduleFormSubmit({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const formId = CreateScheduleForm.useValue((s) => s.formId)
+  const isPending = CreateScheduleForm.useValue((s) => s.isPending)
+
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
+  const handleSubmit = CreateScheduleForm.useSubmit(
+    (payload) => api.schedule.create.mutateEffect({ payload }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: api.schedule.list.getQueryKey(),
+        })
+        toast.success('Schedule created')
+        navigate('/dashboard/schedules')
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
+  return (
+    <form id={formId} onSubmit={handleSubmit}>
+      <FieldSet disabled={isPending}>{children}</FieldSet>
+    </form>
+  )
+}
+
+export default function SchedulesCreatePage() {
+  const [searchParams] = useSearchParams()
   const { user, status } = useSession()
 
   const { data, isLoading } = useQuery(
@@ -63,7 +98,7 @@ export default function SchedulesCreatePage() {
     )
 
   return (
-    <CreateScheduleForm.Root
+    <CreateScheduleForm.Provider
       defaultValues={{
         deviceId: (searchParams.get('id') ?? '') as DeviceId,
         startDate: '',
@@ -72,35 +107,8 @@ export default function SchedulesCreatePage() {
         daysOfWeek: [],
         items: [],
       }}
-      render={({ handleSubmit, meta }) => (
-        <form
-          id={meta.formId}
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            handleSubmit(
-              (payload) => api.schedule.create.mutateEffect({ payload }),
-              {
-                onSuccess: async () => {
-                  await queryClient.invalidateQueries({
-                    queryKey: api.schedule.list.getQueryKey(),
-                  })
-                  toast.add({ type: 'success', title: 'Schedule created' })
-                  navigate('/dashboard/schedules')
-                },
-                onError: (error) =>
-                  toast.add({
-                    type: 'error',
-                    title: 'Failed to create schedule',
-                    description: error,
-                  }),
-              }
-            )
-          }}
-        />
-      )}
     >
-      <FieldSet>
+      <CreateScheduleFormSubmit>
         <FieldLegend>Create Schedule</FieldLegend>
         <FieldDescription>
           Create a new schedule for your medication dispenser. Select the
@@ -111,15 +119,13 @@ export default function SchedulesCreatePage() {
         <FieldGroup>
           <CreateScheduleForm.Field
             name='deviceId'
-            render={({ field, meta }) => (
+            render={({ field, meta, helpers: { handleChange } }) => (
               <Field data-invalid={meta.errors.length > 0}>
                 <FieldLabel htmlFor={field.id}>Device</FieldLabel>
                 <Select
                   value={field.value}
                   items={deviceOptions}
-                  onValueChange={
-                    field.onChange as (value: string | null) => void
-                  }
+                  onValueChange={handleChange as never}
                 >
                   <SelectTrigger id={field.id}>
                     <SelectValue placeholder='Select a device' />
@@ -144,83 +150,33 @@ export default function SchedulesCreatePage() {
 
           <CreateScheduleForm.Field
             name='time'
-            render={({ field, meta }) => {
-              const [hours = '08', minutes = '00'] = (
-                field.value || '08:00:00'
-              ).split(':')
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Time</FieldLabel>
 
-              const handleTimeChange = (newHours: string, newMinutes: string) =>
-                field.onChange(`${newHours}:${newMinutes}:00`)
+                <Input
+                  {...field}
+                  type='time'
+                  step={300}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
 
-              return (
-                <Field data-invalid={meta.errors.length > 0}>
-                  <FieldLabel htmlFor={field.id}>Time</FieldLabel>
-
-                  <div className='flex items-center gap-2'>
-                    <Select
-                      value={hours}
-                      onValueChange={(val) =>
-                        handleTimeChange(val ?? '', minutes)
-                      }
-                    >
-                      <SelectTrigger className='w-full sm:w-30'>
-                        <SelectValue placeholder='Hour' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 24 }, (_, i) => {
-                          const h = i.toString().padStart(2, '0')
-                          return (
-                            <SelectItem key={h} value={h}>
-                              {h}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-
-                    <span className='text-lg font-bold text-muted-foreground'>
-                      :
-                    </span>
-
-                    <Select
-                      value={minutes}
-                      onValueChange={(val) =>
-                        handleTimeChange(hours, val ?? '')
-                      }
-                    >
-                      <SelectTrigger className='w-full sm:w-30'>
-                        <SelectValue placeholder='Minute' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: 60 }, (_, i) => {
-                          const m = i.toString().padStart(2, '0')
-                          return (
-                            <SelectItem key={m} value={m}>
-                              {m}
-                            </SelectItem>
-                          )
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <FieldDescription>
-                    Set the daily time to dispense medication.
-                  </FieldDescription>
-                  <FieldError id={meta.errorId} errors={meta.errors} />
-                </Field>
-              )
-            }}
+                <FieldDescription>
+                  Set the daily time to dispense medication.
+                </FieldDescription>
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
+            )}
           />
 
           <CreateScheduleForm.Field
             name='daysOfWeek'
-            render={({ field, meta }) => (
+            render={({ field, meta, helpers: { handleChange } }) => (
               <Field data-invalid={meta.errors.length > 0}>
                 <FieldLabel htmlFor={field.id}>Days of Week</FieldLabel>
                 <Select
                   value={[...field.value]}
-                  onValueChange={(values) => field.onChange(values)}
+                  onValueChange={handleChange}
                   items={DAYS_OF_WEEK_MAP}
                   multiple
                 >
@@ -236,7 +192,8 @@ export default function SchedulesCreatePage() {
                   </SelectContent>
                 </Select>
                 <FieldDescription>
-                  Select which days of the week this schedule repeats.
+                  Select which days of the week this schedule repeats. Ignored
+                  if the start and end dates are the same.
                 </FieldDescription>
                 <FieldError id={meta.errorId} errors={meta.errors} />
               </Field>
@@ -245,24 +202,14 @@ export default function SchedulesCreatePage() {
 
           <CreateScheduleForm.Field
             name='items'
-            render={(props) => <ItemField {...props} />}
+            render={(props) => <ProvidedItemField {...props} />}
           />
 
-          <CreateScheduleForm.Submit
-            render={({ meta }) => (
-              <Field>
-                <Button
-                  type='submit'
-                  form={meta.formId}
-                  disabled={meta.isPending}
-                >
-                  Create Schedule
-                </Button>
-              </Field>
-            )}
-          />
+          <Field>
+            <Button type='submit'>Create Schedule</Button>
+          </Field>
         </FieldGroup>
-      </FieldSet>
-    </CreateScheduleForm.Root>
+      </CreateScheduleFormSubmit>
+    </CreateScheduleForm.Provider>
   )
 }

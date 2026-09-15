@@ -1,15 +1,31 @@
-import { useAtomValue } from '@effect/atom-react'
+// oxlint-disable react-hooks/rules-of-hooks
+import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@rozumari/ui/components/card'
+import { Checkbox } from '@rozumari/ui/components/checkbox'
+import {
   Field,
   FieldLabel,
-  FieldContent,
   FieldDescription,
   FieldError,
+  FieldTitle,
 } from '@rozumari/ui/components/field'
 import { XIcon, MinusIcon, PlusIcon } from '@rozumari/ui/components/icons'
-import { Input } from '@rozumari/ui/components/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+} from '@rozumari/ui/components/input-group'
 import {
   Select,
   SelectTrigger,
@@ -18,25 +34,37 @@ import {
   SelectItem,
 } from '@rozumari/ui/components/select'
 import { useQuery } from '@tanstack/react-query'
-import { useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
 
 import { api } from '@/lib/runtime'
-import { CreateScheduleForm } from '@/routes/dashboard/schedules/_components/_config'
+
+interface ItemValue {
+  slot: string
+  quantity: number
+  isRequired: boolean
+}
+
+interface ItemFieldContentProps {
+  deviceId: DeviceId
+  field: { id: string; value: readonly ItemValue[] | undefined }
+  meta: {
+    errors: { message: string }[]
+    descriptionId?: string
+    errorId?: string
+  }
+  helpers: {
+    add: (item: ItemValue) => void
+    remove: (index: number) => void
+    update: (index: number, item: ItemValue) => void
+  }
+}
 
 export const ItemField = ({
+  deviceId,
   field,
   meta,
-}: Parameters<
-  Extract<
-    React.ComponentProps<typeof CreateScheduleForm.Field<'items'>>,
-    { name: 'items' }
-  >['render']
->[0]) => {
-  const deviceId = useAtomValue(
-    CreateScheduleForm.state(),
-    (s) => s.values.deviceId
-  )
-
+  helpers,
+}: ItemFieldContentProps) => {
   const { data: compartments } = useQuery({
     ...api.device.show.queryOptions({
       params: { id: deviceId },
@@ -48,192 +76,171 @@ export const ItemField = ({
   const availableCompartments = useMemo(() => {
     if (!compartments) return []
     const selectedSlots = new Set(
-      field.value.map((i) => i.slot).filter(Boolean)
+      field.value?.map((i) => i.slot).filter(Boolean)
     )
     return compartments.filter((c) => !selectedSlots.has(c.position))
   }, [compartments, field.value])
-
-  const handleSlotChange = useCallback(
-    (index: number, newSlot: string) => {
-      field.onChange(
-        field.value.map((item, i) =>
-          i === index ? { ...item, slot: newSlot } : item
-        )
-      )
-    },
-    [field]
-  )
-
-  const handleQuantityChange = useCallback(
-    (index: number, quantity: number) => {
-      field.onChange(
-        field.value.map((item, i) =>
-          i === index ? { ...item, quantity } : item
-        )
-      )
-    },
-    [field]
-  )
-
-  const handleRemoveItem = useCallback(
-    (index: number) => {
-      field.onChange(field.value.filter((_, i) => i !== index))
-    },
-    [field]
-  )
-
-  const handleAddItem = useCallback(() => {
-    field.onChange([...field.value, { slot: '', quantity: 1 }])
-  }, [field])
 
   return (
     <Field data-invalid={meta.errors.length > 0}>
       <FieldLabel htmlFor={field.id}>Items</FieldLabel>
 
-      {/* Grid Layout đồng bộ cho toàn bộ các Card */}
       <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3'>
-        {field.value.map((item, index) => {
+        {field.value?.map((item, index) => {
           const comp = compartments?.find((c) => c.position === item.slot)
 
-          {
-            /* Trạng thái 1: Chưa chọn slot (Đang chọn Select) */
-          }
           if (!comp) {
             return (
-              <FieldContent
-                key={index}
-                className='relative flex min-h-32 flex-col justify-between rounded-xl border bg-card p-4 shadow-sm'
-              >
-                <div className='flex items-center justify-between gap-2'>
-                  <span className='text-xs font-medium text-muted-foreground'>
-                    Select Slot
-                  </span>
-                  <Button
-                    type='button'
-                    size='icon'
-                    variant='ghost'
-                    className='h-7 w-7 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-                    onClick={() => handleRemoveItem(index)}
-                  >
-                    <span className='sr-only'>Remove</span>
-                    <XIcon className='h-4 w-4' />
-                  </Button>
-                </div>
+              <Card key={index} className='h-32'>
+                <CardHeader>
+                  <CardTitle>Select Slot</CardTitle>
+                  <CardAction>
+                    <Button
+                      type='button'
+                      size='icon-xs'
+                      variant='destructive'
+                      onClick={() => helpers.remove(index)}
+                    >
+                      <span className='sr-only'>Remove</span>
+                      <XIcon />
+                    </Button>
+                  </CardAction>
+                </CardHeader>
 
-                <Select
-                  value={item.slot}
-                  onValueChange={(value) =>
-                    handleSlotChange(index, value ?? '')
-                  }
-                  items={availableCompartments.map((c) => ({
-                    value: c.position,
-                    label: `${c.medicine} (Slot ${c.position})`,
-                  }))}
-                  disabled={!compartments?.length}
-                >
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Select a compartment' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availableCompartments.map((c) => (
-                      <SelectItem
-                        key={c.position}
-                        value={c.position}
-                        disabled={!c.medicine}
-                      >
-                        {c.medicine} (Slot {c.position})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FieldContent>
+                <div className='flex-1' />
+
+                <CardContent>
+                  <Select
+                    value={item.slot}
+                    onValueChange={(value) =>
+                      helpers.update(index, { ...item, slot: value ?? '' })
+                    }
+                    items={availableCompartments.map((c) => ({
+                      value: c.position,
+                      label: `${c.medicine} (Slot ${c.position})`,
+                    }))}
+                    disabled={!compartments?.length}
+                  >
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select a compartment' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableCompartments.map((c) => (
+                        <SelectItem
+                          key={c.position}
+                          value={c.position}
+                          disabled={!c.medicine}
+                        >
+                          {c.medicine} (Slot {c.position})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
             )
           }
 
           return (
-            <FieldContent
-              key={index}
-              className='relative flex min-h-32 flex-col justify-between rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-md'
-            >
-              <div className='flex items-start justify-between gap-2'>
-                <div className='flex items-center gap-4 pr-6'>
-                  <span className='line-clamp-1 font-semibold text-foreground'>
-                    {comp.medicine}
-                  </span>
+            <Card key={index} className='h-32'>
+              <CardHeader>
+                <CardTitle>
+                  {comp.medicine}
                   <Badge variant='outline'>Slot: {item.slot}</Badge>
-                </div>
+                </CardTitle>
 
-                <Button
-                  type='button'
-                  size='icon-xs'
-                  variant='ghost'
-                  className='absolute top-2 right-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
-                  onClick={() => handleRemoveItem(index)}
-                >
-                  <XIcon />
-                  <span className='sr-only'>Remove</span>
-                </Button>
-              </div>
-
-              <div className='mt-3 flex items-center justify-between gap-2 rounded-lg bg-muted/50 p-1.5'>
-                <span className='pl-1 text-xs font-medium text-muted-foreground'>
-                  Qty
-                </span>
-
-                <div className='flex items-center gap-1'>
+                <CardAction>
                   <Button
                     type='button'
-                    size='icon'
-                    variant='outline'
-                    disabled={item.quantity <= 1}
-                    onClick={() =>
-                      handleQuantityChange(
-                        index,
-                        Math.max(1, item.quantity - 1)
-                      )
-                    }
+                    size='icon-xs'
+                    variant='destructive'
+                    onClick={() => helpers.remove(index)}
                   >
-                    <MinusIcon />
+                    <XIcon />
+                    <span className='sr-only'>Remove</span>
                   </Button>
+                </CardAction>
+              </CardHeader>
 
-                  <Input
-                    type='number'
-                    min={1}
+              <div className='flex-1' />
+
+              <CardContent className='flex items-center justify-between gap-2'>
+                <InputGroup>
+                  <InputGroupAddon align='inline-start'>
+                    <InputGroupText>Qty.</InputGroupText>
+                  </InputGroupAddon>
+
+                  <InputGroupInput
                     value={item.quantity}
                     onChange={(e) =>
-                      handleQuantityChange(
-                        index,
-                        Math.max(1, Number(e.target.value) || 1)
-                      )
+                      helpers.update(index, {
+                        ...item,
+                        quantity: e.target.valueAsNumber,
+                      })
                     }
                   />
 
-                  <Button
-                    type='button'
-                    size='icon'
-                    variant='outline'
-                    onClick={() =>
-                      handleQuantityChange(index, item.quantity + 1)
-                    }
-                  >
-                    <PlusIcon />
-                  </Button>
-                </div>
-              </div>
-            </FieldContent>
+                  <InputGroupAddon align='inline-end'>
+                    <InputGroupButton
+                      onClick={() =>
+                        helpers.update(index, {
+                          ...item,
+                          quantity: Math.max(1, item.quantity - 1),
+                        })
+                      }
+                    >
+                      <MinusIcon />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+
+                  <InputGroupAddon align='inline-end'>
+                    <InputGroupButton
+                      onClick={() =>
+                        helpers.update(index, {
+                          ...item,
+                          quantity: item.quantity + 1,
+                        })
+                      }
+                    >
+                      <PlusIcon />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+
+                <FieldLabel
+                  htmlFor={`${field.id}-${index}-required`}
+                  className='basis-1/3'
+                >
+                  <Field orientation='horizontal' className='h-8'>
+                    <Checkbox
+                      id={`${field.id}-${index}-required`}
+                      checked={item.isRequired}
+                      onCheckedChange={(checked) =>
+                        helpers.update(index, {
+                          ...item,
+                          isRequired: checked,
+                        })
+                      }
+                    />
+                    <FieldTitle>Required</FieldTitle>
+                  </Field>
+                </FieldLabel>
+              </CardContent>
+            </Card>
           )
         })}
 
-        <button
-          type='button'
-          onClick={handleAddItem}
-          className='flex min-h-32 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-muted-foreground/25 bg-transparent p-4 text-muted-foreground transition-all hover:border-primary hover:bg-accent/50 hover:text-primary'
+        <Card
+          onClick={() =>
+            helpers.add({ slot: '', quantity: 1, isRequired: true })
+          }
+          className='h-32 cursor-pointer items-center justify-center border-2 border-dashed border-muted-foreground/25 bg-transparent ring-0 transition-all hover:border-primary hover:bg-accent/50 hover:text-primary'
         >
-          <div className='flex size-9 items-center justify-center rounded-full border bg-background shadow-xs'>
+          <div className='flex size-9 items-center justify-center rounded-full border border-muted-foreground/25 bg-transparent'>
             <PlusIcon className='size-4' />
           </div>
           <span className='text-xs font-medium'>Add Item</span>
-        </button>
+        </Card>
       </div>
 
       <FieldDescription id={meta.descriptionId}>

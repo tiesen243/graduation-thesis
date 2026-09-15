@@ -21,6 +21,7 @@ export const ScheduleAggregateSchema = Schema.Struct({
       medicine: CompartmentSchema.fields.medicine,
       dosage: CompartmentSchema.fields.dosage,
       quantity: ScheduleItemSchema.fields.quantity,
+      isRequired: ScheduleItemSchema.fields.isRequired,
     })
   ),
 })

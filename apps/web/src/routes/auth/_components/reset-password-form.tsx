@@ -23,91 +23,83 @@ const forgotPasswordForm = FormBuilder.empty
   })
   .make()
 
-export function ResetPasswordForm({ token }: { token: string }) {
+function ResetPasswordFormSubmit({
+  token,
+  children,
+}: Readonly<{ token: string; children: React.ReactNode }>) {
+  const formId = forgotPasswordForm.useValue((s) => s.formId)
+  const isPending = forgotPasswordForm.useValue((s) => s.isPending)
+
   const navigate = useNavigate()
 
+  const handleSubmit = forgotPasswordForm.useSubmit(
+    (payload) =>
+      api.auth['reset-password'].mutate({
+        headers: { Authorization: `Bearer ${token}` },
+        payload,
+      }),
+    {
+      onSuccess: () => {
+        navigate('/login', { replace: true })
+        toast.success(
+          'Password reset successfully. You can now log in with your new password.'
+        )
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
   return (
-    <forgotPasswordForm.Root
-      defaultValues={{ password: '', confirmPassword: '' }}
-      render={({ handleSubmit }) => (
-        <form
-          className='px-4'
-          onSubmit={(e) => {
-            e.preventDefault()
-
-            handleSubmit(
-              (payload) =>
-                api.auth['reset-password'].mutateEffect({
-                  headers: { Authorization: `Bearer ${token}` },
-                  payload,
-                }),
-              {
-                onSuccess: () => {
-                  navigate('/login', { replace: true })
-                  toast.add({
-                    type: 'success',
-                    description: 'Password reset successfully.',
-                  })
-                },
-              }
-            )
-          }}
-        />
-      )}
-    >
-      <FieldSet className='group-data-[pending=true]/form:pointer-events-none'>
-        <legend className='sr-only'>Forgot Password</legend>
-
-        <forgotPasswordForm.Field
-          name='password'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <forgotPasswordForm.Field
-          name='confirmPassword'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <Field>
-          <forgotPasswordForm.Submit
-            render={({ meta }) => (
-              <Button
-                type='submit'
-                form={meta.formId}
-                disabled={meta.isPending}
-              >
-                {meta.isPending ? 'Sending...' : 'Send Reset Link'}
-              </Button>
-            )}
-          />
-
-          <FieldDescription>
-            Remembered your password? <Link to='/login'>Login</Link>
-          </FieldDescription>
-        </Field>
-      </FieldSet>
-    </forgotPasswordForm.Root>
+    <form id={formId} className='px-4' onSubmit={handleSubmit}>
+      <FieldSet disabled={isPending}>{children}</FieldSet>
+    </form>
   )
 }
+
+export const ResetPasswordForm: React.FC<{ token: string }> = ({ token }) => (
+  <forgotPasswordForm.Provider
+    defaultValues={{ password: '', confirmPassword: '' }}
+  >
+    <ResetPasswordFormSubmit token={token}>
+      <legend className='sr-only'>Forgot Password</legend>
+
+      <forgotPasswordForm.Field
+        name='password'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <forgotPasswordForm.Field
+        name='confirmPassword'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <Field>
+        <Button type='submit'>Send Reset Link</Button>
+
+        <FieldDescription>
+          Remembered your password? <Link to='/login'>Login</Link>
+        </FieldDescription>
+      </Field>
+    </ResetPasswordFormSubmit>
+  </forgotPasswordForm.Provider>
+)

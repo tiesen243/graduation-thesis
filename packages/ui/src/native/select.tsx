@@ -213,11 +213,11 @@ function SelectContent({
             <Animated.View
               style={{ transform: [{ translateY }] }}
               className={cn(
-                'max-h-2/3 min-h-1/3 w-full rounded-t-xl bg-popover p-4',
+                'max-h-2/3 min-h-1/3 w-full rounded-t-xl bg-popover py-4',
                 className
               )}
             >
-              <View className='mb-3 flex-row items-center justify-between border-b border-border pb-2'>
+              <View className='mb-3 flex-row items-center justify-between border-b border-border px-4 pb-2'>
                 <Typography className='flex-1 text-base font-semibold text-popover-foreground'>
                   {title}
                 </Typography>
@@ -236,7 +236,7 @@ function SelectContent({
               </View>
 
               <ScrollView
-                className='gap-y-1.5'
+                className='gap-y-1.5 px-4'
                 showsVerticalScrollIndicator={false}
               >
                 {children}

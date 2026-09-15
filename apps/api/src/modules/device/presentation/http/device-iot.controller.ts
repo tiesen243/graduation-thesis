@@ -36,7 +36,7 @@ export const DeviceIoTController = HttpApiBuilder.group(
           Effect.flatMap((id) =>
             DeviceStreamUseCase.use((s) => s.emit({ id, ...payload }))
           ),
-          Effect.map((data) => DeviceStreamDto.make({ data }))
+          Effect.map((data) => new DeviceStreamDto({ data }))
         )
       )
 )

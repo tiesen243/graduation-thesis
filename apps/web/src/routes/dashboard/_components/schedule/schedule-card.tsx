@@ -65,16 +65,17 @@ export const ScheduleCard: React.FC<{
         {schedule.items.map((item) => (
           <div
             key={`${schedule.id}-slot-${item.slot}`}
-            className='flex flex-wrap items-center justify-between gap-4 bg-muted/40 p-2 text-sm'
+            className='flex flex-col gap-2 bg-muted/40 p-2 text-sm'
           >
             <div className='flex items-center gap-2'>
               <PillIcon className='size-3.5 shrink-0 text-primary' />
-              <span className='font-medium'>{item.medicine}</span>
+              <span className='truncate font-medium'>{item.medicine}</span>
               {item.dosage && (
                 <span className='text-xs text-muted-foreground'>
                   ({item.dosage})
                 </span>
               )}
+              {item.isRequired && <span className='text-destructive'>*</span>}
             </div>
 
             <Badge variant='outline'>

@@ -26,108 +26,104 @@ const loginForm = FormBuilder.empty
   .add('password', LoginDto.Input.fields.password)
   .make()
 
-export default function LoginScreen() {
+function LoginFormSubmit() {
+  const isPending = loginForm.useValue((s) => s.isPending)
+
   const queryClient = useQueryClient()
   const router = useRouter()
   const { api } = useRuntime()
 
+  const handleSubmit = loginForm.useSubmit(
+    (payload) => api.auth.login.mutate({ payload }),
+    {
+      onSuccess: async ({ data }) => {
+        await setTokens(data.accessToken, data.refreshToken)
+        await queryClient.invalidateQueries({
+          queryKey: api.auth.whoami.getQueryKey(),
+        })
+        toast.success('Login successful')
+        router.navigate('/(tabs)/home')
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
   return (
-    <loginForm.Root
-      defaultValues={{ email: '', password: '' }}
-      render={() => (
-        <FieldSet containerClassName='p-4' className='justify-center' />
-      )}
-    >
-      <FieldLegend>Login</FieldLegend>
-      <FieldDescription>
-        Please enter your email and password to login to your account.
-      </FieldDescription>
+    <Button disabled={isPending} onPress={() => handleSubmit()}>
+      {isPending ? 'Logging in...' : 'Login'}
+    </Button>
+  )
+}
 
-      <FieldGroup>
-        <loginForm.Field
-          name='email'
-          render={({ field: { onChange, ...field }, meta }) => (
-            <Field>
-              <FieldLabel>Email</FieldLabel>
-              <Input
-                {...field}
-                onChangeText={onChange}
-                placeholder='Enter your email'
-                keyboardType='email-address'
-                editable={!meta.isPending}
-              />
-              <FieldError errors={meta.errors} />
-            </Field>
-          )}
-        />
+export default function LoginScreen() {
+  const router = useRouter()
 
-        <loginForm.Field
-          name='password'
-          render={({ field: { onChange, ...field }, meta }) => (
-            <Field>
-              <FieldLabel>Password</FieldLabel>
-              <Input
-                {...field}
-                onChangeText={onChange}
-                placeholder='Enter your password'
-                editable={!meta.isPending}
-                secureTextEntry
-              />
-              <FieldError errors={meta.errors} />
-            </Field>
-          )}
-        />
+  return (
+    <loginForm.Provider defaultValues={{ email: '', password: '' }}>
+      <FieldSet containerClassName='p-4' className='justify-center'>
+        <FieldLegend>Login</FieldLegend>
+        <FieldDescription>
+          Please enter your email and password to login to your account.
+        </FieldDescription>
 
-        <loginForm.Submit
-          render={({ handleSubmit, meta }) => (
-            <Field>
-              <Button
-                disabled={meta.isPending}
-                onPress={() =>
-                  handleSubmit(
-                    (payload) => api.auth.login.mutateEffect({ payload }),
-                    {
-                      onSuccess: async ({ data }) => {
-                        await setTokens(data.accessToken, data.refreshToken)
-                        await queryClient.invalidateQueries({
-                          queryKey: api.auth.whoami.getQueryKey(),
-                        })
+        <FieldGroup>
+          <loginForm.Field
+            name='email'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>Email</FieldLabel>
+                <Input
+                  {...field}
+                  placeholder='Enter your email'
+                  keyboardType='email-address'
+                  onChangeText={handleChange}
+                  editable={!meta.isPending}
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-                        toast.success('Login successful')
-                        router.navigate('/(tabs)/home')
-                      },
-                      onError: (error) =>
-                        toast.error('Login failed', error.message),
-                    }
-                  )
-                }
-              >
-                {meta.isPending ? 'Logging in...' : 'Login'}
-              </Button>
-            </Field>
-          )}
-        />
+          <loginForm.Field
+            name='password'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>Password</FieldLabel>
+                <Input
+                  {...field}
+                  placeholder='Enter your password'
+                  onChangeText={handleChange}
+                  editable={!meta.isPending}
+                  secureTextEntry
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-        <View className='flex-row items-center'>
-          <FieldDescription>Don&apos;t have an account? </FieldDescription>
-          <Button
-            variant='link'
-            onPress={() => router.navigate('/(auth)/register')}
-          >
-            Register here
-          </Button>
-        </View>
+          <LoginFormSubmit />
 
-        <FieldSeparator>
-          <FieldLabel>or</FieldLabel>
-        </FieldSeparator>
+          <View className='flex-row items-center'>
+            <FieldDescription>Don&apos;t have an account? </FieldDescription>
+            <Button
+              variant='link'
+              onPress={() => router.navigate('/(auth)/register')}
+            >
+              Register here
+            </Button>
+          </View>
 
-        <Field orientation='horizontal'>
-          {['facebook', 'google'].map((provider) => (
-            <OAuthButton key={provider} provider={provider} />
-          ))}
-        </Field>
-      </FieldGroup>
-    </loginForm.Root>
+          <FieldSeparator>
+            <FieldLabel>or</FieldLabel>
+          </FieldSeparator>
+
+          <Field orientation='horizontal'>
+            {['facebook', 'google'].map((provider) => (
+              <OAuthButton key={provider} provider={provider} />
+            ))}
+          </Field>
+        </FieldGroup>
+      </FieldSet>
+    </loginForm.Provider>
   )
 }

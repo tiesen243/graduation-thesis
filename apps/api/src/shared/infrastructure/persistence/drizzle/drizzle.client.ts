@@ -22,8 +22,7 @@ const PgClientLive = PgClient.layer({
       if (
         [1184, 1114, 1082, 1186, 1231, 1115, 1185, 1187, 1182].includes(typeId)
       )
-        return (val: number) => val
-
+        return (val: any) => val
       return types.getTypeParser(typeId, format)
     },
   },

@@ -15,25 +15,25 @@ export const userController = HttpApiBuilder.group(Api, 'user', (handlers) =>
   handlers
     .handle('list', ({ query }) =>
       ListUsersUseCase.use((s) => s.execute(query)).pipe(
-        Effect.map((data) => ListUsersDto.make({ data }))
+        Effect.map((data) => new ListUsersDto({ data }))
       )
     )
 
     .handle('show', ({ params }) =>
       ShowUserUseCase.use((s) => s.execute(params)).pipe(
-        Effect.map((data) => ShowUserDto.make({ data }))
+        Effect.map((data) => new ShowUserDto({ data }))
       )
     )
 
     .handle('update', ({ params, payload }) =>
       UpdateUserUseCase.use((s) => s.execute({ ...params, ...payload })).pipe(
-        Effect.map((data) => UpdateUserDto.make({ data }))
+        Effect.map((data) => new UpdateUserDto({ data }))
       )
     )
 
     .handle('delete', ({ params }) =>
       DeleteUserUseCase.use((s) => s.execute(params)).pipe(
-        Effect.map((data) => DeleteUserDto.make({ data }))
+        Effect.map((data) => new DeleteUserDto({ data }))
       )
     )
 )

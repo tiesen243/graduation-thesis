@@ -24,122 +24,96 @@ const changePasswordForm = FormBuilder.empty
   })
   .make()
 
-export function ChangePasswordForm() {
+function ChangePasswordFormSubmit({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const formId = changePasswordForm.useValue((s) => s.formId)
+  const isPending = changePasswordForm.useValue((s) => s.isPending)
+
   const navigate = useNavigate()
   const { logout } = useSession()
 
+  const handleSubmit = changePasswordForm.useSubmit(
+    (payload) => api.auth['change-password'].mutateEffect({ payload }),
+    {
+      onSuccess: () => {
+        toast.success('Password changed successfully. Please log in again.')
+        logout()
+        navigate('/login', { replace: true })
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
   return (
-    <changePasswordForm.Root
-      defaultValues={{
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      }}
-      render={({ handleSubmit }) => (
-        <form
-          className='mt-4'
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-
-            handleSubmit(
-              (payload) =>
-                api.auth['change-password'].mutateEffect({
-                  payload: {
-                    currentPassword: payload.currentPassword || undefined,
-                    newPassword: payload.newPassword,
-                  },
-                }),
-              {
-                onSuccess: () => {
-                  toast.add({
-                    type: 'success',
-                    description:
-                      'Password changed successfully. Please log in again.',
-                  })
-
-                  logout()
-                  navigate('/login', { replace: true })
-                },
-                onError: () =>
-                  toast.add({
-                    type: 'error',
-                    description: 'Current password is incorrect.',
-                  }),
-              }
-            )
-          }}
-        />
-      )}
-    >
-      <FieldSet className='group-data-[pending=true]/form:pointer-events-none'>
-        <legend className='sr-only'>Change Password</legend>
-
-        <changePasswordForm.Field
-          name='currentPassword'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Current Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Leave blank if you have no password'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <changePasswordForm.Field
-          name='newPassword'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>New Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Enter your new password'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <changePasswordForm.Field
-          name='confirmPassword'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Re-enter your new password'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <Field>
-          <changePasswordForm.Submit
-            render={({ meta }) => (
-              <Button
-                type='submit'
-                form={meta.formId}
-                disabled={meta.isPending}
-              >
-                {meta.isPending ? 'Changing...' : 'Change Password'}
-              </Button>
-            )}
-          />
-        </Field>
-      </FieldSet>
-    </changePasswordForm.Root>
+    <form id={formId} className='px-4' onSubmit={handleSubmit}>
+      <FieldSet disabled={isPending}>{children}</FieldSet>
+    </form>
   )
 }
+
+export const ChangePasswordForm: React.FC = () => (
+  <changePasswordForm.Provider
+    defaultValues={{
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    }}
+  >
+    <ChangePasswordFormSubmit>
+      <legend className='sr-only'>Change Password</legend>
+
+      <changePasswordForm.Field
+        name='currentPassword'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Current Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              placeholder='Leave blank if you have no password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <changePasswordForm.Field
+        name='newPassword'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>New Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              placeholder='Enter your new password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <changePasswordForm.Field
+        name='confirmPassword'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              placeholder='Re-enter your new password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <Field>
+        <Button type='submit'>Change Password</Button>
+      </Field>
+    </ChangePasswordFormSubmit>
+  </changePasswordForm.Provider>
+)

@@ -1,8 +1,10 @@
 // oxlint-disable no-use-before-define
 
 import { Badge } from '@rozumari/ui/components/badge'
+import { Button } from '@rozumari/ui/components/button'
 import {
   Card,
+  CardAction,
   CardContent,
   CardDescription,
   CardHeader,
@@ -11,6 +13,7 @@ import {
 import {
   CalendarIcon,
   CheckCircle2Icon,
+  CheckIcon,
   ClockIcon,
   CpuIcon,
   PillIcon,
@@ -27,6 +30,7 @@ import {
 } from '@rozumari/ui/components/table'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router'
 
 import { createMetadata } from '@/lib/metadata'
 import { api } from '@/lib/runtime'
@@ -95,9 +99,15 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
       <div className='my-4 grid gap-4 md:grid-cols-2'>
         <Card>
           <CardHeader className='pb-3'>
-            <CardTitle className='text-sm font-medium text-muted-foreground'>
-              Schedule Timing
-            </CardTitle>
+            <CardTitle>Schedule Timing</CardTitle>
+            <CardAction>
+              <Button
+                nativeButton={false}
+                render={<Link to={`/dashboard/schedules/${params.id}/edit`} />}
+              >
+                Edit Schedule
+              </Button>
+            </CardAction>
           </CardHeader>
           <CardContent className='space-y-3'>
             <div className='flex items-center text-sm font-semibold'>
@@ -120,9 +130,7 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
 
         <Card>
           <CardHeader className='pb-3'>
-            <CardTitle className='text-sm font-medium text-muted-foreground'>
-              Assigned Device
-            </CardTitle>
+            <CardTitle>Assigned Device</CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
             <div className='flex items-center justify-between'>
@@ -156,7 +164,8 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
                 <TableHead className='w-30'>Slot</TableHead>
                 <TableHead>Medicine</TableHead>
                 <TableHead>Dosage</TableHead>
-                <TableHead className='text-right'>Quantity</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead className='text-right'>Required</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -179,8 +188,11 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
                       {item.medicine}
                     </TableCell>
                     <TableCell>{item.dosage}</TableCell>
-                    <TableCell className='text-right font-semibold'>
+                    <TableCell className='font-semibold'>
                       {item.quantity} pill(s)
+                    </TableCell>
+                    <TableCell className='flex justify-end'>
+                      {item.isRequired && <CheckIcon className='size-4' />}
                     </TableCell>
                   </TableRow>
                 ))
