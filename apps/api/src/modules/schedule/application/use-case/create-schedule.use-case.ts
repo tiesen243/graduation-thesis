@@ -85,6 +85,7 @@ export class CreateScheduleUseCase extends Context.Service<
               scheduleId: schedule.id,
               slot: item.slot,
               quantity: item.quantity,
+              isRequired: item.isRequired,
             })
           )
 

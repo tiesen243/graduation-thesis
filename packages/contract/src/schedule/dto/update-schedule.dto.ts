@@ -1,3 +1,4 @@
+import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 import { ScheduleItemSchema } from '@/schedule/schemas/schedule-item.schema'
@@ -30,7 +31,7 @@ export namespace UpdateScheduleDto {
         quantity: ScheduleItemSchema.fields.quantity,
         isRequired: ScheduleItemSchema.fields.isRequired,
       })
-    ).pipe(Schema.optionalKey),
+    ).pipe(Schema.withConstructorDefault(Effect.succeed([]))),
   })
   export type Input = typeof Input.Type
 

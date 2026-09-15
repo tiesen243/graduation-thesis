@@ -32,7 +32,10 @@ export const DrizzleScheduleItemRepository = Layer.effect(
             .values(entity.map(DrizzleScheduleItemMapper.toRow))
             .onConflictDoUpdate({
               target: primaryKey,
-              set: { quantity: sql`excluded.quantity` },
+              set: {
+                quantity: sql`excluded.quantity`,
+                isRequired: sql`excluded.is_required`,
+              },
             })
             .pipe(Effect.asVoid, Effect.orDie)
         }

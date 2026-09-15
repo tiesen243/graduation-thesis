@@ -89,7 +89,7 @@ export class UpdateScheduleUseCase extends Context.Service<
         let itemsToDelete: ScheduleItem[] = []
         let itemsToSave: ScheduleItem[] = []
 
-        if (input.items) {
+        if (input.items.length > 0) {
           const newSlotsSet = new Set(input.items.map((i) => i.slot))
 
           itemsToDelete = found.items
@@ -106,12 +106,22 @@ export class UpdateScheduleUseCase extends Context.Service<
             ScheduleItem.make({ ...item, scheduleId: updatedSchedule.id })
           )
 
+        const shouldUpdate = itemsToSave.some((item, index) => {
+          const foundItem = found.items[index]
+          if (!foundItem) return true
+          return (
+            item.slot !== foundItem.slot ||
+            item.quantity !== foundItem.quantity ||
+            item.isRequired !== foundItem.isRequired
+          )
+        })
+
         return yield* Effect.gen(function* tx() {
           if (itemsToDelete.length > 0)
             yield* scheduleItemRepository.delete(itemsToDelete)
 
           yield* scheduleRepository.save(updatedSchedule)
-          yield* scheduleItemRepository.save(itemsToSave)
+          if (shouldUpdate) yield* scheduleItemRepository.save(itemsToSave)
 
           return { id: updatedSchedule.id }
         }).pipe(withTransaction)

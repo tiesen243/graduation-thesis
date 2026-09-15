@@ -13,6 +13,7 @@ import {
 import {
   CalendarIcon,
   CheckCircle2Icon,
+  CheckIcon,
   ClockIcon,
   CpuIcon,
   PillIcon,
@@ -163,7 +164,8 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
                 <TableHead className='w-30'>Slot</TableHead>
                 <TableHead>Medicine</TableHead>
                 <TableHead>Dosage</TableHead>
-                <TableHead className='text-right'>Quantity</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead className='text-right'>Required</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -186,8 +188,11 @@ export default function ScheduleDetailsPage({ params }: Route.ComponentProps) {
                       {item.medicine}
                     </TableCell>
                     <TableCell>{item.dosage}</TableCell>
-                    <TableCell className='text-right font-semibold'>
+                    <TableCell className='font-semibold'>
                       {item.quantity} pill(s)
+                    </TableCell>
+                    <TableCell className='flex justify-end'>
+                      {item.isRequired && <CheckIcon className='size-4' />}
                     </TableCell>
                   </TableRow>
                 ))

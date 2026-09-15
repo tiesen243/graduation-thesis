@@ -2,66 +2,40 @@
   "version": "8",
   "dialect": "postgres",
   "id": "25654037-ad0c-4a46-b48b-1b27948cd1cf",
-  "prevIds": [
-    "a0c7a870-f0e3-4829-b043-d6ac8f873dd1"
-  ],
+  "prevIds": ["a0c7a870-f0e3-4829-b043-d6ac8f873dd1"],
   "ddl": [
     {
-      "values": [
-        "unlinked",
-        "linked",
-        "suspended"
-      ],
+      "values": ["unlinked", "linked", "suspended"],
       "name": "device_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "info",
-        "warning",
-        "error"
-      ],
+      "values": ["info", "warning", "error"],
       "name": "notification_level",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "pending",
-        "completed",
-        "failed"
-      ],
+      "values": ["pending", "completed", "failed"],
       "name": "schedule_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "pending",
-        "paid",
-        "failed"
-      ],
+      "values": ["pending", "paid", "failed"],
       "name": "payment_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "pending",
-        "active",
-        "expired",
-        "canceled"
-      ],
+      "values": ["pending", "active", "expired", "canceled"],
       "name": "subscription_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": [
-        "user",
-        "admin"
-      ],
+      "values": ["user", "admin"],
       "name": "user_role",
       "entityType": "enums",
       "schema": "public"
@@ -1718,14 +1692,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "accounts_user_id_users_id_fkey",
@@ -1735,14 +1705,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "sessions_user_id_users_id_fkey",
@@ -1752,14 +1718,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "device_id"
-      ],
+      "columns": ["device_id"],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "compartments_device_id_devices_id_fkey",
@@ -1769,14 +1731,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "devices_user_id_users_id_fkey",
@@ -1786,14 +1744,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "notifications_user_id_users_id_fkey",
@@ -1803,14 +1757,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "device_id"
-      ],
+      "columns": ["device_id"],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "notifications_device_id_devices_id_fkey",
@@ -1820,14 +1770,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "schedule_id"
-      ],
+      "columns": ["schedule_id"],
       "schemaTo": "public",
       "tableTo": "schedules",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "notifications_schedule_id_schedules_id_fkey",
@@ -1837,14 +1783,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "schedule_id"
-      ],
+      "columns": ["schedule_id"],
       "schemaTo": "public",
       "tableTo": "schedules",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "schedule_items_schedule_id_schedules_id_fkey",
@@ -1854,14 +1796,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "schedules_user_id_users_id_fkey",
@@ -1871,14 +1809,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "device_id"
-      ],
+      "columns": ["device_id"],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "schedules_device_id_devices_id_fkey",
@@ -1888,14 +1822,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "subscription_id"
-      ],
+      "columns": ["subscription_id"],
       "schemaTo": "public",
       "tableTo": "subscriptions",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "payments_subscription_id_subscriptions_id_fkey",
@@ -1905,14 +1835,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "subscriptions_user_id_users_id_fkey",
@@ -1922,14 +1848,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "device_id"
-      ],
+      "columns": ["device_id"],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "subscriptions_device_id_devices_id_fkey",
@@ -1939,14 +1861,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "plan_id"
-      ],
+      "columns": ["plan_id"],
       "schemaTo": "public",
       "tableTo": "plans",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "RESTRICT",
       "name": "subscriptions_plan_id_plans_id_fkey",
@@ -1956,14 +1874,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "payment_id"
-      ],
+      "columns": ["payment_id"],
       "schemaTo": "public",
       "tableTo": "payments",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "transactions_payment_id_payments_id_fkey",
@@ -1972,10 +1886,7 @@
       "table": "transactions"
     },
     {
-      "columns": [
-        "provider",
-        "provider_id"
-      ],
+      "columns": ["provider", "provider_id"],
       "nameExplicit": false,
       "name": "accounts_pkey",
       "entityType": "pks",
@@ -1983,10 +1894,7 @@
       "table": "accounts"
     },
     {
-      "columns": [
-        "device_id",
-        "position"
-      ],
+      "columns": ["device_id", "position"],
       "nameExplicit": false,
       "name": "compartments_pkey",
       "entityType": "pks",
@@ -1994,10 +1902,7 @@
       "table": "compartments"
     },
     {
-      "columns": [
-        "schedule_id",
-        "slot"
-      ],
+      "columns": ["schedule_id", "slot"],
       "nameExplicit": false,
       "name": "schedule_items_pkey",
       "entityType": "pks",
@@ -2005,9 +1910,7 @@
       "table": "schedule_items"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "sessions_pkey",
       "schema": "public",
@@ -2015,9 +1918,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "devices_pkey",
       "schema": "public",
@@ -2025,9 +1926,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "notifications_pkey",
       "schema": "public",
@@ -2035,9 +1934,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "schedules_pkey",
       "schema": "public",
@@ -2045,9 +1942,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "payments_pkey",
       "schema": "public",
@@ -2055,9 +1950,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "plans_pkey",
       "schema": "public",
@@ -2065,9 +1958,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "subscriptions_pkey",
       "schema": "public",
@@ -2075,9 +1966,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "transactions_pkey",
       "schema": "public",
@@ -2085,9 +1974,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",

@@ -55,6 +55,7 @@ export const InMemoryScheduleRepository = Layer.effect(
             quantity: item.quantity,
             medicine: compartment?.medicine ?? '',
             dosage: compartment?.dosage ?? '',
+            isRequired: item.isRequired,
           }
         })
 

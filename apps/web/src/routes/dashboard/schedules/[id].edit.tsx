@@ -158,7 +158,12 @@ export default function ScheduleEditPage({ params }: Route.ComponentProps) {
             )}
           />
 
-          <ItemField deviceId={data.data.device.id} />
+          <updateScheduleForm.Field
+            name='items'
+            render={(props) => (
+              <ItemField {...props} deviceId={data.data.device.id} />
+            )}
+          />
 
           <Field>
             <Button type='submit'>Save Changes</Button>

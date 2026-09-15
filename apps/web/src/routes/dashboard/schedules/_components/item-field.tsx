@@ -4,14 +4,28 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@rozumari/ui/components/card'
+import { Checkbox } from '@rozumari/ui/components/checkbox'
+import {
   Field,
   FieldLabel,
-  FieldContent,
   FieldDescription,
   FieldError,
+  FieldTitle,
 } from '@rozumari/ui/components/field'
 import { XIcon, MinusIcon, PlusIcon } from '@rozumari/ui/components/icons'
-import { Input } from '@rozumari/ui/components/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+} from '@rozumari/ui/components/input-group'
 import {
   Select,
   SelectTrigger,
@@ -23,183 +37,217 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
 import { api } from '@/lib/runtime'
-import { CreateScheduleForm } from '@/routes/dashboard/schedules/_components/_config'
 
-export const ItemField = ({ deviceId }: { deviceId: DeviceId }) => (
-  <CreateScheduleForm.Field
-    name='items'
-    render={({ field, meta, helpers }) => {
-      const { data: compartments } = useQuery({
-        ...api.device.show.queryOptions({
-          params: { id: deviceId },
-        }),
-        select: (d) => d.data.compartments,
-        enabled: !!deviceId,
-      })
+export interface ItemValue {
+  slot: string
+  quantity: number
+  isRequired: boolean
+}
 
-      const availableCompartments = useMemo(() => {
-        if (!compartments) return []
-        const selectedSlots = new Set(
-          field.value.map((i) => i.slot).filter(Boolean)
-        )
-        return compartments.filter((c) => !selectedSlots.has(c.position))
-      }, [compartments, field.value])
+interface ItemFieldContentProps {
+  deviceId: DeviceId
+  field: { id: string; value: readonly ItemValue[] | undefined }
+  meta: {
+    errors: { message: string }[]
+    descriptionId?: string
+    errorId?: string
+  }
+  helpers: {
+    add: (item: ItemValue) => void
+    remove: (index: number) => void
+    update: (index: number, item: ItemValue) => void
+  }
+}
 
-      return (
-        <Field data-invalid={meta.errors.length > 0}>
-          <FieldLabel htmlFor={field.id}>Items</FieldLabel>
+export const ItemField = ({
+  deviceId,
+  field,
+  meta,
+  helpers,
+}: ItemFieldContentProps) => {
+  const { data: compartments } = useQuery({
+    ...api.device.show.queryOptions({
+      params: { id: deviceId },
+    }),
+    select: (d) => d.data.compartments,
+    enabled: !!deviceId,
+  })
 
-          <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3'>
-            {field.value.map((item, index) => {
-              const comp = compartments?.find((c) => c.position === item.slot)
+  const availableCompartments = useMemo(() => {
+    if (!compartments) return []
+    const selectedSlots = new Set(
+      field.value?.map((i) => i.slot).filter(Boolean)
+    )
+    return compartments.filter((c) => !selectedSlots.has(c.position))
+  }, [compartments, field.value])
 
-              if (!comp) {
-                return (
-                  <FieldContent
-                    key={index}
-                    className='relative flex min-h-32 flex-col justify-between rounded-xl border bg-card p-4 shadow-sm'
-                  >
-                    <div className='flex items-center justify-between gap-2'>
-                      <span className='text-xs font-medium text-muted-foreground'>
-                        Select Slot
-                      </span>
-                      <Button
-                        type='button'
-                        size='icon'
-                        variant='destructive'
-                        onClick={() => helpers.remove(index)}
-                      >
-                        <span className='sr-only'>Remove</span>
-                        <XIcon />
-                      </Button>
-                    </div>
+  return (
+    <Field data-invalid={meta.errors.length > 0}>
+      <FieldLabel htmlFor={field.id}>Items</FieldLabel>
 
-                    <Select
-                      value={item.slot}
-                      onValueChange={(value) =>
-                        helpers.update(index, { ...item, slot: value ?? '' })
-                      }
-                      items={availableCompartments.map((c) => ({
-                        value: c.position,
-                        label: `${c.medicine} (Slot ${c.position})`,
-                      }))}
-                      disabled={!compartments?.length}
-                    >
-                      <SelectTrigger className='w-full'>
-                        <SelectValue placeholder='Select a compartment' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableCompartments.map((c) => (
-                          <SelectItem
-                            key={c.position}
-                            value={c.position}
-                            disabled={!c.medicine}
-                          >
-                            {c.medicine} (Slot {c.position})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FieldContent>
-                )
-              }
+      <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3'>
+        {field.value?.map((item, index) => {
+          const comp = compartments?.find((c) => c.position === item.slot)
 
-              return (
-                <FieldContent
-                  key={index}
-                  className='relative flex min-h-32 flex-col justify-between rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-md'
-                >
-                  <div className='flex items-start justify-between gap-2'>
-                    <div className='flex items-center gap-4 pr-6'>
-                      <span className='line-clamp-1 font-semibold text-foreground'>
-                        {comp.medicine}
-                      </span>
-                      <Badge variant='outline'>Slot: {item.slot}</Badge>
-                    </div>
-
+          if (!comp) {
+            return (
+              <Card key={index} className='h-32'>
+                <CardHeader>
+                  <CardTitle>Select Slot</CardTitle>
+                  <CardAction>
                     <Button
                       type='button'
                       size='icon-xs'
                       variant='destructive'
-                      className='absolute top-2 right-2'
                       onClick={() => helpers.remove(index)}
                     >
-                      <XIcon />
                       <span className='sr-only'>Remove</span>
+                      <XIcon />
                     </Button>
-                  </div>
+                  </CardAction>
+                </CardHeader>
 
-                  <div className='mt-3 flex items-center justify-between gap-2 rounded-lg bg-muted/50 p-1.5'>
-                    <span className='pl-1 text-xs font-medium text-muted-foreground'>
-                      Qty
-                    </span>
+                <div className='flex-1' />
 
-                    <div className='flex items-center gap-1'>
-                      <Button
-                        type='button'
-                        size='icon'
-                        variant='outline'
-                        disabled={item.quantity <= 1}
-                        onClick={() =>
-                          helpers.update(index, {
-                            ...item,
-                            quantity: Math.max(1, item.quantity - 1),
-                          })
-                        }
-                      >
-                        <MinusIcon />
-                      </Button>
+                <CardContent>
+                  <Select
+                    value={item.slot}
+                    onValueChange={(value) =>
+                      helpers.update(index, { ...item, slot: value ?? '' })
+                    }
+                    items={availableCompartments.map((c) => ({
+                      value: c.position,
+                      label: `${c.medicine} (Slot ${c.position})`,
+                    }))}
+                    disabled={!compartments?.length}
+                  >
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Select a compartment' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableCompartments.map((c) => (
+                        <SelectItem
+                          key={c.position}
+                          value={c.position}
+                          disabled={!c.medicine}
+                        >
+                          {c.medicine} (Slot {c.position})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+            )
+          }
 
-                      <Input
-                        type='number'
-                        min={1}
-                        value={item.quantity}
-                        onChange={(e) =>
-                          helpers.update(index, {
-                            ...item,
-                            quantity: Math.max(1, Number(e.target.value) || 1),
-                          })
-                        }
-                      />
+          return (
+            <Card key={index} className='h-32'>
+              <CardHeader>
+                <CardTitle>
+                  {comp.medicine}
+                  <Badge variant='outline'>Slot: {item.slot}</Badge>
+                </CardTitle>
 
-                      <Button
-                        type='button'
-                        size='icon'
-                        variant='outline'
-                        onClick={() =>
-                          helpers.update(index, {
-                            ...item,
-                            quantity: item.quantity + 1,
-                          })
-                        }
-                      >
-                        <PlusIcon />
-                      </Button>
-                    </div>
-                  </div>
-                </FieldContent>
-              )
-            })}
+                <CardAction>
+                  <Button
+                    type='button'
+                    size='icon-xs'
+                    variant='destructive'
+                    onClick={() => helpers.remove(index)}
+                  >
+                    <XIcon />
+                    <span className='sr-only'>Remove</span>
+                  </Button>
+                </CardAction>
+              </CardHeader>
 
-            <button
-              type='button'
-              onClick={() => helpers.add({ slot: '', quantity: 1 })}
-              className='flex min-h-32 flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-muted-foreground/25 bg-transparent p-4 text-muted-foreground transition-all hover:border-primary hover:bg-accent/50 hover:text-primary'
-            >
-              <div className='flex size-9 items-center justify-center rounded-full border bg-background shadow-xs'>
-                <PlusIcon className='size-4' />
-              </div>
-              <span className='text-xs font-medium'>Add Item</span>
-            </button>
+              <div className='flex-1' />
+
+              <CardContent className='flex items-center justify-between gap-2'>
+                <InputGroup>
+                  <InputGroupAddon align='inline-start'>
+                    <InputGroupText>Qty.</InputGroupText>
+                  </InputGroupAddon>
+
+                  <InputGroupInput
+                    value={item.quantity}
+                    onChange={(e) =>
+                      helpers.update(index, {
+                        ...item,
+                        quantity: e.target.valueAsNumber,
+                      })
+                    }
+                  />
+
+                  <InputGroupAddon align='inline-end'>
+                    <InputGroupButton
+                      onClick={() =>
+                        helpers.update(index, {
+                          ...item,
+                          quantity: Math.max(1, item.quantity - 1),
+                        })
+                      }
+                    >
+                      <MinusIcon />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+
+                  <InputGroupAddon align='inline-end'>
+                    <InputGroupButton
+                      onClick={() =>
+                        helpers.update(index, {
+                          ...item,
+                          quantity: item.quantity + 1,
+                        })
+                      }
+                    >
+                      <PlusIcon />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+
+                <FieldLabel
+                  htmlFor={`${field.id}-${index}-required`}
+                  className='basis-1/3'
+                >
+                  <Field orientation='horizontal' className='h-8'>
+                    <Checkbox
+                      id={`${field.id}-${index}-required`}
+                      checked={item.isRequired}
+                      onCheckedChange={(checked) =>
+                        helpers.update(index, {
+                          ...item,
+                          isRequired: checked,
+                        })
+                      }
+                    />
+                    <FieldTitle>Required</FieldTitle>
+                  </Field>
+                </FieldLabel>
+              </CardContent>
+            </Card>
+          )
+        })}
+
+        <Card
+          onClick={() =>
+            helpers.add({ slot: '', quantity: 1, isRequired: true })
+          }
+          className='h-32 cursor-pointer items-center justify-center border-2 border-dashed border-muted-foreground/25 bg-transparent ring-0 transition-all hover:border-primary hover:bg-accent/50 hover:text-primary'
+        >
+          <div className='flex size-9 items-center justify-center rounded-full border border-muted-foreground/25 bg-transparent'>
+            <PlusIcon className='size-4' />
           </div>
+          <span className='text-xs font-medium'>Add Item</span>
+        </Card>
+      </div>
 
-          <FieldDescription id={meta.descriptionId}>
-            Add the compartments and quantities to dispense for this schedule.
-          </FieldDescription>
+      <FieldDescription id={meta.descriptionId}>
+        Add the compartments and quantities to dispense for this schedule.
+      </FieldDescription>
 
-          <FieldError id={meta.errorId} errors={meta.errors} />
-        </Field>
-      )
-    }}
-  />
-)
+      <FieldError id={meta.errorId} errors={meta.errors} />
+    </Field>
+  )
+}

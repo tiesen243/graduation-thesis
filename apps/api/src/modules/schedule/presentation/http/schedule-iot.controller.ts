@@ -36,7 +36,7 @@ export const scheduleIoTController = HttpApiBuilder.group(
 
       .handle('update-status', ({ params, payload }) =>
         UpdateScheduleUseCase.use((s) =>
-          s.execute({ id: params.id, status: payload.status })
+          s.execute({ id: params.id, status: payload.status, items: [] })
         ).pipe(Effect.map((data) => new UpdateScheduleDto({ data })))
       )
 )
