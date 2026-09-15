@@ -2,6 +2,7 @@
 
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
+import { Button } from '@rozumari/ui/components/button'
 import {
   Field,
   FieldError,
@@ -16,7 +17,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@rozumari/ui/components/select'
-import { useQuery } from '@tanstack/react-query'
+import { toast } from '@rozumari/ui/components/toast'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from 'expo-router'
+
+import type { ScheduleItemsProps } from '@/components/schedule/create/schedule-items'
 
 import { CreateScheduleForm } from '@/components/schedule/create/_config'
 import { DaysOfWeekSelector } from '@/components/schedule/create/days-of-week-selector'
@@ -24,6 +29,39 @@ import { PeriodSelector } from '@/components/schedule/create/period-selector'
 import { ScheduleItems } from '@/components/schedule/create/schedule-items'
 import { TimePicker } from '@/components/schedule/create/time-picker'
 import { useRuntime } from '@/hooks/use-runtime'
+
+function CreateScheduleFormSubmit() {
+  const isPending = CreateScheduleForm.useValue((s) => s.isPending)
+
+  const router = useRouter()
+  const queryClient = useQueryClient()
+  const { api } = useRuntime()
+
+  const handleSubmit = CreateScheduleForm.useSubmit(
+    (payload) => api.schedule.create.mutate({ payload }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: api.schedule.list.getQueryKey(),
+        })
+        router.push('/(tabs)/schedules')
+        toast.success('Schedule created successfully')
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
+  return (
+    <Button onPress={() => handleSubmit()} disabled={isPending}>
+      {isPending ? 'Creating...' : 'Create Schedule'}
+    </Button>
+  )
+}
+
+function ProvidedScheduleItems(props: Omit<ScheduleItemsProps, 'deviceId'>) {
+  const deviceId = CreateScheduleForm.useValue((s) => s.values.deviceId)
+  return <ScheduleItems {...props} deviceId={deviceId} />
+}
 
 export default function TabsSchedulesCreateScreen() {
   const { api } = useRuntime()
@@ -114,18 +152,12 @@ export default function TabsSchedulesCreateScreen() {
 
           <DaysOfWeekSelector />
 
-          <ScheduleItems />
+          <CreateScheduleForm.Field
+            name='items'
+            render={(props) => <ProvidedScheduleItems {...props} />}
+          />
 
-          {/* <CreateScheduleForm.Submit */}
-          {/*   render={({ handleSubmit, meta }) => ( */}
-          {/*     <Button */}
-          {/*       onPress={() => handleSubmit(Effect.log)} */}
-          {/*       disabled={meta.isPending} */}
-          {/*     > */}
-          {/*       Create Schedule */}
-          {/*     </Button> */}
-          {/*   )} */}
-          {/* /> */}
+          <CreateScheduleFormSubmit />
         </FieldGroup>
       </FieldSet>
     </CreateScheduleForm.Provider>

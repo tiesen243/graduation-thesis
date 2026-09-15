@@ -30,6 +30,7 @@ function LoginFormSubmit() {
   const isPending = loginForm.useValue((s) => s.isPending)
 
   const queryClient = useQueryClient()
+  const router = useRouter()
   const { api } = useRuntime()
 
   const handleSubmit = loginForm.useSubmit(
@@ -41,6 +42,7 @@ function LoginFormSubmit() {
           queryKey: api.auth.whoami.getQueryKey(),
         })
         toast.success('Login successful')
+        router.navigate('/(tabs)/home')
       },
       onError: (error) => toast.error(error.message),
     }
@@ -58,7 +60,7 @@ export default function LoginScreen() {
 
   return (
     <loginForm.Provider defaultValues={{ email: '', password: '' }}>
-      <FieldSet containerClassName='p-4'>
+      <FieldSet containerClassName='p-4' className='justify-center'>
         <FieldLegend>Login</FieldLegend>
         <FieldDescription>
           Please enter your email and password to login to your account.

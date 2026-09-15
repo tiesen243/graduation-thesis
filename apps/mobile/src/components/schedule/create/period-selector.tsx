@@ -1,20 +1,10 @@
 import type { DateType } from 'react-native-calendars-datepicker'
 
-import * as DateTime from 'effect/DateTime'
-import * as Duration from 'effect/Duration'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import { useCallback } from 'react'
 import CalendarPicker, {
   useDefaultClassNames,
 } from 'react-native-calendars-datepicker'
-
-const formatDate = (date: string) => {
-  if (!date) return ''
-  const d = new Date(date)
-  const year = d.getFullYear()
-  const month = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
 
 export const PeriodSelector: React.FC<{
   startDate: string
@@ -28,9 +18,11 @@ export const PeriodSelector: React.FC<{
     // oxlint-disable-next-line complexity
     (dates: { startDate: DateType; endDate: DateType }) => {
       const rawStart = dates.startDate
-        ? formatDate(dates.startDate.toString())
+        ? formatDate(dates.startDate.toString(), 'yyyy-MM-dd')
         : ''
-      const rawEnd = dates.endDate ? formatDate(dates.endDate.toString()) : ''
+      const rawEnd = dates.endDate
+        ? formatDate(dates.endDate.toString(), 'yyyy-MM-dd')
+        : ''
 
       let selected = ''
       if (rawStart !== startDate && rawStart) selected = rawStart
@@ -50,8 +42,8 @@ export const PeriodSelector: React.FC<{
         if (selected === startDate) onStartDateChange('')
         else if (selected > startDate) onEndDateChange(selected)
         else {
-          onEndDateChange(startDate)
           onStartDateChange(selected)
+          onEndDateChange(startDate)
         }
 
         return
@@ -74,17 +66,14 @@ export const PeriodSelector: React.FC<{
           onEndDateChange(selected)
         } else {
           // Case 3e. Selected is between start and end -> Determine which end to move based on proximity
-          const startDiff = DateTime.distance(
-            DateTime.makeUnsafe(selected),
-            DateTime.makeUnsafe(startDate)
-          ).pipe(Duration.abs)
-          const endDiff = DateTime.distance(
-            DateTime.makeUnsafe(selected),
-            DateTime.makeUnsafe(endDate)
-          ).pipe(Duration.abs)
+          const startDiff = Math.abs(
+            new Date(selected).getTime() - new Date(startDate).getTime()
+          )
+          const endDiff = Math.abs(
+            new Date(selected).getTime() - new Date(endDate).getTime()
+          )
 
-          if (Duration.isLessThanOrEqualTo(startDiff, endDiff))
-            onStartDateChange(selected)
+          if (startDiff <= endDiff) onStartDateChange(selected)
           else onEndDateChange(selected)
         }
       }

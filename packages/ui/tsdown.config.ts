@@ -9,6 +9,6 @@ export default defineConfig({
   ],
   copy: ['src/tailwind.css'],
   dts: true,
-  minify: true,
+  minify: false,
   shims: true,
 })

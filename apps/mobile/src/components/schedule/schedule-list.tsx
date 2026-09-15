@@ -83,18 +83,23 @@ export const ScheduleList: React.FC<{
       )}
 
       {!isLoading && schedules.length <= 0 && (
-        <View className='flex-1 items-center justify-center'>
+        <ScrollView
+          ref={scrollViewRef}
+          contentContainerClassName='items-center justify-center flex-1'
+          refreshControl={
+            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+          }
+        >
           <Typography className='text-muted-foreground'>
             No schedules found. Please add a schedule to see it here.
           </Typography>
-        </View>
+        </ScrollView>
       )}
 
       {!isLoading && schedules.length > 0 && (
         <ScrollView
           ref={scrollViewRef}
-          className='flex-1'
-          contentContainerClassName='gap-3'
+          contentContainerClassName='flex-1 gap-3'
           refreshControl={
             <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
           }

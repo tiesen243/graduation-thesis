@@ -38,7 +38,7 @@ import { useMemo } from 'react'
 
 import { api } from '@/lib/runtime'
 
-export interface ItemValue {
+interface ItemValue {
   slot: string
   quantity: number
   isRequired: boolean
