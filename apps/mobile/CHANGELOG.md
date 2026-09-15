@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.0.15
+
+### Bug Fixes
+
+- Fix App Links domain verification failed state by adding missing `http` scheme to Expo `intentFilters`
+- Ensure `android:autoVerify="true"` attribute is correctly generated in `AndroidManifest.xml`
+
 ## @rozumari/mobile@0.0.14
 
 ### Config Deep Linking for Web and Mobile
