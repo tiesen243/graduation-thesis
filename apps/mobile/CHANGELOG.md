@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.0.13
+
+### Bug figs
+
+- Failed to install `tools` on `android-actions/setup-android`
+
 ## @rozumari/mobile@0.0.12
 
 ### Schedule Management Enhancements
