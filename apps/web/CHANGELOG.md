@@ -1,3 +1,19 @@
+## @rozumari/web@0.0.22
+
+### Schedule Management Enhancements
+
+- Added full schedule management capabilities across Web and Mobile, including creating, editing, and listing schedules.
+- Supported compartment item slot selection with quantity and required flag configurations.
+- Refactored date range selection logic for seamless date picking.
+- Standardized UI components (`InputGroup`, form fields) for parity between Web and React Native.
+- Fixed `ON CONFLICT` database queries to properly update `is_required` status on existing schedule items.
+- Fixed pull-to-refresh behavior on empty schedule list views in Mobile.
+
+### Added update schedule
+
+- Added a form to update the schedule for the pill box, allowing users to set reminders for taking their medication.
+- Added check new schedule items is in the schedule before adding them to the schedule, preventing duplicates.
+
 ## @rozumari/web@0.0.20
 
 ### Bug Fixes & Improvements

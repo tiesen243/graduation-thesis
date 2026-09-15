@@ -1,46 +1,52 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Bug Fixes\n\n- Schedule mapper error\n"
-    filename: 2026-09-09-mtu1h5lq.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Schedule Management Enhancements\n\n- Added full schedule management capabilities across Web and Mobile, including creating, editing, and listing schedules.\n- Supported compartment item slot selection with quantity and required flag configurations.\n- Refactored date range selection logic for seamless date picking.\n- Standardized UI components (`InputGroup`, form fields) for parity between Web and React Native.\n- Fixed `ON CONFLICT` database queries to properly update `is_required` status on existing schedule items.\n- Fixed pull-to-refresh behavior on empty schedule list views in Mobile.\n"
+    filename: 2026-09-16-mu2xvxax.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Added update schedule\n\n- Added a form to update the schedule for the pill box, allowing users to set reminders for taking their medication.\n- Added check new schedule items is in the schedule before adding them to the schedule, preventing duplicates.\n"
+    filename: 2026-09-09-mtubh5r8.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - changelogIds:
-      - 2026-09-09-mtu1h5lq.md
-    id: npm:@rozumari/contract
-    updated: true
   - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/eda
     updated: false
   - id: npm:@rozumari/ui
     updated: false
+  - id: npm:@rozumari/eda
+    updated: false
+  - id: npm:@rozumari/firmware
+    updated: false
+  - id: npm:@rozumari/oxlint
+    updated: false
+  - changelogIds:
+      - 2026-09-16-mu2xvxax.md
+      - 2026-09-09-mtubh5r8.md
+    id: npm:@rozumari/web
+    updated: true
   - id: npm:@rozumari/lib
     updated: false
   - changelogIds:
-      - 2026-09-09-mtu1h5lq.md
+      - 2026-09-16-mu2xvxax.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - changelogIds:
+      - 2026-09-09-mtubh5r8.md
     id: npm:@rozumari/api
     updated: true
-  - id: npm:@rozumari/mobile
-    updated: true
-  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/contract
     updated: false
-  - id: npm:@rozumari/web
-    updated: true
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/contract
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/eda
   - id: npm:@rozumari/ui
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/eda
   - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/web
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/contract
