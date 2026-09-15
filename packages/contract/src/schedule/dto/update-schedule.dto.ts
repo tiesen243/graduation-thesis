@@ -28,6 +28,7 @@ export namespace UpdateScheduleDto {
       Schema.Struct({
         slot: ScheduleItemSchema.fields.slot,
         quantity: ScheduleItemSchema.fields.quantity,
+        isRequired: ScheduleItemSchema.fields.isRequired,
       })
     ).pipe(Schema.optionalKey),
   })

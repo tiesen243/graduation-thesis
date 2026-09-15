@@ -43,7 +43,8 @@ export const DrizzleScheduleRepository = Layer.effect(
           'slot', ${scheduleItems.slot},
           'medicine', ${compartments.medicine},
           'dosage', ${compartments.dosage},
-          'quantity', ${scheduleItems.quantity}
+          'quantity', ${scheduleItems.quantity},
+          'isRequired', ${scheduleItems.isRequired}
         )) FILTER (WHERE ${scheduleItems.slot} IS NOT NULL),
       '[]'::json)`,
     }

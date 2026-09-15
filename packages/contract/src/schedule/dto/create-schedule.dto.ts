@@ -45,6 +45,7 @@ export namespace CreateScheduleDto {
       Schema.Struct({
         slot: ScheduleItemSchema.fields.slot,
         quantity: ScheduleItemSchema.fields.quantity,
+        isRequired: ScheduleItemSchema.fields.isRequired,
       })
     ),
   })

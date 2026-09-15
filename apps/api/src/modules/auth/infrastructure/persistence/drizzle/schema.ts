@@ -15,12 +15,13 @@ export const accounts = snakeCase.table(
   (t) => ({
     provider: t.varchar({ length: 255 }).notNull().$type<AccountProvider>(),
     providerId: t.varchar({ length: 255 }).notNull().$type<AccountProviderId>(),
-    password: t.varchar({ length: 255 }),
     userId: t
       .varchar({ length: 24 })
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' })
       .$type<UserId>(),
+
+    password: t.varchar({ length: 255 }),
   }),
   (t) => [
     primaryKey({ columns: [t.provider, t.providerId] }),
@@ -33,12 +34,13 @@ export const sessions = snakeCase.table(
   (t) => ({
     id: t.varchar({ length: 24 }).notNull().primaryKey().$type<SessionId>(),
     token: t.varchar({ length: 64 }).notNull().$type<RefreshToken>(),
-    expiresAt: t.timestamp({ mode: 'date' }).notNull(),
     userId: t
       .varchar({ length: 24 })
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' })
       .$type<UserId>(),
+
+    expiresAt: t.timestamp({ mode: 'date' }).notNull(),
     createdAt: t.timestamp({ mode: 'date' }).notNull(),
   }),
   (t) => [uniqueIndex('sessions_token_uq_idx').on(t.token)]

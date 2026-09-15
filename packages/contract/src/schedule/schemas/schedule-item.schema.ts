@@ -1,3 +1,4 @@
+import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 import { ScheduleId } from '@/schedule/schemas/schedule.schema'
@@ -13,6 +14,9 @@ export const ScheduleItemSchema = Schema.Struct({
     Schema.isGreaterThanOrEqualTo(1, {
       message: 'Quantity must be greater than or equal to 1',
     })
+  ),
+  isRequired: Schema.Boolean.pipe(
+    Schema.withConstructorDefault(Effect.succeed(true))
   ),
 })
 export type ScheduleItemSchema = typeof ScheduleItemSchema.Type
