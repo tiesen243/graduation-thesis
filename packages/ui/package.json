@@ -51,8 +51,8 @@
     "typescript": "catalog:dev"
   },
   "peerDependencies": {
-    "@effect/atom-react": "^4.0.0-rc.115",
-    "effect": "^4.0.0-rc.115",
+    "@effect/atom-react": "catalog:effect",
+    "effect": "catalog:effect",
     "react": "catalog:react"
   }
 }

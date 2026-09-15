@@ -1,4 +1,5 @@
 import type { CompartmentSchema } from '@rozumari/contract/device/schemas/compartment.schema'
+import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
 import { Button } from '@rozumari/ui/components/button'
@@ -31,6 +32,7 @@ import {
   InputGroupInput,
   InputGroupText,
 } from '@rozumari/ui/components/input-group'
+import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useState } from 'react'
@@ -44,6 +46,60 @@ const updateCompartmentForm = FormBuilder.empty
   .add('capacity', UpdateCompartmentDto.Input.fields.capacity)
   .make()
 
+function SaveChangesButton({
+  id,
+  position,
+  onSuccess,
+}: Readonly<{
+  id: DeviceId
+  position: string
+  onSuccess: () => Promise<void>
+}>) {
+  const isPending = updateCompartmentForm.useValue((s) => s.isPending)
+
+  const handleClick = updateCompartmentForm.useSubmit(
+    (payload) =>
+      api.device['update-compartment'].mutateEffect({
+        params: { id, position },
+        payload,
+      }),
+    { onSuccess, onError: (e) => toast.error(e.message) }
+  )
+
+  return (
+    <Button onClick={() => handleClick()} disabled={isPending}>
+      {isPending ? 'Saving...' : 'Save changes'}
+    </Button>
+  )
+}
+
+const ClearButton: React.FC<{
+  id: DeviceId
+  position: string
+  onSuccess: () => Promise<void>
+}> = ({ id, position, onSuccess }) => {
+  const isPending = updateCompartmentForm.useValue((s) => s.isPending)
+
+  const handleClick = updateCompartmentForm.useSubmit(
+    () =>
+      api.device['update-compartment'].mutateEffect({
+        params: { id, position },
+        payload: { medicine: '', dosage: 0, capacity: 0 },
+      }),
+    { onSuccess, onError: (e) => toast.error(e.message) }
+  )
+
+  return (
+    <Button
+      variant='destructive'
+      onClick={() => handleClick()}
+      disabled={isPending}
+    >
+      {isPending ? 'Clearing...' : 'Clear'}
+    </Button>
+  )
+}
+
 const UpdateCompartmentForm: React.FC<{
   trigger: React.ReactElement
   compartment: CompartmentSchema
@@ -52,132 +108,98 @@ const UpdateCompartmentForm: React.FC<{
   const { deviceId, position, medicine, dosage, capacity } = compartment
   const { refetch } = useDevice()
 
+  const handleSuccess = async () => {
+    await refetch()
+    setIsOpen(false)
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger render={trigger} />
 
-      <updateCompartmentForm.Root
+      <updateCompartmentForm.Provider
         defaultValues={{ medicine: medicine ?? '', dosage, capacity }}
-        render={() => <DialogContent />}
       >
-        <DialogHeader>
-          <DialogTitle>Update Compartment</DialogTitle>
-          <DialogDescription>Update medicine at {position}</DialogDescription>
-        </DialogHeader>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update Compartment</DialogTitle>
+            <DialogDescription>Update medicine at {position}</DialogDescription>
+          </DialogHeader>
 
-        <updateCompartmentForm.Field
-          name='medicine'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Medicine</FieldLabel>
-              <Input
-                {...field}
-                onChange={({ target }) => field.onChange(target.value)}
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <updateCompartmentForm.Field
-          name='dosage'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Dosage</FieldLabel>
-              <InputGroup>
-                <InputGroupInput
+          <updateCompartmentForm.Field
+            name='medicine'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Medicine</FieldLabel>
+                <Input
                   {...field}
-                  type='number'
-                  onChange={({ target }) =>
-                    field.onChange(target.valueAsNumber)
-                  }
+                  onChange={({ target }) => handleChange(target.value)}
                 />
-
-                <InputGroupAddon align='inline-end'>
-                  <InputGroupText>mg / unit</InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <updateCompartmentForm.Field
-          name='capacity'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Capacity</FieldLabel>
-              <InputGroup>
-                <InputGroupInput
-                  {...field}
-                  type='number'
-                  onChange={({ target }) =>
-                    field.onChange(target.valueAsNumber)
-                  }
-                />
-
-                <InputGroupAddon align='inline-end'>
-                  <InputGroupText>pills</InputGroupText>
-                </InputGroupAddon>
-              </InputGroup>
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <DialogFooter>
-          <updateCompartmentForm.Submit
-            render={({ handleSubmit, meta }) => (
-              <Button
-                variant='destructive'
-                onClick={() =>
-                  handleSubmit(
-                    () =>
-                      api.device['update-compartment'].mutateEffect({
-                        params: { id: deviceId, position },
-                        payload: { medicine: '', dosage: 0, capacity: 0 },
-                      }),
-                    {
-                      onSuccess: async () => {
-                        setIsOpen(false)
-                        await refetch()
-                      },
-                    }
-                  )
-                }
-                disabled={meta.isPending}
-              >
-                {meta.isPending ? 'Deleting...' : 'Delete compartment'}
-              </Button>
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
             )}
           />
 
-          <updateCompartmentForm.Submit
-            render={({ handleSubmit, meta }) => (
-              <Button
-                onClick={() =>
-                  handleSubmit(
-                    (payload) =>
-                      api.device['update-compartment'].mutateEffect({
-                        params: { id: deviceId, position },
-                        payload,
-                      }),
-                    {
-                      onSuccess: async () => {
-                        setIsOpen(false)
-                        await refetch()
-                      },
+          <updateCompartmentForm.Field
+            name='dosage'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Dosage</FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    {...field}
+                    type='number'
+                    onChange={({ target }) =>
+                      handleChange(target.valueAsNumber)
                     }
-                  )
-                }
-                disabled={meta.isPending}
-              >
-                {meta.isPending ? 'Saving...' : 'Save changes'}
-              </Button>
+                  />
+
+                  <InputGroupAddon align='inline-end'>
+                    <InputGroupText>mg / unit</InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
             )}
           />
-        </DialogFooter>
-      </updateCompartmentForm.Root>
+
+          <updateCompartmentForm.Field
+            name='capacity'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field data-invalid={meta.errors.length > 0}>
+                <FieldLabel htmlFor={field.id}>Capacity</FieldLabel>
+                <InputGroup>
+                  <InputGroupInput
+                    {...field}
+                    type='number'
+                    onChange={({ target }) =>
+                      handleChange(target.valueAsNumber)
+                    }
+                  />
+
+                  <InputGroupAddon align='inline-end'>
+                    <InputGroupText>pills</InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+                <FieldError id={meta.errorId} errors={meta.errors} />
+              </Field>
+            )}
+          />
+
+          <DialogFooter>
+            <ClearButton
+              id={deviceId}
+              position={position}
+              onSuccess={handleSuccess}
+            />
+            <SaveChangesButton
+              id={deviceId}
+              position={position}
+              onSuccess={handleSuccess}
+            />
+          </DialogFooter>
+        </DialogContent>
+      </updateCompartmentForm.Provider>
     </Dialog>
   )
 }

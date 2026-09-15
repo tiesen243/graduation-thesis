@@ -104,6 +104,7 @@ export class FormBuilder<
             add: (item: U) => void
             update: (index: number, item: U) => void
             remove: (index: number) => void
+            handleChange: (newValue: TValues[TField]) => void
           }
         : { handleChange: (newValue: TValues[TField]) => void }),
     >(props: {
@@ -116,6 +117,7 @@ export class FormBuilder<
           // A11y attributes
           id: string
           form: string
+          name: string
           'aria-describedby': string
           'aria-invalid': boolean
         }
@@ -173,12 +175,22 @@ export class FormBuilder<
 
           id,
           form: formId,
+          name: String(name),
           'aria-describedby': errors.length
             ? `${descriptionId} ${errorId}`
             : descriptionId,
           'aria-invalid': errors.length > 0,
         }),
-        [value, handleBlur, id, formId, descriptionId, errorId, errors.length]
+        [
+          value,
+          handleBlur,
+          id,
+          formId,
+          name,
+          descriptionId,
+          errorId,
+          errors.length,
+        ]
       )
 
       const meta = React.useMemo(
@@ -240,7 +252,9 @@ export class FormBuilder<
 
       const helpers = React.useMemo(
         () =>
-          Array.isArray(value) ? { add, update, remove } : { handleChange },
+          Array.isArray(value)
+            ? { add, update, remove, handleChange }
+            : { handleChange },
         [value, add, update, remove, handleChange]
       ) as THelper
 
@@ -252,12 +266,12 @@ export class FormBuilder<
         values: TValues
       ) => Effect.Effect<TData, TError> | Promise<TData> | TData,
       options: {
-        onSuccess?: (data: NoInfer<TData>) => Promise<void> | void
+        onSuccess?: (data: NoInfer<TData>) => Promise<unknown> | unknown
         onError?: (
           error: NoInfer<TError> & {
             match: (handlers: FormBuilder.ExtractTaggedUnion<TError>) => void
           }
-        ) => Promise<void> | void
+        ) => Promise<unknown> | unknown
       } = {}
     ) => {
       const form = formAtom.use()
@@ -308,7 +322,7 @@ export class FormBuilder<
 
             const result = await onSubmit(parsedValue.success as never)
 
-            if (Effect.isEffect(result)) {
+            if (Effect.isEffect(result))
               await Effect.runPromise(
                 result.pipe(
                   Effect.tap((data) =>
@@ -322,9 +336,7 @@ export class FormBuilder<
                   )
                 )
               )
-            } else {
-              options.onSuccess?.(result as TData)
-            }
+            else options.onSuccess?.(result as TData)
           } catch (error) {
             options.onError?.(self.createMatchableError(error as TError))
           } finally {
@@ -335,8 +347,22 @@ export class FormBuilder<
       )
     }
 
+    function useValue<TSelected>(
+      selector: (state: FormBuilder.State<TValues>) => TSelected
+    ): TSelected {
+      const form = formAtom.use()
+      return useAtomValue(form, (state) => selector(state))
+    }
+
+    function useSet() {
+      const form = formAtom.use()
+      return useAtomSet(form)
+    }
+
     return {
-      use: formAtom.use,
+      useValue,
+      useSet,
+
       useSubmit,
 
       Provider,
@@ -397,6 +423,7 @@ export namespace FormBuilder {
   }
 
   export interface State<TValues> {
+    formId: string
     values: TValues
     errors: Record<keyof TValues, StandardSchemaV1.Issue[]>
     isPending: boolean

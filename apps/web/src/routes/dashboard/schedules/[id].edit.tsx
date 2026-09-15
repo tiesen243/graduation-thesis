@@ -1,3 +1,5 @@
+import type { ScheduleId } from '@rozumari/contract/schedule/schemas/schedule.schema'
+
 import { UpdateScheduleDto } from '@rozumari/contract/schedule/dto/update-schedule.dto'
 import { Button } from '@rozumari/ui/components/button'
 import { Calendar } from '@rozumari/ui/components/calendar'
@@ -19,7 +21,7 @@ import {
 } from '@rozumari/ui/components/popover'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/lib/runtime'
 import { ItemField } from '@/routes/dashboard/schedules/_components/item-field'
@@ -46,52 +48,45 @@ const formatDateString = (date?: Date) => {
   return `${year}-${month}-${day}`
 }
 
+function UpdateScheduleFormSubmit({
+  id,
+  children,
+}: Readonly<{ id: ScheduleId; children: React.ReactNode }>) {
+  const formId = updateScheduleForm.useValue((s) => s.formId)
+  const isPending = updateScheduleForm.useValue((s) => s.isPending)
+
+  const queryClient = useQueryClient()
+
+  const handleSubmit = updateScheduleForm.useSubmit(
+    (payload) => api.schedule.update.mutate({ params: { id }, payload }),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: api.schedule.show.getQueryKey({ params: { id } }),
+        })
+        toast.success('Schedule updated successfully')
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
+  return (
+    <form id={formId} onSubmit={handleSubmit}>
+      <FieldSet disabled={isPending}>{children}</FieldSet>
+    </form>
+  )
+}
+
 export default function ScheduleEditPage({ params }: Route.ComponentProps) {
-  const { data, isLoading, isError, refetch } = useQuery(
+  const { data, isLoading, isError } = useQuery(
     api.schedule.show.queryOptions({ params: params as never })
   )
 
   if (isLoading || isError || !data?.data) return <div>Loading...</div>
 
   return (
-    <updateScheduleForm.Root
-      defaultValues={{
-        date: data.data.date,
-        time: data.data.time,
-        items: data.data.items,
-      }}
-      render={({ meta: { formId }, handleSubmit }) => (
-        <form
-          id={formId}
-          onSubmit={(e) => {
-            e.preventDefault()
-            handleSubmit(
-              (payload) =>
-                api.schedule.update.mutateEffect({
-                  params: data.data,
-                  payload,
-                }),
-              {
-                onSuccess: async () => {
-                  await refetch()
-                  toast.add({
-                    type: 'success',
-                    title: 'Schedule updated successfully',
-                  })
-                },
-                onError: (error) =>
-                  toast.add({
-                    type: 'error',
-                    title: 'Failed to update schedule',
-                    description: error.message,
-                  }),
-              }
-            )
-          }}
-        />
-      )}
-    >
-      <FieldSet>
+    <updateScheduleForm.Provider defaultValues={data.data}>
+      <UpdateScheduleFormSubmit id={data.data.id}>
         <FieldLegend>Update Schedule</FieldLegend>
         <FieldDescription>
           Update the schedule for the device. You can change the date, time, and
@@ -102,7 +97,11 @@ export default function ScheduleEditPage({ params }: Route.ComponentProps) {
         <FieldGroup>
           <updateScheduleForm.Field
             name='date'
-            render={({ field: { value, onChange, ...field }, meta }) => {
+            render={({
+              field: { value, ...field },
+              meta,
+              helpers: { handleChange },
+            }) => {
               const selectedDate = parseLocalDate(value)
 
               return (
@@ -130,7 +129,9 @@ export default function ScheduleEditPage({ params }: Route.ComponentProps) {
                       <Calendar
                         mode='single'
                         selected={selectedDate}
-                        onSelect={(date) => onChange(formatDateString(date))}
+                        onSelect={(date) =>
+                          handleChange(formatDateString(date))
+                        }
                         defaultMonth={selectedDate}
                       />
                     </PopoverContent>
@@ -143,42 +144,27 @@ export default function ScheduleEditPage({ params }: Route.ComponentProps) {
 
           <updateScheduleForm.Field
             name='time'
-            render={({ field, meta }) => (
+            render={({ field, meta, helpers: { handleChange } }) => (
               <Field data-invalid={meta.errors.length > 0}>
                 <FieldLabel htmlFor={field.id}>Time</FieldLabel>
                 <Input
                   {...field}
                   type='time'
                   step={300}
-                  onChange={(e) => field.onChange(e.target.value)}
+                  onChange={(e) => handleChange(e.target.value)}
                 />
                 <FieldError id={meta.errorId} errors={meta.errors} />
               </Field>
             )}
           />
 
-          <updateScheduleForm.Field
-            name='items'
-            render={(props) => (
-              <ItemField {...props} deviceId={data.data.device.id} />
-            )}
-          />
+          <ItemField deviceId={data.data.device.id} />
 
           <Field>
-            <updateScheduleForm.Submit
-              render={({ meta }) => (
-                <Button
-                  type='submit'
-                  form={meta.formId}
-                  disabled={meta.isPending}
-                >
-                  {meta.isPending ? 'Saving...' : 'Save Changes'}
-                </Button>
-              )}
-            />
+            <Button type='submit'>Save Changes</Button>
           </Field>
         </FieldGroup>
-      </FieldSet>
-    </updateScheduleForm.Root>
+      </UpdateScheduleFormSubmit>
+    </updateScheduleForm.Provider>
   )
 }

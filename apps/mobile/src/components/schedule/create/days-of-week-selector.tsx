@@ -15,12 +15,12 @@ import {
 export const DaysOfWeekSelector = () => (
   <CreateScheduleForm.Field
     name='daysOfWeek'
-    render={({ field, meta }) => {
+    render={({ field, meta, helpers: { handleChange } }) => {
       const value = field.value ?? []
 
       const toggle = (day: number) => {
-        if (value.includes(day)) field.onChange(value.filter((d) => d !== day))
-        else field.onChange([...value, day])
+        if (value.includes(day)) handleChange(value.filter((d) => d !== day))
+        else handleChange([...value, day])
       }
 
       return (

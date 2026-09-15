@@ -25,131 +25,115 @@ const registerForm = FormBuilder.empty
   })
   .make()
 
-export function RegisterForm() {
+function RegisterFormSubmit({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  const formId = registerForm.useValue((s) => s.formId)
+  const isPending = registerForm.useValue((s) => s.isPending)
   const navigate = useNavigate()
 
+  const handleSubmit = registerForm.useSubmit(
+    (payload) => api.auth.register.mutate({ payload }),
+    {
+      onSuccess: () => {
+        navigate('/login', { replace: true })
+        toast.success(
+          'Registration successful. You can now log in with your new account.'
+        )
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
   return (
-    <registerForm.Root
-      defaultValues={{
-        email: '',
-        username: '',
-        password: '',
-        confirmPassword: '',
-      }}
-      render={({ handleSubmit }) => (
-        <form
-          className='px-4'
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-
-            handleSubmit(
-              (payload) => api.auth.register.mutateEffect({ payload }),
-              {
-                onSuccess: () => {
-                  navigate('/login', { replace: true })
-                  toast.add({
-                    type: 'success',
-                    title: 'Registration successful',
-                    description: 'You can now log in with your new account.',
-                  })
-                },
-                onError: (error) =>
-                  toast.add({ type: 'error', description: error.message }),
-              }
-            )
-          }}
-        />
-      )}
-    >
-      <FieldSet className='group-data-[pending=true]/form:pointer-events-none'>
-        <legend className='sr-only'>Register</legend>
-
-        <registerForm.Field
-          name='username'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Username</FieldLabel>
-              <Input
-                {...field}
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Enter your username'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <registerForm.Field
-          name='email'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Email</FieldLabel>
-              <Input
-                {...field}
-                type='email'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Enter your email'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <registerForm.Field
-          name='password'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Enter your password'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <registerForm.Field
-          name='confirmPassword'
-          render={({ field, meta }) => (
-            <Field data-invalid={meta.errors.length > 0}>
-              <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
-              <Input
-                {...field}
-                type='password'
-                disabled={meta.isPending}
-                onChange={(e) => field.onChange(e.target.value)}
-                placeholder='Confirm your password'
-              />
-              <FieldError id={meta.errorId} errors={meta.errors} />
-            </Field>
-          )}
-        />
-
-        <Field>
-          <registerForm.Submit
-            render={({ meta }) => (
-              <Button
-                type='submit'
-                form={meta.formId}
-                disabled={meta.isPending}
-              >
-                {meta.isPending ? 'Registering...' : 'Register'}
-              </Button>
-            )}
-          />
-
-          <FieldDescription>
-            Already have an account? <Link to='/login'>Login</Link>
-          </FieldDescription>
-        </Field>
-      </FieldSet>
-    </registerForm.Root>
+    <form id={formId} className='px-4' onSubmit={handleSubmit}>
+      <FieldSet disabled={isPending}>{children}</FieldSet>
+    </form>
   )
 }
+
+export const RegisterForm: React.FC = () => (
+  <registerForm.Provider
+    defaultValues={{
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+    }}
+  >
+    <RegisterFormSubmit>
+      <legend className='sr-only'>Register</legend>
+
+      <registerForm.Field
+        name='username'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Username</FieldLabel>
+            <Input
+              {...field}
+              placeholder='Enter your username'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <registerForm.Field
+        name='email'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Email</FieldLabel>
+            <Input
+              {...field}
+              type='email'
+              placeholder='Enter your email'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <registerForm.Field
+        name='password'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              placeholder='Enter your password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <registerForm.Field
+        name='confirmPassword'
+        render={({ field, meta, helpers: { handleChange } }) => (
+          <Field data-invalid={meta.errors.length > 0}>
+            <FieldLabel htmlFor={field.id}>Confirm Password</FieldLabel>
+            <Input
+              {...field}
+              type='password'
+              placeholder='Confirm your password'
+              onChange={(e) => handleChange(e.target.value)}
+            />
+            <FieldError id={meta.errorId} errors={meta.errors} />
+          </Field>
+        )}
+      />
+
+      <Field>
+        <Button type='submit'>Register</Button>
+
+        <FieldDescription>
+          Already have an account? <Link to='/login'>Login</Link>
+        </FieldDescription>
+      </Field>
+    </RegisterFormSubmit>
+  </registerForm.Provider>
+)

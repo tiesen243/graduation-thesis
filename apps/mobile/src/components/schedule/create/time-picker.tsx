@@ -18,7 +18,7 @@ export function TimePicker() {
   return (
     <CreateScheduleForm.Field
       name='time'
-      render={({ field, meta }) => (
+      render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
           <FieldLabel>Time</FieldLabel>
 
@@ -56,7 +56,7 @@ export function TimePicker() {
                   hour12: false,
                 }).format(date)
 
-                field.onChange(formatedDate)
+                handleChange(formatedDate)
                 setIsOpen(false)
               }}
               is24Hour

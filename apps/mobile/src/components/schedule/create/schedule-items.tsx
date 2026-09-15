@@ -13,7 +13,7 @@ export function ScheduleItems() {
   return (
     <CreateScheduleForm.Field
       name='items'
-      render={({ field, meta }) => (
+      render={({ field, meta, helpers }) => (
         <Field>
           <FieldLabel>Items</FieldLabel>
 
@@ -28,11 +28,7 @@ export function ScheduleItems() {
               </Card>
             ))}
 
-            <Pressable
-              onPress={() => {
-                field.onChange([...field.value, { slot: '', quantity: 1 }])
-              }}
-            >
+            <Pressable onPress={() => helpers.add({ slot: '', quantity: 1 })}>
               <Text className='font-medium text-foreground'>Add item</Text>
             </Pressable>
           </View>

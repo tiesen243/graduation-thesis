@@ -28,131 +28,130 @@ const registerForm = FormBuilder.empty
   })
   .make()
 
-export default function RegisterScreen() {
+function RegisterFormSubmit() {
+  const isPending = registerForm.useValue((s) => s.isPending)
+
   const router = useRouter()
   const { api } = useRuntime()
 
+  const handleSubmit = registerForm.useSubmit(
+    (payload) => api.auth.register.mutate({ payload }),
+    {
+      onSuccess: () => {
+        toast.success('Registration successful')
+        router.navigate('/(auth)/login')
+      },
+      onError: (error) => toast.error(error.message),
+    }
+  )
+
   return (
-    <registerForm.Root
+    <Button disabled={isPending} onPress={() => handleSubmit()}>
+      {isPending ? 'Registering...' : 'Register'}
+    </Button>
+  )
+}
+
+export default function RegisterScreen() {
+  const router = useRouter()
+
+  return (
+    <registerForm.Provider
       defaultValues={{
         username: '',
         email: '',
         password: '',
         confirmPassword: '',
       }}
-      render={() => (
-        <FieldSet containerClassName='p-4' className='justify-center' />
-      )}
     >
-      <FieldLegend>Register</FieldLegend>
-      <FieldDescription>
-        Fill in the form below to create a new account. You can also register
-        using your social media accounts.
-      </FieldDescription>
+      <FieldSet containerClassName='p-4' className='justify-center'>
+        <FieldLegend>Register</FieldLegend>
+        <FieldDescription>
+          Fill in the form below to create a new account. You can also register
+          using your social media accounts.
+        </FieldDescription>
 
-      <FieldGroup>
-        <registerForm.Field
-          name='username'
-          render={({ field: { onChange, ...field }, meta }) => (
-            <Field>
-              <FieldLabel>Username</FieldLabel>
-              <Input
-                {...field}
-                onChangeText={onChange}
-                placeholder='Enter your username'
-                editable={!meta.isPending}
-              />
-              <FieldError errors={meta.errors} />
-            </Field>
-          )}
-        />
+        <FieldGroup>
+          <registerForm.Field
+            name='username'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>Username</FieldLabel>
+                <Input
+                  {...field}
+                  placeholder='Enter your username'
+                  onChangeText={handleChange}
+                  editable={!meta.isPending}
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-        <registerForm.Field
-          name='email'
-          render={({ field: { onChange, ...field }, meta }) => (
-            <Field>
-              <FieldLabel>Email</FieldLabel>
-              <Input
-                {...field}
-                onChangeText={onChange}
-                placeholder='Enter your email'
-                keyboardType='email-address'
-                editable={!meta.isPending}
-              />
-              <FieldError errors={meta.errors} />
-            </Field>
-          )}
-        />
+          <registerForm.Field
+            name='email'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>Email</FieldLabel>
+                <Input
+                  {...field}
+                  placeholder='Enter your email'
+                  keyboardType='email-address'
+                  onChangeText={handleChange}
+                  editable={!meta.isPending}
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-        <registerForm.Field
-          name='password'
-          render={({ field: { onChange, ...field }, meta }) => (
-            <Field>
-              <FieldLabel>Password</FieldLabel>
-              <Input
-                {...field}
-                onChangeText={onChange}
-                placeholder='Enter your password'
-                editable={!meta.isPending}
-                secureTextEntry
-              />
-              <FieldError errors={meta.errors} />
-            </Field>
-          )}
-        />
+          <registerForm.Field
+            name='password'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>Password</FieldLabel>
+                <Input
+                  {...field}
+                  placeholder='Enter your password'
+                  onChangeText={handleChange}
+                  editable={!meta.isPending}
+                  secureTextEntry
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-        <registerForm.Field
-          name='confirmPassword'
-          render={({ field: { onChange, ...field }, meta }) => (
-            <Field>
-              <FieldLabel>Confirm Password</FieldLabel>
-              <Input
-                {...field}
-                onChangeText={onChange}
-                placeholder='Enter your password again'
-                editable={!meta.isPending}
-                secureTextEntry
-              />
-              <FieldError errors={meta.errors} />
-            </Field>
-          )}
-        />
+          <registerForm.Field
+            name='confirmPassword'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>Confirm Password</FieldLabel>
+                <Input
+                  {...field}
+                  placeholder='Enter your password again'
+                  onChangeText={handleChange}
+                  editable={!meta.isPending}
+                  secureTextEntry
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-        <registerForm.Submit
-          render={({ handleSubmit, meta }) => (
-            <Field>
-              <Button
-                disabled={meta.isPending}
-                onPress={() =>
-                  handleSubmit(
-                    (payload) => api.auth.register.mutateEffect({ payload }),
-                    {
-                      onSuccess: () => {
-                        toast.success('Registration successful')
-                        router.navigate('/(auth)/login')
-                      },
-                      onError: (error) =>
-                        toast.error('Registration failed', error.message),
-                    }
-                  )
-                }
-              >
-                {meta.isPending ? 'Registering...' : 'Register'}
-              </Button>
-            </Field>
-          )}
-        />
+          <RegisterFormSubmit />
 
-        <View className='flex flex-row items-center'>
-          <FieldDescription>Already have an account? </FieldDescription>
-          <Button
-            variant='link'
-            onPress={() => router.navigate('/(auth)/login')}
-          >
-            Login here
-          </Button>
-        </View>
-      </FieldGroup>
-    </registerForm.Root>
+          <View className='flex flex-row items-center'>
+            <FieldDescription>Already have an account? </FieldDescription>
+            <Button
+              variant='link'
+              onPress={() => router.navigate('/(auth)/login')}
+            >
+              Login here
+            </Button>
+          </View>
+        </FieldGroup>
+      </FieldSet>
+    </registerForm.Provider>
   )
 }
