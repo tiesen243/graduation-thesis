@@ -12,15 +12,12 @@ export function ScanOverlay({ scanState }: ScanOverlayProps) {
 
   const getOverlayText = () => {
     switch (scanState) {
-      case 'processing': {
+      case 'processing':
         return 'QR detected, processing...'
-      }
-      case 'linking': {
+      case 'linking':
         return 'Linking device...'
-      }
-      default: {
+      default:
         return 'Scanning QR code...'
-      }
     }
   }
 
