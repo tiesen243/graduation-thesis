@@ -20,6 +20,11 @@ interface IScheduleRepository extends IBaseRepository<Schedule> {
     startDate: string
     endDate: string
   }) => Effect<ScheduleAggregateSchema[]>
+
+  findManyByDeviceIdFromDate: (options: {
+    deviceId: DeviceId
+    startDate: string
+  }) => Effect<ScheduleAggregateSchema[]>
 }
 
 export class ScheduleRepository extends Context.Service<

@@ -1,6 +1,7 @@
 import type { ScheduleAggregateSchema } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
+import type { ScheduleStatus } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
-import { and, asc, between, eq, sql } from 'drizzle-orm'
+import { and, asc, between, eq, sql, gte } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -107,6 +108,38 @@ export const DrizzleScheduleRepository = Layer.effect(
 
         return rows
       }),
+
+      findManyByDeviceIdFromDate: Effect.fn(
+        function* findManyByDeviceIdFromDate({ deviceId, startDate }) {
+          const rows = yield* db
+            .select(selector)
+            .from(schedules)
+            .innerJoin(
+              scheduleItems,
+              eq(scheduleItems.scheduleId, schedules.id)
+            )
+            .innerJoin(devices, eq(devices.id, schedules.deviceId))
+            .leftJoin(
+              compartments,
+              and(
+                eq(compartments.deviceId, schedules.deviceId),
+                eq(compartments.position, scheduleItems.slot)
+              )
+            )
+            .where(
+              and(
+                eq(schedules.deviceId, deviceId),
+                gte(schedules.date, startDate),
+                eq(schedules.status, 'pending' as ScheduleStatus)
+              )
+            )
+            .groupBy(schedules.id, devices.id)
+            .orderBy(asc(schedules.date), asc(schedules.time))
+            .pipe(Effect.orDie)
+
+          return rows
+        }
+      ),
     }
   })
 )

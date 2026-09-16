@@ -1,3 +1,4 @@
+import type { DeviceNotFound } from '@rozumari/contract/device/schemas/device.error'
 import type { UpdateScheduleDto } from '@rozumari/contract/schedule/dto/update-schedule.dto'
 
 import {
@@ -10,6 +11,7 @@ import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
+import { DeviceService } from '@/modules/device/application/ports/device.service'
 import { ScheduleItemRepository } from '@/modules/schedule/application/ports/schedule-item.repository'
 import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
 import { ScheduleItem } from '@/modules/schedule/domain/entities/schedule-item.entity'
@@ -23,7 +25,7 @@ export class UpdateScheduleUseCase extends Context.Service<
       input: UpdateScheduleDto.Params & UpdateScheduleDto.Input
     ) => Effect.Effect<
       UpdateScheduleDto.Output,
-      ScheduleNotFound | ScheduleInvalid,
+      ScheduleNotFound | ScheduleInvalid | DeviceNotFound,
       DateTime.CurrentTimeZone
     >
   }
@@ -31,8 +33,10 @@ export class UpdateScheduleUseCase extends Context.Service<
   make: Effect.gen(function* make() {
     const scheduleItemRepository = yield* ScheduleItemRepository
     const scheduleRepository = yield* ScheduleRepository
+    const deviceService = yield* DeviceService
 
     return {
+      // oxlint-disable-next-line complexity
       execute: Effect.fn(function* execute({ id, ...input }) {
         const [found, [schedule]] = yield* Effect.all([
           scheduleRepository.findWithItems(id),
@@ -78,6 +82,52 @@ export class UpdateScheduleUseCase extends Context.Service<
               message: 'Only pending schedules can be updated',
             })
           )
+
+        const queryStartDate =
+          found.date < targetDateStr ? found.date : targetDateStr
+        const existingSchedulesOfDevice =
+          yield* scheduleRepository.findManyByDeviceIdFromDate({
+            deviceId: found.device.id,
+            startDate: queryStartDate,
+          })
+
+        const compartments = yield* deviceService.findCompartments(
+          found.device.id
+        )
+
+        const reservedQuantitiesBySlot: Record<string, number> = {}
+
+        // 1. Calculate reserved quantities by slot from existing schedules (excluding the current schedule being updated)
+        for (const scheduleItem of existingSchedulesOfDevice) {
+          if (scheduleItem.id === id) continue
+          for (const item of scheduleItem.items) {
+            reservedQuantitiesBySlot[item.slot] =
+              (reservedQuantitiesBySlot[item.slot] ?? 0) + item.quantity
+          }
+        }
+
+        // 2. Calculate valid quantities by slot based on compartment capacities and reserved quantities
+        const validQuantitiesBySlot: Record<string, number> = {}
+        for (const comp of compartments) {
+          const reserved = reservedQuantitiesBySlot[comp.position] ?? 0
+          validQuantitiesBySlot[comp.position] = Math.max(
+            0,
+            comp.capacity - reserved
+          )
+        }
+
+        // 3. Validate the requested quantities against the valid quantities
+        const itemsToValidate =
+          input.items.length > 0 ? input.items : found.items
+        for (const item of itemsToValidate) {
+          const validAmount = validQuantitiesBySlot[item.slot] ?? 0
+          if (item.quantity > validAmount)
+            return yield* Effect.fail(
+              new ScheduleInvalid({
+                message: `Slot ${item.slot} does not have enough medicine. Available: ${validAmount}, Requested: ${item.quantity}`,
+              })
+            )
+        }
 
         const updatedSchedule = Schedule.make({
           ...schedule,

@@ -108,6 +108,24 @@ export const InMemoryScheduleRepository = Layer.effect(
 
         return yield* mapSchedulesWithItems(filteredSchedules)
       }),
+
+      findManyByDeviceIdFromDate: Effect.fn(
+        function* findManyByDeviceIdFromDate({ deviceId, startDate }) {
+          const schedules = yield* Ref.get(db.schedules).pipe(
+            Effect.map((dict) => [...dict.values()])
+          )
+
+          const filteredSchedules = schedules.filter(
+            (schedule) =>
+              schedule.deviceId === deviceId &&
+              new Date(schedule.date).getTime() >=
+                new Date(startDate).getTime() &&
+              schedule.status === 'pending'
+          )
+
+          return yield* mapSchedulesWithItems(filteredSchedules)
+        }
+      ),
     }
   })
 )
