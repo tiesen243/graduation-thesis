@@ -593,7 +593,7 @@ export default defineConfig({
     'unicorn/require-module-specifiers': 'error',
     'unicorn/require-number-to-fixed-digits-argument': 'error',
     'unicorn/require-post-message-target-origin': 'error',
-    'unicorn/switch-case-braces': 'error',
+    'unicorn/switch-case-braces': ['error', 'avoid'],
     'unicorn/switch-case-break-position': 'error',
     'unicorn/text-encoding-identifier-case': ['error', { withDash: true }],
     'unicorn/throw-new-error': 'error',

@@ -50,7 +50,7 @@ export const ScheduleNav: React.FC<{
   }, [startDate, endDate])
 
   return (
-    <View className='flex-row items-center justify-between gap-4 px-4'>
+    <View className='flex-row items-center justify-between gap-4 px-4 pt-4'>
       <View className='flex-row items-center gap-3'>
         {STATUSES.map((status) => (
           <View key={status.label} className='flex-row items-center gap-1.5'>

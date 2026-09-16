@@ -28,7 +28,10 @@ export class AppModule {
       { persistence },
       deviceModule.exports.deviceService
     )
-    const scheduleModule = ScheduleModule.create({ persistence })
+    const scheduleModule = ScheduleModule.create(
+      { persistence },
+      deviceModule.exports.deviceService
+    )
     const userModule = UserModule.create({ persistence })
     const authModule = AuthModule.create(
       { persistence, providers },

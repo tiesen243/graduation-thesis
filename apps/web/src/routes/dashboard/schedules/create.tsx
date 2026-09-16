@@ -85,7 +85,7 @@ export default function SchedulesCreatePage() {
     () =>
       data?.data.devices.map((device) => ({
         value: device.id,
-        label: device.name,
+        label: device.name ?? device.factoryModel,
       })) ?? [],
     [data]
   )

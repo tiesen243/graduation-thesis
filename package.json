@@ -50,7 +50,7 @@
       "@types/react-dom": "^19.3.0",
       "react": "19.2.3",
       "react-dom": "19.2.3",
-      "react-native": "0.86.3"
+      "react-native": "0.88.0-rc.0"
     },
     "tailwind": {
       "@tailwindcss/vite": "^4.3.3",

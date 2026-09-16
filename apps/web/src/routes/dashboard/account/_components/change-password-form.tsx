@@ -55,7 +55,7 @@ function ChangePasswordFormSubmit({
 export const ChangePasswordForm: React.FC = () => (
   <changePasswordForm.Provider
     defaultValues={{
-      currentPassword: '',
+      currentPassword: undefined,
       newPassword: '',
       confirmPassword: '',
     }}

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { NativeTabs } from 'expo-router/unstable-native-tabs'
+import { NativeTabs } from 'expo-router/native-tabs'
 import { useCSSVariable } from 'uniwind'
 
 import { useRuntime } from '@/hooks/use-runtime'
@@ -36,11 +36,21 @@ export default function TabsLayout() {
 
       badgeBackgroundColor={destructiveColor}
       badgeTextColor='#FAFAFA'
+
+      activityEnabled
     >
       <NativeTabs.Trigger name='home'>
         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           src={require('@/assets/tab-icons/home.png')}
+          renderingMode='template'
+        />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name='pill-boxes'>
+        <NativeTabs.Trigger.Label>Pill Boxes</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          src={require('@/assets/tab-icons/pill-boxes.png')}
           renderingMode='template'
         />
       </NativeTabs.Trigger>

@@ -3,6 +3,7 @@ import '@/globals.css'
 import { createQueryClient } from '@rozumari/lib/create-query-client'
 import { ToasterProvider } from '@rozumari/ui/components/toast'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { Camera } from 'expo-camera'
 import { DefaultTheme, Slot, ThemeProvider } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
@@ -36,6 +37,7 @@ function RootLayoutInner() {
 
       // check permission...
       await requestBLEPermissions()
+      await Camera.requestCameraPermissionsAsync()
     })()
   }, [fontLoaded, fontError, status])
 

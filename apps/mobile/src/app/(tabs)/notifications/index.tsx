@@ -121,7 +121,9 @@ export default function TabsNotificationsIndexScreen() {
           <View className='py-4'>
             <ActivityIndicator size='small' colorClassName='accent-primary' />
           </View>
-        ) : null
+        ) : (
+          <View />
+        )
       }
     />
   )

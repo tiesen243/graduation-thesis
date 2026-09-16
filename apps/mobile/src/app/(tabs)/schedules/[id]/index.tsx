@@ -86,7 +86,7 @@ export default function TabsSchedulesDetailsScreen() {
         <CardHeader>
           <CardTitle>Medication Items</CardTitle>
         </CardHeader>
-        <CardContent className='gap-1'>
+        <CardContent className='gap-3'>
           {items.map((item) => (
             <Card key={item.slot} className='flex-row justify-between'>
               <CardHeader>

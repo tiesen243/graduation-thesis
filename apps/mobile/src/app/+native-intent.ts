@@ -10,6 +10,10 @@ const routes = {
   // Dashboard
   '/dashboard': '/home',
 
+  // Pill Boxes
+  '/dashboard/pill-boxes': '/pill-boxes',
+  '/dashboard/pill-boxes/:id': '/pill-boxes/[id]',
+
   // Schedules
   '/dashboard/schedules': '/schedules',
   '/dashboard/schedules/create': '/schedules/create',

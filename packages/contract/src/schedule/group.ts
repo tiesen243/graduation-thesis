@@ -2,6 +2,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { AuthMiddleware } from '@/auth/middleware'
+import { DeviceNotFound } from '@/device/schemas/device.error'
 import { CreateScheduleDto } from '@/schedule/dto/create-schedule.dto'
 import { ListSchedulesDto } from '@/schedule/dto/list-schedules.dto'
 import { ShowScheduleDto } from '@/schedule/dto/show-schedule.dto'
@@ -31,7 +32,7 @@ export class ScheduleGroup extends HttpApiGroup.make('schedule')
     HttpApiEndpoint.post('create', '/', {
       payload: CreateScheduleDto.Input,
       success: CreateScheduleDto,
-      error: [ScheduleInvalid],
+      error: [ScheduleInvalid, DeviceNotFound],
     })
   )
 
@@ -40,7 +41,7 @@ export class ScheduleGroup extends HttpApiGroup.make('schedule')
       params: UpdateScheduleDto.Params,
       payload: UpdateScheduleDto.Input,
       success: UpdateScheduleDto,
-      error: [ScheduleNotFound, ScheduleInvalid],
+      error: [ScheduleNotFound, ScheduleInvalid, DeviceNotFound],
     })
   )
 

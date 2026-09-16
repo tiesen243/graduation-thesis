@@ -2,7 +2,6 @@ import { getCurrentWeekRange } from '@rozumari/lib/get-current-week-range'
 import { useQuery } from '@tanstack/react-query'
 import { getCalendars } from 'expo-localization'
 import { useState } from 'react'
-import { View } from 'react-native'
 
 import { ScheduleList } from '@/components/schedule/schedule-list'
 import { ScheduleNav } from '@/components/schedule/schedule-nav'
@@ -20,7 +19,7 @@ export default function TabsSchedulesIndexScreen() {
   )
 
   return (
-    <View className='flex-1 py-4'>
+    <>
       <ScheduleNav
         startDate={query.startDate}
         endDate={query.endDate}
@@ -37,6 +36,6 @@ export default function TabsSchedulesIndexScreen() {
         refetch={refetch}
         isRefetching={isRefetching}
       />
-    </View>
+    </>
   )
 }

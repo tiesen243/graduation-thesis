@@ -51,7 +51,7 @@ export const ScheduleCard: React.FC<{
           <Badge variant='secondary'>
             <HardDriveIcon className='size-3' />
             <Link to={`/dashboard/pill-boxes/${schedule.device.id}`}>
-              {schedule.device.name}
+              {schedule.device.name ?? schedule.device.id}
               {schedule.device.position && ` (${schedule.device.position})`}
             </Link>
           </Badge>

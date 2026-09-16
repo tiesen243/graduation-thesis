@@ -27,7 +27,7 @@ export default function TabsSchedulesLayout() {
                 size='icon'
                 onPress={() => router.push('/(tabs)/schedules/create')}
               >
-                <PlusIcon className='size-5 text-foreground' />
+                <PlusIcon className='size-5 shrink-0 text-foreground' />
               </Button>
             </View>
           ),
@@ -46,7 +46,7 @@ export default function TabsSchedulesLayout() {
               size='icon'
               onPress={() => router.push(`/(tabs)/schedules/${id}/edit`)}
             >
-              <PencilIcon className='size-5 text-foreground' />
+              <PencilIcon className='size-5 shrink-0 text-foreground' />
             </Button>
           ),
         }}
