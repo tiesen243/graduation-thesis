@@ -1,3 +1,9 @@
+## @rozumari/contract@0.0.15
+
+### Bug Fixes
+
+- Added check quantity of compartments before creating or updating a schedule to prevent errors when the number of compartments is insufficient.
+
 ## @rozumari/contract@0.0.14
 
 ### Bug Fixes
