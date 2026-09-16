@@ -109,23 +109,39 @@ export const InMemoryScheduleRepository = Layer.effect(
         return yield* mapSchedulesWithItems(filteredSchedules)
       }),
 
-      findManyByDeviceIdFromDate: Effect.fn(
-        function* findManyByDeviceIdFromDate({ deviceId, startDate }) {
-          const schedules = yield* Ref.get(db.schedules).pipe(
-            Effect.map((dict) => [...dict.values()])
-          )
+      findManyPendingByDeviceId: Effect.fn(function* findManyPendingByDeviceId({
+        deviceId,
+      }) {
+        const schedules = yield* Ref.get(db.schedules).pipe(
+          Effect.map((dict) => [...dict.values()])
+        )
 
-          const filteredSchedules = schedules.filter(
-            (schedule) =>
-              schedule.deviceId === deviceId &&
-              new Date(schedule.date).getTime() >=
-                new Date(startDate).getTime() &&
-              schedule.status === 'pending'
-          )
+        const pendingSchedules = schedules.filter(
+          (schedule) =>
+            schedule.deviceId === deviceId && schedule.status === 'pending'
+        )
 
-          return yield* mapSchedulesWithItems(filteredSchedules)
+        const items = yield* Ref.get(db.scheduleItems).pipe(
+          Effect.map((dict) => [...dict.values()])
+        )
+
+        const itemsBySlot: Record<string, number> = {}
+
+        for (const schedule of pendingSchedules) {
+          const scheduleItems = items.filter(
+            (item) => item.scheduleId === schedule.id
+          )
+          for (const item of scheduleItems) {
+            itemsBySlot[item.slot] =
+              (itemsBySlot[item.slot] ?? 0) + item.quantity
+          }
         }
-      ),
+
+        return Object.entries(itemsBySlot).map(([slot, quantity]) => ({
+          slot,
+          quantity,
+        }))
+      }),
     }
   })
 )

@@ -30,7 +30,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -146,14 +146,14 @@ export function ScheduleItems({
           return (
             <Card key={index} className='h-32'>
               <CardHeader className='flex-row items-center justify-between'>
-                <CardTitle className='flex-row items-center gap-2'>
-                  <Text className='font-semibold text-foreground'>
-                    {comp.medicine}
-                  </Text>
+                <View className='flex-row items-center gap-2'>
                   <Badge variant='outline'>
                     <Typography>Slot: {item.slot}</Typography>
                   </Badge>
-                </CardTitle>
+                  <Typography className='font-semibold text-foreground'>
+                    {comp.medicine}
+                  </Typography>
+                </View>
 
                 <CardAction>
                   <Button
@@ -206,9 +206,7 @@ export function ScheduleItems({
           <View className='size-9 items-center justify-center rounded-full border border-muted-foreground/25 bg-transparent'>
             <PlusIcon className='size-4 text-primary' />
           </View>
-          <Text className='mt-1 text-xs font-medium text-foreground'>
-            Add Item
-          </Text>
+          <Typography className='mt-1 text-xs font-medium'>Add Item</Typography>
         </Pressable>
       </View>
 

@@ -175,7 +175,7 @@ export const ItemField = ({
                     onChange={(e) =>
                       helpers.update(index, {
                         ...item,
-                        quantity: e.target.valueAsNumber,
+                        quantity: Math.trunc(Number(e.target.value)),
                       })
                     }
                   />
@@ -231,6 +231,9 @@ export const ItemField = ({
         })}
 
         <Card
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+          role='button'
+          tabIndex={0}
           onClick={() =>
             helpers.add({ slot: '', quantity: 1, isRequired: true })
           }

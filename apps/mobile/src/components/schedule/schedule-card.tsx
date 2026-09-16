@@ -3,6 +3,7 @@ import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-sche
 import { Badge } from '@rozumari/ui/components/badge'
 import { Card, CardHeader } from '@rozumari/ui/components/card'
 import {
+  AsteriskIcon,
   ClockIcon,
   HardDriveIcon,
   PillIcon,
@@ -75,6 +76,9 @@ export const ScheduleCard: React.FC<{
                 <Typography className='text-xs text-muted-foreground'>
                   ({item.dosage})
                 </Typography>
+              )}
+              {item.isRequired && (
+                <AsteriskIcon className='-mt-1 size-3 shrink-0 text-destructive' />
               )}
             </View>
 
