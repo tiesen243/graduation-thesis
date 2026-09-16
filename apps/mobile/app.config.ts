@@ -26,6 +26,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 
   android: {
     package: `com.${appName}.mobile`,
+    adaptiveIcon: {
+      foregroundImage: './assets/adaptive-icon.png',
+      backgroundColor: '#DBE4FF',
+      monochromeImage: './assets/adaptive-icon-monochrome.png',
+    },
+    predictiveBackGestureEnabled: true,
+    permissions: [
+      'android.permission.BLUETOOTH',
+      'android.permission.BLUETOOTH_ADMIN',
+      'android.permission.BLUETOOTH_CONNECT',
+      'android.permission.BLUETOOTH_SCAN',
+      'android.permission.ACCESS_FINE_LOCATION',
+    ],
     intentFilters: [
       {
         action: 'VIEW',
@@ -45,18 +58,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         category: ['BROWSABLE', 'DEFAULT'],
       },
     ],
-    adaptiveIcon: {
-      foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#DBE4FF',
-      monochromeImage: './assets/adaptive-icon-monochrome.png',
-    },
-    permissions: [
-      'android.permission.BLUETOOTH',
-      'android.permission.BLUETOOTH_ADMIN',
-      'android.permission.BLUETOOTH_CONNECT',
-      'android.permission.BLUETOOTH_SCAN',
-      'android.permission.ACCESS_FINE_LOCATION',
-    ],
   },
 
   ios: {
@@ -74,6 +75,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     '@react-native-community/datetimepicker',
     'expo-font',
     'expo-localization',
+    'expo-router',
+    'expo-system-ui',
+    'expo-web-browser',
+    'react-native-ble-manager',
+    [
+      'expo-camera',
+      {
+        cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera.',
+        barcodeScannerEnabled: true,
+      },
+    ],
     [
       'expo-location',
       {
@@ -81,7 +93,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           'Allow $(PRODUCT_NAME) to use your location.',
       },
     ],
-    'expo-router',
     [
       'expo-secure-store',
       {
@@ -95,14 +106,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         backgroundColor: '#DBE4FF',
         image: './assets/icon-light.png',
+        imageWidth: 80,
         dark: {
           backgroundColor: '#0D1633',
           image: './assets/icon-dark.png',
         },
       },
     ],
-    'expo-system-ui',
-    'react-native-ble-manager',
   ],
 
   experiments: {
