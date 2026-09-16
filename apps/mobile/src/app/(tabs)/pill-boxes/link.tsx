@@ -1,7 +1,7 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+import type { CameraView as ICameraView } from 'expo-camera'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { CameraView } from 'expo-camera'
 import { useRouter } from 'expo-router'
 import { useRef, useState } from 'react'
 import { Alert, View } from 'react-native'
@@ -12,8 +12,16 @@ import { ScanActionButton } from '@/components/pill-boxes/link/scan-action-butto
 import { ScanOverlay } from '@/components/pill-boxes/link/scan-overplay'
 import { useRuntime } from '@/hooks/use-runtime'
 
+let CameraView: typeof ICameraView | null = null
+try {
+  // oxlint-disable-next-line node/global-require unicorn/prefer-module
+  ;({ CameraView } = require('expo-camera'))
+} catch {
+  // noop
+}
+
 export default function TabsPillBoxesLinkScreen() {
-  const cameraRef = useRef<CameraView>(null)
+  const cameraRef = useRef<ICameraView>(null)
   const [scanState, setScanState] = useState<ScanState>('idle')
 
   const isScannedRef = useRef(false)
@@ -22,6 +30,8 @@ export default function TabsPillBoxesLinkScreen() {
   const { api } = useRuntime()
   const queryClient = useQueryClient()
   const router = useRouter()
+
+  if (!CameraView) return null
 
   const clearScanTimeout = () => {
     if (scanTimeoutRef.current) {

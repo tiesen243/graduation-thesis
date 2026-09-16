@@ -1,7 +1,6 @@
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
-  Card,
   CardContent,
   CardHeader,
   CardTitle,
@@ -13,15 +12,22 @@ import {
 import { Input } from '@rozumari/ui/components/input'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
+import { useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
-import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native'
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  View,
+} from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 import { useSession } from '@/hooks/use-session'
 
 type BadgeVariant = React.ComponentProps<typeof Badge>['variant']
 
-const getBadgeVariant = (status?: string): BadgeVariant => {
+export const getBadgeVariant = (status?: string): BadgeVariant => {
   switch (status) {
     case 'linked':
       return 'success'
@@ -35,6 +41,7 @@ const getBadgeVariant = (status?: string): BadgeVariant => {
 export default function TabsPillBoxesIndexScreen() {
   const { api } = useRuntime()
   const { user } = useSession()
+  const router = useRouter()
 
   const [searchTerm, setSearchTerm] = useState('')
   const [queryParams, setQueryParams] = useState({ query: '', page: 1 })
@@ -103,7 +110,10 @@ export default function TabsPillBoxesIndexScreen() {
           )
         }
         renderItem={({ item }) => (
-          <Card>
+          <Pressable
+            className='group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 ring-1 ring-foreground/10'
+            onPress={() => router.push(`/(tabs)/pill-boxes/${item.id}`)}
+          >
             <CardHeader className='flex-row items-center justify-between gap-2'>
               <CardTitle>{item.name ?? item.factoryModel}</CardTitle>
               <Badge variant={getBadgeVariant(item.status)}>
@@ -120,7 +130,7 @@ export default function TabsPillBoxesIndexScreen() {
                 Position: {item.position ?? 'Unknown'}
               </Typography>
             </CardContent>
-          </Card>
+          </Pressable>
         )}
       />
 

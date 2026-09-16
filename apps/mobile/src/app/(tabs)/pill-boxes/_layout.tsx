@@ -27,6 +27,8 @@ export default function TabsPillBoxesLayout() {
       />
 
       <Stack.Screen name='link' options={{ title: 'Link Pill Box' }} />
+
+      <Stack.Screen name='[id]' options={{ title: 'Pill Box Details' }} />
     </Stack>
   )
 }

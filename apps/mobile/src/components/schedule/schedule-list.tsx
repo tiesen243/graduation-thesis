@@ -1,4 +1,5 @@
 import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
+import type { ScrollViewInstance } from 'react-native'
 
 import { Badge } from '@rozumari/ui/components/badge'
 import { Typography } from '@rozumari/ui/components/typography'
@@ -30,7 +31,7 @@ export const ScheduleList: React.FC<{
 
   const today = useMemo(() => getTimezonedDate(), [])
 
-  const scrollViewRef = useRef<ScrollView>(null)
+  const scrollViewRef = useRef<ScrollViewInstance>(null)
   const groupPositions = useRef<Record<string, number>>({})
 
   const groupedSchedules = useMemo(() => {
@@ -54,7 +55,7 @@ export const ScheduleList: React.FC<{
 
   return (
     <>
-      <View className='w-full flex-row gap-2 p-4 pb-6'>
+      <View className='w-full flex-row gap-2 p-4'>
         {dateRange.map(({ iso, weekday, dayNumber }) => (
           <Pressable
             key={iso}
@@ -87,7 +88,10 @@ export const ScheduleList: React.FC<{
           ref={scrollViewRef}
           contentContainerClassName='items-center justify-center flex-1'
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch as never}
+            />
           }
         >
           <Typography className='text-muted-foreground'>
@@ -99,9 +103,12 @@ export const ScheduleList: React.FC<{
       {!isLoading && schedules.length > 0 && (
         <ScrollView
           ref={scrollViewRef}
-          contentContainerClassName='flex-1 gap-3'
+          contentContainerClassName='grow gap-3 pb-4'
           refreshControl={
-            <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={refetch as never}
+            />
           }
         >
           {Object.entries(groupedSchedules).map(([date, group]) => {

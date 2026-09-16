@@ -1,17 +1,29 @@
 // oxlint-disable no-bitwise
 
+import type * as TLocation from 'expo-location'
 import type { Peripheral } from 'react-native-ble-manager'
+import type TBleManager from 'react-native-ble-manager'
 
 import { toast } from '@rozumari/ui/components/toast'
-import * as Location from 'expo-location'
 import * as React from 'react'
 
-import {
-  BLE_RX_UUID,
-  BLE_SERVICE_UUID,
-  BLE_TX_UUID,
-  isExpoGo,
-} from '@/lib/constants'
+import { BLE_RX_UUID, BLE_SERVICE_UUID, BLE_TX_UUID } from '@/lib/constants'
+
+let BleManager: typeof TBleManager | null = null
+try {
+  // oxlint-disable-next-line node/global-require unicorn/prefer-module
+  BleManager = require('react-native-ble-manager').default
+} catch {
+  // noop
+}
+
+let Location: typeof TLocation | null = null
+try {
+  // oxlint-disable-next-line node/global-require unicorn/prefer-module
+  Location = require('expo-location')
+} catch {
+  // noop
+}
 
 export const ACTION_CODES = {
   PONG: 0,
@@ -35,7 +47,6 @@ interface DeviceInfo {
 }
 
 interface BLEContextType {
-  isRequirementsMet: boolean
   discoveredDevices: Peripheral[]
   selectedDevice: string
   setSelectedDevice: (id: string) => void
@@ -84,8 +95,6 @@ const removeVietnameseTones = (str: string): string =>
     .replaceAll('Đ', 'D')
 
 export function BLEProvider({ children }: { children: React.ReactNode }) {
-  const [isRequirementsMet, setIsRequirementsMet] =
-    React.useState<boolean>(true)
   const [discoveredDevices, setDiscoveredDevices] = React.useState<
     Peripheral[]
   >([])
@@ -120,17 +129,15 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   React.useEffect(() => {
-    if (isExpoGo) return
+    if (!BleManager || !Location) return
 
     void (async () => {
-      const { default: BleManager } = await import('react-native-ble-manager')
-
       const isLocationEnabled = await Location.hasServicesEnabledAsync()
       if (!isLocationEnabled)
         try {
           await Location.enableNetworkProviderAsync()
         } catch {
-          return setIsRequirementsMet(false)
+          // noop
         }
 
       await BleManager.start({ showAlert: false })
@@ -138,10 +145,8 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
       try {
         await BleManager.enableBluetooth()
       } catch {
-        return setIsRequirementsMet(false)
+        // noop
       }
-
-      setIsRequirementsMet(true)
 
       if (!discoverListenerRef.current) {
         discoverListenerRef.current = BleManager.onDiscoverPeripheral(
@@ -169,9 +174,7 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleConnect = React.useCallback(async () => {
-    if (!selectedDevice || isExpoGo) return
-
-    const { default: BleManager } = await import('react-native-ble-manager')
+    if (!selectedDevice || !BleManager) return
 
     try {
       setIsConnecting(true)
@@ -243,9 +246,7 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
   }, [selectedDevice, handleByteNotification])
 
   const handleDisconnect = React.useCallback(async () => {
-    if (!selectedDevice || isExpoGo) return
-
-    const { default: BleManager } = await import('react-native-ble-manager')
+    if (!selectedDevice || !BleManager) return
 
     try {
       notificationListenerRef.current?.remove()
@@ -261,10 +262,8 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
 
   const sendBleCommand = React.useCallback(
     async (actionName: string, payloadObj: Record<string, unknown> = {}) => {
-      if (!selectedDevice || !isConnected || !actionName.trim() || isExpoGo)
+      if (!selectedDevice || !isConnected || !actionName.trim() || !BleManager)
         return
-
-      const { default: BleManager } = await import('react-native-ble-manager')
 
       try {
         const cleanAction = removeVietnameseTones(actionName.trim())
@@ -296,7 +295,6 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
 
   const memorizedValue = React.useMemo(
     () => ({
-      isRequirementsMet,
       discoveredDevices,
       selectedDevice,
       setSelectedDevice,
@@ -309,7 +307,6 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
       registerByteHandler,
     }),
     [
-      isRequirementsMet,
       discoveredDevices,
       selectedDevice,
       setSelectedDevice,
