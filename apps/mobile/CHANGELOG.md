@@ -1,3 +1,11 @@
+## @rozumari/mobile@0.0.16
+
+### Patch changes
+
+- Added list devices screen
+- Added device details screen
+- Added update device feature
+
 ## @rozumari/mobile@0.0.15
 
 ### Bug Fixes

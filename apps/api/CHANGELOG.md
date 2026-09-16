@@ -1,3 +1,9 @@
+## @rozumari/api@0.0.22
+
+### Bug Fixes
+
+- Added check quantity of compartments before creating or updating a schedule to prevent errors when the number of compartments is insufficient.
+
 ## @rozumari/api@0.0.21
 
 ### Added update schedule
