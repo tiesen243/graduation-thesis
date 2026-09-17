@@ -1,3 +1,9 @@
+## @rozumari/api@0.0.23
+
+### Patches
+
+- Update compartment capacity when a schedule is completed.
+
 ## @rozumari/api@0.0.22
 
 ### Bug Fixes

@@ -1,3 +1,10 @@
+## @rozumari/ui@0.0.7
+
+### Bug Fixes and Improvements
+
+- Fixed various UI issues and errors.
+- Improved UI component stability and consistency.
+
 ## @rozumari/ui@0.0.6
 
 ### Patch Changes

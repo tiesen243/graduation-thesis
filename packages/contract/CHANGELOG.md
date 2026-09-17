@@ -1,3 +1,9 @@
+## @rozumari/contract@0.0.16
+
+### Patches
+
+- Update compartment capacity when a schedule is completed.
+
 ## @rozumari/contract@0.0.15
 
 ### Bug Fixes

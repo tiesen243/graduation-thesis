@@ -1,51 +1,53 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Bug Fixes\n\n- Added check quantity of compartments before creating or updating a schedule to prevent errors when the number of compartments is insufficient.\n"
-    filename: 2026-09-17-mu4daq5w.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Bug Fixes and Improvements\n\n- Fixed various UI issues and errors.\n- Improved UI component stability and consistency.\n"
+    filename: 2026-09-17-mu4uuwoq.md
     v: 0.0.0
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Patch changes\n\n- Added list devices screen\n- Added device details screen\n- Added update device feature\n"
-    filename: 2026-09-16-mu4cfba8.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Patches\n\n- Update compartment capacity when a schedule is completed.\n"
+    filename: 2026-09-17-mu4y50ru.md
     v: 0.0.0
 core:packages:
   - id: npm:graduation-thesis
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/lib
-    updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
-  - changelogIds:
-      - 2026-09-17-mu4daq5w.md
-    id: npm:@rozumari/contract
-    updated: true
-  - id: npm:@rozumari/web
-    updated: true
   - id: npm:@rozumari/oxlint
     updated: false
   - changelogIds:
-      - 2026-09-16-mu4cfba8.md
+      - 2026-09-17-mu4uuwoq.md
     id: npm:@rozumari/mobile
     updated: true
-  - id: npm:@rozumari/firmware
-    updated: false
+  - changelogIds:
+      - 2026-09-17-mu4y50ru.md
+    id: npm:@rozumari/api
+    updated: true
+  - id: npm:@rozumari/web
+    updated: true
+  - changelogIds:
+      - 2026-09-17-mu4y50ru.md
+    id: npm:@rozumari/contract
+    updated: true
   - id: npm:@rozumari/eda
     updated: false
   - changelogIds:
-      - 2026-09-17-mu4daq5w.md
-    id: npm:@rozumari/api
+      - 2026-09-17-mu4uuwoq.md
+    id: npm:@rozumari/ui
     updated: true
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/firmware
     updated: false
 npm:packages:
   - id: npm:graduation-thesis
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/lib
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/eda
   - id: npm:@rozumari/api
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/eda
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/firmware
