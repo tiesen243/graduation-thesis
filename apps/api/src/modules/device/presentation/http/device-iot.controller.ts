@@ -1,5 +1,6 @@
 import { Api } from '@rozumari/contract'
 import { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
+import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
@@ -7,12 +8,22 @@ import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
+import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
 
 export const DeviceIoTController = HttpApiBuilder.group(
   Api,
   'device-iot',
   (handlers) =>
     handlers
+      .handle('info', () =>
+        CurrentDevice.pipe(
+          Effect.flatMap((id) =>
+            ShowDeviceUseCase.use((s) => s.execute({ id }))
+          ),
+          Effect.map((data) => new ShowDeviceDto({ data }))
+        )
+      )
+
       .handle('subscribe', () =>
         CurrentDevice.pipe(
           Effect.flatMap((id) =>
