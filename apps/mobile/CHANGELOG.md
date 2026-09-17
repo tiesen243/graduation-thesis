@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.0.17
+
+### Bug Fixes and Improvements
+
+- Fixed various UI issues and errors.
+- Improved UI component stability and consistency.
+
 ## @rozumari/mobile@0.0.16
 
 ### Patch changes
