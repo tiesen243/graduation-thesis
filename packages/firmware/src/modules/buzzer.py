@@ -1,5 +1,3 @@
-import time
-
 from machine import Pin
 
 from lib.pins import Pins
@@ -26,13 +24,3 @@ class Buzzer:
         if cls.__instance is None:
             cls.__instance = Buzzer()
         return cls.__instance
-
-
-if __name__ == "__main__":
-    buzzer = Buzzer.create()
-
-    while True:
-        buzzer.on()
-        time.sleep(1)
-        buzzer.off()
-        time.sleep(1)

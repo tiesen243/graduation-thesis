@@ -1,5 +1,6 @@
+import asyncio
+
 import network
-import uasyncio
 
 from lib.config import Config
 
@@ -7,15 +8,13 @@ from lib.config import Config
 class WiFi:
     __instance: WiFi | None = None
 
-    wifi: dict | None = None
-    device: dict | None = None
+    _wifi: dict | None = None
 
     def __init__(self):
         config = Config.create()
-        self.wifi = config.get("wifi")
-        self.device = config.get("device")
+        self._wifi = config.get("wifi")
 
-    async def connect(self, force: bool = False) -> bool:
+    async def connect(self, force: bool = True) -> bool:
         """
         Establish an asynchronous Wi-Fi connection using loaded configurations.
 
@@ -27,33 +26,44 @@ class WiFi:
         :param force: Force a reconnection sequence even if already connected. Defaults to False.
         :return: True if connection is successful, False otherwise.
         """
-        if self.wifi is None or self.device is None:
+        if self._wifi is None:
             return False
 
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
 
         if wlan.isconnected() and not force:
-            print(f"Already connected to WiFi! IP: {wlan.ifconfig()[0]}")
+            print(f"[Setup] Already connected to WiFi! IP: {wlan.ifconfig()[0]}")
             return True
 
-        ssid = self.wifi.get("ssid")
-        password = self.wifi.get("password")
-        print(f"Connecting to WiFi SSID: {ssid}...", end="")
+        ssid = self._wifi.get("ssid")
+        password = self._wifi.get("password")
+        print(f"[Setup] Connecting to WiFi SSID: {ssid}...", end="")
 
-        timeout = 20
+        timeout = 30
         wlan.connect(ssid, password)
         while not wlan.isconnected() and timeout > 0:
-            await uasyncio.sleep(1)
+            await asyncio.sleep(1)
             print(".", end="")
             timeout -= 1
 
         if wlan.isconnected():
-            print(f"\nConnected to WiFi! IP: {wlan.ifconfig()[0]}")
+            print(f"\n[Setup] Connected to WiFi! IP: {wlan.ifconfig()[0]}")
             return True
         else:
-            print("\nFailed to connect to WiFi.")
+            print("\n[Setup] Failed to connect to WiFi.")
             return False
+
+    def disconnect(self) -> None:
+        """
+        Disconnect from the current Wi-Fi network and deactivate the station interface.
+
+        :return: None
+        """
+        wlan = network.WLAN(network.STA_IF)
+        if wlan.isconnected():
+            wlan.disconnect()
+        wlan.active(False)
 
     @classmethod
     def create(cls) -> WiFi:
@@ -83,12 +93,12 @@ class WiFi:
 
         if wlan.isconnected():
             wlan.disconnect()
-            uasyncio.sleep_ms(200)
+            await asyncio.sleep(0.2)
 
         try:
             wlan.connect(ssid, password)
-        except Exception as e:  # noqa: BLE001
-            print(f"WiFi connect error: {e}")
+        except Exception as e:
+            print(f"[Setup] WiFi connect error: {e}")
             wlan.active(False)
             return False
 
@@ -102,7 +112,7 @@ class WiFi:
             if status in (1000, 1001, 1010, 201, 202):
                 break
 
-            await uasyncio.sleep_ms(500)
+            await asyncio.sleep(0.5)
 
         wlan.disconnect()
         wlan.active(False)

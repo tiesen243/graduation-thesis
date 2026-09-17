@@ -1,4 +1,4 @@
-import uasyncio
+import asyncio
 
 from lib.api import Api
 from lib.config import Config
@@ -9,18 +9,18 @@ from lib.utils import get_current_time
 class SyncSchedule:
     __instance: SyncSchedule | None = None
 
-    api: Api
-    schedule: Schedule
-    sync_time: str
+    _api: Api
+    _schedule: Schedule
+    _sync_time: str
 
     def __init__(self) -> None:
         config = Config.create()
-        self.sync_time = config.get("sync_time", "04:00:00")
+        self._sync_time = config.get("sync_time", "04:00:00")
 
-        self.api = Api.create()
-        self.schedule = Schedule.create()
+        self._api = Api.create()
+        self._schedule = Schedule.create()
 
-    async def sync(self):
+    async def execute(self):
         """
         Fetch today's schedule from the server using the current system date and persist it locally.
 
@@ -34,13 +34,13 @@ class SyncSchedule:
         today = get_current_time()
         today = f"{today[0]:04d}-{today[1]:02d}-{today[2]:02d}"
 
-        resp = await self.api.get("/api/schedules/today", params={"date": today})
-        is_saved = self.schedule.save_schedules(resp.get("data", []))
+        resp = await self._api.get("/api/schedules/today", params={"date": today})
+        is_saved = self._schedule.save_schedules(resp.get("data", []))
 
         if is_saved:
-            print(f"Schedules for {today} synced successfully.")
+            print(f"[SyncSchedule] Schedules for {today} synced successfully.")
         else:
-            print(f"Failed to save schedules for {today}.")
+            print(f"[SyncSchedule] Failed to save schedules for {today}.")
 
     async def start(self) -> None:
         """
@@ -49,11 +49,11 @@ class SyncSchedule:
         :return: None
         """
         print(
-            "[STARTUP] SyncSchedule task initiated...\n", {"sync_time": self.sync_time}
+            "[Startup] SyncSchedule task initiated...", {"sync_time": self._sync_time}
         )
         last_synced_date = None
 
-        sync_hour, sync_minute = map(int, self.sync_time.split(":"))
+        sync_hour, sync_minute = map(int, self._sync_time.split(":"))
 
         while True:
             try:
@@ -63,15 +63,15 @@ class SyncSchedule:
 
                 if current_hour >= sync_hour and last_synced_date != today_str:
                     print(
-                        f"[{today_str}] It's past {sync_hour}:{sync_minute}. Starting daily schedule sync..."
+                        f"[SyncSchedule] It's past {sync_hour}:{sync_minute}. Starting daily schedule sync..."
                     )
-                    await self.sync()
+                    await self.execute()
                     last_synced_date = today_str
 
-            except Exception as e:  # noqa: BLE001
-                print(f"Error in schedule monitor loop: {e}")
+            except Exception as e:
+                print(f"[SyncSchedule] Error: {e}")
 
-            await uasyncio.sleep(1800)
+            await asyncio.sleep(1800)
 
     @classmethod
     def create(cls):

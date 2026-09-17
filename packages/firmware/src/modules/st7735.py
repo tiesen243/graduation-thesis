@@ -574,11 +574,11 @@ class ST7735:
         :return: None
         """
         self.rs.value(1)
-        time.sleep_ms(50)
+        time.sleep(0.05)
         self.rs.value(0)
-        time.sleep_ms(50)
+        time.sleep(0.05)
         self.rs.value(1)
-        time.sleep_ms(150)
+        time.sleep(0.15)
 
     def _set_window_point(self, pos: tuple[int, int]) -> None:
         """
@@ -655,10 +655,10 @@ class ST7735:
         self._reset()
 
         self._cmd(ST7735.SWRESET)
-        time.sleep_ms(150)
+        time.sleep(0.15)
 
         self._cmd(ST7735.SLPOUT)
-        time.sleep_ms(200)
+        time.sleep(0.20)
 
         self._cmd(ST7735.FRMCTR1)
         self._data(bytearray([0x01, 0x2C, 0x2D]))
@@ -698,10 +698,10 @@ class ST7735:
         self._data(bytearray([0x05]))
 
         self._cmd(ST7735.NORON)
-        time.sleep_ms(10)
+        time.sleep(0.01)
 
         self._cmd(ST7735.DISPON)
-        time.sleep_ms(100)
+        time.sleep(0.1)
 
         self.cs.value(1)
 
@@ -772,198 +772,3 @@ class ST7735:
     PURPLE = rgb(0xFF, 0x00, 0xFF)
     WHITE = rgb(0xFF, 0xFF, 0xFF)
     GRAY = rgb(0x80, 0x80, 0x80)
-
-
-def rgb(r: int, g: int, b: int, invert: bool = False) -> int:
-    if invert:
-        return ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3)
-    else:
-        return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
-
-
-if __name__ == "__main__":
-    import framebuf
-
-    tft = ST7735.create()
-    tft.init()
-
-    width, height = tft.size()
-
-    buf = bytearray(width * height * 2)
-    fb = framebuf.FrameBuffer(buf, width, height, framebuf.RGB565)
-
-    lyrics = [
-        "Den thieng vong tieng",
-        "trong bi ai Hao",
-        "quang nua kiep van",
-        "con dai Nguoi quy",
-        "lay giua troi trang",
-        "khoi Khan xin dung",
-        "khi tu trong noi",
-        "Thien loi nghen tieng",
-        "goi Na Tra Than",
-        "dong hoa luyen tinh",
-        "hoa su Mot tay",
-        "doi nui tay dep",
-        "troi Mau xuong tra",
-        "nghia tu mua roi",
-        "Loc xuong con tra",
-        "cha Loc thit con",
-        "tra me Van vat",
-        "roi se no hoa",
-        "Hoa tro cung che",
-        "cho me Bien tan",
-        "cung se do cha",
-        "Cau troi cho tieng",
-        "tho nhe Me oi",
-        "Hom nay hoa sen",
-        "lai no Nen con",
-        "ve nha roi me",
-        "oi Vai cau sinh",
-        "ra oan hon Bao",
-        "to cua nguoi doi",
-        "me oi Ho noi",
-        "la con nghich tu",
-        "Chang ai dam ngo",
-        "Cha dau long me",
-        "khoc do vanh mi",
-        "Than Phat Quy deu",
-        "so May de lam",
-        "chi Ngay ma con",
-        "hoi sinh tu tro",
-        "tan Doi day khon",
-        "dung tin vao ai",
-        "Ban tay dung to",
-        "tran Boi long tham",
-        "chang mua duoc dau",
-        "Du co la cho",
-        "vang Ta danh thang",
-        "thien ha thi de",
-        "Thang duoc chinh minh",
-        "moi la nhat duoc",
-        "kho tang Xin cui",
-        "lay mot bua com",
-        "Mot bua com bat",
-        "that day Xin cui",
-        "lay mot cai om",
-        "Ngoi voi cha voi",
-        "me va Xin cui",
-        "lay troi non cao",
-        "Tieng ai than ai",
-        "gao Thi sao Ta",
-        "ta la ta dau",
-        "duong xa Dau ngay",
-        "mai co phai la",
-        "ma Ta cung qua",
-        "ta chang tha Nhung",
-        "nguoi dam dung truoc",
-        "mat ta Khong ca",
-        "sa khong can hoa",
-        "Khong con buong tieng",
-        "ca Coi ta ba",
-        "coi ta ba Day",
-        "phong hoa luan tay",
-        "hoa thuong Day cang",
-        "khon quan quanh troi",
-        "may Ta la cay",
-        "ta la suong Ta",
-        "niem sai tat ca",
-        "cuong quay Dat troi",
-        "xoay im mieng ngay",
-        "Ta con dung o",
-        "day nay Quy xuong",
-        "Ai cho phep nguoi",
-        "Lam kho tam gia",
-        "dinh ta Quy xuong",
-        "Cong nap het tien",
-        "tai Vat chat loi",
-        "danh lai day Quy",
-        "xuong Uoc tu tam",
-        "Ta se ban chut",
-        "tien phung dieu Vac",
-        "cai xac pham tran",
-        "Ta se ca luoi",
-        "xao tra Suot doi",
-        "phai chiu Troi long",
-        "gio Phai chang con",
-        "ve khong do Mat",
-        "moi thuong nhin con",
-        "nho Du la hoa",
-        "tro Ta tai gioi",
-        "kieu ngao Ta di",
-        "khap bon be Co",
-        "duoc tat ca Nhung",
-        "lai khien cho cha",
-        "me buon tui Trung",
-        "sinh lan nay Bien",
-        "troi co lon cung",
-        "thanh lua Ta ta",
-        "la ta dau duong",
-        "xa Dau ngay mai",
-        "co phai la ma",
-        "Ta cung qua ta",
-        "chang tha Nhung nguoi",
-        "dam dung truoc mat",
-        "ta Khong ca sa",
-        "khong can hoa Khong",
-        "con buong tieng ca",
-        "Coi ta ba coi",
-        "ta ba Day phong",
-        "hoa luan tay hoa",
-        "thuong Day cang khon",
-        "quan quanh troi may",
-        "Ta la cay ta",
-        "la suong Ta niem",
-        "sai tat ca cuong",
-        "quay Dat troi xoay",
-        "im mieng ngay Ta",
-        "con dung o ngay",
-        "day Den thieng vong",
-        "tieng trong bi ai",
-        "Hao quang nua kiep",
-        "van con dai Nguoi",
-        "quy lay giua troi",
-        "trang khoi Khan xin",
-        "dung khi tu trong",
-        "noi Thien loi nghen",
-        "tieng goi Na Tra",
-        "Than dong hoa luyen",
-        "tinh hoa su Mot",
-        "tay doi nui tay",
-        "dep troi Mau xuong",
-        "tra nghia tu mua",
-        "roi",
-    ]
-
-    char_width = 8
-    line_height = 10
-
-    total_lines = len(lyrics)
-    total_text_height = total_lines * line_height
-
-    # Dùng invert=True cho framebuf để chuẩn màu RGB565
-    text_color = rgb(0xFF, 0xFF, 0xFF, invert=True)
-    bg_color = rgb(0x00, 0x00, 0x00, invert=True)
-
-    while True:
-        for offset in range(height, -total_text_height - 20, -1):
-            # 1. Xóa sạch bộ đệm khung hình
-            fb.fill(bg_color)
-
-            # 2. Vẽ toàn bộ các dòng chữ vào bộ đệm RAM
-            for i, line in enumerate(lyrics):
-                current_y = offset + (i * line_height)
-
-                if -line_height < current_y < height:
-                    text_width = len(line) * char_width
-                    x_pos = max(0, (width - text_width) // 2)
-
-                    # fb.text() vẽ cả chuỗi một lần, cực nhanh!
-                    fb.text(line, x_pos, current_y, text_color)
-
-            # 3. Đẩy toàn bộ buffer ra màn hình một phát duy nhất -> Hết giật!
-            tft.image(0, 0, width - 1, height - 1, buf)
-
-            time.sleep(0.015)
-
-        time.sleep(2)

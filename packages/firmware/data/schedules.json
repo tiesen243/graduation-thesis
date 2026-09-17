@@ -1,14 +1,29 @@
 [
   {
-    "id": "",
-    "deviceId": "",
-    "date": "",
-    "time": "",
+    "time": "HH:MM:SS",
     "status": "pending",
+    "userId": "YOUR_USER_ID",
+    "id": "YOUR_SCHEDULE_ID",
+    "date": "YYYY-MM-DD",
+    "device": {
+      "id": "YOUR_DEVICE_ID",
+      "position": "Example Location",
+      "name": "Example Device"
+    },
     "items": [
       {
-        "slot": "0-0",
-        "quantity": 1
+        "dosage": 36,
+        "isRequired": true,
+        "medicine": "Example Medication",
+        "quantity": 2,
+        "slot": "0-0"
+      },
+      {
+        "dosage": 67,
+        "isRequired": false,
+        "medicine": "Example Medication",
+        "quantity": 1,
+        "slot": "0-1"
       }
     ]
   }

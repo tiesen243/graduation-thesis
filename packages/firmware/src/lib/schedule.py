@@ -1,4 +1,4 @@
-import ujson
+import json
 
 from lib.api import Api
 
@@ -7,12 +7,12 @@ class Schedule:
     __instance: Schedule | None = None
 
     _schedules: list[dict]
-    api: Api
+    _api: Api
 
     def __init__(self, file_path: str) -> None:
-        self.path = file_path
+        self._path = file_path
         self._schedules = []
-        self.api = Api.create()
+        self._api = Api.create()
 
     def load_schedules(self) -> bool:
         """
@@ -21,16 +21,16 @@ class Schedule:
         :return: True if load was successful, False otherwise.
         """
         try:
-            with open(self.path, "r") as f:
-                data = ujson.load(f)
+            with open(self._path, "r") as f:
+                data = json.load(f)
                 if isinstance(data, list):
                     self._schedules = data
                     return True
                 else:
-                    print(f"Data in {self.path} is not a list.")
+                    print(f"Data in {self._path} is not a list.")
                     return False
-        except Exception as e:  # noqa: BLE001
-            print(f"Error loading schedules from {self.path}: {e}")
+        except Exception as e:
+            print(f"Error loading schedules from {self._path}: {e}")
             return False
 
     def get_schedules(self) -> list[dict]:
@@ -39,6 +39,8 @@ class Schedule:
 
         :return: List of schedule dictionaries.
         """
+        if not self._schedules or len(self._schedules) == 0:
+            _ = self.load_schedules()
         return self._schedules
 
     async def update_status(self, schedule_id: str, new_status: str) -> bool:
@@ -49,17 +51,20 @@ class Schedule:
         :param new_status: The new status to set for the schedule.
         :return: True if update was successful, False otherwise.
         """
+        update_success = False
+
         for schedule in self._schedules:
             if schedule.get("id") == schedule_id:
                 schedule["status"] = new_status
-                return self.save_schedules()
+                update_success = self.save_schedules()
+                break
 
-        _ = await self.api.post(
-            f"/api/shedules/{schedule_id}/update-status", data={"status": new_status}
+        _ = await self._api.post(
+            f"/api/schedules/{schedule_id}/update-status",
+            data={"status": new_status},
         )
 
-        print(f"Schedule with ID {schedule_id} not found.")
-        return False
+        return update_success
 
     def save_schedules(self, schedules: list[dict] | None = None) -> bool:
         """
@@ -72,11 +77,11 @@ class Schedule:
             self._schedules = schedules
 
         try:
-            with open(self.path, "w") as f:
-                ujson.dump(self._schedules, f)
+            with open(self._path, "w") as f:
+                json.dump(self._schedules, f)
             return True
-        except Exception as e:  # noqa: BLE001
-            print(f"Error saving schedules to {self.path}: {e}")
+        except Exception as e:
+            print(f"Error saving schedules to {self._path}: {e}")
             return False
 
     @classmethod
