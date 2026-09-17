@@ -11,7 +11,7 @@ import {
 } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { Typography } from '@rozumari/ui/components/typography'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 import {
@@ -52,6 +52,7 @@ export default function TabsPillBoxesIndexScreen() {
     ...(user?.role === 'admin'
       ? api.device.list.queryOptions({ query: queryParams })
       : api.device.me.queryOptions({ query: queryParams })),
+    placeholderData: keepPreviousData,
     enabled: !!user,
   })
 

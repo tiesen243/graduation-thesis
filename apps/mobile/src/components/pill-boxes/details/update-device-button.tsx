@@ -11,7 +11,7 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
-import { Modal, TouchableWithoutFeedback, View } from 'react-native'
+import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -63,62 +63,60 @@ export function UpdateDeviceButton({
       </Button>
 
       <Modal
-        visible={isOpen}
         animationType='fade'
+        visible={isOpen}
         onRequestClose={() => setIsOpen(false)}
         transparent
       >
         <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
           <View className='flex-1 justify-center bg-black/50 p-4'>
-            <TouchableWithoutFeedback>
-              <updateDeviceForm.Provider defaultValues={device}>
-                <View className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
-                  <Typography className='text-lg font-semibold'>
-                    Update Device
-                  </Typography>
-                  <Typography className='-mt-4 text-sm text-muted-foreground'>
-                    Update the device name and position.
-                  </Typography>
+            <updateDeviceForm.Provider defaultValues={device}>
+              <Pressable className='w-full gap-4 rounded-lg border border-border bg-popover p-4'>
+                <Typography className='text-lg font-semibold'>
+                  Update Device
+                </Typography>
+                <Typography className='-mt-4 text-sm text-muted-foreground'>
+                  Update the device name and position.
+                </Typography>
 
-                  <updateDeviceForm.Field
-                    name='name'
-                    render={({ field, meta, helpers: { handleChange } }) => (
-                      <Field>
-                        <FieldLabel>Device Name</FieldLabel>
-                        <Input
-                          {...field}
-                          value={field.value ?? ''}
-                          placeholder='Enter device name'
-                          onChangeText={handleChange}
-                        />
-                        <FieldError errors={meta.errors} />
-                      </Field>
-                    )}
-                  />
+                <updateDeviceForm.Field
+                  name='name'
+                  render={({ field, meta, helpers: { handleChange } }) => (
+                    <Field>
+                      <FieldLabel>Device Name</FieldLabel>
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        placeholder='Enter device name'
+                        onChangeText={handleChange}
+                      />
+                      <FieldError errors={meta.errors} />
+                    </Field>
+                  )}
+                />
 
-                  <updateDeviceForm.Field
-                    name='position'
-                    render={({ field, meta, helpers: { handleChange } }) => (
-                      <Field>
-                        <FieldLabel>Position</FieldLabel>
-                        <Input
-                          {...field}
-                          value={field.value ?? ''}
-                          placeholder='Enter position'
-                          onChangeText={handleChange}
-                        />
+                <updateDeviceForm.Field
+                  name='position'
+                  render={({ field, meta, helpers: { handleChange } }) => (
+                    <Field>
+                      <FieldLabel>Position</FieldLabel>
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        placeholder='Enter position'
+                        onChangeText={handleChange}
+                      />
 
-                        <FieldError errors={meta.errors} />
-                      </Field>
-                    )}
-                  />
+                      <FieldError errors={meta.errors} />
+                    </Field>
+                  )}
+                />
 
-                  <Field>
-                    <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
-                  </Field>
-                </View>
-              </updateDeviceForm.Provider>
-            </TouchableWithoutFeedback>
+                <Field>
+                  <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
+                </Field>
+              </Pressable>
+            </updateDeviceForm.Provider>
           </View>
         </TouchableWithoutFeedback>
       </Modal>

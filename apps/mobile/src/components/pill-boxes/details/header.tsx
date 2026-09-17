@@ -13,6 +13,7 @@ import {
   MapPinIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import React from 'react'
 import { View } from 'react-native'
 
@@ -66,7 +67,7 @@ export function PillBoxDetailsHeader({
           </Typography>
           <Typography className='text-sm'>
             {device.activatedAt
-              ? new Date(device.activatedAt).toLocaleDateString('en-US')
+              ? formatDate(device.activatedAt, 'dd/MM/yyyy')
               : 'N/A'}
           </Typography>
         </View>
