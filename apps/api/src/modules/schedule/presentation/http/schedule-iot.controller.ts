@@ -1,12 +1,11 @@
 import { Api } from '@rozumari/contract'
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
-import { UpdateScheduleDto } from '@rozumari/contract/schedule/dto/update-schedule.dto'
 import * as Effect from 'effect/Effect'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { ListSchedulesUseCase } from '@/modules/schedule/application/use-case/list-schedules.use-case'
-import { UpdateScheduleUseCase } from '@/modules/schedule/application/use-case/update-schedule.use-case'
+import { UpdateScheduleStatusUseCase } from '@/modules/schedule/application/use-case/update-schedule-status.use-case'
 
 export const scheduleIoTController = HttpApiBuilder.group(
   Api,
@@ -19,13 +18,12 @@ export const scheduleIoTController = HttpApiBuilder.group(
             ListSchedulesUseCase.use((s) => {
               let today = query.date
 
-              if (!today) {
-                const d = new Date()
-                const year = d.getFullYear()
-                const month = String(d.getMonth() + 1).padStart(2, '0')
-                const day = String(d.getDate()).padStart(2, '0')
-                today = `${year}-${month}-${day}`
-              }
+              if (!today)
+                today = Intl.DateTimeFormat('en-CA', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                }).format(new Date())
 
               return s.execute({ deviceId, startDate: today, endDate: today })
             })
@@ -35,8 +33,8 @@ export const scheduleIoTController = HttpApiBuilder.group(
       )
 
       .handle('update-status', ({ params, payload }) =>
-        UpdateScheduleUseCase.use((s) =>
-          s.execute({ id: params.id, status: payload.status, items: [] })
-        ).pipe(Effect.map((data) => new UpdateScheduleDto({ data })))
+        UpdateScheduleStatusUseCase.use((s) =>
+          s.execute({ id: params.id, status: payload.status })
+        )
       )
 )

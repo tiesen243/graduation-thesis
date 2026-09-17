@@ -3,6 +3,7 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { DeviceMiddleware } from '@/device/middleware'
+import { DeviceNotFound } from '@/device/schemas/device.error'
 import { ListSchedulesDto } from '@/schedule/dto/list-schedules.dto'
 import { UpdateScheduleDto } from '@/schedule/dto/update-schedule.dto'
 import {
@@ -26,8 +27,7 @@ export class ScheduleIoTGroup extends HttpApiGroup.make('schedule-iot')
       payload: Schema.Struct({
         status: UpdateScheduleDto.Input.fields.status,
       }),
-      success: UpdateScheduleDto,
-      error: [ScheduleNotFound, ScheduleInvalid],
+      error: [ScheduleNotFound, ScheduleInvalid, DeviceNotFound],
     })
   )
 

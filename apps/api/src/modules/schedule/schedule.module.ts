@@ -7,6 +7,7 @@ import type { StreamService } from '@/shared/application/services/stream.service
 import { CreateScheduleUseCase } from '@/modules/schedule/application/use-case/create-schedule.use-case'
 import { ListSchedulesUseCase } from '@/modules/schedule/application/use-case/list-schedules.use-case'
 import { ShowScheduleUseCase } from '@/modules/schedule/application/use-case/show-schedule.use-case'
+import { UpdateScheduleStatusUseCase } from '@/modules/schedule/application/use-case/update-schedule-status.use-case'
 import { UpdateScheduleUseCase } from '@/modules/schedule/application/use-case/update-schedule.use-case'
 import { ScheduleInfrastructureModule } from '@/modules/schedule/infrastructure/infrastructure.module'
 import { scheduleIoTController } from '@/modules/schedule/presentation/http/schedule-iot.controller'
@@ -25,6 +26,7 @@ export class ScheduleModule {
       CreateScheduleUseCase.layer,
       ListSchedulesUseCase.layer,
       ShowScheduleUseCase.layer,
+      UpdateScheduleStatusUseCase.layer,
       UpdateScheduleUseCase.layer
     )
 

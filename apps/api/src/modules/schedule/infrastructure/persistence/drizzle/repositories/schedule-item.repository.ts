@@ -41,7 +41,6 @@ export const DrizzleScheduleItemRepository = Layer.effect(
         }
 
         const row = DrizzleScheduleItemMapper.toRow(entity)
-
         return yield* db
           .insert(scheduleItems)
           .values(row)
