@@ -34,6 +34,7 @@ export const DrizzleScheduleRepository = Layer.effect(
       date: schedules.date,
       time: schedules.time,
       status: schedules.status,
+      userId: schedules.userId,
       device: {
         id: devices.id,
         name: devices.name,

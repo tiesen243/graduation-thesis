@@ -31,6 +31,19 @@ export const DeviceServiceLayer = Layer.effect(
           return yield* Effect.fail(new DeviceNotFound({ error: { id } }))
         return compartments
       }),
+
+      updateCompartments: Effect.fn(
+        function* updateCompartments(id, compartments) {
+          const [device] = yield* deviceRepository.findMany({
+            where: { id: { eq: id } },
+            limit: 1,
+          })
+          if (!device)
+            return yield* Effect.fail(new DeviceNotFound({ error: { id } }))
+
+          yield* compartmentRepository.save(compartments)
+        }
+      ),
     }
   })
 )

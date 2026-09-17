@@ -1,3 +1,5 @@
+// oxlint-disable react/refs
+
 import { CheckIcon, ChevronDownIcon } from 'lucide-uniwind'
 import * as React from 'react'
 import {
@@ -51,7 +53,6 @@ function Select<TMultiple extends boolean = false>({
   multiple,
 }: SelectProps<TMultiple>) {
   const [open, setOpen] = React.useState(false)
-  // Quản lý internal state cho trường hợp Uncontrolled
   const [uncontrolledValue, setUncontrolledValue] = React.useState<
     (TMultiple extends true ? string[] : string) | undefined
   >(defaultValue)
@@ -59,7 +60,6 @@ function Select<TMultiple extends boolean = false>({
   const isControlled = valueProp !== undefined
   const currentValue = isControlled ? valueProp : uncontrolledValue
 
-  // oxlint-disable-next-line react/refs
   const translateY = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current
 
   const handleValueChange = React.useCallback(
@@ -82,7 +82,6 @@ function Select<TMultiple extends boolean = false>({
     [open, setOpen, translateY, currentValue, handleValueChange, multiple]
   ) as never
 
-  // oxlint-disable-next-line react/refs
   return <SelectContext value={memoizedValue}>{children}</SelectContext>
 }
 
@@ -202,9 +201,9 @@ function SelectContent({
     <Modal
       data-slot='select-content'
       animationType='fade'
-      transparent
       visible={open}
       onRequestClose={handleClose}
+      transparent
       {...props}
     >
       <TouchableWithoutFeedback onPress={handleClose}>

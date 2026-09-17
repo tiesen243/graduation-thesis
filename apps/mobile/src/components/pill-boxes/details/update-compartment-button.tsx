@@ -10,7 +10,7 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
-import { Modal, TouchableWithoutFeedback, View } from 'react-native'
+import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import type { Compartment } from '@/components/pill-boxes/details/compartment-card'
 
@@ -93,7 +93,7 @@ function DeleteCompartmentFormSubmit({
       onPress={() => handleSubmit()}
       disabled={isPending}
     >
-      {isPending ? 'Deleting...' : 'Delete Compartment'}
+      {isPending ? 'Deleting...' : 'Delete'}
     </Button>
   )
 }
@@ -121,91 +121,89 @@ export function UpdateCompartmentButton({
       >
         <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
           <View className='flex-1 justify-center bg-black/50 p-4'>
-            <TouchableWithoutFeedback>
-              <updateCompartmentForm.Provider
-                defaultValues={{
-                  ...compartment,
-                  medicine: compartment.medicine ?? '',
-                }}
-              >
-                <View className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
-                  <Typography className='text-lg font-semibold'>
-                    Update Compartment {compartment.position}
-                  </Typography>
-                  <Typography className='-mt-4 text-sm text-muted-foreground'>
-                    Fill in the details of the medicine you want to add to this
-                    compartment.
-                  </Typography>
+            <updateCompartmentForm.Provider
+              defaultValues={{
+                ...compartment,
+                medicine: compartment.medicine ?? '',
+              }}
+            >
+              <Pressable className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
+                <Typography className='text-lg font-semibold'>
+                  Update Compartment {compartment.position}
+                </Typography>
+                <Typography className='-mt-4 text-sm text-muted-foreground'>
+                  Fill in the details of the medicine you want to add to this
+                  compartment.
+                </Typography>
 
-                  <updateCompartmentForm.Field
-                    name='medicine'
-                    render={({ field, meta, helpers: { handleChange } }) => (
-                      <Field>
-                        <FieldLabel>Medicine</FieldLabel>
-                        <Input
-                          {...field}
-                          placeholder='Enter medicine name'
-                          onChangeText={handleChange}
-                        />
-                        <FieldError errors={meta.errors} />
-                      </Field>
-                    )}
-                  />
-
-                  <updateCompartmentForm.Field
-                    name='dosage'
-                    render={({ field, meta, helpers: { handleChange } }) => (
-                      <Field>
-                        <FieldLabel>Dosage</FieldLabel>
-                        <Input
-                          {...field}
-                          placeholder='Enter dosage'
-                          keyboardType='numeric'
-                          value={field.value.toString()}
-                          onChangeText={(text) =>
-                            handleChange(Math.trunc(Number(text)))
-                          }
-                        />
-
-                        <FieldError errors={meta.errors} />
-                      </Field>
-                    )}
-                  />
-
-                  <updateCompartmentForm.Field
-                    name='capacity'
-                    render={({ field, meta, helpers: { handleChange } }) => (
-                      <Field>
-                        <FieldLabel>Capacity</FieldLabel>
-                        <Input
-                          {...field}
-                          placeholder='Enter capacity'
-                          keyboardType='numeric'
-                          value={field.value.toString()}
-                          onChangeText={(text) =>
-                            handleChange(Math.trunc(Number(text)))
-                          }
-                        />
-                        <FieldError errors={meta.errors} />
-                      </Field>
-                    )}
-                  />
-
-                  <Field orientation='horizontal' className='justify-end'>
-                    {!hideDelete && (
-                      <DeleteCompartmentFormSubmit
-                        position={compartment.position}
-                        setIsOpen={setIsOpen}
+                <updateCompartmentForm.Field
+                  name='medicine'
+                  render={({ field, meta, helpers: { handleChange } }) => (
+                    <Field>
+                      <FieldLabel>Medicine</FieldLabel>
+                      <Input
+                        {...field}
+                        placeholder='Enter medicine name'
+                        onChangeText={handleChange}
                       />
-                    )}
-                    <SaveCompartmentFormSubmit
+                      <FieldError errors={meta.errors} />
+                    </Field>
+                  )}
+                />
+
+                <updateCompartmentForm.Field
+                  name='dosage'
+                  render={({ field, meta, helpers: { handleChange } }) => (
+                    <Field>
+                      <FieldLabel>Dosage</FieldLabel>
+                      <Input
+                        {...field}
+                        placeholder='Enter dosage'
+                        keyboardType='numeric'
+                        value={field.value.toString()}
+                        onChangeText={(text) =>
+                          handleChange(Math.trunc(Number(text)))
+                        }
+                      />
+
+                      <FieldError errors={meta.errors} />
+                    </Field>
+                  )}
+                />
+
+                <updateCompartmentForm.Field
+                  name='capacity'
+                  render={({ field, meta, helpers: { handleChange } }) => (
+                    <Field>
+                      <FieldLabel>Capacity</FieldLabel>
+                      <Input
+                        {...field}
+                        placeholder='Enter capacity'
+                        keyboardType='numeric'
+                        value={field.value.toString()}
+                        onChangeText={(text) =>
+                          handleChange(Math.trunc(Number(text)))
+                        }
+                      />
+                      <FieldError errors={meta.errors} />
+                    </Field>
+                  )}
+                />
+
+                <Field orientation='horizontal' className='justify-end'>
+                  {!hideDelete && (
+                    <DeleteCompartmentFormSubmit
                       position={compartment.position}
                       setIsOpen={setIsOpen}
                     />
-                  </Field>
-                </View>
-              </updateCompartmentForm.Provider>
-            </TouchableWithoutFeedback>
+                  )}
+                  <SaveCompartmentFormSubmit
+                    position={compartment.position}
+                    setIsOpen={setIsOpen}
+                  />
+                </Field>
+              </Pressable>
+            </updateCompartmentForm.Provider>
           </View>
         </TouchableWithoutFeedback>
       </Modal>

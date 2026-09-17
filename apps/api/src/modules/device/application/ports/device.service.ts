@@ -11,8 +11,14 @@ export class DeviceService extends Context.Service<
   DeviceService,
   {
     readonly find: (id: DeviceId) => Effect<Device, DeviceNotFound>
+
     readonly findCompartments: (
       id: DeviceId
     ) => Effect<Compartment[], DeviceNotFound>
+
+    readonly updateCompartments: (
+      id: DeviceId,
+      compartments: Compartment[]
+    ) => Effect<void, DeviceNotFound>
   }
 >()('device/application/DeviceService') {}
