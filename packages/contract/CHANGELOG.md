@@ -1,3 +1,9 @@
+## @rozumari/contract@0.0.17
+
+### Patchs
+
+- added get device info in iot route
+
 ## @rozumari/contract@0.0.16
 
 ### Patches

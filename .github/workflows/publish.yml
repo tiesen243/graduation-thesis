@@ -59,7 +59,7 @@ jobs:
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
           echo "APP_VERSION=${VERSION}" >> $GITHUB_ENV
 
-      - name: Build APK & IPA on EAS Cloud
+      - name: Build APK
         working-directory: ./apps/mobile
         env:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
@@ -73,7 +73,7 @@ jobs:
             --non-interactive \
             --local
 
-      - name: Upload Build Artifacts to Existing GitHub Release
+      - name: Upload Build Artifacts to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
