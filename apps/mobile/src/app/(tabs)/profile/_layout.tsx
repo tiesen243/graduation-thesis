@@ -1,6 +1,7 @@
 import { Button } from '@rozumari/ui/components/button'
 import { SettingsIcon } from '@rozumari/ui/components/icons'
 import { Stack, useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 
 import { useOptions } from '@/hooks/use-options'
 
@@ -8,12 +9,14 @@ export default function TabsProfileLayout() {
   const screenOptions = useOptions()
   const router = useRouter()
 
+  const { t } = useTranslation(['profile'])
+
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen
         name='index'
         options={{
-          title: 'Profile',
+          title: t('title'),
           headerRight: () => (
             <Button
               variant='ghost'

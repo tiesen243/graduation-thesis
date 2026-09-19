@@ -1,5 +1,7 @@
 import '@/globals.css'
 
+import '@/lib/i18n'
+
 import { createQueryClient } from '@rozumari/lib/create-query-client'
 import { ToasterProvider } from '@rozumari/ui/components/toast'
 import { QueryClientProvider } from '@tanstack/react-query'

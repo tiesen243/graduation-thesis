@@ -1,13 +1,10 @@
 import type { ShowUserDto } from '@rozumari/contract/user/dto/show-user.dto'
 import type { UpdateUserDto } from '@rozumari/contract/user/dto/update-user.dto'
+import type { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
 
 import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
-import type {
-  UserAlreadyDeleted} from '@rozumari/contract/user/schemas/user.error';
-import {
-  UserNotFound,
-} from '@rozumari/contract/user/schemas/user.error'
+import { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
