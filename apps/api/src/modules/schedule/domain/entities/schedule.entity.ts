@@ -11,11 +11,4 @@ export class Schedule extends Schema.TaggedClass<Schedule>()(
       Schema.withConstructorDefault(Effect.sync(createId))
     ),
   }
-) {
-  public update(props: Partial<Pick<Schedule, 'date' | 'time' | 'status'>>) {
-    return Schedule.make({
-      ...structuredClone(this),
-      ...props,
-    })
-  }
-}
+) {}

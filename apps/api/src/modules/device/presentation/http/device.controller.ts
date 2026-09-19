@@ -54,10 +54,7 @@ export const deviceController = HttpApiBuilder.group(
       )
 
       .handle('link', ({ payload }) =>
-        CurrentUser.pipe(
-          Effect.flatMap(({ userId }) =>
-            LinkDeviceUseCase.use((s) => s.execute({ ...payload, userId }))
-          ),
+        LinkDeviceUseCase.use((s) => s.execute(payload)).pipe(
           Effect.map((data) => new LinkDeviceDto({ data }))
         )
       )

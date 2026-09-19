@@ -1,3 +1,5 @@
+// oxlint-disable unicorn/no-array-for-each
+
 import type { AddDeviceDto } from '@rozumari/contract/device/dto/add-device.dto'
 import type { DeviceAlreadyExists } from '@rozumari/contract/device/schemas/device.error'
 
@@ -27,21 +29,27 @@ export class AddDeviceUseCase extends Context.Service<
       execute: Effect.fn(function* execute(input) {
         const { amount, size } = input
 
-        // oxlint-disable-next-line unicorn/no-array-for-each
-        return yield* Effect.forEach(
+        const devices = yield* Effect.forEach(
           Array.from({ length: amount }),
-          Effect.fn(function* txLoop() {
+          Effect.fn(function* generateDevice() {
             const factoryModel = yield* Device.generateFactoryModel
-            const device = Device.make({ factoryModel })
-            yield* deviceRepository.save(device)
-
-            const compartments = yield* Compartment.makeRange(device.id, size)
-            yield* compartmentRepository.save(compartments)
-
-            return { id: device.id, factoryModel }
+            return Device.make({ factoryModel })
           }),
           { concurrency: 1 }
-        ).pipe(withTransaction)
+        )
+
+        const compartments = yield* Effect.forEach(
+          devices,
+          (device) => Compartment.makeRange(device.id, size),
+          { concurrency: 'unbounded' }
+        ).pipe(Effect.map((ranges) => ranges.flat()))
+
+        yield* Effect.gen(function* saveDevicesAndCompartments() {
+          yield* deviceRepository.save(devices)
+          yield* compartmentRepository.save(compartments)
+        }).pipe(withTransaction)
+
+        return devices
       }),
     }
   }),
