@@ -7,11 +7,9 @@ import {
 } from '@rozumari/ui/components/icons'
 import { Skeleton } from '@rozumari/ui/components/skeleton'
 import { Typography } from '@rozumari/ui/components/typography'
-import { cn } from '@rozumari/ui/lib/utils'
+import { cn, formatDate, formatDistanceDays } from '@rozumari/ui/lib/utils'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
-
-import { formatDate } from '@/lib/utils'
 
 export const LEVEL_METAS = {
   error: {
@@ -31,19 +29,19 @@ export const LEVEL_METAS = {
   },
 }
 
-function formatGroup(date: Date) {
-  const today = new Date()
-  if (date.toDateString() === today.toDateString()) return 'Today'
-  if (
-    date.toDateString() ===
-    new Date(today.getTime() - 86_400_000).toDateString()
-  )
-    return 'Yesterday'
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-  }).format(date)
-}
+// function formatGroup(date: Date) {
+//   const today = new Date()
+//   if (date.toDateString() === today.toDateString()) return 'Today'
+//   if (
+//     date.toDateString() ===
+//     new Date(today.getTime() - 86_400_000).toDateString()
+//   )
+//     return 'Yesterday'
+//   // return new Intl.DateTimeFormat('en-US', {
+//   //   month: 'long',
+//   //   day: 'numeric',
+//   // }).format(date)
+// }
 
 export const NotificationList: React.FC<{
   notifications: ListNotificationsDto[]
@@ -58,7 +56,7 @@ export const NotificationList: React.FC<{
       ListNotificationsDto.Output['notifications'][number][]
     > = {}
     for (const item of notificationList) {
-      const group = formatGroup(item.createdAt)
+      const group = formatDistanceDays(item.createdAt)
       if (!grouped[group]) grouped[group] = []
       grouped[group].push(item)
     }
@@ -124,7 +122,7 @@ export const NotificationList: React.FC<{
                   dateTime={item.createdAt.toISOString()}
                   className='absolute top-4 right-4 text-xs text-muted-foreground'
                 >
-                  {formatDate(item.createdAt)}
+                  {formatDate(item.createdAt, { mode: 'all' })}
                 </time>
               </div>
             </Link>

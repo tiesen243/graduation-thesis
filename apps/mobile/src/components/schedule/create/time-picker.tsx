@@ -49,7 +49,7 @@ export function CreateScheduleTimePicker() {
               onDismiss={() => setIsOpen(false)}
               onValueChange={(_, date) => {
                 if (!date) return setIsOpen(false)
-                handleChange(formatDate(date, 'HH:mm:ss'))
+                handleChange(formatDate(date, { mode: 'time' }))
                 setIsOpen(false)
               }}
               is24Hour

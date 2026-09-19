@@ -21,6 +21,7 @@ import {
 } from '@rozumari/ui/components/popover'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { api } from '@/lib/runtime'
@@ -38,14 +39,6 @@ const parseLocalDate = (dateStr?: string) => {
   if (!dateStr) return
   const [year = 0, month = 0, day = 0] = dateStr.split('-').map(Number)
   return new Date(year, month - 1, day)
-}
-
-const formatDateString = (date?: Date) => {
-  if (!date) return ''
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 function UpdateScheduleFormSubmit({
@@ -130,7 +123,7 @@ export default function ScheduleEditPage({ params }: Route.ComponentProps) {
                         mode='single'
                         selected={selectedDate}
                         onSelect={(date) =>
-                          handleChange(formatDateString(date))
+                          handleChange(formatDate(date ?? ''))
                         }
                         defaultMonth={selectedDate}
                       />

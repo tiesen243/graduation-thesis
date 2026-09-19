@@ -14,14 +14,9 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  View,
-} from 'react-native'
+import { FlatList, Pressable, RefreshControl, View } from 'react-native'
 
+import { ActivityIndicator } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 import { useSession } from '@/hooks/use-session'
 
@@ -100,7 +95,7 @@ export default function TabsPillBoxesIndexScreen() {
         ListEmptyComponent={
           isLoading ? (
             <View className='flex-1 items-center justify-center py-12'>
-              <ActivityIndicator size='large' colorClassName='accent-primary' />
+              <ActivityIndicator size='large' />
             </View>
           ) : (
             <View className='flex-1 items-center justify-center px-4 py-12'>

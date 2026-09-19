@@ -15,6 +15,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import { getBadgeVariant } from '@/app/(tabs)/pill-boxes'
@@ -23,6 +24,8 @@ import { UpdateDeviceButton } from '@/components/pill-boxes/details/update-devic
 export function PillBoxDetailsHeader({
   device,
 }: Readonly<{ device: ShowDeviceDto.Output }>) {
+  const { i18n } = useTranslation('pillBox')
+
   return (
     <Card className='mx-4'>
       <CardHeader className='flex-row items-center gap-2 border-b border-border pb-4'>
@@ -67,7 +70,9 @@ export function PillBoxDetailsHeader({
           </Typography>
           <Typography className='text-sm'>
             {device.activatedAt
-              ? formatDate(device.activatedAt, 'dd/MM/yyyy')
+              ? formatDate(device.activatedAt, {
+                  locale: i18n.resolvedLanguage,
+                })
               : 'N/A'}
           </Typography>
         </View>

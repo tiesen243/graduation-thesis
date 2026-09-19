@@ -1,3 +1,5 @@
+import type { ListNotificationsDto } from '@rozumari/contract/notification/dto/list-notifications.dto'
+
 import { Badge } from '@rozumari/ui/components/badge'
 import {
   CardDescription,
@@ -5,18 +7,16 @@ import {
   CardTitle,
 } from '@rozumari/ui/components/card'
 import { Typography } from '@rozumari/ui/components/typography'
-import { cn } from '@rozumari/ui/lib/utils'
+import { cn, formatDate, formatDistanceDays } from '@rozumari/ui/lib/utils'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useCallback, useMemo } from 'react'
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { SectionList, TouchableOpacity, View } from 'react-native'
 
+import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
+import { getTimezonedDate } from '@/lib/utils'
 
 const LEVEL_CONFIG = {
   info: { label: 'Info', variant: 'info' },
@@ -24,10 +24,17 @@ const LEVEL_CONFIG = {
   error: { label: 'Error', variant: 'destructive' },
 } as const
 
+type NotificationItem = ListNotificationsDto.Output['notifications'][number]
+
+interface NotificationSection {
+  title: string
+  data: NotificationItem[]
+}
+
 export default function TabsNotificationsIndexScreen() {
+  const { i18n } = useTranslation()
   const { api } = useRuntime()
   const router = useRouter()
-
   const queryClient = useQueryClient()
 
   const { data, isRefetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
@@ -42,10 +49,24 @@ export default function TabsNotificationsIndexScreen() {
       },
     })
 
-  const flattenDate = useMemo(
-    () => data?.pages.flatMap((page) => page.data.notifications) ?? [],
-    [data?.pages]
-  )
+  const sections = useMemo(() => {
+    const notifications =
+      data?.pages.flatMap((page) => page.data.notifications) ?? []
+
+    const groups: Record<string, NotificationItem[]> = {}
+
+    for (const notification of notifications) {
+      const groupTitle = formatDistanceDays(notification.createdAt, {
+        earlierDate: getTimezonedDate(),
+        locale: i18n.language,
+      })
+
+      if (!groups[groupTitle]) groups[groupTitle] = []
+      groups[groupTitle].push(notification)
+    }
+
+    return Object.entries(groups).map(([title, d]) => ({ title, data: d }))
+  }, [data?.pages, i18n.language])
 
   const handleRefresh = useCallback(async () => {
     await queryClient.invalidateQueries({
@@ -58,10 +79,18 @@ export default function TabsNotificationsIndexScreen() {
   }, [api.notification.unread, api.notification.list, queryClient])
 
   return (
-    <FlatList
-      data={flattenDate}
-      keyExtractor={(n) => n.id}
+    <SectionList<NotificationItem, NotificationSection>
+      sections={sections}
+      keyExtractor={(item) => item.id}
       contentContainerClassName='p-4 gap-4'
+      stickySectionHeadersEnabled={false}
+      renderSectionHeader={({ section: { title } }) => (
+        <View className='bg-background/95 backdrop-blur-md'>
+          <Typography className='text-sm font-semibold text-muted-foreground capitalize'>
+            {title}
+          </Typography>
+        </View>
+      )}
       renderItem={({ item }) => {
         const isUnread = !item.readAt
         const levelConfig =
@@ -71,7 +100,7 @@ export default function TabsNotificationsIndexScreen() {
           <TouchableOpacity
             data-slot='card'
             className={cn(
-              'group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 ring-1 ring-foreground/10',
+              'group/card mb-3 flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 ring-1 ring-foreground/10',
               isUnread ? 'bg-ring/20 ring-ring/40' : ''
             )}
             activeOpacity={0.8}
@@ -89,14 +118,7 @@ export default function TabsNotificationsIndexScreen() {
                 </Badge>
 
                 <CardDescription className='text-xs text-muted-foreground'>
-                  {Intl.DateTimeFormat('en', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    hour12: false,
-                  }).format(new Date(item.createdAt))}
+                  {formatDate(item.createdAt, { mode: 'time' })}
                 </CardDescription>
               </View>
 
@@ -107,23 +129,15 @@ export default function TabsNotificationsIndexScreen() {
           </TouchableOpacity>
         )
       }}
-
-      refreshing={isRefetching}
-      onRefresh={handleRefresh}
-
+      refreshControl={
+        <RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} />
+      }
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) fetchNextPage()
       }}
       onEndReachedThreshold={0.05}
-
       ListFooterComponent={
-        isFetchingNextPage ? (
-          <View className='py-4'>
-            <ActivityIndicator size='small' colorClassName='accent-primary' />
-          </View>
-        ) : (
-          <View />
-        )
+        isFetchingNextPage ? <ActivityIndicator /> : <View />
       }
     />
   )

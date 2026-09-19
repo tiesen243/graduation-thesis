@@ -51,33 +51,6 @@ const { handler } = HttpRouter.toWebHandler(
   ])
 )
 
-// const program = Effect.gen(function* program() {
-//   const httpEffect = yield* handler
-//
-//   const context = yield* Effect.context()
-//   const webResponse = yield* Deferred.make<Response>()
-//
-//   yield* HttpEffect.toHandled(httpEffect, (request, response) =>
-//     Deferred.succeed(
-//       webResponse,
-//       HttpServerResponse.toWeb(HttpEffect.scopeTransferToStream(response), {
-//         withoutBody: request.method === 'HEAD',
-//         context,
-//       })
-//     )
-//   )
-//
-//   return yield* Deferred.await(webResponse)
-// }).pipe(Effect.scoped)
-
 export default {
   fetch: handler,
-  // fetch: (request: Request) =>
-  //   Effect.runPromise(
-  //     Effect.provideService(
-  //       program,
-  //       HttpServerRequest.HttpServerRequest,
-  //       HttpServerRequest.fromWeb(request)
-  //     ) as Effect.Effect<Response>
-  //   ),
 }

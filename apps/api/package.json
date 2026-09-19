@@ -18,16 +18,15 @@
     "@effect/sql-pg": "catalog:effect",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
-    "drizzle-orm": "^1.0.0-rc.5-ab785fc",
-    "effect": "catalog:effect",
-    "pg": "^8.23.0"
+    "drizzle-orm": "^1.0.0-rc.5-5935859",
+    "effect": "catalog:effect"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "@types/pg": "^8.23.1",
-    "drizzle-kit": "^1.0.0-rc.5-ab785fc",
+    "drizzle-kit": "^1.0.0-rc.5-5935859",
+    "pg": "^8.23.0",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   }

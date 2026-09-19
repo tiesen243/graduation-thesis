@@ -18,8 +18,10 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { ActivityIndicator, View } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { View } from 'react-native'
 
+import { ActivityIndicator } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const STATUS_VARIANTS = {
@@ -29,6 +31,7 @@ const STATUS_VARIANTS = {
 } as const
 
 export default function TabsSchedulesDetailsScreen() {
+  const { i18n } = useTranslation('schedule')
   const { id } = useLocalSearchParams<{ id: ScheduleId }>()
 
   const { api } = useRuntime()
@@ -37,7 +40,7 @@ export default function TabsSchedulesDetailsScreen() {
   if (!data?.data)
     return (
       <View className='flex-1 items-center justify-center'>
-        <ActivityIndicator size='large' colorClassName='accent-primary' />
+        <ActivityIndicator size='large' />
       </View>
     )
 
@@ -62,7 +65,11 @@ export default function TabsSchedulesDetailsScreen() {
             <CalendarIcon className='size-4 text-muted-foreground' />
 
             <Typography>
-              {formatDate(schedule.date, 'eee, MMM d, yyyy')}
+              {formatDate(schedule.date, {
+                mode: 'custom',
+                custom: 'eee, MMM d, yyyy',
+                locale: i18n.resolvedLanguage,
+              })}
             </Typography>
           </View>
           <View className='flex-row items-center gap-2'>

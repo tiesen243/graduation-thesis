@@ -29,7 +29,7 @@ import { useSession } from '@/hooks/use-session'
 
 export default function TabsProfileIndexScreen() {
   const { status, user, refetch, isRefetching, logout } = useSession()
-  const { t } = useTranslation(['profile'])
+  const { t, i18n } = useTranslation(['profile'])
   if (status !== 'authenticated') return null
 
   const informations = [
@@ -46,7 +46,9 @@ export default function TabsProfileIndexScreen() {
     {
       icon: Calendar1Icon,
       title: t('index.joined'),
-      description: formatDate(user.createdAt, 'MMMM dd, yyyy'),
+      description: formatDate(user.createdAt, {
+        locale: i18n.resolvedLanguage,
+      }),
     },
   ]
 

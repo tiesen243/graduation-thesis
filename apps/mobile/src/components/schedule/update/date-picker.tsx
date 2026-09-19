@@ -32,7 +32,7 @@ export const UpdateScheduleDatePicker = () => {
               onDismiss={() => setIsOpen(false)}
               onValueChange={(_event, date) => {
                 if (!date) return setIsOpen(false)
-                handleChange(formatDate(date, 'yyyy-MM-dd'))
+                handleChange(formatDate(date))
                 setIsOpen(false)
               }}
             />

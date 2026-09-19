@@ -1,5 +1,7 @@
 import { Typography } from '@rozumari/ui/components/typography'
-import { ActivityIndicator, View } from 'react-native'
+import { View } from 'react-native'
+
+import { ActivityIndicator } from '@/components/native'
 
 export type ScanState = 'idle' | 'scanning' | 'processing' | 'linking'
 

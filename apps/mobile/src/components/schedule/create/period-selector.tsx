@@ -18,11 +18,9 @@ export const PeriodSelector: React.FC<{
     // oxlint-disable-next-line complexity
     (dates: { startDate: DateType; endDate: DateType }) => {
       const rawStart = dates.startDate
-        ? formatDate(dates.startDate.toString(), 'yyyy-MM-dd')
+        ? formatDate(dates.startDate.toString())
         : ''
-      const rawEnd = dates.endDate
-        ? formatDate(dates.endDate.toString(), 'yyyy-MM-dd')
-        : ''
+      const rawEnd = dates.endDate ? formatDate(dates.endDate.toString()) : ''
 
       let selected = ''
       if (rawStart !== startDate && rawStart) selected = rawStart

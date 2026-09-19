@@ -26,10 +26,29 @@ export const getBaseUrl = () => {
   )
 }
 
-export const getTimezonedDate = (now = new Date()) => {
-  const timeZone = getCalendars()[0].timeZone ?? 'UTC'
-  return Intl.DateTimeFormat('en-CA', {
-    timeZone,
-    dateStyle: 'short',
-  }).format(now)
+const timeZone = getCalendars()[0].timeZone ?? 'UTC'
+
+export const getTimezonedDate = (
+  now: Date | number | string = new Date()
+): Date => {
+  const date = new Date(now)
+
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    })
+      .formatToParts(date)
+      .map((part) => [part.type, part.value])
+  )
+
+  return new Date(
+    `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}Z`
+  )
 }

@@ -13,12 +13,12 @@ import {
   SmartphoneIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
 
 import { createMetadata } from '@/lib/metadata'
 import { api } from '@/lib/runtime'
-import { formatDate } from '@/lib/utils'
 import { LEVEL_METAS } from '@/routes/dashboard/_components/notification-list'
 
 import type { Route } from './+types/[id]'
@@ -54,7 +54,7 @@ export default function NotificationDetailsPage({
           <Typography variant='h2'>{notification.title}</Typography>
 
           <p className='text-sm text-muted-foreground'>
-            Received {formatDate(notification.createdAt)}
+            Received {formatDate(notification.createdAt, { mode: 'all' })}
           </p>
         </div>
       </div>

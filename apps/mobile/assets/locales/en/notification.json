@@ -1,3 +1,23 @@
 {
-  "title": "Notifications"
+  "title": "Notifications",
+
+  "index": {
+    "title": "Notifications"
+  },
+
+  "detail": {
+    "title": "Notification detail",
+    "not_found": "Notification not found.",
+    "level": {
+      "info": "Information",
+      "warning": "Warning",
+      "error": "Error"
+    },
+    "sections": {
+      "details": "Notification Details",
+      "device_id": "Device ID",
+      "schedule_id": "Schedule ID",
+      "payload_metadata": "Payload Metadata"
+    }
+  }
 }

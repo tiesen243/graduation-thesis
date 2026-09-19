@@ -1,7 +1,8 @@
 import { useRouter, useSegments } from 'expo-router'
 import { useEffect } from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import { View } from 'react-native'
 
+import { ActivityIndicator } from '@/components/native'
 import { useSession } from '@/hooks/use-session'
 
 export default function IndexScreen() {
@@ -17,7 +18,7 @@ export default function IndexScreen() {
 
   return (
     <View className='flex-1 items-center justify-center bg-background'>
-      <ActivityIndicator size='large' colorClassName='accent-primary' />
+      <ActivityIndicator size='large' />
     </View>
   )
 }

@@ -32,7 +32,7 @@ export const DrizzleScheduleRepository = Layer.effect(
     const selector = {
       id: schedules.id,
       date: schedules.date,
-      time: schedules.time,
+      time: sql<string>`TO_CHAR(${schedules.time}, 'HH24:MI:SS')`,
       status: schedules.status,
       userId: schedules.userId,
       device: {
@@ -106,6 +106,8 @@ export const DrizzleScheduleRepository = Layer.effect(
           .groupBy(schedules.id, devices.id)
           .orderBy(asc(schedules.date), asc(schedules.time))
           .pipe(Effect.orDie)
+
+        yield* Effect.logDebug(rows)
 
         return rows
       }),

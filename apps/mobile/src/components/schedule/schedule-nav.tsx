@@ -5,17 +5,15 @@ import {
   ChevronRightIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
-import { cn } from '@rozumari/ui/lib/utils'
-import { getCalendars } from 'expo-localization'
-import { useMemo } from 'react'
+import { cn, formatDate } from '@rozumari/ui/lib/utils'
 import { View } from 'react-native'
 
-const timezone = getCalendars()[0].timeZone ?? 'UTC'
+import { getTimezonedDate } from '@/lib/utils'
 
 const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
-  const date = new Date(currentStartDate)
+  const date = getTimezonedDate(currentStartDate)
   date.setDate(date.getDate() + offsetDays)
-  return getCurrentWeekRange(date, timezone)
+  return getCurrentWeekRange(date)
 }
 
 const STATUSES = [
@@ -28,63 +26,41 @@ export const ScheduleNav: React.FC<{
   startDate: string
   endDate: string
   setWeek: (options: { startDate: string; endDate: string }) => void
-}> = ({ startDate, endDate, setWeek }) => {
-  const formattedRange = useMemo(() => {
-    if (!startDate || !endDate) return ''
-    const start = new Date(startDate)
-    const end = new Date(endDate)
-
-    const startStr = start.toLocaleDateString('en-US', {
-      timeZone: timezone,
-      month: 'short',
-      day: 'numeric',
-    })
-    const endStr = end.toLocaleDateString('en-US', {
-      timeZone: timezone,
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-
-    return `${startStr} – ${endStr}`
-  }, [startDate, endDate])
-
-  return (
-    <View className='flex-row items-center justify-between gap-4 px-4 pt-4'>
-      <View className='flex-row items-center gap-3'>
-        {STATUSES.map((status) => (
-          <View key={status.label} className='flex-row items-center gap-1.5'>
-            <View className={cn('size-2 rounded-full', status.color)} />
-            <Typography className='text-xs'>{status.label}</Typography>
-          </View>
-        ))}
-      </View>
-
-      <View className='flex-row items-center rounded-lg border border-border'>
-        <Button
-          variant='outline'
-          size='icon'
-          className='rounded-r-none border-r border-none'
-          onPress={() => setWeek(getAdjacentWeekRange(startDate, -7))}
-        >
-          <ChevronLeftIcon className='size-5 text-foreground' />
-        </Button>
-        <Button
-          variant='outline'
-          className='rounded-none border-none'
-          onPress={() => setWeek(getCurrentWeekRange(new Date(), timezone))}
-        >
-          <Typography>{formattedRange}</Typography>
-        </Button>
-        <Button
-          variant='outline'
-          size='icon'
-          className='rounded-l-none border-l border-none'
-          onPress={() => setWeek(getAdjacentWeekRange(startDate, 7))}
-        >
-          <ChevronRightIcon className='size-5 text-foreground' />
-        </Button>
-      </View>
+}> = ({ startDate, endDate, setWeek }) => (
+  <View className='flex-row items-center justify-between gap-4 px-4 pt-4'>
+    <View className='flex-row items-center gap-3'>
+      {STATUSES.map((status) => (
+        <View key={status.label} className='flex-row items-center gap-1.5'>
+          <View className={cn('size-2 rounded-full', status.color)} />
+          <Typography className='text-xs'>{status.label}</Typography>
+        </View>
+      ))}
     </View>
-  )
-}
+
+    <View className='flex-row items-center rounded-lg border border-border'>
+      <Button
+        variant='outline'
+        size='icon'
+        className='rounded-r-none border-r border-none'
+        onPress={() => setWeek(getAdjacentWeekRange(startDate, -7))}
+      >
+        <ChevronLeftIcon className='size-5 text-foreground' />
+      </Button>
+      <Button
+        variant='outline'
+        className='rounded-none border-none'
+        onPress={() => setWeek(getCurrentWeekRange(getTimezonedDate()))}
+      >
+        <Typography>{`${formatDate(startDate)} – ${formatDate(endDate)}`}</Typography>
+      </Button>
+      <Button
+        variant='outline'
+        size='icon'
+        className='rounded-l-none border-l border-none'
+        onPress={() => setWeek(getAdjacentWeekRange(startDate, 7))}
+      >
+        <ChevronRightIcon className='size-5 text-foreground' />
+      </Button>
+    </View>
+  </View>
+)

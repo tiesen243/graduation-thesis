@@ -41,7 +41,7 @@
     "react-native": "catalog:react",
     "react-native-ble-manager": "^12.5.2",
     "react-native-calendars-datepicker": "^1.2.4",
-    "react-native-safe-area-context": "^5.9.1",
+    "react-native-safe-area-context": "~5.9.1",
     "react-native-svg": "^15.15.5"
   },
   "devDependencies": {

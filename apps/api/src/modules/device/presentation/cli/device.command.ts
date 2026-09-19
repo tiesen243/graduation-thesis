@@ -8,9 +8,9 @@ import { Jwt } from '@/shared/application/services/jwt.service'
 const listDevices = Command.make(
   'list',
   {
-    query: Flag.string('query').pipe(Flag.withDefault('')),
-    page: Flag.integer('page').pipe(Flag.withDefault(1)),
-    limit: Flag.integer('limit').pipe(Flag.withDefault(10)),
+    query: Flag.String('query').pipe(Flag.withDefault('')),
+    page: Flag.Int('page').pipe(Flag.withDefault(1)),
+    limit: Flag.Int('limit').pipe(Flag.withDefault(10)),
   },
   Effect.fn(function* listDevicesFn(input) {
     const { devices, meta } = yield* ListDevicesUseCase.use((s) =>
@@ -25,7 +25,7 @@ const listDevices = Command.make(
 const generateToken = Command.make(
   'generate-token',
   {
-    deviceId: Flag.string('deviceId'),
+    deviceId: Flag.String('deviceId'),
   },
   Effect.fn(function* generateTokenFn(input) {
     const jwt = yield* Jwt
