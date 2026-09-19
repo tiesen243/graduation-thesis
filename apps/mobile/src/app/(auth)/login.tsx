@@ -42,16 +42,17 @@ function LoginFormSubmit() {
         await queryClient.invalidateQueries({
           queryKey: api.auth.whoami.getQueryKey(),
         })
-        toast.success('Login successful')
+        toast.success(t('login.messages.success'))
         router.navigate('/(tabs)/home')
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('login.messages.failed'), error.message),
     }
   )
 
   return (
     <Button disabled={isPending} onPress={() => handleSubmit()}>
-      {isPending ? t('login.title') : t('login.title')}
+      {isPending ? t('login.actions.submitting') : t('login.actions.submit')}
     </Button>
   )
 }
@@ -90,7 +91,12 @@ export default function LoginScreen() {
               <Field>
                 <View className='flex-row items-center justify-between'>
                   <FieldLabel>{t('login.fields.password.label')}</FieldLabel>
-                  <Button variant='link' size='sm'>
+                  <Button
+                    variant='link'
+                    size='sm'
+                    focusable={false}
+                    accessible={false}
+                  >
                     {t('login.actions.forgotPassword')}
                   </Button>
                 </View>

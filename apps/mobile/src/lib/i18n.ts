@@ -1,4 +1,5 @@
-import * as i18n from 'i18next'
+// oxlint-disable-next-line unicorn/prefer-export-from
+import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 
 import { getLanguage } from '@/lib/secure-store'
@@ -47,6 +48,7 @@ const resources = {
 async function initializeI18n() {
   const language = await getLanguage()
 
+  // oxlint-disable-next-line import/no-named-as-default-member
   i18n.use(initReactI18next).init({
     compatibilityJSON: 'v4',
     resources,
@@ -71,6 +73,7 @@ async function initializeI18n() {
 }
 
 initializeI18n()
+export { i18n }
 
 declare module 'i18next' {
   interface CustomTypeOptions {

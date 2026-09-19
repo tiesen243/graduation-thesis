@@ -32,6 +32,7 @@ const registerForm = FormBuilder.empty
 
 function RegisterFormSubmit() {
   const isPending = registerForm.useValue((s) => s.isPending)
+  const { t } = useTranslation('auth')
 
   const router = useRouter()
   const { api } = useRuntime()
@@ -40,16 +41,19 @@ function RegisterFormSubmit() {
     (payload) => api.auth.register.mutate({ payload }),
     {
       onSuccess: () => {
-        toast.success('Registration successful')
+        toast.success(t('register.messages.success'))
         router.navigate('/(auth)/login')
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('register.messages.failed'), error.message),
     }
   )
 
   return (
     <Button disabled={isPending} onPress={() => handleSubmit()}>
-      {isPending ? 'Registering...' : 'Register'}
+      {isPending
+        ? t('register.actions.submitting')
+        : t('register.actions.submit')}
     </Button>
   )
 }
