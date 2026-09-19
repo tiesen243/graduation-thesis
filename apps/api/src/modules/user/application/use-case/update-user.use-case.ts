@@ -1,5 +1,6 @@
 import type { ShowUserDto } from '@rozumari/contract/user/dto/show-user.dto'
 import type { UpdateUserDto } from '@rozumari/contract/user/dto/update-user.dto'
+import type { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
 
 import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
@@ -17,7 +18,7 @@ export class UpdateUserUseCase extends Context.Service<
       input: ShowUserDto.Input & UpdateUserDto.Input
     ) => Effect.Effect<
       UpdateUserDto.Output,
-      UserNotFound | Forbidden,
+      UserNotFound | UserAlreadyDeleted | Forbidden,
       CurrentUser
     >
   }
@@ -26,13 +27,11 @@ export class UpdateUserUseCase extends Context.Service<
     const userRepository = yield* UserRepository
 
     return {
-      execute: Effect.fn(function* execute({ id, ...input }) {
+      execute: Effect.fn(function* execute({ id, role }) {
         const { userId } = yield* CurrentUser
         if (userId === id)
           return yield* Effect.fail(
-            new Forbidden({
-              message: 'You cannot update your own role',
-            })
+            new Forbidden({ message: 'You cannot update your own role' })
           )
 
         const [user] = yield* userRepository.findMany({
@@ -42,7 +41,7 @@ export class UpdateUserUseCase extends Context.Service<
         if (!user)
           return yield* Effect.fail(new UserNotFound({ error: { id } }))
 
-        const updatedUser = user.update(input)
+        const updatedUser = yield* user.changeRole(role)
         yield* userRepository.save(updatedUser)
 
         return {

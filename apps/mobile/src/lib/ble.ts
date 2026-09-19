@@ -2,8 +2,6 @@ import * as ExpoDevice from 'expo-device'
 import * as Linking from 'expo-linking'
 import { Alert, PermissionsAndroid, Platform } from 'react-native'
 
-import { isExpoGo } from '@/lib/constants'
-
 const requestAndroid31Permissions = async (): Promise<boolean> => {
   const permissions = [
     PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
@@ -44,8 +42,6 @@ const requestAndroid31Permissions = async (): Promise<boolean> => {
 }
 
 export const requestBLEPermissions = async (): Promise<boolean> => {
-  if (isExpoGo) return true
-
   if (Platform.OS === 'android') {
     if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
       const granted = await PermissionsAndroid.request(

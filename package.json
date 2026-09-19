@@ -23,7 +23,7 @@
     "oxfmt": "^0.68.0",
     "oxlint": "^1.82.0",
     "tegami": "^1.5.0",
-    "turbo": "^2.10.12"
+    "turbo": "^2.11.2"
   },
   "overrides": {
     "@effect/platform-node-shared": "4.0.0-rc.112"
@@ -38,6 +38,10 @@
     "prod": {
       "@tanstack/react-query": "^5.103.1",
       "@tiesen/effect-tanstack-query": "^0.0.21"
+    },
+    "i18n": {
+      "i18next": "^26.4.2",
+      "react-i18next": "^17.0.14"
     },
     "effect": {
       "@effect/platform-bun": "4.0.0-rc.112",

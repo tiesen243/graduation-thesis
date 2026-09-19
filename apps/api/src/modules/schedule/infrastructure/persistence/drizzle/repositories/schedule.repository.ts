@@ -1,7 +1,7 @@
 import type { ScheduleAggregateSchema } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleStatus } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
-import { and, asc, between, eq, sql, sum } from 'drizzle-orm'
+import { and, asc, between, eq, ne, sql, sum } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -112,6 +112,7 @@ export const DrizzleScheduleRepository = Layer.effect(
 
       findManyPendingByDeviceId: Effect.fn(function* findManyPendingByDeviceId({
         deviceId,
+        excludeScheduleId,
       }) {
         const rows = yield* db
           .select({
@@ -123,13 +124,19 @@ export const DrizzleScheduleRepository = Layer.effect(
           .where(
             and(
               eq(schedules.deviceId, deviceId),
-              eq(schedules.status, 'pending' as ScheduleStatus)
+              eq(schedules.status, 'pending' as ScheduleStatus),
+              excludeScheduleId
+                ? ne(schedules.id, excludeScheduleId)
+                : undefined
             )
           )
           .groupBy(scheduleItems.slot)
           .pipe(Effect.orDie)
 
-        return rows
+        return rows.map((row) => ({
+          slot: row.slot,
+          quantity: row.quantity ?? 0,
+        }))
       }),
     }
   })

@@ -1,4 +1,5 @@
 import type { DeleteUserDto } from '@rozumari/contract/user/dto/delete-user.dto'
+import type { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
 
 import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
@@ -16,7 +17,7 @@ export class DeleteUserUseCase extends Context.Service<
       input: DeleteUserDto.Input
     ) => Effect.Effect<
       DeleteUserDto.Output,
-      UserNotFound | Forbidden,
+      UserNotFound | UserAlreadyDeleted | Forbidden,
       CurrentUser
     >
   }
@@ -39,12 +40,7 @@ export class DeleteUserUseCase extends Context.Service<
         if (!user)
           return yield* Effect.fail(new UserNotFound({ error: { id } }))
 
-        if (user.deletedAt)
-          return yield* Effect.fail(
-            new Forbidden({ message: 'User is already deleted' })
-          )
-
-        const deletedUser = user.markDeleted()
+        const deletedUser = yield* user.delete()
         yield* userRepository.save(deletedUser)
 
         return {

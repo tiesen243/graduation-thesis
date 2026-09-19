@@ -111,15 +111,18 @@ export const InMemoryScheduleRepository = Layer.effect(
 
       findManyPendingByDeviceId: Effect.fn(function* findManyPendingByDeviceId({
         deviceId,
+        excludeScheduleId,
       }) {
         const schedules = yield* Ref.get(db.schedules).pipe(
           Effect.map((dict) => [...dict.values()])
         )
 
-        const pendingSchedules = schedules.filter(
-          (schedule) =>
-            schedule.deviceId === deviceId && schedule.status === 'pending'
-        )
+        const pendingSchedules = schedules
+          .filter(
+            (schedule) =>
+              schedule.deviceId === deviceId && schedule.status === 'pending'
+          )
+          .filter((schedule) => schedule.id !== excludeScheduleId)
 
         const items = yield* Ref.get(db.scheduleItems).pipe(
           Effect.map((dict) => [...dict.values()])

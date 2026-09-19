@@ -14,6 +14,7 @@ import type { Compartment } from '@/modules/device/domain/entities/compartment.e
 import { DeviceService } from '@/modules/device/application/ports/device.service'
 import { ScheduleRepository } from '@/modules/schedule/application/ports/schedule.repository'
 import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
+import { validateScheduleIsPending } from '@/modules/schedule/domain/services/schedule-policy'
 import { withTransaction } from '@/shared/utils'
 
 export class UpdateScheduleStatusUseCase extends Context.Service<
@@ -42,17 +43,12 @@ export class UpdateScheduleStatusUseCase extends Context.Service<
         if (!schedule)
           return yield* Effect.fail(new ScheduleNotFound({ error: { id } }))
 
-        if (schedule.status !== 'pending')
-          return yield* Effect.fail(
-            new ScheduleInvalid({
-              message: `Cannot update schedule with status ${schedule.status}`,
-            })
-          )
+        yield* validateScheduleIsPending(schedule.status)
 
         const { device, items, ..._schedule } = schedule
         const compartments = yield* deviceService.findCompartments(device.id)
 
-        const updatedSchedule = new Schedule({
+        const updatedSchedule = Schedule.make({
           ..._schedule,
           deviceId: device.id,
           status,
@@ -74,13 +70,6 @@ export class UpdateScheduleStatusUseCase extends Context.Service<
         } else if (status === 'failed') {
           // noop
         }
-
-        console.log(
-          'Updated schedule:',
-          updatedSchedule,
-          'Compartments to update:',
-          compartmentsToUpdate
-        )
 
         yield* Effect.gen(function* executeTx() {
           yield* scheduleRepository.save(updatedSchedule)

@@ -4,6 +4,7 @@ import * as Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
 import { View } from 'react-native'
 
+import { ProfileSettingsLanguage } from '@/components/profile/settings/language'
 import { ProfileSettingsTheme } from '@/components/profile/settings/theme'
 
 export default function TabsProfileSettingsScreen() {
@@ -12,6 +13,8 @@ export default function TabsProfileSettingsScreen() {
   return (
     <View className='gap-4 p-4'>
       <ProfileSettingsTheme />
+
+      <ProfileSettingsLanguage />
 
       <View className='gap-2'>
         <Typography variant='h3'>Device Configuration</Typography>

@@ -130,7 +130,7 @@ export const AuthServiceLayer = Layer.effect(
           const extendedExpriesAt = DateTime.add(now, {
             seconds: TOKEN_EXPIRATION.refreshToken,
           })
-          session = session.renew(DateTime.toDate(extendedExpriesAt))
+          session = yield* session.renew(DateTime.toDate(extendedExpriesAt))
           yield* sessionRepository.save(session)
         }
 

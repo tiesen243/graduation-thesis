@@ -13,8 +13,10 @@ import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
+import { OAuthButtons } from '@/components/auth/oauth-buttons'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const registerForm = FormBuilder.empty
@@ -30,6 +32,7 @@ const registerForm = FormBuilder.empty
 
 function RegisterFormSubmit() {
   const isPending = registerForm.useValue((s) => s.isPending)
+  const { t } = useTranslation('auth')
 
   const router = useRouter()
   const { api } = useRuntime()
@@ -38,21 +41,25 @@ function RegisterFormSubmit() {
     (payload) => api.auth.register.mutate({ payload }),
     {
       onSuccess: () => {
-        toast.success('Registration successful')
+        toast.success(t('register.messages.success'))
         router.navigate('/(auth)/login')
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('register.messages.failed'), error.message),
     }
   )
 
   return (
     <Button disabled={isPending} onPress={() => handleSubmit()}>
-      {isPending ? 'Registering...' : 'Register'}
+      {isPending
+        ? t('register.actions.submitting')
+        : t('register.actions.submit')}
     </Button>
   )
 }
 
 export default function RegisterScreen() {
+  const { t } = useTranslation('auth')
   const router = useRouter()
 
   return (
@@ -65,21 +72,18 @@ export default function RegisterScreen() {
       }}
     >
       <FieldSet containerClassName='p-4' className='justify-center'>
-        <FieldLegend>Register</FieldLegend>
-        <FieldDescription>
-          Fill in the form below to create a new account. You can also register
-          using your social media accounts.
-        </FieldDescription>
+        <FieldLegend>{t('register.title')}</FieldLegend>
+        <FieldDescription>{t('register.description')}</FieldDescription>
 
         <FieldGroup>
           <registerForm.Field
             name='username'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Username</FieldLabel>
+                <FieldLabel>{t('register.fields.username.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder='Enter your username'
+                  placeholder={t('register.fields.username.placeholder')}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                 />
@@ -92,10 +96,10 @@ export default function RegisterScreen() {
             name='email'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Email</FieldLabel>
+                <FieldLabel>{t('register.fields.email.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder='Enter your email'
+                  placeholder={t('register.fields.email.placeholder')}
                   keyboardType='email-address'
                   onChangeText={handleChange}
                   editable={!meta.isPending}
@@ -109,10 +113,10 @@ export default function RegisterScreen() {
             name='password'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Password</FieldLabel>
+                <FieldLabel>{t('register.fields.password.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder='Enter your password'
+                  placeholder={t('register.fields.password.placeholder')}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                   secureTextEntry
@@ -126,10 +130,12 @@ export default function RegisterScreen() {
             name='confirmPassword'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Confirm Password</FieldLabel>
+                <FieldLabel>
+                  {t('register.fields.confirmPassword.label')}
+                </FieldLabel>
                 <Input
                   {...field}
-                  placeholder='Enter your password again'
+                  placeholder={t('register.fields.confirmPassword.placeholder')}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                   secureTextEntry
@@ -142,14 +148,16 @@ export default function RegisterScreen() {
           <RegisterFormSubmit />
 
           <View className='flex flex-row items-center'>
-            <FieldDescription>Already have an account? </FieldDescription>
+            <FieldDescription>{t('register.login.prompt')}</FieldDescription>
             <Button
               variant='link'
               onPress={() => router.navigate('/(auth)/login')}
             >
-              Login here
+              {t('register.login.link')}
             </Button>
           </View>
+
+          <OAuthButtons />
         </FieldGroup>
       </FieldSet>
     </registerForm.Provider>
