@@ -20,7 +20,7 @@ export default function TabsLayout() {
 
   const { t } = useTranslation([
     'home',
-    'pillBox',
+    'pill-box',
     'schedule',
     'notification',
     'profile',
@@ -60,7 +60,7 @@ export default function TabsLayout() {
 
       <NativeTabs.Trigger name='pill-boxes'>
         <NativeTabs.Trigger.Label>
-          {t('pillBox:title')}
+          {t('pill-box:title')}
         </NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           src={require('@/assets/tab-icons/pill-boxes.png')}

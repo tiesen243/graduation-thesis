@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
@@ -54,6 +55,7 @@ function SaveDeviceFormSubmit({
 export function UpdateDeviceButton({
   device,
 }: Readonly<{ device: { name: string | null; position: string | null } }>) {
+  const { t } = useTranslation('pill-box')
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
@@ -83,11 +85,11 @@ export function UpdateDeviceButton({
                   name='name'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Device Name</FieldLabel>
+                      <FieldLabel>{t('details.device.name')}</FieldLabel>
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        placeholder='Enter device name'
+                        placeholder={t('details.device.namePlaceholder')}
                         onChangeText={handleChange}
                       />
                       <FieldError errors={meta.errors} />
@@ -99,11 +101,11 @@ export function UpdateDeviceButton({
                   name='position'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Position</FieldLabel>
+                      <FieldLabel>{t('details.device.position')}</FieldLabel>
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        placeholder='Enter position'
+                        placeholder={t('details.device.positionPlaceholder')}
                         onChangeText={handleChange}
                       />
 

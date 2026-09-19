@@ -1,5 +1,3 @@
-// oxlint-disable react/jsx-handler-names
-
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { Button } from '@rozumari/ui/components/button'
@@ -20,6 +18,7 @@ import {
 import { toast } from '@rozumari/ui/components/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 
 import type { ScheduleItemsProps } from '@/components/schedule/schedule-items'
 
@@ -31,6 +30,7 @@ import { ScheduleItems } from '@/components/schedule/schedule-items'
 import { useRuntime } from '@/hooks/use-runtime'
 
 function CreateScheduleFormSubmit() {
+  const { t } = useTranslation('schedule')
   const isPending = CreateScheduleForm.useValue((s) => s.isPending)
 
   const router = useRouter()
@@ -45,7 +45,7 @@ function CreateScheduleFormSubmit() {
           queryKey: api.schedule.list.getQueryKey(),
         })
         router.push('/(tabs)/schedules')
-        toast.success('Schedule created successfully')
+        toast.success(t('create.messages.success'))
       },
       onError: (error) => toast.error(error.message),
     }
@@ -53,7 +53,7 @@ function CreateScheduleFormSubmit() {
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? 'Creating...' : 'Create Schedule'}
+      {isPending ? t('create.actions.submitting') : t('create.actions.submit')}
     </Button>
   )
 }
@@ -66,6 +66,7 @@ function ProvidedScheduleItems(props: Omit<ScheduleItemsProps, 'deviceId'>) {
 export default function TabsSchedulesCreateScreen() {
   const { api } = useRuntime()
 
+  const { t } = useTranslation('schedule')
   const { data } = useQuery(api.device.me.queryOptions({ query: {} }))
   if (!data?.data) return null
 
@@ -86,7 +87,7 @@ export default function TabsSchedulesCreateScreen() {
             name='deviceId'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Device</FieldLabel>
+                <FieldLabel>{t('create.fields.device')}</FieldLabel>
 
                 <Select
                   value={field.value}
@@ -94,7 +95,7 @@ export default function TabsSchedulesCreateScreen() {
                 >
                   <SelectTrigger>
                     <SelectValue
-                      placeholder='Select a device'
+                      placeholder={t('create.fields.devicePlaceholder')}
                       items={data.data.devices.map((device) => ({
                         value: device.id,
                         label: device.name ?? device.factoryModel,
@@ -102,7 +103,7 @@ export default function TabsSchedulesCreateScreen() {
                     />
                   </SelectTrigger>
 
-                  <SelectContent title='Select a device'>
+                  <SelectContent title={t('create.fields.devicePlaceholder')}>
                     {data.data.devices.map((device) => (
                       <SelectItem key={device.id} value={device.id}>
                         {device.name ?? device.factoryModel}
@@ -131,7 +132,7 @@ export default function TabsSchedulesCreateScreen() {
                   helpers: { handleChange: handleEndDateChange },
                 }) => (
                   <Field>
-                    <FieldLabel>Period</FieldLabel>
+                    <FieldLabel>{t('create.fields.period')}</FieldLabel>
 
                     <PeriodSelector
                       startDate={startDateField.value}

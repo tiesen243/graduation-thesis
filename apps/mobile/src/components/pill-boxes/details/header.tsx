@@ -24,7 +24,7 @@ import { UpdateDeviceButton } from '@/components/pill-boxes/details/update-devic
 export function PillBoxDetailsHeader({
   device,
 }: Readonly<{ device: ShowDeviceDto.Output }>) {
-  const { i18n } = useTranslation('pillBox')
+  const { i18n } = useTranslation('pill-box')
 
   return (
     <Card className='mx-4'>

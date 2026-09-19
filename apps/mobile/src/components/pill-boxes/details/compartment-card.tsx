@@ -11,6 +11,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import { UpdateCompartmentButton } from '@/components/pill-boxes/details/update-compartment-button'
@@ -18,6 +19,7 @@ import { UpdateCompartmentButton } from '@/components/pill-boxes/details/update-
 export type Compartment = ShowDeviceDto.Output['compartments'][number]
 
 export function CompartmentCard({ compartment }: { compartment: Compartment }) {
+  const { t } = useTranslation('pill-box')
   const hasMedicine = Boolean(compartment.medicine)
 
   return (
@@ -66,7 +68,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
           <View className='flex-1' />
 
           <View className='h-7 w-full flex-row items-center justify-between rounded-md bg-muted/50 px-3'>
-            <Typography>Quantity</Typography>
+            <Typography>{t('details.compartment.quantity')}</Typography>
 
             <Typography className='text-sm font-semibold'>
               {compartment.capacity} pills
@@ -89,7 +91,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
                 onPress={() => setIsOpen(true)}
               >
                 <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
-                <Typography>Add Medicine</Typography>
+                <Typography>{t('details.compartment.addMedicine')}</Typography>
               </Button>
             )}
           </UpdateCompartmentButton>

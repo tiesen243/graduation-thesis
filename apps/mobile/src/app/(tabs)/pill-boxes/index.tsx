@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
@@ -34,6 +35,7 @@ export const getBadgeVariant = (status?: string): BadgeVariant => {
 }
 
 export default function TabsPillBoxesIndexScreen() {
+  const { t } = useTranslation('pill-box')
   const { api } = useRuntime()
   const { user } = useSession()
   const router = useRouter()
@@ -76,7 +78,7 @@ export default function TabsPillBoxesIndexScreen() {
     <View className='flex-1'>
       <View className='px-4 pt-4 pb-2'>
         <Input
-          placeholder='Search devices...'
+          placeholder={t('index.searchPlaceholder')}
           value={searchTerm}
           onChangeText={handleSearch}
         />

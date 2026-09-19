@@ -1,3 +1,24 @@
 {
-  "title": "Hộp thuốc"
+  "title": "Hộp thuốc",
+  "index": {
+    "searchPlaceholder": "Tìm thiết bị..."
+  },
+  "details": {
+    "compartment": {
+      "medicine": "Thuốc",
+      "medicinePlaceholder": "Nhập tên thuốc",
+      "dosage": "Liều dùng",
+      "dosagePlaceholder": "Nhập liều dùng",
+      "capacity": "Sức chứa",
+      "capacityPlaceholder": "Nhập sức chứa",
+      "quantity": "Số lượng",
+      "addMedicine": "Thêm thuốc"
+    },
+    "device": {
+      "name": "Tên thiết bị",
+      "namePlaceholder": "Nhập tên thiết bị",
+      "position": "Vị trí",
+      "positionPlaceholder": "Nhập vị trí"
+    }
+  }
 }

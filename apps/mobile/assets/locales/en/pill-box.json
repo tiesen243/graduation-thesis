@@ -1,3 +1,26 @@
 {
-  "title": "Pill Boxes"
+  "title": "Pill Boxes",
+
+  "index": {
+    "searchPlaceholder": "Search devices..."
+  },
+
+  "details": {
+    "compartment": {
+      "medicine": "Medicine",
+      "medicinePlaceholder": "Enter medicine name",
+      "dosage": "Dosage",
+      "dosagePlaceholder": "Enter dosage",
+      "capacity": "Capacity",
+      "capacityPlaceholder": "Enter capacity",
+      "quantity": "Quantity",
+      "addMedicine": "Add Medicine"
+    },
+    "device": {
+      "name": "Device Name",
+      "namePlaceholder": "Enter device name",
+      "position": "Position",
+      "positionPlaceholder": "Enter position"
+    }
+  }
 }

@@ -24,14 +24,23 @@ import { View } from 'react-native'
 import { ActivityIndicator } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 
-const STATUS_VARIANTS = {
-  pending: 'warning',
-  completed: 'success',
-  failed: 'destructive',
+const STATUS_MAPPERS = {
+  pending: {
+    key: 'index.statuses.pending',
+    variant: 'warning',
+  },
+  completed: {
+    key: 'index.statuses.completed',
+    variant: 'success',
+  },
+  failed: {
+    key: 'index.statuses.missed',
+    variant: 'destructive',
+  },
 } as const
 
 export default function TabsSchedulesDetailsScreen() {
-  const { i18n } = useTranslation('schedule')
+  const { t, i18n } = useTranslation('schedule')
   const { id } = useLocalSearchParams<{ id: ScheduleId }>()
 
   const { api } = useRuntime()
@@ -47,17 +56,15 @@ export default function TabsSchedulesDetailsScreen() {
   const schedule = data.data
   const { device, items } = schedule
 
+  const status = STATUS_MAPPERS[schedule.status as keyof typeof STATUS_MAPPERS]
+
   return (
     <View className='gap-4 p-4'>
       <Card>
         <CardHeader className='flex-row items-center justify-between'>
-          <CardTitle>Schedule Information</CardTitle>
-          <Badge
-            variant={
-              STATUS_VARIANTS[schedule.status as keyof typeof STATUS_VARIANTS]
-            }
-          >
-            <Typography>{schedule.status}</Typography>
+          <CardTitle>{t('detail.sections.scheduleInformation')}</CardTitle>
+          <Badge variant={status.variant}>
+            <Typography>{t(status.key)}</Typography>
           </Badge>
         </CardHeader>
         <CardContent className='gap-1'>
@@ -91,7 +98,7 @@ export default function TabsSchedulesDetailsScreen() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Medication Items</CardTitle>
+          <CardTitle>{t('detail.sections.medicationItems')}</CardTitle>
         </CardHeader>
         <CardContent className='gap-3'>
           {items.map((item) => (
@@ -103,12 +110,18 @@ export default function TabsSchedulesDetailsScreen() {
                     <AsteriskIcon className='size-3 text-destructive' />
                   )}
                 </CardTitle>
-                <CardDescription>Slot: {item.slot}</CardDescription>
+                <CardDescription>
+                  {t('items.slot')}: {item.slot}
+                </CardDescription>
               </CardHeader>
 
               <CardContent>
-                <CardDescription>Qty. {item.quantity}</CardDescription>
-                <CardDescription>Dosage {item.dosage}</CardDescription>
+                <CardDescription>
+                  {t('items.quantity')} {item.quantity}
+                </CardDescription>
+                <CardDescription>
+                  {t('items.dosage')} {item.dosage}
+                </CardDescription>
               </CardContent>
             </Card>
           ))}

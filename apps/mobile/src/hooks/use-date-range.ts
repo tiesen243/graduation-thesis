@@ -1,7 +1,11 @@
+import { formatDate } from '@rozumari/ui/lib/utils'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
-export const useDateRange = (startDate: string, endDate: string) =>
-  useMemo(() => {
+export const useDateRange = (startDate: string, endDate: string) => {
+  const { i18n } = useTranslation('schedule')
+
+  return useMemo(() => {
     if (!startDate || !endDate) return []
     const start = new Date(startDate)
     const end = new Date(endDate)
@@ -12,11 +16,16 @@ export const useDateRange = (startDate: string, endDate: string) =>
       const iso = currentDate.toISOString().split('T')[0] ?? ''
       dates.push({
         iso,
-        weekday: currentDate.toLocaleString('default', { weekday: 'short' }),
+        weekday: formatDate(currentDate, {
+          mode: 'custom',
+          custom: 'EEE',
+          locale: i18n.resolvedLanguage,
+        }),
         dayNumber: currentDate.getDate(),
       })
       currentDate.setDate(currentDate.getDate() + 1)
     }
 
     return dates
-  }, [startDate, endDate])
+  }, [startDate, endDate, i18n.resolvedLanguage])
+}

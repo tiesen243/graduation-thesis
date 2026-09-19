@@ -10,6 +10,7 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import type { Compartment } from '@/components/pill-boxes/details/compartment-card'
@@ -108,6 +109,7 @@ export function UpdateCompartmentButton({
   children: (setIsOpen: (isOpen: boolean) => void) => React.ReactNode
 }>) {
   const [isOpen, setIsOpen] = React.useState(false)
+  const { t } = useTranslation('pill-box')
 
   return (
     <>
@@ -140,10 +142,14 @@ export function UpdateCompartmentButton({
                   name='medicine'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Medicine</FieldLabel>
+                      <FieldLabel>
+                        {t('details.compartment.medicine')}
+                      </FieldLabel>
                       <Input
                         {...field}
-                        placeholder='Enter medicine name'
+                        placeholder={t(
+                          'details.compartment.medicinePlaceholder'
+                        )}
                         onChangeText={handleChange}
                       />
                       <FieldError errors={meta.errors} />
@@ -155,10 +161,10 @@ export function UpdateCompartmentButton({
                   name='dosage'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Dosage</FieldLabel>
+                      <FieldLabel>{t('details.compartment.dosage')}</FieldLabel>
                       <Input
                         {...field}
-                        placeholder='Enter dosage'
+                        placeholder={t('details.compartment.dosagePlaceholder')}
                         keyboardType='numeric'
                         value={field.value.toString()}
                         onChangeText={(text) =>
@@ -175,10 +181,14 @@ export function UpdateCompartmentButton({
                   name='capacity'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Capacity</FieldLabel>
+                      <FieldLabel>
+                        {t('details.compartment.capacity')}
+                      </FieldLabel>
                       <Input
                         {...field}
-                        placeholder='Enter capacity'
+                        placeholder={t(
+                          'details.compartment.capacityPlaceholder'
+                        )}
                         keyboardType='numeric'
                         value={field.value.toString()}
                         onChangeText={(text) =>

@@ -3,11 +3,14 @@ import { Button } from '@rozumari/ui/components/button'
 import { Field, FieldError, FieldLabel } from '@rozumari/ui/components/field'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { Activity, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useCSSVariable } from 'uniwind'
 
 import { updateScheduleForm } from '@/components/schedule/update/_config'
 
 export const UpdateScheduleDatePicker = () => {
+  const { t } = useTranslation('schedule')
+
   const [isOpen, setIsOpen] = useState(false)
   const foregroundColor = useCSSVariable('--color-foreground') as string
 
@@ -16,7 +19,7 @@ export const UpdateScheduleDatePicker = () => {
       name='date'
       render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
-          <FieldLabel>Date</FieldLabel>
+          <FieldLabel>{t('update.date')}</FieldLabel>
 
           <Button variant='outline' onPress={() => setIsOpen(true)}>
             {field.value || 'Select date'}

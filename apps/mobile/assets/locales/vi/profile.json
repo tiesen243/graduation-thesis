@@ -1,12 +1,10 @@
 {
   "title": "Hồ sơ",
-
   "index": {
     "account": "Thông tin tài khoản",
     "joined": "Tham gia vào",
     "logout": "Đăng xuất"
   },
-
   "settings": {
     "title": "Cài đặt",
     "darkMode": {
@@ -28,10 +26,8 @@
     },
     "version": "Phiên bản ứng dụng"
   },
-
   "config": {
     "title": "Cấu hình thiết bị",
-
     "device": {
       "selector": {
         "title": "Chọn thiết bị",
@@ -39,7 +35,6 @@
       },
       "unnamed": "Thiết bị chưa đặt tên"
     },
-
     "language": {
       "title": "Cấu hình ngôn ngữ",
       "selector": {
@@ -51,7 +46,6 @@
         "failed": "Cập nhật cấu hình ngôn ngữ thất bại. Vui lòng thử lại."
       }
     },
-
     "utc": {
       "title": "Cấu hình múi giờ",
       "selector": {
@@ -63,15 +57,18 @@
         "failed": "Cập nhật cấu hình múi giờ thất bại. Vui lòng thử lại."
       }
     },
-
     "sync": {
       "title": "Cấu hình thời gian đồng bộ"
     },
-
     "actions": {
       "connect": "Kết nối",
       "connecting": "Đang kết nối...",
       "disconnect": "Ngắt kết nối"
+    },
+    "wifi": {
+      "title": "Cấu hình Wi-Fi",
+      "ssid": "SSID Wi-Fi",
+      "password": "Mật khẩu Wi-Fi"
     }
   }
 }

@@ -1,6 +1,5 @@
-// oxlint-disable react-hooks/rules-of-hooks
-
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+// oxlint-disable react-hooks/rules-of-hooks
 
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
@@ -30,6 +29,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Pressable, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
@@ -61,6 +61,7 @@ export function ScheduleItems({
   meta,
   helpers,
 }: ScheduleItemsProps) {
+  const { t } = useTranslation('schedule')
   const { api } = useRuntime()
   const { data: compartments } = useQuery({
     ...api.device.show.queryOptions({ params: { id: deviceId } }),
@@ -78,7 +79,7 @@ export function ScheduleItems({
 
   return (
     <Field data-invalid={meta.errors.length > 0}>
-      <FieldLabel>Items</FieldLabel>
+      <FieldLabel>{t('items.title')}</FieldLabel>
 
       <View className='gap-3'>
         {field.value?.map((item, index) => {
@@ -88,7 +89,7 @@ export function ScheduleItems({
             return (
               <Card key={index} className='h-32'>
                 <CardHeader className='flex-row items-center justify-between'>
-                  <CardTitle>Select Slot</CardTitle>
+                  <CardTitle>{t('items.selectSlot')}</CardTitle>
                   <CardAction>
                     <Button
                       size='icon-xs'
@@ -117,7 +118,7 @@ export function ScheduleItems({
                       disabled={!compartments?.length}
                     >
                       <SelectValue
-                        placeholder='Select a compartment'
+                        placeholder={t('items.selectCompartment')}
                         items={availableCompartments.map((c) => ({
                           value: c.position,
                           label: `${c.medicine} (Slot ${c.position})`,
@@ -132,7 +133,7 @@ export function ScheduleItems({
                           disabled={!c.medicine}
                         >
                           <Typography>
-                            {c.medicine} (Slot {c.position})
+                            {c.medicine} ({t('items.slot')} {c.position})
                           </Typography>
                         </SelectItem>
                       ))}
@@ -148,7 +149,9 @@ export function ScheduleItems({
               <CardHeader className='flex-row items-center justify-between'>
                 <View className='flex-row items-center gap-2'>
                   <Badge variant='outline'>
-                    <Typography>Slot: {item.slot}</Typography>
+                    <Typography>
+                      {t('items.slot')}: {item.slot}
+                    </Typography>
                   </Badge>
                   <Typography className='font-semibold text-foreground'>
                     {comp.medicine}
@@ -190,7 +193,7 @@ export function ScheduleItems({
                       isRequired: !!checked,
                     })
                   }
-                  label='Required'
+                  label={t('items.required')}
                 />
               </CardContent>
             </Card>
@@ -206,13 +209,13 @@ export function ScheduleItems({
           <View className='size-9 items-center justify-center rounded-full border border-muted-foreground/25 bg-transparent'>
             <PlusIcon className='size-4 text-primary' />
           </View>
-          <Typography className='mt-1 text-xs font-medium'>Add Item</Typography>
+          <Typography className='mt-1 text-xs font-medium'>
+            {t('items.add')}
+          </Typography>
         </Pressable>
       </View>
 
-      <FieldDescription>
-        Add the compartments and quantities to dispense for this schedule.
-      </FieldDescription>
+      <FieldDescription>{t('items.description')}</FieldDescription>
 
       <FieldError errors={meta.errors} />
     </Field>

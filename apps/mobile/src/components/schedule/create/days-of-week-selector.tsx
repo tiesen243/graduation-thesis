@@ -5,6 +5,7 @@ import {
   FieldError,
   FieldLabel,
 } from '@rozumari/ui/components/field'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import {
@@ -12,43 +13,47 @@ import {
   DAYS_OF_WEEK,
 } from '@/components/schedule/create/_config'
 
-export const DaysOfWeekSelector = () => (
-  <CreateScheduleForm.Field
-    name='daysOfWeek'
-    render={({ field, meta, helpers: { handleChange } }) => {
-      const value = field.value ?? []
+export const DaysOfWeekSelector = () => {
+  const { t } = useTranslation('schedule')
 
-      const toggle = (day: number) => {
-        if (value.includes(day)) handleChange(value.filter((d) => d !== day))
-        else handleChange([...value, day])
-      }
+  return (
+    <CreateScheduleForm.Field
+      name='daysOfWeek'
+      render={({ field, meta, helpers: { handleChange } }) => {
+        const value = field.value ?? []
 
-      return (
-        <Field>
-          <FieldLabel>Repeat on</FieldLabel>
+        const toggle = (day: number) => {
+          if (value.includes(day)) handleChange(value.filter((d) => d !== day))
+          else handleChange([...value, day])
+        }
 
-          <View className='flex flex-row flex-wrap gap-x-4 gap-y-2'>
-            {DAYS_OF_WEEK.map((day) => {
-              const selected = value.includes(day.value)
+        return (
+          <Field>
+            <FieldLabel>{t('create.repeatOn')}</FieldLabel>
 
-              return (
-                <Checkbox
-                  key={day.value}
-                  checked={selected}
-                  label={day.label}
-                  onCheckedChange={() => toggle(day.value)}
-                />
-              )
-            })}
-          </View>
+            <View className='flex flex-row flex-wrap gap-x-4 gap-y-2'>
+              {DAYS_OF_WEEK.map((day) => {
+                const selected = value.includes(day.value)
 
-          <FieldDescription>
-            Choose the days when medication should be dispensed.
-          </FieldDescription>
+                return (
+                  <Checkbox
+                    key={day.value}
+                    checked={selected}
+                    label={day.label}
+                    onCheckedChange={() => toggle(day.value)}
+                  />
+                )
+              })}
+            </View>
 
-          <FieldError errors={meta.errors} />
-        </Field>
-      )
-    }}
-  />
-)
+            <FieldDescription>
+              Choose the days when medication should be dispensed.
+            </FieldDescription>
+
+            <FieldError errors={meta.errors} />
+          </Field>
+        )
+      }}
+    />
+  )
+}

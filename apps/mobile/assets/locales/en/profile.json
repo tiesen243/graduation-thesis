@@ -9,7 +9,6 @@
 
   "settings": {
     "title": "Settings",
-
     "darkMode": {
       "title": "Dark Mode",
       "description": "Enable dark mode for the application",
@@ -19,7 +18,6 @@
         "system": "Use Device Settings"
       }
     },
-
     "language": {
       "title": "Language",
       "description": "Select the language for the application",
@@ -33,7 +31,6 @@
 
   "config": {
     "title": "Device Configuration",
-
     "device": {
       "selector": {
         "title": "Select Device",
@@ -41,7 +38,11 @@
       },
       "unnamed": "Unnamed Device"
     },
-
+    "wifi": {
+      "title": "Wi-Fi Configuration",
+      "ssid": "Wi-Fi SSID",
+      "password": "Wi-Fi Password"
+    },
     "language": {
       "title": "Language Configuration",
       "selector": {
@@ -53,7 +54,6 @@
         "failed": "Failed to update language configuration. Please try again."
       }
     },
-
     "utc": {
       "title": "Timezone Configuration",
       "selector": {
@@ -65,11 +65,9 @@
         "failed": "Failed to update timezone configuration. Please try again."
       }
     },
-
     "sync": {
       "title": "Sync Time Configuration"
     },
-
     "actions": {
       "connect": "Connect",
       "connecting": "Connecting...",

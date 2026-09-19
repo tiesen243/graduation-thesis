@@ -1,6 +1,7 @@
 import { Button } from '@rozumari/ui/components/button'
 import { PencilIcon, PlusIcon } from '@rozumari/ui/components/icons'
 import { Stack, useGlobalSearchParams, useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import { SyncScheduleButton } from '@/components/schedule/sync-schedule-button'
@@ -8,6 +9,7 @@ import { useOptions } from '@/hooks/use-options'
 
 export default function TabsSchedulesLayout() {
   const screenOptions = useOptions()
+  const { t } = useTranslation('schedule')
   const router = useRouter()
 
   const { id } = useGlobalSearchParams<{ id: string }>()
@@ -17,7 +19,7 @@ export default function TabsSchedulesLayout() {
       <Stack.Screen
         name='index'
         options={{
-          title: 'Schedules',
+          title: t('index.title'),
           headerRight: () => (
             <View className='flex-row items-center gap-2'>
               <SyncScheduleButton />
@@ -34,12 +36,12 @@ export default function TabsSchedulesLayout() {
         }}
       />
 
-      <Stack.Screen name='create' options={{ title: 'Create Schedule' }} />
+      <Stack.Screen name='create' options={{ title: t('create.title') }} />
 
       <Stack.Screen
         name='[id]/index'
         options={{
-          title: 'Schedule Details',
+          title: t('detail.title'),
           headerRight: () => (
             <Button
               variant='ghost'
@@ -52,7 +54,7 @@ export default function TabsSchedulesLayout() {
         }}
       />
 
-      <Stack.Screen name='[id]/edit' options={{ title: 'Edit Schedule' }} />
+      <Stack.Screen name='[id]/edit' options={{ title: t('edit.title') }} />
     </Stack>
   )
 }
