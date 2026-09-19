@@ -4,6 +4,7 @@ import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { getCalendars } from 'expo-localization'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import {
@@ -12,9 +13,10 @@ import {
   useBLE,
 } from '@/components/profile/config/_context'
 
-const timeZone = getCalendars()[0]?.timeZone ?? 'UTC'
+const [{ timeZone }] = getCalendars()
 
 export function SyncTimeConfig() {
+  const { t } = useTranslation('profile')
   const { deviceInfo, isConnected, sendBleCommand, registerByteHandler } =
     useBLE()
 
@@ -42,7 +44,7 @@ export function SyncTimeConfig() {
       value: new Date(0, 0, 0, localTime.hours, localTime.minutes),
       onValueChange: (_event, date) => {
         const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone,
+          timeZone: timeZone ?? 'UTC',
           hour: 'numeric',
           minute: 'numeric',
           hour12: false,
@@ -66,7 +68,9 @@ export function SyncTimeConfig() {
 
   return (
     <View className='gap-3'>
-      <Typography className='font-semibold'>Sync Time Configuration</Typography>
+      <Typography className='font-semibold'>
+        {t('config.sync.title')}
+      </Typography>
 
       <Button variant='outline' onPress={showTimePicker}>
         <Typography>

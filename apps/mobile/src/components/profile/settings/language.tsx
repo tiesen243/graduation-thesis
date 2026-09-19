@@ -8,25 +8,27 @@ import type { SupportedLanguage } from '@/lib/i18n'
 import { setLanguage } from '@/lib/secure-store'
 
 export const ProfileSettingsLanguage = () => {
-  const { i18n } = useTranslation()
-  const currentLanguage = i18n.resolvedLanguage
+  const { t, i18n } = useTranslation('profile')
 
   return (
     <View className='gap-2'>
-      <Typography variant='h3'>Language</Typography>
+      <Typography variant='h3'>{t('settings.language.title')}</Typography>
+      <Typography className='text-sm text-muted-foreground'>
+        {t('settings.language.description')}
+      </Typography>
 
       <RadioGroup
-        value={currentLanguage ?? 'en'}
+        value={i18n.resolvedLanguage ?? 'en'}
         onValueChange={async (value) => {
           await setLanguage(value as SupportedLanguage)
           await i18n.changeLanguage(value)
         }}
       >
         <RadioGroupItem value='en'>
-          <Typography>English</Typography>
+          <Typography>{t('settings.language.options.en')}</Typography>
         </RadioGroupItem>
         <RadioGroupItem value='vi'>
-          <Typography>Tiếng Việt</Typography>
+          <Typography>{t('settings.language.options.vi')}</Typography>
         </RadioGroupItem>
       </RadioGroup>
     </View>

@@ -7,11 +7,13 @@ import {
   SelectValue,
 } from '@rozumari/ui/components/select'
 import { Typography } from '@rozumari/ui/components/typography'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import { useBLE } from '@/components/profile/config/_context'
 
 export function BLEConnection() {
+  const { t } = useTranslation(['profile'])
   const {
     discoveredDevices,
     selectedDevice,
@@ -31,18 +33,18 @@ export function BLEConnection() {
           className={isConnected || isConnecting ? 'opacity-50' : ''}
         >
           <SelectValue
-            placeholder='Select a device...'
+            placeholder={t('config.device.selector.placeholder')}
             items={discoveredDevices.map((device) => ({
               value: device.id,
-              label: device.name || 'Unnamed Device',
+              label: device.name || t('config.device.unnamed'),
             }))}
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent title={t('config.device.selector.title')}>
           {discoveredDevices.map((device) => (
             <SelectItem key={device.id} value={device.id}>
               <Typography>
-                {device.name ?? 'Unnamed Device'} ({device.id})
+                {device.name ?? t('config.device.unnamed')} ({device.id})
               </Typography>
             </SelectItem>
           ))}
@@ -56,7 +58,7 @@ export function BLEConnection() {
             variant='outline'
             onPress={() => sendBleCommand('ping')}
           >
-            Ping Device
+            Ping
           </Button>
 
           <Button
@@ -64,7 +66,7 @@ export function BLEConnection() {
             variant='destructive'
             onPress={handleDisconnect}
           >
-            Disconnect
+            {t('config.actions.disconnect')}
           </Button>
         </View>
       ) : (
@@ -72,7 +74,9 @@ export function BLEConnection() {
           onPress={handleConnect}
           disabled={!selectedDevice || isConnecting}
         >
-          {isConnecting ? 'Connecting...' : 'Connect'}
+          {isConnecting
+            ? t('config.actions.connecting')
+            : t('config.actions.connect')}
         </Button>
       )}
     </View>

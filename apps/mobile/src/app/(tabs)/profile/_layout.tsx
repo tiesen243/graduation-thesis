@@ -29,9 +29,9 @@ export default function TabsProfileLayout() {
         }}
       />
 
-      <Stack.Screen name='settings' options={{ title: 'Settings' }} />
+      <Stack.Screen name='settings' options={{ title: t('settings.title') }} />
 
-      <Stack.Screen name='config' options={{ title: 'Device Configuration' }} />
+      <Stack.Screen name='config' options={{ title: t('config.title') }} />
     </Stack>
   )
 }
