@@ -1,14 +1,10 @@
 import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
 import * as BunServices from '@effect/platform-bun/BunServices'
 import * as DateTime from 'effect/DateTime'
-import * as Deferred from 'effect/Deferred'
-import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
-import * as HttpEffect from 'effect/unstable/http/HttpEffect'
+import * as Etag from 'effect/unstable/http/Etag'
 import * as HttpRouter from 'effect/unstable/http/HttpRouter'
-import * as HttpServerRequest from 'effect/unstable/http/HttpServerRequest'
-import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 
 import { AppModule } from '@/modules/app.module'
 import { FacebookProvider } from '@/modules/auth/infrastructure/services/providers/facebook.provider'
@@ -23,7 +19,7 @@ const routes = AppModule.createHttp({
   ],
 })
 
-const handler = HttpRouter.toHttpEffect(
+const { handler } = HttpRouter.toWebHandler(
   Layer.provide(routes, [
     HttpRouter.cors({
       allowedOrigins:
@@ -51,35 +47,37 @@ const handler = HttpRouter.toHttpEffect(
 
     BunHttpPlatform.layer,
     BunServices.layer,
+    Etag.layer,
   ])
 )
 
-const program = Effect.gen(function* program() {
-  const httpEffect = yield* handler
-
-  const context = yield* Effect.context()
-  const webResponse = yield* Deferred.make<Response>()
-
-  yield* HttpEffect.toHandled(httpEffect, (request, response) =>
-    Deferred.succeed(
-      webResponse,
-      HttpServerResponse.toWeb(HttpEffect.scopeTransferToStream(response), {
-        withoutBody: request.method === 'HEAD',
-        context,
-      })
-    )
-  )
-
-  return yield* Deferred.await(webResponse)
-}).pipe(Effect.scoped)
+// const program = Effect.gen(function* program() {
+//   const httpEffect = yield* handler
+//
+//   const context = yield* Effect.context()
+//   const webResponse = yield* Deferred.make<Response>()
+//
+//   yield* HttpEffect.toHandled(httpEffect, (request, response) =>
+//     Deferred.succeed(
+//       webResponse,
+//       HttpServerResponse.toWeb(HttpEffect.scopeTransferToStream(response), {
+//         withoutBody: request.method === 'HEAD',
+//         context,
+//       })
+//     )
+//   )
+//
+//   return yield* Deferred.await(webResponse)
+// }).pipe(Effect.scoped)
 
 export default {
-  fetch: (request: Request) =>
-    Effect.runPromise(
-      Effect.provideService(
-        program,
-        HttpServerRequest.HttpServerRequest,
-        HttpServerRequest.fromWeb(request)
-      ) as Effect.Effect<Response>
-    ),
+  fetch: handler,
+  // fetch: (request: Request) =>
+  //   Effect.runPromise(
+  //     Effect.provideService(
+  //       program,
+  //       HttpServerRequest.HttpServerRequest,
+  //       HttpServerRequest.fromWeb(request)
+  //     ) as Effect.Effect<Response>
+  //   ),
 }

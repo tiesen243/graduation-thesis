@@ -29,6 +29,7 @@ export class ShowDeviceUseCase extends Context.Service<
 
         if (
           CurrentUserOpts._tag === 'Some' &&
+          CurrentUserOpts.value.userRole !== 'admin' &&
           agg.device.userId !== CurrentUserOpts.value.userId
         )
           return yield* Effect.fail(new DeviceNotFound({ error: { id } }))
