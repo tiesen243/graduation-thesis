@@ -18,6 +18,7 @@ def get_current_time() -> time.struct_time:
 
 
 def rgb(r: int, g: int, b: int, invert: bool = False) -> int:
+    """Convert 8-bit RGB channels to a packed RGB565 integer."""
     if invert:
         val = ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3)
     else:
@@ -27,15 +28,18 @@ def rgb(r: int, g: int, b: int, invert: bool = False) -> int:
 
 
 def swap_color(color: int) -> int:
-    # Đảo 2 byte để framebuf hiểu đúng màu RGB565
+    """Swap the byte order of a packed 16-bit color value."""
+    # Swap the two bytes so framebuf receives RGB565 in the expected order.
     return ((color & 0xFF) << 8) | ((color >> 8) & 0xFF)
 
 
 def clamp(value: int, _min: int, _max: int) -> int:
+    """Clamp a numeric value to the inclusive range [_min, _max]."""
     return max(_min, min(_max, value))
 
 
 def print_table(data: list[dict], keys: list[str] | None = None) -> None:
+    """Print records as a compact ASCII table for diagnostics."""
     if not data:
         print("Empty table")
         return

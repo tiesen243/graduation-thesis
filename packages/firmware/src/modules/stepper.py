@@ -1,4 +1,5 @@
-import uasyncio
+import asyncio
+
 from machine import Pin
 
 from lib.pins import Pins
@@ -13,24 +14,24 @@ FULL_STEP = [
 
 class StepperMotor:
     def __init__(self, pins: list[Pin]) -> None:
-        self.pins = pins
-        self.step_index = 0
+        self._pins = pins
+        self._step_index = 0
         self.off()
 
     def off(self) -> None:
-        for p in self.pins:
+        for p in self._pins:
             p.value(0)
 
-    async def move(self, steps: int, delay_ms: int = 2) -> None:
+    async def move(self, steps: int, delay_ms: int = 3) -> None:
         direction = 1 if steps > 0 else -1
 
         for _ in range(abs(steps)):
-            self.step_index = (self.step_index + direction) % 4
+            self._step_index = (self._step_index + direction) % 4
 
             for i in range(4):
-                self.pins[i].value(FULL_STEP[self.step_index][i])
+                self._pins[i].value(FULL_STEP[self._step_index][i])
 
-            await uasyncio.sleep_ms(delay_ms)
+            await asyncio.sleep(delay_ms / 1000)
 
         self.off()
 
@@ -40,12 +41,12 @@ class Stepper:
 
     def __init__(self) -> None:
         pins = Pins.create()
-        self.discard = StepperMotor(pins.stepper_discard)
-        self.drawer = StepperMotor(pins.stepper_drawer)
+        self._discard = StepperMotor(pins.stepper_discard)
+        self._drawer = StepperMotor(pins.stepper_drawer)
 
     def off_all(self) -> None:
-        self.discard.off()
-        self.drawer.off()
+        self._discard.off()
+        self._drawer.off()
 
     @classmethod
     def create(cls) -> Stepper:

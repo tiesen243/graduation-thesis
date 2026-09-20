@@ -1,97 +1,87 @@
-import uasyncio
-import ujson
+import asyncio
+import json
+
 from machine import Pin
 
 from lib.api import Api
+from lib.pins import Pins
 from tasks.sync_schedule import SyncSchedule
-
-led = Pin("LED", Pin.OUT)
 
 
 class Streaming:
     __instance: Streaming | None = None
 
-    api: Api
-    sync_schedule: SyncSchedule
+    _api: Api
+    _led: Pin
+    _sync_schedule: SyncSchedule
 
-    def __init__(self):
-        self.api = Api.create()
-        self.sync_schedule = SyncSchedule.create()
+    def __init__(self) -> None:
+        self._api = Api.create()
+        self._sync_schedule = SyncSchedule.create()
+
+        pins = Pins.create()
+        self._led = pins.led
+
+    def _is_digit(self, val: str) -> bool:
+        try:
+            _ = int(val, 16)
+            return True
+        except ValueError:
+            return False
 
     async def _handle_payload(self, line: str) -> None:
-        """
-        Parse raw SSE payload lines and trigger hardware or software actions.
+        await asyncio.sleep(0.1)
 
-        :param line: Raw text line received from the streaming endpoint.
-        :return: None
-        """
-        if not line or line.startswith(":keep-alive"):
+        clean_line = line.strip()
+
+        if not clean_line or clean_line.startswith(":") or self._is_digit(clean_line):
             return
 
-        if line.startswith("data:"):
-            line = line[5:].strip()
+        if clean_line.startswith("data:"):
+            clean_line = clean_line[5:].strip()
 
         try:
-            data = ujson.loads(line)
-            print(f"Received streaming payload: {data}")
-        except Exception:  # noqa: BLE001
+            data = json.loads(clean_line)
+        except Exception:
             return
+
+        if not isinstance(data, dict):
+            return
+
+        print(f"[Stream] Received streaming payload: {data}")
 
         action = data.get("action")
         payload = data.get("payload")
 
         if action == "led":
-            print(f"Setting LED state to: {payload}")
-            led.value(int(payload))
+            print(f"[Stream] Setting LED state to: {payload}")
+            self._led.value(int(payload))  # pyright: ignore[reportArgumentType]
 
         elif action == "sync_schedule":
-            print("Syncing schedule...")
-            await self.sync_schedule.sync()
+            print("[Stream] Syncing schedule...")
+            await self._sync_schedule.execute()
 
     async def start(self) -> None:
-        """
-        Start the continuous Server-Sent Events (SSE) streaming listener loop with exponential backoff logic.
-
-        Detailed Workflow:
-            1. **Stream Connection Setup**:
-               - Invokes `self.api.stream()` to establish a long-lived HTTP SSE subscription connection to
-                 the endpoint `/api/devices/subscribe`.
-               - Registers `self._handle_payload` as the callback function to handle incoming streaming data chunks.
-               - Sets a 30-second read timeout parameter to detect stalled or dropped socket connections.
-
-            2. **Successful Stream Processing**:
-               - When the connection maintains stability or completes gracefully, resets the connection backoff
-                 delay parameter (`retry_delay`) to its base duration of 2 seconds.
-
-            3. **Error Recovery & Reconnection Logic**:
-               - Catches network, socket, or parsing exceptions thrown during streaming execution without crashing the device.
-               - Prints an error diagnostic message containing the exception payload.
-               - Suspends task execution via `uasyncio.sleep(retry_delay)` before attempting a reconnect.
-
-            4. **Exponential Backoff Retry Calculation**:
-               - Doubles `retry_delay` after each failure iteration (`retry_delay * 2`).
-               - Caps the max backoff wait period at `max_delay` (60 seconds) to prevent infinite growth while conserving resources.
-
-        :return: None
-        :raises Exception: Internal stream or connection exceptions are caught, logged, and handled internally.
-        """
-        print("\n[STARTUP] Streaming task initiated...\n")
+        """Start continuous SSE streaming listener loop with backoff logic."""
+        print("[Startup] Streaming task initiated...")
 
         retry_delay = 2
         max_delay = 60
 
         while True:
             try:
-                await self.api.stream(
+                await asyncio.sleep(0.020)
+
+                await self._api.stream(
                     endpoint="/api/devices/subscribe",
                     callback=self._handle_payload,
                     timeout=30,
                 )
                 retry_delay = 2
-            except Exception as e:  # noqa: BLE001
-                print(f"Streaming error: {e}")
+            except Exception as e:
+                print(f"[Stream] Error: {e}. Retrying in {retry_delay} seconds...")
 
-            await uasyncio.sleep(retry_delay)
+            await asyncio.sleep(retry_delay)
             retry_delay = min(retry_delay * 2, max_delay)
 
     @classmethod
@@ -99,8 +89,3 @@ class Streaming:
         if cls.__instance is None:
             cls.__instance = Streaming()
         return cls.__instance
-
-
-if __name__ == "__main__":
-    streaming = Streaming.create()
-    uasyncio.run(streaming.start())

@@ -2,9 +2,11 @@
   "name": "@rozumari/firmware",
   "version": "0.0.5",
   "private": false,
+  "main": "src/main.py",
   "scripts": {
+    "board": "uv run scripts/board.py",
     "clean": "git clean -xdf .venv __pycache__",
-    "clean:board": "uv run scripts/clean.py",
-    "upload:board": "uv run scripts/upload.py"
+    "config": "uv run mpremote edit data/config.json",
+    "start": "uv run mpremote mount src exec --no-follow \"exec(open('/remote/main.py').read())\" repl"
   }
 }
