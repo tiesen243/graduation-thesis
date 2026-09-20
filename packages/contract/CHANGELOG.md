@@ -1,3 +1,10 @@
+## @rozumari/contract@0.0.18
+
+### Patches
+
+- Updated contract
+- Fix UI
+
 ## @rozumari/contract@0.0.17
 
 ### Patchs

@@ -1,3 +1,10 @@
+## @rozumari/lib@0.0.3
+
+### Patches
+
+- Updated contract
+- Fix UI
+
 ## @rozumari/lib@0.0.2
 
 ### Summary of Changes
