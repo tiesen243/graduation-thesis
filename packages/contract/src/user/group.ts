@@ -7,7 +7,11 @@ import { DeleteUserDto } from '@/user/dto/delete-user.dto'
 import { ListUsersDto } from '@/user/dto/list-users.dto'
 import { ShowUserDto } from '@/user/dto/show-user.dto'
 import { UpdateUserDto } from '@/user/dto/update-user.dto'
-import { UserNotFound, UserQueryError } from '@/user/schemas/user.error'
+import {
+  UserAlreadyDeleted,
+  UserNotFound,
+  UserQueryError,
+} from '@/user/schemas/user.error'
 
 export class UserGroup extends HttpApiGroup.make('user')
   .add(
@@ -31,7 +35,7 @@ export class UserGroup extends HttpApiGroup.make('user')
       params: ShowUserDto.Input,
       payload: UpdateUserDto.Input,
       success: UpdateUserDto,
-      error: [UserNotFound, Forbidden],
+      error: [UserNotFound, UserAlreadyDeleted, Forbidden],
     })
   )
 
@@ -39,7 +43,7 @@ export class UserGroup extends HttpApiGroup.make('user')
     HttpApiEndpoint.delete('delete', '/:id', {
       params: DeleteUserDto.Input,
       success: DeleteUserDto,
-      error: [UserNotFound, Forbidden],
+      error: [UserNotFound, UserAlreadyDeleted, Forbidden],
     })
   )
 

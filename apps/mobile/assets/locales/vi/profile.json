@@ -1,0 +1,79 @@
+{
+  "title": "Hồ sơ",
+  "index": {
+    "account": "Thông tin tài khoản",
+    "joined": "Tham gia vào",
+    "logout": "Đăng xuất"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "dark_mode": {
+      "title": "Chế độ tối",
+      "description": "Bật chế độ tối cho ứng dụng",
+      "options": {
+        "on": "Bật",
+        "off": "Tắt",
+        "system": "Sử dụng cài đặt thiết bị"
+      }
+    },
+    "language": {
+      "title": "Ngôn ngữ",
+      "description": "Chọn ngôn ngữ cho ứng dụng",
+      "options": {
+        "en": "Tiếng Anh",
+        "vi": "Tiếng Việt"
+      }
+    },
+    "version": "Phiên bản ứng dụng"
+  },
+  "config": {
+    "title": "Cấu hình thiết bị",
+    "messages": {
+      "success": "Kết nối thiết bị thành công.",
+      "failed": "Kết nối thiết bị thất bại. Vui lòng thử lại.",
+      "disconnected": "Ngắt kết nối thiết bị thành công.",
+      "send_failed": "Gửi cấu hình đến thiết bị thất bại. Vui lòng thử lại."
+    },
+    "device": {
+      "selector": {
+        "title": "Chọn thiết bị",
+        "placeholder": "Chọn thiết bị..."
+      }
+    },
+    "language": {
+      "title": "Cấu hình ngôn ngữ",
+      "selector": {
+        "title": "Chọn ngôn ngữ",
+        "placeholder": "Chọn ngôn ngữ..."
+      },
+      "messages": {
+        "success": "Cấu hình ngôn ngữ đã được cập nhật thành công.",
+        "failed": "Cập nhật cấu hình ngôn ngữ thất bại. Vui lòng thử lại."
+      }
+    },
+    "utc": {
+      "title": "Cấu hình múi giờ",
+      "selector": {
+        "title": "Chọn múi giờ",
+        "placeholder": "Chọn múi giờ..."
+      },
+      "messages": {
+        "success": "Cấu hình múi giờ đã được cập nhật thành công.",
+        "failed": "Cập nhật cấu hình múi giờ thất bại. Vui lòng thử lại."
+      }
+    },
+    "sync": {
+      "title": "Cấu hình thời gian đồng bộ"
+    },
+    "actions": {
+      "connect": "Kết nối",
+      "connecting": "Đang kết nối...",
+      "disconnect": "Ngắt kết nối"
+    },
+    "wifi": {
+      "title": "Cấu hình Wi-Fi",
+      "ssid": "SSID Wi-Fi",
+      "password": "Mật khẩu Wi-Fi"
+    }
+  }
+}

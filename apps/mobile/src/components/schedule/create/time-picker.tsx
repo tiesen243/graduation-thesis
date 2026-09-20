@@ -8,11 +8,13 @@ import {
 } from '@rozumari/ui/components/field'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { Activity, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useCSSVariable } from 'uniwind'
 
 import { CreateScheduleForm } from '@/components/schedule/create/_config'
 
 export function CreateScheduleTimePicker() {
+  const { t } = useTranslation('schedule')
   const [isOpen, setIsOpen] = useState(false)
   const foregroundColor = useCSSVariable('--color-foreground') as string
 
@@ -21,10 +23,10 @@ export function CreateScheduleTimePicker() {
       name='time'
       render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
-          <FieldLabel>Time</FieldLabel>
+          <FieldLabel>{t('create.fields.time.label')}</FieldLabel>
 
           <Button variant='outline' onPress={() => setIsOpen(true)}>
-            {field.value || 'Select time'}
+            {field.value || t('create.fields.time.placeholder')}
           </Button>
 
           <Activity mode={isOpen ? 'visible' : 'hidden'}>
@@ -49,7 +51,7 @@ export function CreateScheduleTimePicker() {
               onDismiss={() => setIsOpen(false)}
               onValueChange={(_, date) => {
                 if (!date) return setIsOpen(false)
-                handleChange(formatDate(date, 'HH:mm:ss'))
+                handleChange(formatDate(date, { mode: 'time' }))
                 setIsOpen(false)
               }}
               is24Hour
@@ -57,7 +59,7 @@ export function CreateScheduleTimePicker() {
           </Activity>
 
           <FieldDescription>
-            Select the time when the schedule should run.
+            {t('create.fields.time.description')}
           </FieldDescription>
 
           <FieldError errors={meta.errors} />

@@ -1,0 +1,75 @@
+{
+  "title": "Schedule",
+
+  "index": {
+    "title": "Schedules",
+    "statuses": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "missed": "Missed"
+    },
+    "no_schedules": "No schedules found. Please add a schedule to see it here.",
+    "item": "Slot {{slot}} - {{quantity}} pills"
+  },
+
+  "create": {
+    "title": "Create Schedule",
+    "fields": {
+      "device": {
+        "label": "Device",
+        "placeholder": "Select a device"
+      },
+      "period": "Period",
+      "time": {
+        "label": "Time",
+        "placeholder": "Select time",
+        "description": "Select the time for the schedule"
+      },
+      "repeat_on": {
+        "label": "Repeat on",
+        "description": "Select the days of the week to repeat the schedule"
+      }
+    },
+    "actions": {
+      "submitting": "Creating..."
+    },
+    "messages": {
+      "success": "Schedule created successfully",
+      "error": "Failed to create schedule"
+    }
+  },
+
+  "detail": {
+    "title": "Schedule Details",
+    "sections": {
+      "schedule_information": "Schedule Information",
+      "medication_items": "Medication Items"
+    }
+  },
+
+  "edit": {
+    "title": "Edit Schedule",
+    "messages": {
+      "success": "Schedule updated successfully",
+      "error": "Failed to update schedule"
+    }
+  },
+
+  "items": {
+    "title": "Items",
+    "description": "Add the compartments and quantities to dispense for this schedule. ",
+    "select_slot": "Select Slot",
+    "select_compartment": "Select a compartment",
+    "required": "Required",
+    "add": "Add Item"
+  },
+
+  "sync": {
+    "title": "Syncing schedule",
+    "description": "Select the device you want to sync your schedule with. This will overwrite any existing schedule on the device.",
+    "select_device": "Select a device",
+    "actions": {
+      "syncing": "Syncing..."
+    }
+  }
+}

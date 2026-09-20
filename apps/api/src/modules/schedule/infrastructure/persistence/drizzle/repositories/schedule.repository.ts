@@ -1,7 +1,7 @@
 import type { ScheduleAggregateSchema } from '@rozumari/contract/schedule/schemas/schedule.aggregate'
 import type { ScheduleStatus } from '@rozumari/contract/schedule/schemas/schedule.schema'
 
-import { and, asc, between, eq, sql, sum } from 'drizzle-orm'
+import { and, asc, between, eq, ne, sql, sum } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -21,7 +21,7 @@ import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizz
 export const DrizzleScheduleRepository = Layer.effect(
   ScheduleRepository,
   Effect.gen(function* DrizzleScheduleRepository() {
-    const { db } = yield* DrizzleClient
+    const { db, buildCriteria, buildOrderBy } = yield* DrizzleClient
 
     const schedulesRepo = yield* makeDrizzleRepository(
       schedules,
@@ -32,7 +32,7 @@ export const DrizzleScheduleRepository = Layer.effect(
     const selector = {
       id: schedules.id,
       date: schedules.date,
-      time: schedules.time,
+      time: sql<string>`TO_CHAR(${schedules.time}, 'HH24:MI:SS')`,
       status: schedules.status,
       userId: schedules.userId,
       device: {
@@ -53,6 +53,36 @@ export const DrizzleScheduleRepository = Layer.effect(
 
     return {
       ...schedulesRepo,
+
+      findMany: Effect.fn(function* findMany(options = {}) {
+        const query = db
+          .select({
+            id: schedules.id,
+            userId: schedules.userId,
+            deviceId: schedules.deviceId,
+            date: schedules.date,
+            time: sql<string>`TO_CHAR(${schedules.time}, 'HH24:MI:SS')`,
+            status: schedules.status,
+          })
+          .from(schedules)
+          .$dynamic()
+
+        const whereSql = yield* buildCriteria(schedules, options.where)
+        if (whereSql) query.where(whereSql)
+
+        const orderBySql = yield* buildOrderBy(schedules, options.orderBy)
+        if (orderBySql.length > 0) query.orderBy(...orderBySql)
+
+        if (options.limit) query.limit(options.limit)
+        if (options.offset) query.offset(options.offset)
+
+        return yield* query.pipe(
+          Effect.map((rows) =>
+            rows.map((row) => DrizzleScheduleMapper.toEntity(row))
+          ),
+          Effect.orDie
+        )
+      }),
 
       findWithItems: Effect.fn(function* findWithItems(scheduleId) {
         const [row] = yield* db
@@ -107,11 +137,14 @@ export const DrizzleScheduleRepository = Layer.effect(
           .orderBy(asc(schedules.date), asc(schedules.time))
           .pipe(Effect.orDie)
 
+        yield* Effect.logDebug(rows)
+
         return rows
       }),
 
       findManyPendingByDeviceId: Effect.fn(function* findManyPendingByDeviceId({
         deviceId,
+        excludeScheduleId,
       }) {
         const rows = yield* db
           .select({
@@ -123,13 +156,19 @@ export const DrizzleScheduleRepository = Layer.effect(
           .where(
             and(
               eq(schedules.deviceId, deviceId),
-              eq(schedules.status, 'pending' as ScheduleStatus)
+              eq(schedules.status, 'pending' as ScheduleStatus),
+              excludeScheduleId
+                ? ne(schedules.id, excludeScheduleId)
+                : undefined
             )
           )
           .groupBy(scheduleItems.slot)
           .pipe(Effect.orDie)
 
-        return rows
+        return rows.map((row) => ({
+          slot: row.slot,
+          quantity: row.quantity ?? 0,
+        }))
       }),
     }
   })

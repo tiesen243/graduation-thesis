@@ -10,9 +10,10 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
-import type { Compartment } from '@/components/pill-boxes/details/compartment-card'
+import type { Compartment } from '@/components/pill-boxes/compartment-card'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -27,11 +28,11 @@ function SaveCompartmentFormSubmit({
   setIsOpen,
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
-
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
+  const { t } = useTranslation(['common', 'pill-box'])
 
-  const { api } = useRuntime()
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   const handleSubmit = updateCompartmentForm.useSubmit(
     (payload) =>
@@ -45,15 +46,19 @@ function SaveCompartmentFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success('Compartment updated successfully')
+        toast.success(t('pill-box:details.compartment.update.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(
+          t('pill-box:details.compartment.update.error'),
+          error.message
+        ),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? 'Saving...' : 'Save Changes'}
+      {isPending ? t('common:saving') : t('common:save_changes')}
     </Button>
   )
 }
@@ -63,11 +68,11 @@ function DeleteCompartmentFormSubmit({
   setIsOpen,
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
-
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
+  const { t } = useTranslation(['common', 'pill-box'])
 
-  const { api } = useRuntime()
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   const handleSubmit = updateCompartmentForm.useSubmit(
     () =>
@@ -81,9 +86,13 @@ function DeleteCompartmentFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success('Compartment deleted successfully')
+        toast.success(t('pill-box:details.compartment.delete.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(
+          t('pill-box:details.compartment.delete.error'),
+          error.message
+        ),
     }
   )
 
@@ -93,7 +102,9 @@ function DeleteCompartmentFormSubmit({
       onPress={() => handleSubmit()}
       disabled={isPending}
     >
-      {isPending ? 'Deleting...' : 'Delete'}
+      {isPending
+        ? t('pill-box:details.compartment.delete.actions.submitting')
+        : t('pill-box:details.compartment.delete.actions.submit')}
     </Button>
   )
 }
@@ -108,6 +119,7 @@ export function UpdateCompartmentButton({
   children: (setIsOpen: (isOpen: boolean) => void) => React.ReactNode
 }>) {
   const [isOpen, setIsOpen] = React.useState(false)
+  const { t } = useTranslation(['common', 'pill-box'])
 
   return (
     <>
@@ -129,21 +141,25 @@ export function UpdateCompartmentButton({
             >
               <Pressable className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
-                  Update Compartment {compartment.position}
+                  {t('pill-box:details.compartment.update.title')}{' '}
+                  {compartment.position}
                 </Typography>
                 <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  Fill in the details of the medicine you want to add to this
-                  compartment.
+                  {t('pill-box:details.compartment.update.description')}
                 </Typography>
 
                 <updateCompartmentForm.Field
                   name='medicine'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Medicine</FieldLabel>
+                      <FieldLabel>
+                        {t('pill-box:details.compartment.medicine')}
+                      </FieldLabel>
                       <Input
                         {...field}
-                        placeholder='Enter medicine name'
+                        placeholder={t(
+                          'pill-box:details.compartment.medicine_placeholder'
+                        )}
                         onChangeText={handleChange}
                       />
                       <FieldError errors={meta.errors} />
@@ -155,10 +171,12 @@ export function UpdateCompartmentButton({
                   name='dosage'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Dosage</FieldLabel>
+                      <FieldLabel>{t('common:dosage')}</FieldLabel>
                       <Input
                         {...field}
-                        placeholder='Enter dosage'
+                        placeholder={t(
+                          'pill-box:details.compartment.dosage_placeholder'
+                        )}
                         keyboardType='numeric'
                         value={field.value.toString()}
                         onChangeText={(text) =>
@@ -175,10 +193,14 @@ export function UpdateCompartmentButton({
                   name='capacity'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Capacity</FieldLabel>
+                      <FieldLabel>
+                        {t('pill-box:details.compartment.capacity')}
+                      </FieldLabel>
                       <Input
                         {...field}
-                        placeholder='Enter capacity'
+                        placeholder={t(
+                          'pill-box:details.compartment.capacity_placeholder'
+                        )}
                         keyboardType='numeric'
                         value={field.value.toString()}
                         onChangeText={(text) =>

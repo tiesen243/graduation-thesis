@@ -13,9 +13,6 @@ export class Notification extends Schema.TaggedClass<Notification>()(
   }
 ) {
   public markAsRead(now = new Date()): Notification {
-    return new Notification({
-      ...this,
-      readAt: now,
-    })
+    return new Notification({ ...this, readAt: now })
   }
 }

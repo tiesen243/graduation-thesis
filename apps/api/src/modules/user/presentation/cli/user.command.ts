@@ -9,9 +9,9 @@ import { ShowUserUseCase } from '@/modules/user/application/use-case/show-user.u
 const listUsers = Command.make(
   'list',
   {
-    query: Flag.string('query').pipe(Flag.withDefault('')),
-    page: Flag.integer('page').pipe(Flag.withDefault(1)),
-    limit: Flag.integer('limit').pipe(Flag.withDefault(10)),
+    query: Flag.String('query').pipe(Flag.withDefault('')),
+    page: Flag.Int('page').pipe(Flag.withDefault(1)),
+    limit: Flag.Int('limit').pipe(Flag.withDefault(10)),
   },
   Effect.fn(function* listUsersFn(input) {
     const { users, meta } = yield* ListUsersUseCase.use((s) => s.execute(input))
@@ -24,7 +24,7 @@ const listUsers = Command.make(
 const showUser = Command.make(
   'show',
   {
-    id: Flag.string('id'),
+    id: Flag.String('id'),
   },
   Effect.fn(function* showUserFn(input) {
     const user = yield* ShowUserUseCase.use((s) =>

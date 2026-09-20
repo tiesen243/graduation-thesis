@@ -19,11 +19,14 @@ import {
 import { toast } from '@rozumari/ui/components/toast'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal, TouchableWithoutFeedback, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
 export const SyncScheduleButton = () => {
+  const { t } = useTranslation('schedule')
+
   const [open, setOpen] = useState(false)
   const [selectedDevice, setSelectedDevice] = useState<DeviceId>('' as DeviceId)
 
@@ -56,11 +59,8 @@ export const SyncScheduleButton = () => {
           <View className='flex-1 items-center justify-center bg-black/50 px-4'>
             <Card>
               <CardHeader>
-                <CardTitle>Syncing schedule</CardTitle>
-                <CardDescription>
-                  Select the device you want to sync your schedule with. This
-                  will overwrite any existing schedule on the device.
-                </CardDescription>
+                <CardTitle>{t('sync.title')}</CardTitle>
+                <CardDescription>{t('sync.description')}</CardDescription>
               </CardHeader>
               <CardContent className='gap-4'>
                 <Select
@@ -75,7 +75,7 @@ export const SyncScheduleButton = () => {
                           label: device.name ?? device.factoryModel,
                         })) ?? []
                       }
-                      placeholder='Select a device'
+                      placeholder={t('sync.select_device')}
                     />
                   </SelectTrigger>
 
@@ -97,7 +97,9 @@ export const SyncScheduleButton = () => {
                     })
                   }
                 >
-                  {syncSchedule.isPending ? 'Syncing...' : 'Sync Schedule'}
+                  {syncSchedule.isPending
+                    ? t('sync.actions.syncing')
+                    : t('sync.title')}
                 </Button>
               </CardContent>
             </Card>

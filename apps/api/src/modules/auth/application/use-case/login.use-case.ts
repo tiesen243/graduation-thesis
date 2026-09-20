@@ -40,9 +40,7 @@ export class LoginUseCase extends Context.Service<
         const { email, password: plainPassword } = input
 
         const user = yield* userService.findByIdentifier({ email })
-        if (!user) return yield* Effect.fail(new InvalidCredentials())
-        if (user.deletedAt !== null)
-          return yield* Effect.fail(new InvalidCredentials())
+        if (!user?.isActive) return yield* Effect.fail(new InvalidCredentials())
 
         const [account] = yield* accountRepository.findMany({
           where: {

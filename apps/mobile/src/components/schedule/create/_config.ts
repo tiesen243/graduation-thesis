@@ -1,6 +1,8 @@
 import { CreateScheduleDto } from '@rozumari/contract/schedule/dto/create-schedule.dto'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 
+import { getTimezonedDate } from '@/lib/utils'
+
 export const CreateScheduleForm = FormBuilder.empty
   .add('deviceId', CreateScheduleDto.Input.fields.deviceId)
   .add('startDate', CreateScheduleDto.Input.fields.startDate)
@@ -46,11 +48,11 @@ export const getMarkedDates = (
       textColor: string
     }
   > = {}
-  const currentDate = new Date(start)
-  const lastDate = new Date(end)
+  const currentDate = getTimezonedDate(start)
+  const lastDate = getTimezonedDate(end)
 
   while (currentDate.getTime() <= lastDate.getTime()) {
-    const [dateString = ''] = currentDate.toISOString().split('T')
+    const [dateString = ''] = currentDate.toISOString().split('t')
 
     if (dateString === start)
       marked[dateString] = { startingDay: true, color, textColor }

@@ -5,57 +5,52 @@ import {
   ChevronRightIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
-import { cn } from '@rozumari/ui/lib/utils'
-import { getCalendars } from 'expo-localization'
+import { cn, formatDate } from '@rozumari/ui/lib/utils'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-const timezone = getCalendars()[0].timeZone ?? 'UTC'
+import { getTimezonedDate } from '@/lib/utils'
 
 const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
-  const date = new Date(currentStartDate)
+  const date = getTimezonedDate(currentStartDate)
   date.setDate(date.getDate() + offsetDays)
-  return getCurrentWeekRange(date, timezone)
+  return getCurrentWeekRange(date)
 }
 
 const STATUSES = [
-  { label: 'Completed', color: 'bg-success' },
-  { label: 'Pending', color: 'bg-warning' },
-  { label: 'Missed', color: 'bg-destructive' },
-]
+  { key: 'index.statuses.completed', color: 'bg-success' },
+  { key: 'index.statuses.pending', color: 'bg-warning' },
+  { key: 'index.statuses.missed', color: 'bg-destructive' },
+] as const
 
 export const ScheduleNav: React.FC<{
   startDate: string
   endDate: string
   setWeek: (options: { startDate: string; endDate: string }) => void
 }> = ({ startDate, endDate, setWeek }) => {
-  const formattedRange = useMemo(() => {
-    if (!startDate || !endDate) return ''
-    const start = new Date(startDate)
-    const end = new Date(endDate)
+  const { t, i18n } = useTranslation('schedule')
 
-    const startStr = start.toLocaleDateString('en-US', {
-      timeZone: timezone,
-      month: 'short',
-      day: 'numeric',
-    })
-    const endStr = end.toLocaleDateString('en-US', {
-      timeZone: timezone,
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    })
-
-    return `${startStr} – ${endStr}`
-  }, [startDate, endDate])
+  const weekRange = useMemo(() => {
+    const isSameYear = startDate.split('-')[0] === endDate.split('-')[0]
+    return `${formatDate(startDate, {
+      mode: 'custom',
+      custom: isSameYear ? 'MMM d' : 'MMM d, yyyy',
+      locale: i18n.resolvedLanguage,
+    })} – ${formatDate(endDate, {
+      mode: 'custom',
+      custom: 'MMM d, yyyy',
+      locale: i18n.resolvedLanguage,
+    })}`
+  }, [startDate, endDate, i18n.resolvedLanguage])
 
   return (
     <View className='flex-row items-center justify-between gap-4 px-4 pt-4'>
       <View className='flex-row items-center gap-3'>
         {STATUSES.map((status) => (
-          <View key={status.label} className='flex-row items-center gap-1.5'>
+          <View key={status.key} className='flex-row items-center gap-1.5'>
             <View className={cn('size-2 rounded-full', status.color)} />
-            <Typography className='text-xs'>{status.label}</Typography>
+            <Typography className='text-xs'>{t(status.key)}</Typography>
           </View>
         ))}
       </View>
@@ -72,9 +67,9 @@ export const ScheduleNav: React.FC<{
         <Button
           variant='outline'
           className='rounded-none border-none'
-          onPress={() => setWeek(getCurrentWeekRange(new Date(), timezone))}
+          onPress={() => setWeek(getCurrentWeekRange(getTimezonedDate()))}
         >
-          <Typography>{formattedRange}</Typography>
+          <Typography>{weekRange}</Typography>
         </Button>
         <Button
           variant='outline'

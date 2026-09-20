@@ -3,6 +3,7 @@ import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import {
@@ -12,6 +13,7 @@ import {
 } from '@/components/profile/config/_context'
 
 export function WifiConfig() {
+  const { t } = useTranslation('profile')
   const { isConnected, sendBleCommand, registerByteHandler } = useBLE()
   const [ssid, setSsid] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -63,10 +65,12 @@ export function WifiConfig() {
 
   return (
     <View className='gap-3'>
-      <Typography className='font-semibold'>Wi-Fi Configuration</Typography>
+      <Typography className='font-semibold'>
+        {t('config.wifi.title')}
+      </Typography>
 
       <Input
-        placeholder='Wi-Fi SSID'
+        placeholder={t('config.wifi.ssid')}
         value={ssid}
         onChangeText={(text) => {
           setSsid(text)
@@ -75,7 +79,7 @@ export function WifiConfig() {
       />
 
       <Input
-        placeholder='Wi-Fi Password'
+        placeholder={t('config.wifi.password')}
         secureTextEntry
         value={password}
         onChangeText={(text) => {

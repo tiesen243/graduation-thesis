@@ -8,6 +8,7 @@ import {
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import {
@@ -46,6 +47,7 @@ export const UTC_OPTIONS = [
 ] as const
 
 export function UtcConfig() {
+  const { t } = useTranslation('profile')
   const { deviceInfo, isConnected, sendBleCommand, registerByteHandler } =
     useBLE()
 
@@ -54,18 +56,18 @@ export function UtcConfig() {
       registerByteHandler((action, status) => {
         if (action === ACTION_CODES.SET_UTC_RES) {
           if (status === STATUS_CODES.SUCCESS)
-            toast.success('UTC Timezone saved!')
-          else toast.error('Failed to save UTC Timezone!')
+            toast.success(t('config.utc.messages.success'))
+          else toast.error(t('config.utc.messages.failed'))
         }
       }),
-    [registerByteHandler]
+    [registerByteHandler, t]
   )
 
   if (!isConnected) return null
 
   return (
     <View className='gap-3'>
-      <Typography className='font-semibold'>Timezone Configuration</Typography>
+      <Typography className='font-semibold'>{t('config.utc.title')}</Typography>
 
       <Select
         defaultValue={String(deviceInfo?.utc)}
@@ -75,11 +77,11 @@ export function UtcConfig() {
       >
         <SelectTrigger>
           <SelectValue
+            placeholder={t('config.utc.selector.placeholder')}
             items={[...UTC_OPTIONS]}
-            placeholder='Select UTC offset...'
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent title={t('config.utc.selector.title')}>
           {UTC_OPTIONS.map((item) => (
             <SelectItem key={item.value} value={String(item.value)}>
               {item.label}

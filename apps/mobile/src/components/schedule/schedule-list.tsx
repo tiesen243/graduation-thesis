@@ -5,17 +5,15 @@ import { Badge } from '@rozumari/ui/components/badge'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useCallback, useMemo, useRef } from 'react'
-import {
-  ActivityIndicator,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  View,
-} from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { Pressable, ScrollView, View } from 'react-native'
 
+import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { ScheduleCard } from '@/components/schedule/schedule-card'
 import { useDateRange } from '@/hooks/use-date-range'
 import { getTimezonedDate } from '@/lib/utils'
+
+const [today] = getTimezonedDate().toISOString().split('t')
 
 export const ScheduleList: React.FC<{
   schedules: ListSchedulesDto.Output
@@ -28,8 +26,7 @@ export const ScheduleList: React.FC<{
   isRefetching: boolean
 }> = ({ schedules, startDate, endDate, ...props }) => {
   const { isLoading, refetch, isRefetching } = props
-
-  const today = useMemo(() => getTimezonedDate(), [])
+  const { t } = useTranslation('schedule')
 
   const scrollViewRef = useRef<ScrollViewInstance>(null)
   const groupPositions = useRef<Record<string, number>>({})
@@ -54,7 +51,15 @@ export const ScheduleList: React.FC<{
   }, [])
 
   return (
-    <>
+    <ScrollView
+      contentContainerClassName='flex-1'
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={refetch as never}
+        />
+      }
+    >
       <View className='w-full flex-row gap-2 p-4'>
         {dateRange.map(({ iso, weekday, dayNumber }) => (
           <Pressable
@@ -79,37 +84,22 @@ export const ScheduleList: React.FC<{
 
       {isLoading && (
         <View className='flex-1 items-center justify-center'>
-          <ActivityIndicator size='large' colorClassName='accent-primary' />
+          <ActivityIndicator size='large' />
         </View>
       )}
 
       {!isLoading && schedules.length <= 0 && (
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerClassName='items-center justify-center flex-1'
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch as never}
-            />
-          }
-        >
+        <View className='flex-1 items-center justify-center'>
           <Typography className='text-muted-foreground'>
-            No schedules found. Please add a schedule to see it here.
+            {t('index.no_schedules')}
           </Typography>
-        </ScrollView>
+        </View>
       )}
 
       {!isLoading && schedules.length > 0 && (
         <ScrollView
           ref={scrollViewRef}
           contentContainerClassName='grow gap-3 pb-4'
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefetching}
-              onRefresh={refetch as never}
-            />
-          }
         >
           {Object.entries(groupedSchedules).map(([date, group]) => {
             const isToday = date === today
@@ -150,6 +140,6 @@ export const ScheduleList: React.FC<{
           })}
         </ScrollView>
       )}
-    </>
+    </ScrollView>
   )
 }

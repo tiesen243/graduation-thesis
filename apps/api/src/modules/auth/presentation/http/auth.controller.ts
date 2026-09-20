@@ -47,23 +47,34 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
                   { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
                 ],
               ])
-            )
+            ),
+            Effect.orDie
           )
-        ),
-        Effect.orDie
+        )
       )
     )
 
     .handle('logout', ({ headers }) =>
       LogoutUseCase.use((s) => s.execute(headers)).pipe(
-        Effect.flatMap(() => HttpServerResponse.json(new LogoutDto())),
-        Effect.flatMap((response) =>
-          HttpServerResponse.setCookies(response, [
-            [COOKIE_KEYS.REFRESH_TOKEN, '', { ...COOKIE_OPTIONS, maxAge: 0 }],
-            [COOKIE_KEYS.ACCESS_TOKEN, '', { ...COOKIE_OPTIONS, maxAge: 0 }],
-          ])
-        ),
-        Effect.orDie
+        Effect.flatMap(() =>
+          HttpServerResponse.json(new LogoutDto()).pipe(
+            Effect.flatMap((response) =>
+              HttpServerResponse.setCookies(response, [
+                [
+                  COOKIE_KEYS.REFRESH_TOKEN,
+                  '',
+                  { ...COOKIE_OPTIONS, maxAge: 0 },
+                ],
+                [
+                  COOKIE_KEYS.ACCESS_TOKEN,
+                  '',
+                  { ...COOKIE_OPTIONS, maxAge: 0 },
+                ],
+              ])
+            ),
+            Effect.orDie
+          )
+        )
       )
     )
 
@@ -90,10 +101,10 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
                   { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
                 ],
               ])
-            )
+            ),
+            Effect.orDie
           )
-        ),
-        Effect.orDie
+        )
       )
     )
 

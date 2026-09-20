@@ -1,0 +1,19 @@
+{
+  "title": "Thông báo",
+  "index": {},
+  "detail": {
+    "title": "Chi tiết thông báo",
+    "not_found": "Không tìm thấy thông báo.",
+    "level": {
+      "info": "Thông tin",
+      "warning": "Cảnh báo",
+      "error": "Lỗi"
+    },
+    "sections": {
+      "details": "Chi tiết thông báo",
+      "device_id": "Mã thiết bị",
+      "schedule_id": "Mã lịch trình",
+      "payload_metadata": "Dữ liệu đính kèm"
+    }
+  }
+}

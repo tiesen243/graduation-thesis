@@ -11,6 +11,7 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
@@ -23,12 +24,12 @@ const updateDeviceForm = FormBuilder.empty
 function SaveDeviceFormSubmit({
   setIsOpen,
 }: Readonly<{ setIsOpen: (isOpen: boolean) => void }>) {
-  const { id } = useLocalSearchParams<{ id: DeviceId }>()
-
   const isPending = updateDeviceForm.useValue((s) => s.isPending)
+  const { id } = useLocalSearchParams<{ id: DeviceId }>()
+  const { t } = useTranslation(['common', 'pill-box'])
 
-  const { api } = useRuntime()
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   const handleSubmit = updateDeviceForm.useSubmit(
     (payload) => api.device['update'].mutateEffect({ params: { id }, payload }),
@@ -38,15 +39,19 @@ function SaveDeviceFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success('Device updated successfully')
+        toast.success(t('pill-box:details.device.update.messages.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(
+          t('pill-box:details.device.update.messages.error'),
+          error.message
+        ),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? 'Saving...' : 'Save Changes'}
+      {isPending ? t('saving') : t('save_changes')}
     </Button>
   )
 }
@@ -54,6 +59,7 @@ function SaveDeviceFormSubmit({
 export function UpdateDeviceButton({
   device,
 }: Readonly<{ device: { name: string | null; position: string | null } }>) {
+  const { t } = useTranslation('pill-box')
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
@@ -73,21 +79,21 @@ export function UpdateDeviceButton({
             <updateDeviceForm.Provider defaultValues={device}>
               <Pressable className='w-full gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
-                  Update Device
+                  {t('details.device.update.title')}
                 </Typography>
                 <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  Update the device name and position.
+                  {t('details.device.update.description')}
                 </Typography>
 
                 <updateDeviceForm.Field
                   name='name'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Device Name</FieldLabel>
+                      <FieldLabel>{t('details.device.name')}</FieldLabel>
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        placeholder='Enter device name'
+                        placeholder={t('details.device.name_placeholder')}
                         onChangeText={handleChange}
                       />
                       <FieldError errors={meta.errors} />
@@ -99,11 +105,11 @@ export function UpdateDeviceButton({
                   name='position'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>Position</FieldLabel>
+                      <FieldLabel>{t('details.device.position')}</FieldLabel>
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        placeholder='Enter position'
+                        placeholder={t('details.device.position_placeholder')}
                         onChangeText={handleChange}
                       />
 

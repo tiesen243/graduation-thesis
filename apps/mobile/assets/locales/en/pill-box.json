@@ -1,0 +1,86 @@
+{
+  "title": "Pill Boxes",
+
+  "statuses": {
+    "linked": "Linked",
+    "unlinked": "Unlinked",
+    "suspended": "Suspended"
+  },
+
+  "index": {
+    "search_placeholder": "Search devices...",
+    "empty": "No pill boxes found. Please add a pill box to see it here."
+  },
+
+  "details": {
+    "title": "Pill Box Details",
+    "loading": "Loading pill box details...",
+    "compartment_list": "Compartment List ({{count}})",
+    "device": {
+      "model": "Model",
+      "name": "Device Name",
+      "unnamed_device": "Unnamed Device",
+      "name_placeholder": "Enter device name",
+      "position": "Position",
+      "unknown_position": "Not set",
+      "position_placeholder": "Enter position",
+      "activated_at": "Activated Date",
+      "update": {
+        "title": "Update Device",
+        "description": "Fill in the details of the device you want to update.",
+        "messages": {
+          "success": "Device updated successfully.",
+          "error": "Failed to update device."
+        }
+      }
+    },
+    "compartment": {
+      "empty": "Empty Compartment",
+      "medicine": "Medicine",
+      "medicine_placeholder": "Enter medicine name",
+      "dosage_placeholder": "Enter dosage",
+      "capacity": "Capacity",
+      "capacity_placeholder": "Enter capacity",
+      "add_medicine": "Add Medicine",
+      "update": {
+        "title": "Update Compartment",
+        "description": "Fill in the details of the medicine you want to add to this compartment.",
+        "success": "Compartment updated successfully.",
+        "error": "Failed to update compartment."
+      },
+      "delete": {
+        "success": "Compartment deleted successfully.",
+        "error": "Failed to delete compartment.",
+        "actions": {
+          "submit": "Delete",
+          "submitting": "Deleting..."
+        }
+      }
+    }
+  },
+
+  "link": {
+    "title": "Link Pill Box",
+    "not_found": "Device not found",
+    "dialog": {
+      "message": "Are you sure you want to link with {{deviceName}}?",
+      "success": {
+        "title": "Link Successful",
+        "message": "The pill box has been successfully linked."
+      },
+      "error": {
+        "title": "Link Failed",
+        "message": "An error occurred while linking the pill box. Please try again."
+      }
+    },
+    "scan_failed": {
+      "title": "Scan Failed",
+      "message": "Unable to scan the QR code. Please try again."
+    },
+    "overplay": {
+      "processing": "QR detected, processing...",
+      "linking": "Linking pill box...",
+      "scanning": "Scanning QR code..."
+    }
+  }
+}

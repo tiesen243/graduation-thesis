@@ -1,5 +1,5 @@
 {
-  "name": "graduation-thesis",
+  "name": "rozumari",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -8,14 +8,14 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "clean": "turbo run clean && git clean -xdf .turbo node_modules",
-    "deploy": "turbo run deploy",
+    "clean": "turbo run clean && git clean -xdf .turbo .venv node_modules",
     "dev:mobile": "turbo run dev --filter=@rozumari/mobile --filter=@rozumari/api --continue",
     "dev:web": "turbo run dev --filter=@rozumari/web --filter=@rozumari/api --continue",
     "format": "oxfmt --check",
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "postinstall": "uv sync",
     "tegami": "bun run tegami.ts",
     "typecheck": "turbo run typecheck"
   },
@@ -23,12 +23,9 @@
     "oxfmt": "^0.68.0",
     "oxlint": "^1.82.0",
     "tegami": "^1.5.0",
-    "turbo": "^2.10.12"
+    "turbo": "^2.11.2"
   },
-  "overrides": {
-    "@effect/platform-node-shared": "4.0.0-rc.112"
-  },
-  "packageManager": "bun@1.3.0",
+  "packageManager": "bun@1.4.0",
   "catalogs": {
     "dev": {
       "@types/bun": "^1.4.2",
@@ -39,18 +36,22 @@
       "@tanstack/react-query": "^5.103.1",
       "@tiesen/effect-tanstack-query": "^0.0.21"
     },
+    "i18n": {
+      "i18next": "^26.4.2",
+      "react-i18next": "^17.0.14"
+    },
     "effect": {
-      "@effect/platform-bun": "4.0.0-rc.112",
-      "@effect/sql-pg": "4.0.0-rc.112",
-      "@effect/atom-react": "4.0.0-rc.112",
-      "effect": "4.0.0-rc.112"
+      "@effect/platform-bun": "^4.0.0-rc.116",
+      "@effect/sql-pg": "^4.0.0-rc.116",
+      "@effect/atom-react": "^4.0.0-rc.116",
+      "effect": "^4.0.0-rc.116"
     },
     "react": {
       "@types/react": "^19.3.0",
       "@types/react-dom": "^19.3.0",
-      "react": "19.2.3",
-      "react-dom": "19.2.3",
-      "react-native": "0.88.0-rc.0"
+      "react": "^19.3.0",
+      "react-dom": "^19.3.0",
+      "react-native": "0.88.0-rc.1"
     },
     "tailwind": {
       "@tailwindcss/vite": "^4.3.3",

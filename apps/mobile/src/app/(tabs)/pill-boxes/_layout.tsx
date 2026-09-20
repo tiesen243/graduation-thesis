@@ -1,11 +1,14 @@
 import { Button } from '@rozumari/ui/components/button'
 import { LinkIcon } from '@rozumari/ui/components/icons'
 import { Stack, useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 
 import { useOptions } from '@/hooks/use-options'
 
 export default function TabsPillBoxesLayout() {
+  const { t } = useTranslation('pill-box')
   const screenOptions = useOptions()
+
   const router = useRouter()
 
   return (
@@ -13,7 +16,7 @@ export default function TabsPillBoxesLayout() {
       <Stack.Screen
         name='index'
         options={{
-          title: 'Pill Boxes',
+          title: t('title'),
           headerRight: () => (
             <Button
               variant='ghost'
@@ -26,9 +29,9 @@ export default function TabsPillBoxesLayout() {
         }}
       />
 
-      <Stack.Screen name='link' options={{ title: 'Link Pill Box' }} />
+      <Stack.Screen name='link' options={{ title: t('link.title') }} />
 
-      <Stack.Screen name='[id]' options={{ title: 'Pill Box Details' }} />
+      <Stack.Screen name='[id]' options={{ title: t('details.title') }} />
     </Stack>
   )
 }

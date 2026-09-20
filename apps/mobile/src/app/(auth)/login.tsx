@@ -7,7 +7,6 @@ import {
   FieldGroup,
   FieldLabel,
   FieldLegend,
-  FieldSeparator,
   FieldSet,
 } from '@rozumari/ui/components/field'
 import { Input } from '@rozumari/ui/components/input'
@@ -15,9 +14,10 @@ import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import { OAuthButton } from '@/components/auth/oauth-button'
+import { OAuthButtons } from '@/components/auth/oauth-buttons'
 import { useRuntime } from '@/hooks/use-runtime'
 import { setTokens } from '@/lib/secure-store'
 
@@ -28,6 +28,7 @@ const loginForm = FormBuilder.empty
 
 function LoginFormSubmit() {
   const isPending = loginForm.useValue((s) => s.isPending)
+  const { t } = useTranslation('auth')
 
   const queryClient = useQueryClient()
   const router = useRouter()
@@ -41,40 +42,40 @@ function LoginFormSubmit() {
         await queryClient.invalidateQueries({
           queryKey: api.auth.whoami.getQueryKey(),
         })
-        toast.success('Login successful')
+        toast.success(t('login.messages.success'))
         router.navigate('/(tabs)/home')
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('login.messages.failed'), error.message),
     }
   )
 
   return (
     <Button disabled={isPending} onPress={() => handleSubmit()}>
-      {isPending ? 'Logging in...' : 'Login'}
+      {isPending ? t('login.actions.submitting') : t('login.title')}
     </Button>
   )
 }
 
 export default function LoginScreen() {
+  const { t } = useTranslation(['auth'])
   const router = useRouter()
 
   return (
     <loginForm.Provider defaultValues={{ email: '', password: '' }}>
       <FieldSet containerClassName='p-4' className='justify-center'>
-        <FieldLegend>Login</FieldLegend>
-        <FieldDescription>
-          Please enter your email and password to login to your account.
-        </FieldDescription>
+        <FieldLegend>{t('login.title')}</FieldLegend>
+        <FieldDescription>{t('login.description')}</FieldDescription>
 
         <FieldGroup>
           <loginForm.Field
             name='email'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Email</FieldLabel>
+                <FieldLabel>{t('email.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder='Enter your email'
+                  placeholder={t('email.placeholder')}
                   keyboardType='email-address'
                   onChangeText={handleChange}
                   editable={!meta.isPending}
@@ -88,10 +89,20 @@ export default function LoginScreen() {
             name='password'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>Password</FieldLabel>
+                <View className='flex-row items-center justify-between'>
+                  <FieldLabel>{t('password.label')}</FieldLabel>
+                  <Button
+                    variant='link'
+                    size='sm'
+                    focusable={false}
+                    accessible={false}
+                  >
+                    {t('login.actions.forgot_password')}
+                  </Button>
+                </View>
                 <Input
                   {...field}
-                  placeholder='Enter your password'
+                  placeholder={t('password.placeholder')}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                   secureTextEntry
@@ -104,24 +115,16 @@ export default function LoginScreen() {
           <LoginFormSubmit />
 
           <View className='flex-row items-center'>
-            <FieldDescription>Don&apos;t have an account? </FieldDescription>
+            <FieldDescription>{t('login.register.prompt')}</FieldDescription>
             <Button
               variant='link'
               onPress={() => router.navigate('/(auth)/register')}
             >
-              Register here
+              {t('login.register.link')}
             </Button>
           </View>
 
-          <FieldSeparator>
-            <FieldLabel>or</FieldLabel>
-          </FieldSeparator>
-
-          <Field orientation='horizontal'>
-            {['facebook', 'google'].map((provider) => (
-              <OAuthButton key={provider} provider={provider} />
-            ))}
-          </Field>
+          <OAuthButtons />
         </FieldGroup>
       </FieldSet>
     </loginForm.Provider>

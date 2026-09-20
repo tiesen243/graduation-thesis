@@ -11,6 +11,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { Pressable, View } from 'react-native'
 
 const STATUS_CONFIG = {
@@ -31,6 +32,7 @@ const STATUS_CONFIG = {
 export const ScheduleCard: React.FC<{
   schedule: ListSchedulesDto.Output[number]
 }> = ({ schedule }) => {
+  const { t } = useTranslation('schedule')
   const router = useRouter()
 
   const statusConfig =
@@ -74,7 +76,7 @@ export const ScheduleCard: React.FC<{
               <Typography className='font-medium'>{item.medicine}</Typography>
               {item.dosage && (
                 <Typography className='text-xs text-muted-foreground'>
-                  ({item.dosage})
+                  ({item.dosage}mg)
                 </Typography>
               )}
               {item.isRequired && (
@@ -84,7 +86,10 @@ export const ScheduleCard: React.FC<{
 
             <Badge variant='outline'>
               <Typography>
-                Slot {item.slot} • Quantity: {item.quantity}
+                {t('index.item', {
+                  slot: item.slot,
+                  quantity: item.quantity,
+                })}
               </Typography>
             </Badge>
           </View>

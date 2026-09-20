@@ -11,14 +11,16 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import { UpdateCompartmentButton } from '@/components/pill-boxes/details/update-compartment-button'
+import { UpdateCompartmentButton } from '@/components/pill-boxes/update-compartment-button'
 
 export type Compartment = ShowDeviceDto.Output['compartments'][number]
 
 export function CompartmentCard({ compartment }: { compartment: Compartment }) {
   const hasMedicine = Boolean(compartment.medicine)
+  const { t } = useTranslation(['common', 'pill-box'])
 
   return (
     <Card
@@ -30,7 +32,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
       <CardHeader className='flex-row items-center justify-between gap-2'>
         <Badge variant='outline' className='px-1.5 py-0.5'>
           <Typography className='text-[10px] font-bold'>
-            Slot {compartment.position}
+            {t('common:slot')} {compartment.position}
           </Typography>
         </Badge>
 
@@ -66,10 +68,10 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
           <View className='flex-1' />
 
           <View className='h-7 w-full flex-row items-center justify-between rounded-md bg-muted/50 px-3'>
-            <Typography>Quantity</Typography>
+            <Typography>{t('common:quantity')}</Typography>
 
             <Typography className='text-sm font-semibold'>
-              {compartment.capacity} pills
+              {compartment.capacity} {t('pills')}
             </Typography>
           </View>
         </CardContent>
@@ -77,7 +79,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
         <CardContent className='flex-1 gap-4'>
           <View className='flex-1 items-center justify-center rounded-md bg-muted'>
             <Typography className='text-sm text-muted-foreground'>
-              Empty compartment
+              {t('pill-box:details.compartment.empty')}
             </Typography>
           </View>
 
@@ -89,7 +91,9 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
                 onPress={() => setIsOpen(true)}
               >
                 <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
-                <Typography>Add Medicine</Typography>
+                <Typography>
+                  {t('pill-box:details.compartment.add_medicine')}
+                </Typography>
               </Button>
             )}
           </UpdateCompartmentButton>

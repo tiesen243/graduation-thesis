@@ -2,6 +2,7 @@ import type { DateType } from 'react-native-calendars-datepicker'
 
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import CalendarPicker, {
   useDefaultClassNames,
 } from 'react-native-calendars-datepicker'
@@ -13,16 +14,15 @@ export const PeriodSelector: React.FC<{
   onEndDateChange: (date: string) => void
 }> = ({ startDate, endDate, onEndDateChange, onStartDateChange }) => {
   const classNames = useDefaultClassNames()
+  const { i18n } = useTranslation()
 
   const handleRangePress = useCallback(
     // oxlint-disable-next-line complexity
     (dates: { startDate: DateType; endDate: DateType }) => {
       const rawStart = dates.startDate
-        ? formatDate(dates.startDate.toString(), 'yyyy-MM-dd')
+        ? formatDate(dates.startDate.toString())
         : ''
-      const rawEnd = dates.endDate
-        ? formatDate(dates.endDate.toString(), 'yyyy-MM-dd')
-        : ''
+      const rawEnd = dates.endDate ? formatDate(dates.endDate.toString()) : ''
 
       let selected = ''
       if (rawStart !== startDate && rawStart) selected = rawStart
@@ -96,6 +96,7 @@ export const PeriodSelector: React.FC<{
         range_middle_label: 'text-accent-foreground',
         range_end: 'rounded-l-none',
       }}
+      locale={i18n.resolvedLanguage}
     />
   )
 }

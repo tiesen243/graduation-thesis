@@ -30,8 +30,8 @@ export function DateRangePicker({
   const handleSelect = useCallback(
     // oxlint-disable-next-line complexity
     (range: DateRange | undefined) => {
-      const rawStart = range?.from ? formatDate(range.from, 'yyyy-MM-dd') : ''
-      const rawEnd = range?.to ? formatDate(range.to, 'yyyy-MM-dd') : ''
+      const rawStart = range?.from ? formatDate(range.from) : ''
+      const rawEnd = range?.to ? formatDate(range.to) : ''
 
       let selected = ''
       if (rawStart !== startDate && rawStart) selected = rawStart
@@ -86,8 +86,8 @@ export function DateRangePicker({
 
   const label = useMemo(() => {
     if (selectedRange?.from && selectedRange?.to)
-      return `${formatDate(selectedRange.from, 'dd/MM/yyyy')} - ${formatDate(selectedRange.to, 'dd/MM/yyyy')}`
-    if (selectedRange?.from) return formatDate(selectedRange.from, 'dd/MM/yyyy')
+      return `${formatDate(selectedRange.from)} - ${formatDate(selectedRange.to)}`
+    if (selectedRange?.from) return formatDate(selectedRange.from)
     return 'Pick a date range'
   }, [selectedRange])
 

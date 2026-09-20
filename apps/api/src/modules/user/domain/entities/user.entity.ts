@@ -1,3 +1,4 @@
+import { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
 import { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
 import { createId } from '@rozumari/lib/create-id'
 import * as Effect from 'effect/Effect'
@@ -13,11 +14,19 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
     return this.deletedAt === null
   }
 
-  public markDeleted(now = new Date()): User {
-    return new User({ ...structuredClone(this), deletedAt: now })
+  public delete(now = new Date()): Effect.Effect<User, UserAlreadyDeleted> {
+    if (!this.isActive)
+      return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
+    return Effect.succeed(
+      new User({ ...structuredClone(this), deletedAt: now })
+    )
   }
 
-  public update(props: Pick<User, 'role'>): User {
-    return new User({ ...structuredClone(this), ...props })
+  public changeRole(
+    role: User['role']
+  ): Effect.Effect<User, UserAlreadyDeleted> {
+    if (!this.isActive)
+      return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
+    return Effect.succeed(new User({ ...structuredClone(this), role }))
   }
 }

@@ -5,6 +5,7 @@ import { FieldSet } from '@rozumari/ui/components/field'
 import { toast } from '@rozumari/ui/components/toast'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 
 import { ScheduleItems } from '@/components/schedule/schedule-items'
 import { updateScheduleForm } from '@/components/schedule/update/_config'
@@ -14,10 +15,10 @@ import { useRuntime } from '@/hooks/use-runtime'
 
 function UpdateScheduleFormSubmit({ id }: { id: ScheduleId }) {
   const isPending = updateScheduleForm.useValue((s) => s.isPending)
-
+  const { t } = useTranslation(['common', 'schedule'])
+  const queryClient = useQueryClient()
   const { api } = useRuntime()
   const router = useRouter()
-  const queryClient = useQueryClient()
 
   const handleSubmit = updateScheduleForm.useSubmit(
     (payload) => api.schedule.update.mutate({ params: { id }, payload }),
@@ -26,16 +27,17 @@ function UpdateScheduleFormSubmit({ id }: { id: ScheduleId }) {
         await queryClient.invalidateQueries({
           queryKey: api.schedule.show.getQueryKey({ params: { id } }),
         })
-        toast.success('Schedule updated successfully')
+        toast.success(t('schedule:edit.messages.success'))
         router.back()
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('schedule:edit.messages.error'), error.message),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? 'Saving...' : 'Save Changes'}
+      {isPending ? t('common:saving') : t('common:save_changes')}
     </Button>
   )
 }

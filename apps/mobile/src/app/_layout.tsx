@@ -7,6 +7,7 @@ import { Camera } from 'expo-camera'
 import { DefaultTheme, Slot, ThemeProvider } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
+import { I18nextProvider } from 'react-i18next'
 import { StatusBar } from 'react-native'
 import { Uniwind, useCSSVariable, useUniwind } from 'uniwind'
 
@@ -14,6 +15,7 @@ import { useGeistFonts } from '@/hooks/use-geist-fonts'
 import { RuntimeProvider } from '@/hooks/use-runtime'
 import { SessionProvider, useSession } from '@/hooks/use-session'
 import { requestBLEPermissions } from '@/lib/ble'
+import { i18n } from '@/lib/i18n'
 import { getTheme } from '@/lib/secure-store'
 
 SplashScreen.preventAutoHideAsync()
@@ -46,13 +48,21 @@ function RootLayoutInner() {
 
 export default function RootLayout() {
   const { theme: colorscheme } = useUniwind()
-
-  const backgroundColor = useCSSVariable('--color-background') as string
-  const foregroundColor = useCSSVariable('--color-foreground') as string
-  const primaryColor = useCSSVariable('--color-primary') as string
-  const cardColor = useCSSVariable('--color-card') as string
-  const popoverColor = useCSSVariable('--color-popover') as string
-  const borderColor = useCSSVariable('--color-border') as string
+  const [
+    backgroundColor,
+    foregroundColor,
+    primaryColor,
+    cardColor,
+    popoverColor,
+    borderColor,
+  ] = useCSSVariable([
+    '--color-background',
+    '--color-foreground',
+    '--color-primary',
+    '--color-card',
+    '--color-popover',
+    '--color-border',
+  ]) as [string, string, string, string, string, string]
 
   return (
     <ThemeProvider
@@ -70,19 +80,21 @@ export default function RootLayout() {
         dark: colorscheme === 'dark',
       }}
     >
-      <ToasterProvider position='bottom'>
-        <QueryClientProvider client={queryClient}>
-          <RuntimeProvider>
-            <SessionProvider>
-              <RootLayoutInner />
-            </SessionProvider>
-          </RuntimeProvider>
-        </QueryClientProvider>
+      <I18nextProvider i18n={i18n} defaultNS='common'>
+        <ToasterProvider position='bottom'>
+          <QueryClientProvider client={queryClient}>
+            <RuntimeProvider>
+              <SessionProvider>
+                <RootLayoutInner />
+              </SessionProvider>
+            </RuntimeProvider>
+          </QueryClientProvider>
 
-        <StatusBar
-          barStyle={colorscheme === 'dark' ? 'light-content' : 'dark-content'}
-        />
-      </ToasterProvider>
+          <StatusBar
+            barStyle={colorscheme === 'dark' ? 'light-content' : 'dark-content'}
+          />
+        </ToasterProvider>
+      </I18nextProvider>
     </ThemeProvider>
   )
 }

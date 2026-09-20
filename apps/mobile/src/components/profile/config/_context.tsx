@@ -6,19 +6,15 @@ import type TBleManager from 'react-native-ble-manager'
 
 import { toast } from '@rozumari/ui/components/toast'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { BLE_RX_UUID, BLE_SERVICE_UUID, BLE_TX_UUID } from '@/lib/constants'
 
-let BleManager: typeof TBleManager | null = null
+let BleManager: typeof TBleManager | null = null,
+  Location: typeof TLocation | null = null
 try {
   // oxlint-disable-next-line node/global-require unicorn/prefer-module
   BleManager = require('react-native-ble-manager').default
-} catch {
-  // noop
-}
-
-let Location: typeof TLocation | null = null
-try {
   // oxlint-disable-next-line node/global-require unicorn/prefer-module
   Location = require('expo-location')
 } catch {
@@ -95,6 +91,8 @@ const removeVietnameseTones = (str: string): string =>
     .replaceAll('Đ', 'D')
 
 export function BLEProvider({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation('profile')
+
   const [discoveredDevices, setDiscoveredDevices] = React.useState<
     Peripheral[]
   >([])
@@ -236,14 +234,14 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
       await startNotificationListener(selectedDevice)
 
       setIsConnected(true)
-      toast.success('Connected to device!')
+      toast.success(t('config.messages.success'))
     } catch {
       setIsConnected(false)
-      toast.error('Connection failed!')
+      toast.error(t('config.messages.failed'))
     } finally {
       setIsConnecting(false)
     }
-  }, [selectedDevice, handleByteNotification])
+  }, [t, selectedDevice, handleByteNotification])
 
   const handleDisconnect = React.useCallback(async () => {
     if (!selectedDevice || !BleManager) return
@@ -254,11 +252,11 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
       await BleManager.disconnect(selectedDevice)
       setIsConnected(false)
       setDeviceInfo(null)
-      toast.info('Disconnected!')
+      toast.info(t('config.messages.disconnected'))
     } catch {
       // noop
     }
-  }, [selectedDevice])
+  }, [t, selectedDevice])
 
   const sendBleCommand = React.useCallback(
     async (actionName: string, payloadObj: Record<string, unknown> = {}) => {
@@ -287,10 +285,10 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
           500
         )
       } catch {
-        toast.error('Failed to send BLE command!')
+        toast.error(t('config.messages.send_failed'))
       }
     },
-    [selectedDevice, isConnected]
+    [t, selectedDevice, isConnected]
   )
 
   const memorizedValue = React.useMemo(
