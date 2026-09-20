@@ -1,44 +1,53 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Bug Fixes\n\n- Streaming not work when use httpEffect\n"
-    filename: 2026-09-17-mu553ggq.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Patches\n\n- Support Vietnameses\n"
+    filename: 2026-09-21-muabhg0v.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/contract:\n    type: patch\n  npm:@rozumari/lib:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Patches\n\n- Updated contract\n- Fix UI\n"
+    filename: 2026-09-21-muadnx71.md
     v: 0.0.0
 core:packages:
-  - id: npm:graduation-thesis
+  - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/mobile
-    updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/oxlint
     updated: false
   - changelogIds:
-      - 2026-09-17-mu553ggq.md
-    id: npm:@rozumari/api
+      - 2026-09-21-muabhg0v.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - id: npm:@rozumari/firmware
+    updated: false
+  - id: npm:@rozumari/web
+    updated: true
+  - id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-09-21-muadnx71.md
+    id: npm:@rozumari/ui
+    updated: true
+  - changelogIds:
+      - 2026-09-21-muadnx71.md
+    id: npm:@rozumari/lib
+    updated: true
+  - changelogIds:
+      - 2026-09-21-muadnx71.md
+    id: npm:@rozumari/contract
     updated: true
   - id: npm:@rozumari/eda
     updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
 npm:packages:
-  - id: npm:graduation-thesis
+  - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/lib
   - id: npm:@rozumari/contract
-  - id: npm:@rozumari/api
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/ui

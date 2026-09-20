@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.0.19
+
+### Patches
+
+- Support Vietnameses
+
 ## @rozumari/mobile@0.0.17
 
 ### Bug Fixes and Improvements

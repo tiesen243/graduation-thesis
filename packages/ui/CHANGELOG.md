@@ -1,3 +1,10 @@
+## @rozumari/ui@0.0.8
+
+### Patches
+
+- Updated contract
+- Fix UI
+
 ## @rozumari/ui@0.0.7
 
 ### Bug Fixes and Improvements
