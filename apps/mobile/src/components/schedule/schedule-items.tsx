@@ -61,7 +61,7 @@ export function ScheduleItems({
   meta,
   helpers,
 }: ScheduleItemsProps) {
-  const { t } = useTranslation('schedule')
+  const { t } = useTranslation(['common', 'schedule'])
   const { api } = useRuntime()
   const { data: compartments } = useQuery({
     ...api.device.show.queryOptions({ params: { id: deviceId } }),
@@ -79,7 +79,7 @@ export function ScheduleItems({
 
   return (
     <Field data-invalid={meta.errors.length > 0}>
-      <FieldLabel>{t('items.title')}</FieldLabel>
+      <FieldLabel>{t('schedule:items.title')}</FieldLabel>
 
       <View className='gap-3'>
         {field.value?.map((item, index) => {
@@ -89,7 +89,7 @@ export function ScheduleItems({
             return (
               <Card key={index} className='h-32'>
                 <CardHeader className='flex-row items-center justify-between'>
-                  <CardTitle>{t('items.selectSlot')}</CardTitle>
+                  <CardTitle>{t('schedule:items.select_slot')}</CardTitle>
                   <CardAction>
                     <Button
                       size='icon-xs'
@@ -118,7 +118,7 @@ export function ScheduleItems({
                       disabled={!compartments?.length}
                     >
                       <SelectValue
-                        placeholder={t('items.selectCompartment')}
+                        placeholder={t('schedule:items.select_compartment')}
                         items={availableCompartments.map((c) => ({
                           value: c.position,
                           label: `${c.medicine} (Slot ${c.position})`,
@@ -133,7 +133,7 @@ export function ScheduleItems({
                           disabled={!c.medicine}
                         >
                           <Typography>
-                            {c.medicine} ({t('items.slot')} {c.position})
+                            {c.medicine} ({t('common:slot')} {c.position})
                           </Typography>
                         </SelectItem>
                       ))}
@@ -150,7 +150,7 @@ export function ScheduleItems({
                 <View className='flex-row items-center gap-2'>
                   <Badge variant='outline'>
                     <Typography>
-                      {t('items.slot')}: {item.slot}
+                      {t('common:slot')}: {item.slot}
                     </Typography>
                   </Badge>
                   <Typography className='font-semibold text-foreground'>
@@ -193,7 +193,7 @@ export function ScheduleItems({
                       isRequired: !!checked,
                     })
                   }
-                  label={t('items.required')}
+                  label={t('schedule:items.required')}
                 />
               </CardContent>
             </Card>
@@ -210,12 +210,12 @@ export function ScheduleItems({
             <PlusIcon className='size-4 text-primary' />
           </View>
           <Typography className='mt-1 text-xs font-medium'>
-            {t('items.add')}
+            {t('schedule:items.add')}
           </Typography>
         </Pressable>
       </View>
 
-      <FieldDescription>{t('items.description')}</FieldDescription>
+      <FieldDescription>{t('schedule:items.description')}</FieldDescription>
 
       <FieldError errors={meta.errors} />
     </Field>

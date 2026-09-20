@@ -1,15 +1,13 @@
 {
   "title": "Hồ sơ",
-
   "index": {
     "account": "Thông tin tài khoản",
     "joined": "Tham gia vào",
     "logout": "Đăng xuất"
   },
-
   "settings": {
     "title": "Cài đặt",
-    "darkMode": {
+    "dark_mode": {
       "title": "Chế độ tối",
       "description": "Bật chế độ tối cho ứng dụng",
       "options": {
@@ -28,21 +26,19 @@
     },
     "version": "Phiên bản ứng dụng"
   },
-
   "config": {
     "title": "Cấu hình thiết bị",
     "messages": {
       "success": "Kết nối thiết bị thành công.",
       "failed": "Kết nối thiết bị thất bại. Vui lòng thử lại.",
       "disconnected": "Ngắt kết nối thiết bị thành công.",
-      "sendFailed": "Gửi cấu hình đến thiết bị thất bại. Vui lòng thử lại."
+      "send_failed": "Gửi cấu hình đến thiết bị thất bại. Vui lòng thử lại."
     },
     "device": {
       "selector": {
         "title": "Chọn thiết bị",
         "placeholder": "Chọn thiết bị..."
-      },
-      "unnamed": "Thiết bị chưa đặt tên"
+      }
     },
     "language": {
       "title": "Cấu hình ngôn ngữ",

@@ -1,10 +1,6 @@
 {
   "title": "Thông báo",
-
-  "index": {
-    "title": "Thông báo"
-  },
-
+  "index": {},
   "detail": {
     "title": "Chi tiết thông báo",
     "not_found": "Không tìm thấy thông báo.",

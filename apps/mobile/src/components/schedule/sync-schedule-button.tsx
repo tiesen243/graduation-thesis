@@ -75,7 +75,7 @@ export const SyncScheduleButton = () => {
                           label: device.name ?? device.factoryModel,
                         })) ?? []
                       }
-                      placeholder={t('sync.selectDevice')}
+                      placeholder={t('sync.select_device')}
                     />
                   </SelectTrigger>
 
@@ -97,7 +97,9 @@ export const SyncScheduleButton = () => {
                     })
                   }
                 >
-                  {syncSchedule.isPending ? 'Syncing...' : 'Sync Schedule'}
+                  {syncSchedule.isPending
+                    ? t('sync.actions.syncing')
+                    : t('sync.title')}
                 </Button>
               </CardContent>
             </Card>

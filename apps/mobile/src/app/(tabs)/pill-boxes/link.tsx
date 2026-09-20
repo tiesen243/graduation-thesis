@@ -65,12 +65,12 @@ export default function TabsPillBoxesLinkScreen() {
         const response = await api.device.show.query({
           params: { id: scannedDeviceId as DeviceId },
         })
-        if (!response?.data) throw new Error(t('link.notFound'))
+        if (!response?.data) throw new Error(t('link.not_found'))
 
         const deviceName = response.data.name ?? response.data.factoryModel
 
         Alert.alert(
-          t('link.dialog.title'),
+          t('link.title'),
           t('link.dialog.message', { deviceName }),
           [
             { text: 'Cancel', style: 'cancel', onPress: resetState },
@@ -144,7 +144,7 @@ export default function TabsPillBoxesLinkScreen() {
       isScannedRef.current = true
       await cameraRef.current?.pausePreview()
 
-      Alert.alert(t('link.scanFailed.title'), t('link.scanFailed.message'), [
+      Alert.alert(t('link.scan_failed.title'), t('link.scan_failed.message'), [
         { text: 'OK', onPress: resetState },
       ])
     }, 5000)

@@ -71,7 +71,7 @@ export default function TabsPillBoxesIndexScreen() {
     <View className='flex-1'>
       <View className='px-4 pt-4 pb-2'>
         <Input
-          placeholder={t('pill-box:index.searchPlaceholder')}
+          placeholder={t('pill-box:index.search_placeholder')}
           value={searchTerm}
           onChangeText={handleSearch}
         />

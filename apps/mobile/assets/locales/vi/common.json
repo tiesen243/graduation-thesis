@@ -1,8 +1,17 @@
 {
   "title": "Chào mừng đến với ứng dụng di động của chúng tôi!",
 
+  "date": "Ngày",
+  "select_date": "Chọn ngày",
+  "pagination": "Trang {{current}} của {{total}}",
+
   "status": "Trạng thái",
   "slot": "Ngăn",
   "pills": "Viên thuốc",
-  "pagination": "Trang {{current}} của {{total}}"
+
+  "saving": "Đang lưu...",
+  "save_changes": "Lưu thay đổi",
+
+  "quantity": "Số lượng",
+  "dosage": "Liều lượng"
 }

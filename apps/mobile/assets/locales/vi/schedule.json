@@ -8,47 +8,47 @@
       "pending": "Đang chờ",
       "missed": "Bỏ lỡ"
     },
-    "noSchedules": "Không tìm thấy lịch trình nào. Vui lòng thêm lịch trình để xem tại đây.",
+    "no_schedules": "Không tìm thấy lịch trình nào. Vui lòng thêm lịch trình để xem tại đây.",
     "item": "Ngăn {{slot}} - {{quantity}} viên"
   },
 
   "create": {
     "title": "Tạo lịch trình",
     "fields": {
-      "device": "Thiết bị",
-      "devicePlaceholder": "Chọn thiết bị",
-      "period": "Chu kỳ"
+      "device": {
+        "label": "Thiết bị",
+        "placeholder": "Chọn thiết bị"
+      },
+      "period": "Chu kỳ",
+      "time": {
+        "label": "Thời gian",
+        "placeholder": "Chọn thời gian",
+        "description": "Chọn thời gian cho lịch trình"
+      },
+      "repeat_on": {
+        "label": "Lặp lại vào",
+        "description": "Chọn các ngày trong tuần để lặp lại lịch trình"
+      }
     },
     "actions": {
-      "submitting": "Đang tạo...",
-      "submit": "Tạo lịch"
+      "submitting": "Đang tạo..."
     },
     "messages": {
       "success": "Tạo lịch thành công",
       "error": "Tạo lịch thất bại"
-    },
-    "time": {
-      "label": "Thời gian",
-      "placeholder": "Chọn thời gian",
-      "description": "Chọn thời gian cho lịch trình"
-    },
-    "repeatOn": "Lặp lại vào"
+    }
   },
 
   "detail": {
     "title": "Chi tiết lịch trình",
     "sections": {
-      "scheduleInformation": "Thông tin lịch",
-      "medicationItems": "Các mục thuốc"
+      "schedule_information": "Thông tin lịch",
+      "medication_items": "Các mục thuốc"
     }
   },
 
   "edit": {
     "title": "Chỉnh sửa lịch trình",
-    "actions": {
-      "submitting": "Đang lưu...",
-      "submit": "Lưu thay đổi"
-    },
     "messages": {
       "success": "Cập nhật lịch trình thành công",
       "error": "Cập nhật lịch trình thất bại"
@@ -58,24 +58,18 @@
   "items": {
     "title": "Các mục",
     "description": "Thêm các ngăn và số lượng để phân phối cho lịch trình này.",
-    "selectSlot": "Chọn ngăn",
-    "selectCompartment": "Chọn ngăn",
+    "select_slot": "Chọn ngăn",
+    "select_compartment": "Chọn ngăn",
     "required": "Bắt buộc",
-    "add": "Thêm mục",
-
-    "slot": "Ngăn",
-    "quantity": "Số lượng",
-    "dosage": "Liều lượng"
+    "add": "Thêm mục"
   },
 
   "sync": {
     "title": "Đồng bộ lịch",
     "description": "Chọn thiết bị bạn muốn đồng bộ lịch trình của mình. Điều này sẽ ghi đè bất kỳ lịch trình hiện có nào trên thiết bị.",
-    "selectDevice": "Chọn thiết bị"
-  },
-
-  "update": {
-    "date": "Ngày",
-    "time": "Giờ"
+    "select_device": "Chọn thiết bị",
+    "actions": {
+      "syncing": "Đang đồng bộ..."
+    }
   }
 }

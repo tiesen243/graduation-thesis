@@ -8,8 +8,7 @@
   },
 
   "index": {
-    "title": "Pill Boxes",
-    "searchPlaceholder": "Search devices...",
+    "search_placeholder": "Search devices...",
     "empty": "No pill boxes found. Please add a pill box to see it here."
   },
 
@@ -18,12 +17,12 @@
     "device": {
       "model": "Model",
       "name": "Device Name",
-      "unnamed": "Unnamed Device",
-      "namePlaceholder": "Enter device name",
+      "unnamed_device": "Unnamed Device",
+      "name_placeholder": "Enter device name",
       "position": "Position",
-      "unknownPosition": "Not set",
-      "positionPlaceholder": "Enter position",
-      "activatedAt": "Activated Date",
+      "unknown_position": "Not set",
+      "position_placeholder": "Enter position",
+      "activated_at": "Activated Date",
       "update": {
         "title": "Update Device",
         "description": "Fill in the details of the device you want to update.",
@@ -40,23 +39,17 @@
     "compartment": {
       "empty": "Empty Compartment",
       "medicine": "Medicine",
-      "medicinePlaceholder": "Enter medicine name",
-      "dosage": "Dosage",
-      "dosagePlaceholder": "Enter dosage",
+      "medicine_placeholder": "Enter medicine name",
+      "dosage_placeholder": "Enter dosage",
       "capacity": "Capacity",
-      "capacityPlaceholder": "Enter capacity",
-      "quantity": "Quantity",
-      "addMedicine": "Add Medicine",
-
+      "capacity_placeholder": "Enter capacity",
+      "add_medicine": "Add Medicine",
       "update": {
         "title": "Update Compartment",
         "description": "Fill in the details of the medicine you want to add to this compartment.",
         "success": "Compartment updated successfully.",
         "error": "Failed to update compartment.",
-        "actions": {
-          "submit": "Save Changes",
-          "submitting": "Saving..."
-        }
+        "actions": {}
       },
       "delete": {
         "success": "Compartment deleted successfully.",
@@ -71,9 +64,8 @@
 
   "link": {
     "title": "Link Pill Box",
-    "notFound": "Device not found",
+    "not_found": "Device not found",
     "dialog": {
-      "title": "Link Pill Box",
       "message": "Are you sure you want to link with {{deviceName}}?",
       "success": {
         "title": "Link Successful",
@@ -84,7 +76,7 @@
         "message": "An error occurred while linking the pill box. Please try again."
       }
     },
-    "scanFailed": {
+    "scan_failed": {
       "title": "Scan Failed",
       "message": "Unable to scan the QR code. Please try again."
     },

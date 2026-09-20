@@ -1,10 +1,6 @@
 {
   "title": "Notifications",
 
-  "index": {
-    "title": "Notifications"
-  },
-
   "detail": {
     "title": "Notification detail",
     "not_found": "Notification not found.",

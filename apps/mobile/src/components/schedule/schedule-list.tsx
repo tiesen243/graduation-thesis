@@ -13,7 +13,7 @@ import { ScheduleCard } from '@/components/schedule/schedule-card'
 import { useDateRange } from '@/hooks/use-date-range'
 import { getTimezonedDate } from '@/lib/utils'
 
-const [today] = getTimezonedDate().toISOString().split('T')
+const [today] = getTimezonedDate().toISOString().split('t')
 
 export const ScheduleList: React.FC<{
   schedules: ListSchedulesDto.Output
@@ -91,7 +91,7 @@ export const ScheduleList: React.FC<{
       {!isLoading && schedules.length <= 0 && (
         <View className='flex-1 items-center justify-center'>
           <Typography className='text-muted-foreground'>
-            {t('index.noSchedules')}
+            {t('index.no_schedules')}
           </Typography>
         </View>
       )}

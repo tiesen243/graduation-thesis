@@ -29,7 +29,7 @@ function SaveCompartmentFormSubmit({
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
-  const { t } = useTranslation('pill-box')
+  const { t } = useTranslation(['common', 'pill-box'])
 
   const queryClient = useQueryClient()
   const { api } = useRuntime()
@@ -46,18 +46,19 @@ function SaveCompartmentFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success(t('details.compartment.update.success'))
+        toast.success(t('pill-box:details.compartment.update.success'))
       },
       onError: (error) =>
-        toast.error(t('details.compartment.update.error'), error.message),
+        toast.error(
+          t('pill-box:details.compartment.update.error'),
+          error.message
+        ),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending
-        ? t('details.compartment.update.actions.submitting')
-        : t('details.compartment.update.actions.submit')}
+      {isPending ? t('common:saving') : t('common:save_changes')}
     </Button>
   )
 }
@@ -68,7 +69,7 @@ function DeleteCompartmentFormSubmit({
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
-  const { t } = useTranslation('pill-box')
+  const { t } = useTranslation(['common', 'pill-box'])
 
   const queryClient = useQueryClient()
   const { api } = useRuntime()
@@ -85,10 +86,13 @@ function DeleteCompartmentFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success(t('details.compartment.delete.success'))
+        toast.success(t('pill-box:details.compartment.delete.success'))
       },
       onError: (error) =>
-        toast.error(t('details.compartment.delete.error'), error.message),
+        toast.error(
+          t('pill-box:details.compartment.delete.error'),
+          error.message
+        ),
     }
   )
 
@@ -99,8 +103,8 @@ function DeleteCompartmentFormSubmit({
       disabled={isPending}
     >
       {isPending
-        ? t('details.compartment.delete.actions.submitting')
-        : t('details.compartment.delete.actions.submit')}
+        ? t('pill-box:details.compartment.delete.actions.submitting')
+        : t('pill-box:details.compartment.delete.actions.submit')}
     </Button>
   )
 }
@@ -115,7 +119,7 @@ export function UpdateCompartmentButton({
   children: (setIsOpen: (isOpen: boolean) => void) => React.ReactNode
 }>) {
   const [isOpen, setIsOpen] = React.useState(false)
-  const { t } = useTranslation('pill-box')
+  const { t } = useTranslation(['common', 'pill-box'])
 
   return (
     <>
@@ -137,10 +141,11 @@ export function UpdateCompartmentButton({
             >
               <Pressable className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
-                  {t('details.compartment.update.title')} {compartment.position}
+                  {t('pill-box:details.compartment.update.title')}{' '}
+                  {compartment.position}
                 </Typography>
                 <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  {t('details.compartment.update.description')}
+                  {t('pill-box:details.compartment.update.description')}
                 </Typography>
 
                 <updateCompartmentForm.Field
@@ -148,12 +153,12 @@ export function UpdateCompartmentButton({
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
                       <FieldLabel>
-                        {t('details.compartment.medicine')}
+                        {t('pill-box:details.compartment.medicine')}
                       </FieldLabel>
                       <Input
                         {...field}
                         placeholder={t(
-                          'details.compartment.medicinePlaceholder'
+                          'pill-box:details.compartment.medicine_placeholder'
                         )}
                         onChangeText={handleChange}
                       />
@@ -166,10 +171,12 @@ export function UpdateCompartmentButton({
                   name='dosage'
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
-                      <FieldLabel>{t('details.compartment.dosage')}</FieldLabel>
+                      <FieldLabel>{t('common:dosage')}</FieldLabel>
                       <Input
                         {...field}
-                        placeholder={t('details.compartment.dosagePlaceholder')}
+                        placeholder={t(
+                          'pill-box:details.compartment.dosage_placeholder'
+                        )}
                         keyboardType='numeric'
                         value={field.value.toString()}
                         onChangeText={(text) =>
@@ -187,12 +194,12 @@ export function UpdateCompartmentButton({
                   render={({ field, meta, helpers: { handleChange } }) => (
                     <Field>
                       <FieldLabel>
-                        {t('details.compartment.capacity')}
+                        {t('pill-box:details.compartment.capacity')}
                       </FieldLabel>
                       <Input
                         {...field}
                         placeholder={t(
-                          'details.compartment.capacityPlaceholder'
+                          'pill-box:details.compartment.capacity_placeholder'
                         )}
                         keyboardType='numeric'
                         value={field.value.toString()}

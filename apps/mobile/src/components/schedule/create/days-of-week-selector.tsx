@@ -29,7 +29,7 @@ export const DaysOfWeekSelector = () => {
 
         return (
           <Field>
-            <FieldLabel>{t('create.repeatOn')}</FieldLabel>
+            <FieldLabel>{t('create.fields.repeat_on.label')}</FieldLabel>
 
             <View className='flex flex-row flex-wrap gap-x-4 gap-y-2'>
               {DAYS_OF_WEEK.map((day) => {
@@ -47,7 +47,7 @@ export const DaysOfWeekSelector = () => {
             </View>
 
             <FieldDescription>
-              Choose the days when medication should be dispensed.
+              {t('create.fields.repeat_on.description')}
             </FieldDescription>
 
             <FieldError errors={meta.errors} />

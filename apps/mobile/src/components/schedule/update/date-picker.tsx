@@ -9,20 +9,20 @@ import { useCSSVariable } from 'uniwind'
 import { updateScheduleForm } from '@/components/schedule/update/_config'
 
 export const UpdateScheduleDatePicker = () => {
-  const { t } = useTranslation('schedule')
+  const foregroundColor = useCSSVariable('--color-foreground') as string
+  const { t } = useTranslation()
 
   const [isOpen, setIsOpen] = useState(false)
-  const foregroundColor = useCSSVariable('--color-foreground') as string
 
   return (
     <updateScheduleForm.Field
       name='date'
       render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
-          <FieldLabel>{t('update.date')}</FieldLabel>
+          <FieldLabel>{t('date')}</FieldLabel>
 
           <Button variant='outline' onPress={() => setIsOpen(true)}>
-            {field.value || 'Select date'}
+            {field.value || t('select_date')}
           </Button>
 
           <Activity mode={isOpen ? 'visible' : 'hidden'}>

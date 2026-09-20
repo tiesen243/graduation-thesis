@@ -52,7 +52,7 @@ function LoginFormSubmit() {
 
   return (
     <Button disabled={isPending} onPress={() => handleSubmit()}>
-      {isPending ? t('login.actions.submitting') : t('login.actions.submit')}
+      {isPending ? t('login.actions.submitting') : t('login.title')}
     </Button>
   )
 }
@@ -72,10 +72,10 @@ export default function LoginScreen() {
             name='email'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>{t('login.fields.email.label')}</FieldLabel>
+                <FieldLabel>{t('email.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder={t('login.fields.email.placeholder')}
+                  placeholder={t('email.placeholder')}
                   keyboardType='email-address'
                   onChangeText={handleChange}
                   editable={!meta.isPending}
@@ -90,19 +90,19 @@ export default function LoginScreen() {
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
                 <View className='flex-row items-center justify-between'>
-                  <FieldLabel>{t('login.fields.password.label')}</FieldLabel>
+                  <FieldLabel>{t('password.label')}</FieldLabel>
                   <Button
                     variant='link'
                     size='sm'
                     focusable={false}
                     accessible={false}
                   >
-                    {t('login.actions.forgotPassword')}
+                    {t('login.actions.forgot_password')}
                   </Button>
                 </View>
                 <Input
                   {...field}
-                  placeholder={t('login.fields.password.placeholder')}
+                  placeholder={t('password.placeholder')}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                   secureTextEntry

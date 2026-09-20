@@ -15,7 +15,7 @@ export default function TabsPillBoxesLayout() {
       <Stack.Screen
         name='index'
         options={{
-          title: t('index.title'),
+          title: t('title'),
           headerRight: () => (
             <Button
               variant='ghost'

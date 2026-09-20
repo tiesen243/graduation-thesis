@@ -32,6 +32,7 @@ import { useRuntime } from '@/hooks/use-runtime'
 function CreateScheduleFormSubmit() {
   const isPending = CreateScheduleForm.useValue((s) => s.isPending)
   const { t } = useTranslation('schedule')
+
   const queryClient = useQueryClient()
   const { api } = useRuntime()
   const router = useRouter()
@@ -53,7 +54,7 @@ function CreateScheduleFormSubmit() {
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? t('create.actions.submitting') : t('create.actions.submit')}
+      {isPending ? t('create.actions.submitting') : t('create.title')}
     </Button>
   )
 }
@@ -87,7 +88,7 @@ export default function TabsSchedulesCreateScreen() {
             name='deviceId'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>{t('create.fields.device')}</FieldLabel>
+                <FieldLabel>{t('create.fields.device.label')}</FieldLabel>
 
                 <Select
                   value={field.value}
@@ -95,7 +96,7 @@ export default function TabsSchedulesCreateScreen() {
                 >
                   <SelectTrigger>
                     <SelectValue
-                      placeholder={t('create.fields.devicePlaceholder')}
+                      placeholder={t('create.fields.device.placeholder')}
                       items={data.data.devices.map((device) => ({
                         value: device.id,
                         label: device.name ?? device.factoryModel,
@@ -103,7 +104,7 @@ export default function TabsSchedulesCreateScreen() {
                     />
                   </SelectTrigger>
 
-                  <SelectContent title={t('create.fields.devicePlaceholder')}>
+                  <SelectContent title={t('create.fields.device.placeholder')}>
                     {data.data.devices.map((device) => (
                       <SelectItem key={device.id} value={device.id}>
                         {device.name ?? device.factoryModel}

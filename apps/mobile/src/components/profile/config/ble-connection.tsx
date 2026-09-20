@@ -13,7 +13,7 @@ import { View } from 'react-native'
 import { useBLE } from '@/components/profile/config/_context'
 
 export function BLEConnection() {
-  const { t } = useTranslation(['profile'])
+  const { t } = useTranslation(['common', 'pill-box', 'profile'])
   const {
     discoveredDevices,
     selectedDevice,
@@ -33,18 +33,19 @@ export function BLEConnection() {
           className={isConnected || isConnecting ? 'opacity-50' : ''}
         >
           <SelectValue
-            placeholder={t('config.device.selector.placeholder')}
+            placeholder={t('profile:config.device.selector.placeholder')}
             items={discoveredDevices.map((device) => ({
               value: device.id,
-              label: device.name || t('config.device.unnamed'),
+              label: device.name || t('pill-box:details.device.unnamed_device'),
             }))}
           />
         </SelectTrigger>
-        <SelectContent title={t('config.device.selector.title')}>
+        <SelectContent title={t('profile:config.device.selector.title')}>
           {discoveredDevices.map((device) => (
             <SelectItem key={device.id} value={device.id}>
               <Typography>
-                {device.name ?? t('config.device.unnamed')} ({device.id})
+                {device.name ?? t('pill-box:details.device.unnamed_device')} (
+                {device.id})
               </Typography>
             </SelectItem>
           ))}
@@ -66,7 +67,7 @@ export function BLEConnection() {
             variant='destructive'
             onPress={handleDisconnect}
           >
-            {t('config.actions.disconnect')}
+            {t('profile:config.actions.disconnect')}
           </Button>
         </View>
       ) : (
@@ -75,8 +76,8 @@ export function BLEConnection() {
           disabled={!selectedDevice || isConnecting}
         >
           {isConnecting
-            ? t('config.actions.connecting')
-            : t('config.actions.connect')}
+            ? t('profile:config.actions.connecting')
+            : t('profile:config.actions.connect')}
         </Button>
       )}
     </View>

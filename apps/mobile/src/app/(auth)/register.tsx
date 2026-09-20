@@ -51,9 +51,7 @@ function RegisterFormSubmit() {
 
   return (
     <Button disabled={isPending} onPress={() => handleSubmit()}>
-      {isPending
-        ? t('register.actions.submitting')
-        : t('register.actions.submit')}
+      {isPending ? t('register.actions.submitting') : t('register.title')}
     </Button>
   )
 }
@@ -96,10 +94,10 @@ export default function RegisterScreen() {
             name='email'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>{t('register.fields.email.label')}</FieldLabel>
+                <FieldLabel>{t('email.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder={t('register.fields.email.placeholder')}
+                  placeholder={t('email.placeholder')}
                   keyboardType='email-address'
                   onChangeText={handleChange}
                   editable={!meta.isPending}
@@ -113,10 +111,10 @@ export default function RegisterScreen() {
             name='password'
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
-                <FieldLabel>{t('register.fields.password.label')}</FieldLabel>
+                <FieldLabel>{t('password.label')}</FieldLabel>
                 <Input
                   {...field}
-                  placeholder={t('register.fields.password.placeholder')}
+                  placeholder={t('password.placeholder')}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                   secureTextEntry
@@ -131,11 +129,13 @@ export default function RegisterScreen() {
             render={({ field, meta, helpers: { handleChange } }) => (
               <Field>
                 <FieldLabel>
-                  {t('register.fields.confirmPassword.label')}
+                  {t('register.fields.confirm_password.label')}
                 </FieldLabel>
                 <Input
                   {...field}
-                  placeholder={t('register.fields.confirmPassword.placeholder')}
+                  placeholder={t(
+                    'register.fields.confirm_password.placeholder'
+                  )}
                   onChangeText={handleChange}
                   editable={!meta.isPending}
                   secureTextEntry

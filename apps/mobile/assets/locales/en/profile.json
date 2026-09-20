@@ -9,7 +9,7 @@
 
   "settings": {
     "title": "Settings",
-    "darkMode": {
+    "dark_mode": {
       "title": "Dark Mode",
       "description": "Enable dark mode for the application",
       "options": {
@@ -35,14 +35,13 @@
       "success": "Device connected successfully.",
       "failed": "Failed to connect to the device. Please try again.",
       "disconnected": "Device disconnected successfully.",
-      "sendFailed": "Failed to send configuration to the device. Please try again."
+      "send_failed": "Failed to send configuration to the device. Please try again."
     },
     "device": {
       "selector": {
         "title": "Select Device",
         "placeholder": "Select a device..."
-      },
-      "unnamed": "Unnamed Device"
+      }
     },
     "wifi": {
       "title": "Wi-Fi Configuration",

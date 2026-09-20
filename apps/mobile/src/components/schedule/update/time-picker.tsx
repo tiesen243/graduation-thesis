@@ -19,7 +19,7 @@ export const UpdateScheduleTimePicker = () => {
       name='time'
       render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
-          <FieldLabel>{t('update.time')}</FieldLabel>
+          <FieldLabel>{t('create.fields.time.label')}</FieldLabel>
 
           <Button variant='outline' onPress={() => setIsOpen(true)}>
             {field.value || 'Select time'}

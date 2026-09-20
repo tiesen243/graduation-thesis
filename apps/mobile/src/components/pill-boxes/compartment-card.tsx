@@ -32,7 +32,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
       <CardHeader className='flex-row items-center justify-between gap-2'>
         <Badge variant='outline' className='px-1.5 py-0.5'>
           <Typography className='text-[10px] font-bold'>
-            {t('slot')} {compartment.position}
+            {t('common:slot')} {compartment.position}
           </Typography>
         </Badge>
 
@@ -68,9 +68,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
           <View className='flex-1' />
 
           <View className='h-7 w-full flex-row items-center justify-between rounded-md bg-muted/50 px-3'>
-            <Typography>
-              {t('pill-box:details.compartment.quantity')}
-            </Typography>
+            <Typography>{t('common:quantity')}</Typography>
 
             <Typography className='text-sm font-semibold'>
               {compartment.capacity} {t('pills')}
@@ -94,7 +92,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
               >
                 <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
                 <Typography>
-                  {t('pill-box:details.compartment.addMedicine')}
+                  {t('pill-box:details.compartment.add_medicine')}
                 </Typography>
               </Button>
             )}

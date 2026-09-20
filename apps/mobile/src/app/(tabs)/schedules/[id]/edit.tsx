@@ -15,7 +15,7 @@ import { useRuntime } from '@/hooks/use-runtime'
 
 function UpdateScheduleFormSubmit({ id }: { id: ScheduleId }) {
   const isPending = updateScheduleForm.useValue((s) => s.isPending)
-  const { t } = useTranslation('schedule')
+  const { t } = useTranslation(['common', 'schedule'])
   const queryClient = useQueryClient()
   const { api } = useRuntime()
   const router = useRouter()
@@ -27,16 +27,17 @@ function UpdateScheduleFormSubmit({ id }: { id: ScheduleId }) {
         await queryClient.invalidateQueries({
           queryKey: api.schedule.show.getQueryKey({ params: { id } }),
         })
-        toast.success(t('edit.messages.success'))
+        toast.success(t('schedule:edit.messages.success'))
         router.back()
       },
-      onError: (error) => toast.error(t('edit.messages.error'), error.message),
+      onError: (error) =>
+        toast.error(t('schedule:edit.messages.error'), error.message),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? t('edit.actions.submitting') : t('edit.actions.submit')}
+      {isPending ? t('common:saving') : t('common:save_changes')}
     </Button>
   )
 }

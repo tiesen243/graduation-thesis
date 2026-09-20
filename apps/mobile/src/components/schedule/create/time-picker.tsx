@@ -23,10 +23,10 @@ export function CreateScheduleTimePicker() {
       name='time'
       render={({ field, meta, helpers: { handleChange } }) => (
         <Field>
-          <FieldLabel>{t('create.time.label')}</FieldLabel>
+          <FieldLabel>{t('create.fields.time.label')}</FieldLabel>
 
           <Button variant='outline' onPress={() => setIsOpen(true)}>
-            {field.value || t('create.time.placeholder')}
+            {field.value || t('create.fields.time.placeholder')}
           </Button>
 
           <Activity mode={isOpen ? 'visible' : 'hidden'}>
@@ -58,7 +58,9 @@ export function CreateScheduleTimePicker() {
             />
           </Activity>
 
-          <FieldDescription>{t('create.time.description')}</FieldDescription>
+          <FieldDescription>
+            {t('create.fields.time.description')}
+          </FieldDescription>
 
           <FieldError errors={meta.errors} />
         </Field>

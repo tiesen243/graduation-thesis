@@ -285,7 +285,7 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
           500
         )
       } catch {
-        toast.error(t('config.messages.sendFailed'))
+        toast.error(t('config.messages.send_failed'))
       }
     },
     [t, selectedDevice, isConnected]

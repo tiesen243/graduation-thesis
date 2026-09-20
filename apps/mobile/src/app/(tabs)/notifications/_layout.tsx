@@ -9,7 +9,7 @@ export default function TabsNotificationsLayout() {
 
   return (
     <Stack screenOptions={screenOptions}>
-      <Stack.Screen name='index' options={{ title: t('index.title') }} />
+      <Stack.Screen name='index' options={{ title: t('title') }} />
       <Stack.Screen name='[id]' options={{ title: t('detail.title') }} />
     </Stack>
   )

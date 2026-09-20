@@ -92,7 +92,7 @@ export function UpdateDeviceButton({
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        placeholder={t('details.device.namePlaceholder')}
+                        placeholder={t('details.device.name_placeholder')}
                         onChangeText={handleChange}
                       />
                       <FieldError errors={meta.errors} />
@@ -108,7 +108,7 @@ export function UpdateDeviceButton({
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        placeholder={t('details.device.positionPlaceholder')}
+                        placeholder={t('details.device.position_placeholder')}
                         onChangeText={handleChange}
                       />
 

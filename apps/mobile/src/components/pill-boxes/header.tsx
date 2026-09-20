@@ -32,7 +32,7 @@ export function PillBoxDetailsHeader({
       <CardHeader className='flex-row items-center gap-2 border-b border-border pb-4'>
         <CpuIcon size={20} className='text-primary' />
         <CardTitle className='flex-1'>
-          {device?.name || t('pill-box:details.device.unnamed')}
+          {device?.name || t('pill-box:details.device.unnamed_device')}
         </CardTitle>
         <UpdateDeviceButton device={device} />
       </CardHeader>
@@ -60,14 +60,14 @@ export function PillBoxDetailsHeader({
             {t('pill-box:details.device.position')}
           </Typography>
           <Typography className='text-sm font-medium'>
-            {device.position || t('pill-box:details.device.unknownPosition')}
+            {device.position || t('pill-box:details.device.unknown_position')}
           </Typography>
         </View>
 
         <View className='flex-row items-center justify-between gap-1'>
           <CalendarIcon className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
-            {t('pill-box:details.device.activatedAt')}
+            {t('pill-box:details.device.activated_at')}
           </Typography>
           <Typography className='text-sm'>
             {device.activatedAt

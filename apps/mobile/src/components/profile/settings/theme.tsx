@@ -8,13 +8,13 @@ import { setTheme } from '@/lib/secure-store'
 
 export const ProfileSettingsTheme = () => {
   const { theme, hasAdaptiveThemes } = useUniwind()
-  const { t } = useTranslation(['profile'])
+  const { t } = useTranslation('profile')
 
   return (
     <View className='gap-2'>
-      <Typography variant='h3'>{t('settings.darkMode.title')}</Typography>
+      <Typography variant='h3'>{t('settings.dark_mode.title')}</Typography>
       <Typography className='text-sm text-muted-foreground'>
-        {t('settings.darkMode.description')}
+        {t('settings.dark_mode.description')}
       </Typography>
 
       <RadioGroup
@@ -25,13 +25,13 @@ export const ProfileSettingsTheme = () => {
         }}
       >
         <RadioGroupItem value='light'>
-          <Typography>{t('settings.darkMode.options.off')}</Typography>
+          <Typography>{t('settings.dark_mode.options.off')}</Typography>
         </RadioGroupItem>
         <RadioGroupItem value='dark'>
-          <Typography>{t('settings.darkMode.options.on')}</Typography>
+          <Typography>{t('settings.dark_mode.options.on')}</Typography>
         </RadioGroupItem>
         <RadioGroupItem value='system'>
-          <Typography>{t('settings.darkMode.options.system')}</Typography>
+          <Typography>{t('settings.dark_mode.options.system')}</Typography>
         </RadioGroupItem>
       </RadioGroup>
     </View>

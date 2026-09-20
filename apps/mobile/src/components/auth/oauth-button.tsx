@@ -44,7 +44,7 @@ export function OAuthButton({ provider }: { provider: string }) {
   return (
     <Button onPress={handleLogin} className='flex-1'>
       <Typography>
-        {t('oauth.continueWith', {
+        {t('oauth.continue_with', {
           provider: provider.charAt(0).toUpperCase() + provider.slice(1),
         })}
       </Typography>

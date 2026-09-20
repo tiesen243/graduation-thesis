@@ -25,14 +25,14 @@ import { ActivityIndicator } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const STATUS_MAPPERS = {
-  pending: { key: 'index.statuses.pending', variant: 'warning' },
-  completed: { key: 'index.statuses.completed', variant: 'success' },
-  failed: { key: 'index.statuses.missed', variant: 'destructive' },
+  pending: { key: 'schedule:index.statuses.pending', variant: 'warning' },
+  completed: { key: 'schedule:index.statuses.completed', variant: 'success' },
+  failed: { key: 'schedule:index.statuses.missed', variant: 'destructive' },
 } as const
 
 export default function TabsSchedulesDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: ScheduleId }>()
-  const { t, i18n } = useTranslation('schedule')
+  const { t, i18n } = useTranslation(['common', 'schedule'])
   const { api } = useRuntime()
 
   const { data, isLoading } = useQuery(
@@ -53,7 +53,9 @@ export default function TabsSchedulesDetailsScreen() {
     <View className='gap-4 p-4'>
       <Card>
         <CardHeader className='flex-row items-center justify-between'>
-          <CardTitle>{t('detail.sections.scheduleInformation')}</CardTitle>
+          <CardTitle>
+            {t('schedule:detail.sections.schedule_information')}
+          </CardTitle>
           <Badge variant={status.variant}>
             <Typography>{t(status.key)}</Typography>
           </Badge>
@@ -89,7 +91,9 @@ export default function TabsSchedulesDetailsScreen() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('detail.sections.medicationItems')}</CardTitle>
+          <CardTitle>
+            {t('schedule:detail.sections.medication_items')}
+          </CardTitle>
         </CardHeader>
         <CardContent className='gap-3'>
           {items.map((item) => (
@@ -102,16 +106,16 @@ export default function TabsSchedulesDetailsScreen() {
                   )}
                 </CardTitle>
                 <CardDescription>
-                  {t('items.slot')}: {item.slot}
+                  {t('common:slot')}: {item.slot}
                 </CardDescription>
               </CardHeader>
 
               <CardContent>
                 <CardDescription>
-                  {t('items.quantity')} {item.quantity}
+                  {t('common:quantity')} {item.quantity}
                 </CardDescription>
                 <CardDescription>
-                  {t('items.dosage')} {item.dosage}
+                  {t('common:dosage')} {item.dosage}
                 </CardDescription>
               </CardContent>
             </Card>

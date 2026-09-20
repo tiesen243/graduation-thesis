@@ -52,7 +52,7 @@ export const getMarkedDates = (
   const lastDate = getTimezonedDate(end)
 
   while (currentDate.getTime() <= lastDate.getTime()) {
-    const [dateString = ''] = currentDate.toISOString().split('T')
+    const [dateString = ''] = currentDate.toISOString().split('t')
 
     if (dateString === start)
       marked[dateString] = { startingDay: true, color, textColor }

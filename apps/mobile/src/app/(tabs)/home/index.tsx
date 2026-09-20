@@ -8,7 +8,7 @@ export default function TabsHomeIndexScreen() {
   return (
     <View className='flex-1 p-4'>
       <Typography variant='h1'>Rozumari</Typography>
-      <Typography>{t('welcomeMessage')}</Typography>
+      <Typography>{t('welcome_message')}</Typography>
     </View>
   )
 }
