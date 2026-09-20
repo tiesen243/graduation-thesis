@@ -3,6 +3,7 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
+import { useTranslation } from 'react-i18next'
 import { FlatList, View } from 'react-native'
 
 import { RefreshControl } from '@/components/native'
@@ -12,6 +13,7 @@ import { useRuntime } from '@/hooks/use-runtime'
 
 export default function TabsPillBoxesDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
+  const { t } = useTranslation('pill-box')
   const { api } = useRuntime()
 
   const { data, isLoading, refetch, isRefetching } = useQuery(
@@ -23,33 +25,39 @@ export default function TabsPillBoxesDetailsScreen() {
     return (
       <View className='flex-1 items-center justify-center p-4'>
         <Typography className='text-muted-foreground'>
-          Loading device information...
+          {t('details.loading')}
         </Typography>
       </View>
     )
 
   return (
-    <View className='flex-1 pt-4'>
-      <PillBoxDetailsHeader device={device} />
+    <FlatList
+      contentContainerClassName='p-4 gap-3'
+      columnWrapperClassName='flex-1 gap-3'
 
-      <Typography className='p-4 pb-2 font-semibold'>
-        Compartment List ({device.compartments.length})
-      </Typography>
+      data={device.compartments}
+      keyExtractor={(comp) => comp.position}
+      renderItem={({ item }) => <CompartmentCard compartment={item} />}
+      numColumns={2}
 
-      <FlatList
-        contentContainerClassName='px-4 gap-3 py-2'
-        columnWrapperClassName='flex-1 gap-3'
-        data={device.compartments}
-        keyExtractor={(comp) => comp.position}
-        renderItem={({ item }) => <CompartmentCard compartment={item} />}
-        numColumns={2}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={refetch as never}
-          />
-        }
-      />
-    </View>
+      ListHeaderComponent={
+        <>
+          <PillBoxDetailsHeader device={device} />
+
+          <Typography className='pt-2 font-semibold'>
+            {t('details.compartment_list', {
+              count: device.compartments.length,
+            })}
+          </Typography>
+        </>
+      }
+
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={refetch as never}
+        />
+      }
+    />
   )
 }

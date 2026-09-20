@@ -48,13 +48,21 @@ function RootLayoutInner() {
 
 export default function RootLayout() {
   const { theme: colorscheme } = useUniwind()
-
-  const backgroundColor = useCSSVariable('--color-background') as string
-  const foregroundColor = useCSSVariable('--color-foreground') as string
-  const primaryColor = useCSSVariable('--color-primary') as string
-  const cardColor = useCSSVariable('--color-card') as string
-  const popoverColor = useCSSVariable('--color-popover') as string
-  const borderColor = useCSSVariable('--color-border') as string
+  const [
+    backgroundColor,
+    foregroundColor,
+    primaryColor,
+    cardColor,
+    popoverColor,
+    borderColor,
+  ] = useCSSVariable([
+    '--color-background',
+    '--color-foreground',
+    '--color-primary',
+    '--color-card',
+    '--color-popover',
+    '--color-border',
+  ]) as [string, string, string, string, string, string]
 
   return (
     <ThemeProvider

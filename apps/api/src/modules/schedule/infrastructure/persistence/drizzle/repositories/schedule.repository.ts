@@ -21,7 +21,7 @@ import { makeDrizzleRepository } from '@/shared/infrastructure/persistence/drizz
 export const DrizzleScheduleRepository = Layer.effect(
   ScheduleRepository,
   Effect.gen(function* DrizzleScheduleRepository() {
-    const { db } = yield* DrizzleClient
+    const { db, buildCriteria, buildOrderBy } = yield* DrizzleClient
 
     const schedulesRepo = yield* makeDrizzleRepository(
       schedules,
@@ -53,6 +53,36 @@ export const DrizzleScheduleRepository = Layer.effect(
 
     return {
       ...schedulesRepo,
+
+      findMany: Effect.fn(function* findMany(options = {}) {
+        const query = db
+          .select({
+            id: schedules.id,
+            userId: schedules.userId,
+            deviceId: schedules.deviceId,
+            date: schedules.date,
+            time: sql<string>`TO_CHAR(${schedules.time}, 'HH24:MI:SS')`,
+            status: schedules.status,
+          })
+          .from(schedules)
+          .$dynamic()
+
+        const whereSql = yield* buildCriteria(schedules, options.where)
+        if (whereSql) query.where(whereSql)
+
+        const orderBySql = yield* buildOrderBy(schedules, options.orderBy)
+        if (orderBySql.length > 0) query.orderBy(...orderBySql)
+
+        if (options.limit) query.limit(options.limit)
+        if (options.offset) query.offset(options.offset)
+
+        return yield* query.pipe(
+          Effect.map((rows) =>
+            rows.map((row) => DrizzleScheduleMapper.toEntity(row))
+          ),
+          Effect.orDie
+        )
+      }),
 
       findWithItems: Effect.fn(function* findWithItems(scheduleId) {
         const [row] = yield* db

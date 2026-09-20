@@ -14,7 +14,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
+import { Link, useLocalSearchParams } from 'expo-router'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
@@ -30,16 +30,16 @@ const LEVEL_CONFIG = {
 } as const
 
 export default function TabsNotificationsDetailScreen() {
-  const { t, i18n } = useTranslation('notification')
   const { id } = useLocalSearchParams<{ id: NotificationId }>()
+  const { t, i18n } = useTranslation('notification')
+
   const queryClient = useQueryClient()
-
   const { api } = useRuntime()
-  const { data: response, isLoading } = useQuery(
-    api.notification.show.queryOptions({ params: { id } })
-  )
 
-  const notification = response?.data
+  const { data: notification, isLoading } = useQuery({
+    ...api.notification.show.queryOptions({ params: { id } }),
+    select: (res) => res.data,
+  })
 
   useEffect(() => {
     if (notification?.readAt !== null) return
@@ -63,7 +63,7 @@ export default function TabsNotificationsDetailScreen() {
 
       queryClient.setQueryData(
         api.notification.show.getQueryKey({ params: { id: notification.id } }),
-        (oldData: NonNullable<typeof response>) =>
+        (oldData: { data: NonNullable<typeof notification> }) =>
           oldData.data
             ? { ...oldData, data: { ...oldData?.data, readAt } }
             : oldData
@@ -153,9 +153,11 @@ export default function TabsNotificationsDetailScreen() {
               <CardDescription>
                 {t('detail.sections.device_id')}
               </CardDescription>
-              <Typography className='text-sm' selectable>
-                {notification.deviceId}
-              </Typography>
+              <Link href={`/(tabs)/pill-boxes/${notification.deviceId}`}>
+                <Typography className='text-sm' selectable>
+                  {notification.deviceId}
+                </Typography>
+              </Link>
             </View>
           )}
 
@@ -164,9 +166,11 @@ export default function TabsNotificationsDetailScreen() {
               <CardDescription>
                 {t('detail.sections.schedule_id')}
               </CardDescription>
-              <Typography className='text-sm' selectable>
-                {notification.scheduleId}
-              </Typography>
+              <Link href={`/(tabs)/schedules/${notification.scheduleId}`}>
+                <Typography className='text-sm' selectable>
+                  {notification.scheduleId}
+                </Typography>
+              </Link>
             </View>
           )}
         </CardContent>
@@ -182,8 +186,8 @@ export default function TabsNotificationsDetailScreen() {
             <View className='gap-2 rounded-lg bg-muted/50 p-3'>
               {Object.entries(notification.payload).map(([key, value]) => (
                 <View key={key} className='flex-row justify-between gap-4'>
-                  <Typography className='text-xs font-semibold text-muted-foreground'>
-                    {key}:
+                  <Typography className='text-xs font-semibold text-muted-foreground capitalize'>
+                    {key.split('_').join(' ')}:
                   </Typography>
 
                   <Typography

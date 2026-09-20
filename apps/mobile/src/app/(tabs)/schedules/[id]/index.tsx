@@ -33,6 +33,7 @@ const STATUS_MAPPERS = {
 export default function TabsSchedulesDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: ScheduleId }>()
   const { t, i18n } = useTranslation(['common', 'schedule'])
+
   const { api } = useRuntime()
 
   const { data, isLoading } = useQuery(

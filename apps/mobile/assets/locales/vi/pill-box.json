@@ -11,6 +11,8 @@
   },
   "details": {
     "title": "Chi tiết hộp thuốc",
+    "loading": "Đang tải chi tiết hộp thuốc...",
+    "compartment_list": "Danh sách ngăn ({{count}})",
     "device": {
       "model": "Mẫu",
       "name": "Tên thiết bị",
@@ -19,7 +21,15 @@
       "position": "Vị trí",
       "unknown_position": "Chưa đặt",
       "position_placeholder": "Nhập vị trí",
-      "activated_at": "Ngày kích hoạt"
+      "activated_at": "Ngày kích hoạt",
+      "update": {
+        "title": "Cập nhật thiết bị",
+        "description": "Điền vào chi tiết của thiết bị bạn muốn cập nhật.",
+        "messages": {
+          "success": "Cập nhật thiết bị thành công.",
+          "error": "Cập nhật thiết bị thất bại."
+        }
+      }
     },
     "compartment": {
       "empty": "Ngăn trống",
@@ -33,8 +43,7 @@
         "title": "Cập nhật ngăn",
         "description": "Điền vào chi tiết của thuốc bạn muốn thêm vào ngăn này.",
         "success": "Cập nhật ngăn thành công.",
-        "error": "Cập nhật ngăn thất bại.",
-        "actions": {}
+        "error": "Cập nhật ngăn thất bại."
       },
       "delete": {
         "success": "Xóa ngăn thành công.",

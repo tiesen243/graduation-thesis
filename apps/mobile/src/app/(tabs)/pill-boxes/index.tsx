@@ -30,6 +30,7 @@ export const STATUS_MAPPERS = {
 export default function TabsPillBoxesIndexScreen() {
   const { t } = useTranslation(['common', 'pill-box'])
   const { user } = useSession()
+
   const { api } = useRuntime()
   const router = useRouter()
 

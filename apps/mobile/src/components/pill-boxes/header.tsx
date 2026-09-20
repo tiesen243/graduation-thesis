@@ -10,7 +10,9 @@ import {
 import {
   CalendarIcon,
   CpuIcon,
+  InfoIcon,
   MapPinIcon,
+  PackageIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
@@ -28,7 +30,7 @@ export function PillBoxDetailsHeader({
   const status = STATUS_MAPPERS[device.status as keyof typeof STATUS_MAPPERS]
 
   return (
-    <Card className='mx-4'>
+    <Card>
       <CardHeader className='flex-row items-center gap-2 border-b border-border pb-4'>
         <CpuIcon size={20} className='text-primary' />
         <CardTitle className='flex-1'>
@@ -38,17 +40,19 @@ export function PillBoxDetailsHeader({
       </CardHeader>
 
       <CardContent className='gap-3'>
-        <View className='flex-row items-center justify-between'>
-          <Typography className='text-sm text-muted-foreground'>
-            {t('common:status')}
+        <View className='flex-row items-center justify-between gap-1'>
+          <InfoIcon className='size-3 text-muted-foreground' />
+          <Typography className='flex-1 text-sm text-muted-foreground'>
+            {t('status')}
           </Typography>
           <Badge variant={status.variant}>
             <Typography className='capitalize'>{t(status.key)}</Typography>
           </Badge>
         </View>
 
-        <View className='flex-row items-center justify-between'>
-          <Typography className='text-sm text-muted-foreground'>
+        <View className='flex-row items-center justify-between gap-1'>
+          <PackageIcon className='size-3 text-muted-foreground' />
+          <Typography className='flex-1 text-sm text-muted-foreground'>
             {t('pill-box:details.device.model')}
           </Typography>
           <Typography className='text-sm'>{device.factoryModel}</Typography>

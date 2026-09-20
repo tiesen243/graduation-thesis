@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next'
 import { useOptions } from '@/hooks/use-options'
 
 export default function TabsPillBoxesLayout() {
-  const screenOptions = useOptions()
-  const router = useRouter()
   const { t } = useTranslation('pill-box')
+  const screenOptions = useOptions()
+
+  const router = useRouter()
 
   return (
     <Stack screenOptions={screenOptions}>

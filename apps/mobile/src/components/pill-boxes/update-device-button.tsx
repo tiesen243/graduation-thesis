@@ -26,7 +26,7 @@ function SaveDeviceFormSubmit({
 }: Readonly<{ setIsOpen: (isOpen: boolean) => void }>) {
   const isPending = updateDeviceForm.useValue((s) => s.isPending)
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
-  const { t } = useTranslation('pill-box')
+  const { t } = useTranslation(['common', 'pill-box'])
 
   const queryClient = useQueryClient()
   const { api } = useRuntime()
@@ -39,18 +39,19 @@ function SaveDeviceFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success(t('details.device.update.messages.success'))
+        toast.success(t('pill-box:details.device.update.messages.success'))
       },
       onError: (error) =>
-        toast.error(t('details.device.update.messages.error'), error.message),
+        toast.error(
+          t('pill-box:details.device.update.messages.error'),
+          error.message
+        ),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending
-        ? t('details.device.update.actions.submitting')
-        : t('details.device.update.actions.submit')}
+      {isPending ? t('saving') : t('save_changes')}
     </Button>
   )
 }
