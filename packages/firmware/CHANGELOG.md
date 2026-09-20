@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.0.6
+
+### Bug Fixes
+
+- Remove postinstall command
+- Bump firmware version
+
 ## @rozumari/firmware@0.0.5
 
 ### Added BLE Device Configuration & Fixed Multi-byte Payload Transmission

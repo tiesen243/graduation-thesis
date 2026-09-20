@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.0.20
+
+### Bug Fixes
+
+- Remove postinstall command
+- Bump firmware version
+
 ## @rozumari/mobile@0.0.19
 
 ### Patches
