@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
@@ -12,6 +11,7 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'

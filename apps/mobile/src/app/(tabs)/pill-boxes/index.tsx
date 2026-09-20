@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
 import {
@@ -15,6 +14,7 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FlatList, Pressable, RefreshControl, View } from 'react-native'
 
 import { ActivityIndicator } from '@/components/native'

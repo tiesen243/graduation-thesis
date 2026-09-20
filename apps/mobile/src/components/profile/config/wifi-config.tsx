@@ -1,9 +1,9 @@
-import { useTranslation } from 'react-i18next'
 import { Button } from '@rozumari/ui/components/button'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import {
@@ -65,7 +65,9 @@ export function WifiConfig() {
 
   return (
     <View className='gap-3'>
-      <Typography className='font-semibold'>{t('config.wifi.title')}</Typography>
+      <Typography className='font-semibold'>
+        {t('config.wifi.title')}
+      </Typography>
 
       <Input
         placeholder={t('config.wifi.ssid')}
