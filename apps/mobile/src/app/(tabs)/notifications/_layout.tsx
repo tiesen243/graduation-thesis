@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next'
 import { useOptions } from '@/hooks/use-options'
 
 export default function TabsNotificationsLayout() {
-  const screenOptions = useOptions()
-
   const { t } = useTranslation('notification')
+  const screenOptions = useOptions()
 
   return (
     <Stack screenOptions={screenOptions}>

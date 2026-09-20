@@ -33,9 +33,10 @@ interface NotificationSection {
 
 export default function TabsNotificationsIndexScreen() {
   const { i18n } = useTranslation()
+
+  const queryClient = useQueryClient()
   const { api } = useRuntime()
   const router = useRouter()
-  const queryClient = useQueryClient()
 
   const { data, isRefetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useInfiniteQuery({
