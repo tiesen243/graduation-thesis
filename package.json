@@ -15,7 +15,6 @@
     "format:fix": "oxfmt --write",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "postinstall": "uv sync",
     "tegami": "bun run tegami.ts",
     "typecheck": "turbo run typecheck"
   },
