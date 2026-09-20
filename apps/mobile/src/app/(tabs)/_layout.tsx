@@ -8,16 +8,19 @@ import { useRuntime } from '@/hooks/use-runtime'
 // oxlint-disable node/global-require unicorn/prefer-module
 
 export default function TabsLayout() {
-  const cardColor = useCSSVariable('--color-card') as string
-  const cardForegroundColor = useCSSVariable(
-    '--color-card-foreground'
-  ) as string
-  const [primaryColor, mutedColor, destructiveColor] = useCSSVariable([
+  const [
+    cardColor,
+    cardForegroundColor,
+    primaryColor,
+    mutedColor,
+    destructiveColor,
+  ] = useCSSVariable([
+    '--color-card',
+    '--color-card-foreground',
     '--color-primary',
     '--color-muted',
     '--color-destructive',
-  ]) as [string, string, string]
-
+  ]) as [string, string, string, string, string]
   const { t } = useTranslation([
     'home',
     'pill-box',

@@ -30,19 +30,12 @@ import { useSession } from '@/hooks/use-session'
 export default function TabsProfileIndexScreen() {
   const { status, user, refetch, isRefetching, logout } = useSession()
   const { t, i18n } = useTranslation(['profile'])
+
   if (status !== 'authenticated') return null
 
   const informations = [
-    {
-      icon: UserIcon,
-      title: 'User ID',
-      description: user.id,
-    },
-    {
-      icon: MailIcon,
-      title: 'Email',
-      description: user.email,
-    },
+    { icon: UserIcon, title: 'User ID', description: user.id },
+    { icon: MailIcon, title: 'Email', description: user.email },
     {
       icon: Calendar1Icon,
       title: t('index.joined'),

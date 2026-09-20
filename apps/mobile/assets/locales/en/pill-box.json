@@ -1,12 +1,44 @@
 {
   "title": "Pill Boxes",
 
+  "statuses": {
+    "linked": "Linked",
+    "unlinked": "Unlinked",
+    "suspended": "Suspended"
+  },
+
   "index": {
-    "searchPlaceholder": "Search devices..."
+    "title": "Pill Boxes",
+    "searchPlaceholder": "Search devices...",
+    "empty": "No pill boxes found. Please add a pill box to see it here."
   },
 
   "details": {
+    "title": "Pill Box Details",
+    "device": {
+      "model": "Model",
+      "name": "Device Name",
+      "unnamed": "Unnamed Device",
+      "namePlaceholder": "Enter device name",
+      "position": "Position",
+      "unknownPosition": "Not set",
+      "positionPlaceholder": "Enter position",
+      "activatedAt": "Activated Date",
+      "update": {
+        "title": "Update Device",
+        "description": "Fill in the details of the device you want to update.",
+        "actions": {
+          "submit": "Save Changes",
+          "submitting": "Saving..."
+        },
+        "messages": {
+          "success": "Device updated successfully.",
+          "error": "Failed to update device."
+        }
+      }
+    },
     "compartment": {
+      "empty": "Empty Compartment",
       "medicine": "Medicine",
       "medicinePlaceholder": "Enter medicine name",
       "dosage": "Dosage",
@@ -14,13 +46,52 @@
       "capacity": "Capacity",
       "capacityPlaceholder": "Enter capacity",
       "quantity": "Quantity",
-      "addMedicine": "Add Medicine"
+      "addMedicine": "Add Medicine",
+
+      "update": {
+        "title": "Update Compartment",
+        "description": "Fill in the details of the medicine you want to add to this compartment.",
+        "success": "Compartment updated successfully.",
+        "error": "Failed to update compartment.",
+        "actions": {
+          "submit": "Save Changes",
+          "submitting": "Saving..."
+        }
+      },
+      "delete": {
+        "success": "Compartment deleted successfully.",
+        "error": "Failed to delete compartment.",
+        "actions": {
+          "submit": "Delete",
+          "submitting": "Deleting..."
+        }
+      }
+    }
+  },
+
+  "link": {
+    "title": "Link Pill Box",
+    "notFound": "Device not found",
+    "dialog": {
+      "title": "Link Pill Box",
+      "message": "Are you sure you want to link with {{deviceName}}?",
+      "success": {
+        "title": "Link Successful",
+        "message": "The pill box has been successfully linked."
+      },
+      "error": {
+        "title": "Link Failed",
+        "message": "An error occurred while linking the pill box. Please try again."
+      }
     },
-    "device": {
-      "name": "Device Name",
-      "namePlaceholder": "Enter device name",
-      "position": "Position",
-      "positionPlaceholder": "Enter position"
+    "scanFailed": {
+      "title": "Scan Failed",
+      "message": "Unable to scan the QR code. Please try again."
+    },
+    "overplay": {
+      "processing": "QR detected, processing...",
+      "linking": "Linking pill box...",
+      "scanning": "Scanning QR code..."
     }
   }
 }

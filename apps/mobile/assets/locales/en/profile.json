@@ -31,6 +31,12 @@
 
   "config": {
     "title": "Device Configuration",
+    "messages": {
+      "success": "Device connected successfully.",
+      "failed": "Failed to connect to the device. Please try again.",
+      "disconnected": "Device disconnected successfully.",
+      "sendFailed": "Failed to send configuration to the device. Please try again."
+    },
     "device": {
       "selector": {
         "title": "Select Device",

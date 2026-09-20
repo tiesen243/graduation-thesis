@@ -3,10 +3,11 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { FlatList, RefreshControl, View } from 'react-native'
+import { FlatList, View } from 'react-native'
 
-import { CompartmentCard } from '@/components/pill-boxes/details/compartment-card'
-import { PillBoxDetailsHeader } from '@/components/pill-boxes/details/header'
+import { RefreshControl } from '@/components/native'
+import { CompartmentCard } from '@/components/pill-boxes/compartment-card'
+import { PillBoxDetailsHeader } from '@/components/pill-boxes/header'
 import { useRuntime } from '@/hooks/use-runtime'
 
 export default function TabsPillBoxesDetailsScreen() {
@@ -18,7 +19,6 @@ export default function TabsPillBoxesDetailsScreen() {
   )
 
   const device = data?.data
-
   if (isLoading || !device)
     return (
       <View className='flex-1 items-center justify-center p-4'>
@@ -33,7 +33,7 @@ export default function TabsPillBoxesDetailsScreen() {
       <PillBoxDetailsHeader device={device} />
 
       <Typography className='p-4 pb-2 font-semibold'>
-        Compartment List ({device?.compartments.length})
+        Compartment List ({device.compartments.length})
       </Typography>
 
       <FlatList

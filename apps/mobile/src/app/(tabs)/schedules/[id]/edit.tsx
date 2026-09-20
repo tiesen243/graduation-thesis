@@ -14,12 +14,11 @@ import { UpdateScheduleTimePicker } from '@/components/schedule/update/time-pick
 import { useRuntime } from '@/hooks/use-runtime'
 
 function UpdateScheduleFormSubmit({ id }: { id: ScheduleId }) {
-  const { t } = useTranslation('schedule')
   const isPending = updateScheduleForm.useValue((s) => s.isPending)
-
+  const { t } = useTranslation('schedule')
+  const queryClient = useQueryClient()
   const { api } = useRuntime()
   const router = useRouter()
-  const queryClient = useQueryClient()
 
   const handleSubmit = updateScheduleForm.useSubmit(
     (payload) => api.schedule.update.mutate({ params: { id }, payload }),

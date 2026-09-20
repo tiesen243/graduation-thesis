@@ -8,11 +8,10 @@ import { SyncScheduleButton } from '@/components/schedule/sync-schedule-button'
 import { useOptions } from '@/hooks/use-options'
 
 export default function TabsSchedulesLayout() {
-  const screenOptions = useOptions()
-  const { t } = useTranslation('schedule')
-  const router = useRouter()
-
   const { id } = useGlobalSearchParams<{ id: string }>()
+  const { t } = useTranslation('schedule')
+  const screenOptions = useOptions()
+  const router = useRouter()
 
   return (
     <Stack screenOptions={screenOptions}>

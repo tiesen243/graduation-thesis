@@ -10,8 +10,8 @@ import { getTimezonedDate } from '@/lib/utils'
 const { startDate, endDate } = getCurrentWeekRange(getTimezonedDate())
 
 export default function TabsSchedulesIndexScreen() {
-  const { api } = useRuntime()
   const [query, setQuery] = useState({ startDate, endDate })
+  const { api } = useRuntime()
 
   const { data, isLoading, refetch, isRefetching } = useQuery(
     api.schedule.list.queryOptions({ query })

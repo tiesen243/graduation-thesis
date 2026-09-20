@@ -30,12 +30,11 @@ import { ScheduleItems } from '@/components/schedule/schedule-items'
 import { useRuntime } from '@/hooks/use-runtime'
 
 function CreateScheduleFormSubmit() {
-  const { t } = useTranslation('schedule')
   const isPending = CreateScheduleForm.useValue((s) => s.isPending)
-
-  const router = useRouter()
+  const { t } = useTranslation('schedule')
   const queryClient = useQueryClient()
   const { api } = useRuntime()
+  const router = useRouter()
 
   const handleSubmit = CreateScheduleForm.useSubmit(
     (payload) => api.schedule.create.mutate({ payload }),
@@ -47,7 +46,8 @@ function CreateScheduleFormSubmit() {
         router.push('/(tabs)/schedules')
         toast.success(t('create.messages.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('create.messages.error'), error.message),
     }
   )
 

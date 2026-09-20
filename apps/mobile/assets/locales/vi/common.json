@@ -1,3 +1,8 @@
 {
-  "title": "Chào mừng đến với ứng dụng di động của chúng tôi!"
+  "title": "Chào mừng đến với ứng dụng di động của chúng tôi!",
+
+  "status": "Trạng thái",
+  "slot": "Ngăn",
+  "pills": "Viên thuốc",
+  "pagination": "Trang {{current}} của {{total}}"
 }

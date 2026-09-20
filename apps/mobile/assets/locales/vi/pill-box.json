@@ -1,24 +1,85 @@
 {
   "title": "Hộp thuốc",
-  "index": {
-    "searchPlaceholder": "Tìm thiết bị..."
+
+  "statuses": {
+    "linked": "Đã liên kết",
+    "unlinked": "Chưa liên kết",
+    "suspended": "Đã tạm dừng"
   },
+
+  "index": {
+    "title": "Hộp thuốc",
+    "searchPlaceholder": "Tìm thiết bị...",
+    "empty": "Không tìm thấy hộp thuốc nào. Vui lòng thêm hộp thuốc để xem tại đây."
+  },
+
   "details": {
-    "compartment": {
-      "medicine": "Thuốc",
-      "medicinePlaceholder": "Nhập tên thuốc",
-      "dosage": "Liều dùng",
-      "dosagePlaceholder": "Nhập liều dùng",
-      "capacity": "Sức chứa",
-      "capacityPlaceholder": "Nhập sức chứa",
-      "quantity": "Số lượng",
-      "addMedicine": "Thêm thuốc"
-    },
+    "title": "Chi tiết hộp thuốc",
     "device": {
+      "model": "Mẫu",
       "name": "Tên thiết bị",
+      "unnamed": "Thiết bị chưa đặt tên",
       "namePlaceholder": "Nhập tên thiết bị",
       "position": "Vị trí",
-      "positionPlaceholder": "Nhập vị trí"
+      "unknownPosition": "Chưa đặt",
+      "positionPlaceholder": "Nhập vị trí",
+      "activatedAt": "Ngày kích hoạt"
+    },
+    "compartment": {
+      "empty": "Ngăn trống",
+      "medicine": "Thuốc",
+      "medicinePlaceholder": "Nhập tên thuốc",
+      "dosage": "Liều lượng",
+      "dosagePlaceholder": "Nhập liều lượng",
+      "capacity": "Dung tích",
+      "capacityPlaceholder": "Nhập dung tích",
+      "quantity": "Số lượng",
+      "addMedicine": "Thêm thuốc",
+
+      "update": {
+        "title": "Cập nhật ngăn",
+        "description": "Điền vào chi tiết của thuốc bạn muốn thêm vào ngăn này.",
+        "success": "Cập nhật ngăn thành công.",
+        "error": "Cập nhật ngăn thất bại.",
+        "actions": {
+          "submit": "Lưu thay đổi",
+          "submitting": "Đang lưu..."
+        }
+      },
+      "delete": {
+        "success": "Xóa ngăn thành công.",
+        "error": "Xóa ngăn thất bại.",
+        "actions": {
+          "submit": "Xóa",
+          "submitting": "Đang xóa..."
+        }
+      }
+    }
+  },
+
+  "link": {
+    "title": "Liên kết hộp thuốc",
+    "notFound": "Không tìm thấy thiết bị",
+    "dialog": {
+      "title": "Liên kết hộp thuốc",
+      "message": "Bạn có chắc chắn muốn liên kết với {{deviceName}} không?",
+      "success": {
+        "title": "Liên kết thành công",
+        "message": "Hộp thuốc đã được liên kết thành công."
+      },
+      "error": {
+        "title": "Liên kết thất bại",
+        "message": "Đã xảy ra lỗi khi liên kết hộp thuốc. Vui lòng thử lại."
+      }
+    },
+    "scanFailed": {
+      "title": "Quét thất bại",
+      "message": "Không thể quét mã QR. Vui lòng thử lại."
+    },
+    "overplay": {
+      "processing": "Đã phát hiện QR, đang xử lý...",
+      "linking": "Đang liên kết hộp thuốc...",
+      "scanning": "Đang quét mã QR..."
     }
   }
 }

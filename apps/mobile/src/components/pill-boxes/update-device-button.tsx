@@ -24,12 +24,12 @@ const updateDeviceForm = FormBuilder.empty
 function SaveDeviceFormSubmit({
   setIsOpen,
 }: Readonly<{ setIsOpen: (isOpen: boolean) => void }>) {
-  const { id } = useLocalSearchParams<{ id: DeviceId }>()
-
   const isPending = updateDeviceForm.useValue((s) => s.isPending)
+  const { id } = useLocalSearchParams<{ id: DeviceId }>()
+  const { t } = useTranslation('pill-box')
 
-  const { api } = useRuntime()
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   const handleSubmit = updateDeviceForm.useSubmit(
     (payload) => api.device['update'].mutateEffect({ params: { id }, payload }),
@@ -39,15 +39,18 @@ function SaveDeviceFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success('Device updated successfully')
+        toast.success(t('details.device.update.messages.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('details.device.update.messages.error'), error.message),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? 'Saving...' : 'Save Changes'}
+      {isPending
+        ? t('details.device.update.actions.submitting')
+        : t('details.device.update.actions.submit')}
     </Button>
   )
 }
@@ -75,10 +78,10 @@ export function UpdateDeviceButton({
             <updateDeviceForm.Provider defaultValues={device}>
               <Pressable className='w-full gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
-                  Update Device
+                  {t('details.device.update.title')}
                 </Typography>
                 <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  Update the device name and position.
+                  {t('details.device.update.description')}
                 </Typography>
 
                 <updateDeviceForm.Field

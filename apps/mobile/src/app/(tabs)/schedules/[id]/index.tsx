@@ -25,38 +25,29 @@ import { ActivityIndicator } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const STATUS_MAPPERS = {
-  pending: {
-    key: 'index.statuses.pending',
-    variant: 'warning',
-  },
-  completed: {
-    key: 'index.statuses.completed',
-    variant: 'success',
-  },
-  failed: {
-    key: 'index.statuses.missed',
-    variant: 'destructive',
-  },
+  pending: { key: 'index.statuses.pending', variant: 'warning' },
+  completed: { key: 'index.statuses.completed', variant: 'success' },
+  failed: { key: 'index.statuses.missed', variant: 'destructive' },
 } as const
 
 export default function TabsSchedulesDetailsScreen() {
-  const { t, i18n } = useTranslation('schedule')
   const { id } = useLocalSearchParams<{ id: ScheduleId }>()
-
+  const { t, i18n } = useTranslation('schedule')
   const { api } = useRuntime()
-  const { data } = useQuery(api.schedule.show.queryOptions({ params: { id } }))
 
-  if (!data?.data)
+  const { data, isLoading } = useQuery(
+    api.schedule.show.queryOptions({ params: { id } })
+  )
+
+  if (isLoading || !data?.data)
     return (
       <View className='flex-1 items-center justify-center'>
         <ActivityIndicator size='large' />
       </View>
     )
 
-  const schedule = data.data
-  const { device, items } = schedule
-
-  const status = STATUS_MAPPERS[schedule.status as keyof typeof STATUS_MAPPERS]
+  const { date, time, device, items, status: _status } = data.data
+  const status = STATUS_MAPPERS[_status as keyof typeof STATUS_MAPPERS]
 
   return (
     <View className='gap-4 p-4'>
@@ -72,7 +63,7 @@ export default function TabsSchedulesDetailsScreen() {
             <CalendarIcon className='size-4 text-muted-foreground' />
 
             <Typography>
-              {formatDate(schedule.date, {
+              {formatDate(date, {
                 mode: 'custom',
                 custom: 'eee, MMM d, yyyy',
                 locale: i18n.resolvedLanguage,
@@ -81,7 +72,7 @@ export default function TabsSchedulesDetailsScreen() {
           </View>
           <View className='flex-row items-center gap-2'>
             <ClockIcon className='size-4 text-muted-foreground' />
-            <Typography>{schedule.time}</Typography>
+            <Typography>{time}</Typography>
           </View>
           <View className='flex-row items-center gap-2'>
             <CpuIcon className='size-4 text-muted-foreground' />

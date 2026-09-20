@@ -13,7 +13,7 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
-import type { Compartment } from '@/components/pill-boxes/details/compartment-card'
+import type { Compartment } from '@/components/pill-boxes/compartment-card'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -28,11 +28,11 @@ function SaveCompartmentFormSubmit({
   setIsOpen,
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
-
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
+  const { t } = useTranslation('pill-box')
 
-  const { api } = useRuntime()
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   const handleSubmit = updateCompartmentForm.useSubmit(
     (payload) =>
@@ -46,15 +46,18 @@ function SaveCompartmentFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success('Compartment updated successfully')
+        toast.success(t('details.compartment.update.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('details.compartment.update.error'), error.message),
     }
   )
 
   return (
     <Button onPress={() => handleSubmit()} disabled={isPending}>
-      {isPending ? 'Saving...' : 'Save Changes'}
+      {isPending
+        ? t('details.compartment.update.actions.submitting')
+        : t('details.compartment.update.actions.submit')}
     </Button>
   )
 }
@@ -64,11 +67,11 @@ function DeleteCompartmentFormSubmit({
   setIsOpen,
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
-
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
+  const { t } = useTranslation('pill-box')
 
-  const { api } = useRuntime()
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   const handleSubmit = updateCompartmentForm.useSubmit(
     () =>
@@ -82,9 +85,10 @@ function DeleteCompartmentFormSubmit({
           queryKey: api.device.show.getQueryKey({ params: { id } }),
         })
         setIsOpen(false)
-        toast.success('Compartment deleted successfully')
+        toast.success(t('details.compartment.delete.success'))
       },
-      onError: (error) => toast.error(error.message),
+      onError: (error) =>
+        toast.error(t('details.compartment.delete.error'), error.message),
     }
   )
 
@@ -94,7 +98,9 @@ function DeleteCompartmentFormSubmit({
       onPress={() => handleSubmit()}
       disabled={isPending}
     >
-      {isPending ? 'Deleting...' : 'Delete'}
+      {isPending
+        ? t('details.compartment.delete.actions.submitting')
+        : t('details.compartment.delete.actions.submit')}
     </Button>
   )
 }
@@ -131,11 +137,10 @@ export function UpdateCompartmentButton({
             >
               <Pressable className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
-                  Update Compartment {compartment.position}
+                  {t('details.compartment.update.title')} {compartment.position}
                 </Typography>
                 <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  Fill in the details of the medicine you want to add to this
-                  compartment.
+                  {t('details.compartment.update.description')}
                 </Typography>
 
                 <updateCompartmentForm.Field

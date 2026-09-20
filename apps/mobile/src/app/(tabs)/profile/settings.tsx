@@ -10,6 +10,7 @@ import { ProfileSettingsTheme } from '@/components/profile/settings/theme'
 
 export default function TabsProfileSettingsScreen() {
   const { t } = useTranslation(['profile'])
+
   const router = useRouter()
 
   return (

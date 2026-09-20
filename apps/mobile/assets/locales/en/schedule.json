@@ -24,7 +24,8 @@
       "submit": "Create Schedule"
     },
     "messages": {
-      "success": "Schedule created successfully"
+      "success": "Schedule created successfully",
+      "error": "Failed to create schedule"
     },
     "time": {
       "label": "Time",

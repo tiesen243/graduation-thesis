@@ -18,20 +18,21 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import { getBadgeVariant } from '@/app/(tabs)/pill-boxes'
-import { UpdateDeviceButton } from '@/components/pill-boxes/details/update-device-button'
+import { STATUS_MAPPERS } from '@/app/(tabs)/pill-boxes'
+import { UpdateDeviceButton } from '@/components/pill-boxes/update-device-button'
 
 export function PillBoxDetailsHeader({
   device,
 }: Readonly<{ device: ShowDeviceDto.Output }>) {
-  const { i18n } = useTranslation('pill-box')
+  const { t, i18n } = useTranslation(['common', 'pill-box'])
+  const status = STATUS_MAPPERS[device.status as keyof typeof STATUS_MAPPERS]
 
   return (
     <Card className='mx-4'>
       <CardHeader className='flex-row items-center gap-2 border-b border-border pb-4'>
         <CpuIcon size={20} className='text-primary' />
         <CardTitle className='flex-1'>
-          {device?.name || 'Unnamed Device'}
+          {device?.name || t('pill-box:details.device.unnamed')}
         </CardTitle>
         <UpdateDeviceButton device={device} />
       </CardHeader>
@@ -39,16 +40,16 @@ export function PillBoxDetailsHeader({
       <CardContent className='gap-3'>
         <View className='flex-row items-center justify-between'>
           <Typography className='text-sm text-muted-foreground'>
-            Status
+            {t('common:status')}
           </Typography>
-          <Badge variant={getBadgeVariant(device.status)}>
-            <Typography className='capitalize'>{device.status}</Typography>
+          <Badge variant={status.variant}>
+            <Typography className='capitalize'>{t(status.key)}</Typography>
           </Badge>
         </View>
 
         <View className='flex-row items-center justify-between'>
           <Typography className='text-sm text-muted-foreground'>
-            Model Code
+            {t('pill-box:details.device.model')}
           </Typography>
           <Typography className='text-sm'>{device.factoryModel}</Typography>
         </View>
@@ -56,17 +57,17 @@ export function PillBoxDetailsHeader({
         <View className='flex-row items-center justify-between gap-1'>
           <MapPinIcon className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
-            Location
+            {t('pill-box:details.device.position')}
           </Typography>
           <Typography className='text-sm font-medium'>
-            {device.position || 'Not set'}
+            {device.position || t('pill-box:details.device.unknownPosition')}
           </Typography>
         </View>
 
         <View className='flex-row items-center justify-between gap-1'>
           <CalendarIcon className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
-            Activated Date
+            {t('pill-box:details.device.activatedAt')}
           </Typography>
           <Typography className='text-sm'>
             {device.activatedAt

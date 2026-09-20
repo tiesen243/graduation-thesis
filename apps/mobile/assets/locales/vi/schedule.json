@@ -24,7 +24,8 @@
       "submit": "Tạo lịch"
     },
     "messages": {
-      "success": "Tạo lịch thành công"
+      "success": "Tạo lịch thành công",
+      "error": "Tạo lịch thất bại"
     },
     "time": {
       "label": "Thời gian",

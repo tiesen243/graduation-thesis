@@ -1,3 +1,8 @@
 {
-  "title": "Welcome to our mobile app!"
+  "title": "Welcome to our mobile app!",
+
+  "status": "Status",
+  "slot": "Slot",
+  "pills": "Pills",
+  "pagination": "Page {{current}} of {{total}}"
 }
