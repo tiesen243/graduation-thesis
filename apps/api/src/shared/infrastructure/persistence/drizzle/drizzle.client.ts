@@ -20,7 +20,6 @@ const PgClientLive = PgClient.layer({
     statement_timeout: '5s',
     search_path: 'public',
   },
-  startupOptions: '-c lock_timeout=1000',
 })
 
 export class DrizzleClient extends Context.Service<
