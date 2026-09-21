@@ -5,7 +5,7 @@
   "main": "src/main.py",
   "scripts": {
     "board": "uv run scripts/board.py",
-    "clean": "git clean -xdf .venv __pycache__",
+    "clean": "git clean -xdf .venv src/**/__pycache__",
     "config": "uv run mpremote edit data/config.json",
     "start": "uv run mpremote mount src exec --no-follow \"exec(open('/remote/main.py').read())\" repl"
   }
