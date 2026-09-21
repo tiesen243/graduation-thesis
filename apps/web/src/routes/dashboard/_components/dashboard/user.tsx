@@ -27,6 +27,7 @@ import {
   Loader2Icon,
   PillIcon,
 } from '@rozumari/ui/components/icons'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
 
@@ -60,13 +61,12 @@ export const UserDashboard: React.FC = () => {
     )
   }
 
-  if (isError || !data) {
+  if (isError || !data)
     return (
       <div className='rounded-lg bg-destructive/10 p-4 text-destructive'>
         An error occurred while loading your dashboard.
       </div>
     )
-  }
 
   const { metrics, devices, recentNotifications, lowStockCompartments } =
     data.data
@@ -263,10 +263,10 @@ export const UserDashboard: React.FC = () => {
                     <div className='flex shrink-0 items-center pl-3 text-xs text-muted-foreground'>
                       <ClockIcon className='mr-1 size-3' />
                       <span className='min-w-16'>
-                        {new Date(notification.createdAt).toLocaleString(
-                          'en-US',
-                          { hour: '2-digit', minute: '2-digit' }
-                        )}
+                        {formatDate(notification.createdAt, {
+                          mode: 'custom',
+                          custom: 'HH:mm',
+                        })}
                       </span>
                     </div>
                   </Link>

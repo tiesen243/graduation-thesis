@@ -76,7 +76,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-font',
     'expo-localization',
     'expo-router',
-    'expo-system-ui',
     'expo-web-browser',
     'react-native-ble-manager',
     [

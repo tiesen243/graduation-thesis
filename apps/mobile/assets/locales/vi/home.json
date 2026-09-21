@@ -1,4 +1,15 @@
 {
   "title": "Trang chủ",
-  "welcome_message": "Chào mừng bạn đến với ứng dụng di động của chúng tôi! Khám phá các tính năng và tận hưởng trải nghiệm của bạn."
+
+  "pending_schedules": "Lịch trình hôm nay đang chờ xử lý",
+
+  "low_stock_compartments": {
+    "title": "Ngăn chứa hàng tồn kho thấp",
+    "description": "Có {{count}} ngăn chứa này sắp hết. Vui lòng bổ sung thêm để đảm bảo hệ thống vận hành thông suốt."
+  },
+
+  "recent_notifications": {
+    "title": "Thông báo gần đây",
+    "description": "Bạn có {{count}} thông báo gần đây. Vui lòng kiểm tra để cập nhật thông tin."
+  }
 }
