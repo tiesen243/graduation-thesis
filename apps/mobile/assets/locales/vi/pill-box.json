@@ -53,8 +53,21 @@
           "submitting": "Đang xóa..."
         }
       }
+    },
+
+    "drop": {
+      "button": "Thả thuốc",
+      "title": "Chọn thuốc để thả",
+      "description": "Chọn thuốc bạn muốn thả từ hộp thuốc.",
+      "empty": "Không có thuốc nào để thả.",
+      "actions": {
+        "submit": "Xác nhận thả",
+        "submitting": "Đang thả...",
+        "cancel": "Hủy"
+      }
     }
   },
+
   "link": {
     "title": "Liên kết hộp thuốc",
     "not_found": "Không tìm thấy thiết bị",

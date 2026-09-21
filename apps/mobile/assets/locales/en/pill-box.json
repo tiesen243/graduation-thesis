@@ -56,6 +56,17 @@
           "submitting": "Deleting..."
         }
       }
+    },
+    "drop": {
+      "button": "Drop Medicine",
+      "title": "Select Medicine to Drop",
+      "description": "Select the medicine you want to drop from the pill box.",
+      "empty": "No medicine available to drop.",
+      "actions": {
+        "submit": "Confirm Drop",
+        "submitting": "Dropping...",
+        "cancel": "Cancel"
+      }
     }
   },
 

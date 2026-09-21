@@ -1,5 +1,5 @@
 import { DeviceStatus } from '@rozumari/contract/device/schemas/device.schema'
-import { and, count, desc, eq, sql } from 'drizzle-orm'
+import { and, count, desc, eq, isNotNull, ne, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -126,6 +126,8 @@ export const DrizzleDashboardRepository = Layer.effect(
               .where(
                 and(
                   eq(devices.userId, userId),
+                  isNotNull(compartments.medicine),
+                  ne(compartments.medicine, ''),
                   sql`${compartments.capacity} < 5`
                 )
               ),

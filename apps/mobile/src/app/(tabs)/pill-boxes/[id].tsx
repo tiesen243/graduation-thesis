@@ -8,6 +8,7 @@ import { FlatList, View } from 'react-native'
 
 import { RefreshControl } from '@/components/native'
 import { CompartmentCard } from '@/components/pill-boxes/compartment-card'
+import { DropButton } from '@/components/pill-boxes/drop-button'
 import { PillBoxDetailsHeader } from '@/components/pill-boxes/header'
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -44,11 +45,15 @@ export default function TabsPillBoxesDetailsScreen() {
         <>
           <PillBoxDetailsHeader device={device} />
 
-          <Typography className='pt-2 font-semibold'>
-            {t('details.compartment_list', {
-              count: device.compartments.length,
-            })}
-          </Typography>
+          <View className='flex-row items-center justify-between pt-2'>
+            <Typography className='font-semibold'>
+              {t('details.compartment_list', {
+                count: device.compartments.length,
+              })}
+            </Typography>
+
+            <DropButton id={id} compartments={device.compartments ?? []} />
+          </View>
         </>
       }
 
