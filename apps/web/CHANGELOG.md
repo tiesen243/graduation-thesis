@@ -1,3 +1,11 @@
+## @rozumari/web@0.0.28
+
+### Patchs
+
+- added drop pill directly
+- added home screen for mobile app
+- improve UI
+
 ## @rozumari/web@0.0.23
 
 ### Config Deep Linking for Web and Mobile

@@ -1,3 +1,11 @@
+## @rozumari/ui@0.0.9
+
+### Patchs
+
+- added drop pill directly
+- added home screen for mobile app
+- improve UI
+
 ## @rozumari/ui@0.0.8
 
 ### Patches
