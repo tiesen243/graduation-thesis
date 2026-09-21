@@ -77,7 +77,7 @@ export function UpdateDeviceButton({
         <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
           <View className='flex-1 justify-center bg-black/50 p-4'>
             <updateDeviceForm.Provider defaultValues={device}>
-              <Pressable className='w-full gap-4 rounded-lg border border-border bg-popover p-4'>
+              <Pressable className='gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
                   {t('details.device.update.title')}
                 </Typography>

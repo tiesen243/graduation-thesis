@@ -139,7 +139,7 @@ export function UpdateCompartmentButton({
                 medicine: compartment.medicine ?? '',
               }}
             >
-              <Pressable className='min-h-fit w-full gap-4 rounded-lg border border-border bg-popover p-4'>
+              <Pressable className='gap-4 rounded-lg border border-border bg-popover p-4'>
                 <Typography className='text-lg font-semibold'>
                   {t('pill-box:details.compartment.update.title')}{' '}
                   {compartment.position}

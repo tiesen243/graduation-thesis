@@ -57,52 +57,54 @@ export const SyncScheduleButton = () => {
       >
         <TouchableWithoutFeedback onPress={() => setOpen(false)}>
           <View className='flex-1 items-center justify-center bg-black/50 px-4'>
-            <Card>
-              <CardHeader>
-                <CardTitle>{t('sync.title')}</CardTitle>
-                <CardDescription>{t('sync.description')}</CardDescription>
-              </CardHeader>
-              <CardContent className='gap-4'>
-                <Select
-                  value={selectedDevice}
-                  onValueChange={setSelectedDevice as never}
-                >
-                  <SelectTrigger>
-                    <SelectValue
-                      items={
-                        data?.data.devices.map((device) => ({
-                          value: device.id,
-                          label: device.name ?? device.factoryModel,
-                        })) ?? []
-                      }
-                      placeholder={t('sync.select_device')}
-                    />
-                  </SelectTrigger>
+            <TouchableWithoutFeedback>
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('sync.title')}</CardTitle>
+                  <CardDescription>{t('sync.description')}</CardDescription>
+                </CardHeader>
+                <CardContent className='gap-4'>
+                  <Select
+                    value={selectedDevice}
+                    onValueChange={setSelectedDevice as never}
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        items={
+                          data?.data.devices.map((device) => ({
+                            value: device.id,
+                            label: device.name ?? device.factoryModel,
+                          })) ?? []
+                        }
+                        placeholder={t('sync.select_device')}
+                      />
+                    </SelectTrigger>
 
-                  <SelectContent>
-                    {data?.data.devices.map((device) => (
-                      <SelectItem key={device.id} value={device.id}>
-                        {device.name ?? device.factoryModel}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                    <SelectContent>
+                      {data?.data.devices.map((device) => (
+                        <SelectItem key={device.id} value={device.id}>
+                          {device.name ?? device.factoryModel}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                <Button
-                  disabled={!selectedDevice || syncSchedule.isPending}
-                  onPress={() =>
-                    syncSchedule.mutate({
-                      action: 'sync_schedule',
-                      payload: {},
-                    })
-                  }
-                >
-                  {syncSchedule.isPending
-                    ? t('sync.actions.syncing')
-                    : t('sync.title')}
-                </Button>
-              </CardContent>
-            </Card>
+                  <Button
+                    disabled={!selectedDevice || syncSchedule.isPending}
+                    onPress={() =>
+                      syncSchedule.mutate({
+                        action: 'sync_schedule',
+                        payload: {},
+                      })
+                    }
+                  >
+                    {syncSchedule.isPending
+                      ? t('sync.actions.syncing')
+                      : t('sync.title')}
+                  </Button>
+                </CardContent>
+              </Card>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
