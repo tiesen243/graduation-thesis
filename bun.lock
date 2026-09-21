@@ -13,7 +13,7 @@
     },
     "apps/api": {
       "name": "@rozumari/api",
-      "version": "0.0.26",
+      "version": "0.0.27",
       "bin": "./dist/cli.mjs",
       "dependencies": {
         "@effect/platform-bun": "catalog:effect",
@@ -35,7 +35,7 @@
     },
     "apps/mobile": {
       "name": "@rozumari/mobile",
-      "version": "0.0.20",
+      "version": "0.0.21",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@expo-google-fonts/geist": "~0.4.2",
@@ -78,7 +78,7 @@
     },
     "apps/web": {
       "name": "@rozumari/web",
-      "version": "0.0.27",
+      "version": "0.0.28",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@react-router/dev": "^8.4.0",
@@ -145,7 +145,7 @@
     },
     "packages/ui": {
       "name": "@rozumari/ui",
-      "version": "0.0.8",
+      "version": "0.0.9",
       "dependencies": {
         "@base-ui/react": "^1.8.0",
         "@rozumari/lib": "workspace:*",

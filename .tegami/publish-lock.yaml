@@ -1,46 +1,50 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug Fixes\n\n- Remove postinstall command\n- Bump firmware version\n"
-    filename: 2026-09-21-muadvt7w.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Patchs\n\n- added drop pill directly\n- added home screen for mobile app\n- improve UI\n"
+    filename: 2026-09-21-mub9w268.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/ui
-    updated: false
   - id: npm:@rozumari/eda
     updated: false
-  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/tsconfig
     updated: false
   - changelogIds:
-      - 2026-09-21-muadvt7w.md
-    id: npm:@rozumari/firmware
+      - 2026-09-21-mub9w268.md
+    id: npm:@rozumari/ui
     updated: true
+  - changelogIds:
+      - 2026-09-21-mub9w268.md
+    id: npm:@rozumari/web
+    updated: true
+  - id: npm:@rozumari/firmware
+    updated: false
+  - changelogIds:
+      - 2026-09-21-mub9w268.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-09-21-mub9w268.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - id: npm:@rozumari/lib
+    updated: false
   - id: npm:@rozumari/contract
     updated: false
   - id: npm:@rozumari/oxlint
     updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/api
-    updated: false
-  - changelogIds:
-      - 2026-09-21-muadvt7w.md
-    id: npm:@rozumari/mobile
-    updated: true
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/ui
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/api
   - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/oxlint
