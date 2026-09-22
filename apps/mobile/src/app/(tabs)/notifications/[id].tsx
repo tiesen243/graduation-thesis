@@ -19,15 +19,11 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
 
+import { LEVEL_CONFIG } from '@/app/(tabs)/notifications'
 import { ActivityIndicator } from '@/components/native'
+import { PayloadView } from '@/components/notification/payload-view'
 import { useRuntime } from '@/hooks/use-runtime'
 import { getTimezonedDate } from '@/lib/utils'
-
-const LEVEL_CONFIG = {
-  info: { labelKey: 'detail.level.info', variant: 'info' },
-  warning: { labelKey: 'detail.level.warning', variant: 'warning' },
-  error: { labelKey: 'detail.level.error', variant: 'destructive' },
-} as const
 
 export default function TabsNotificationsDetailScreen() {
   const { id } = useLocalSearchParams<{ id: NotificationId }>()
@@ -121,7 +117,7 @@ export default function TabsNotificationsDetailScreen() {
     <ScrollView className='flex-1 p-4' contentContainerClassName='gap-4'>
       <View className='flex-row items-center justify-between'>
         <Badge variant={levelConfig.variant}>
-          <Typography>{t(levelConfig.labelKey)}</Typography>
+          <Typography>{t(levelConfig.key)}</Typography>
         </Badge>
 
         <Typography className='text-xs text-muted-foreground'>
@@ -183,24 +179,7 @@ export default function TabsNotificationsDetailScreen() {
           </CardHeader>
 
           <CardContent>
-            <View className='gap-2 rounded-lg bg-muted/50 p-3'>
-              {Object.entries(notification.payload).map(([key, value]) => (
-                <View key={key} className='flex-row justify-between gap-4'>
-                  <Typography className='text-xs font-semibold text-muted-foreground capitalize'>
-                    {key.split('_').join(' ')}:
-                  </Typography>
-
-                  <Typography
-                    className='flex-1 text-right text-xs text-foreground'
-                    selectable
-                  >
-                    {typeof value === 'object'
-                      ? JSON.stringify(value)
-                      : String(value)}
-                  </Typography>
-                </View>
-              ))}
-            </View>
+            <PayloadView payload={notification.payload} />
           </CardContent>
         </Card>
       )}

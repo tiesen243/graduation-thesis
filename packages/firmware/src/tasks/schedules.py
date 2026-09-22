@@ -1,23 +1,20 @@
 import asyncio
 import time
 
-from lib.api import Api
 from lib.schedule import Schedule
 from lib.utils import get_current_time, print_table
-from modules.servo import Servo
+from tasks.drop import Drop
 
 
 class Schedules:
-    __instance = None
+    __instance: Schedules | None = None
 
-    _servo: Servo
     _schedule: Schedule
-    _api: Api
+    _drop: Drop
 
     def __init__(self) -> None:
-        self._servo = Servo.create()
         self._schedule = Schedule.create()
-        self._api = Api.create()
+        self._drop = Drop.create()
 
     async def start(self, schedules_data: list | None = None) -> None:
         """Run the schedule polling loop and execute due schedules."""
@@ -59,105 +56,7 @@ class Schedules:
                         schedule_id = schedule_item.get("id")
                         items = schedule_item.get("items", [])
                         print(f"[Schedule] Executing schedule {schedule_id}")
-
-                        required_failures = []
-                        optional_failures = []
-
-                        for item in items:
-                            slot = item.get("slot")
-                            quantity = item.get("quantity", 1)
-                            is_required = item.get("isRequired", True)
-
-                            print(
-                                f"[Schedule] Dispensing slot '{slot}' with quantity {quantity}..."
-                            )
-                            success = await self._servo.drop(
-                                slot=slot,
-                                quantity=quantity,
-                            )
-
-                            if not success:
-                                failure = {
-                                    "slot": slot,
-                                    "quantity": quantity,
-                                    "medicine": item.get("medicine"),
-                                    "dosage": item.get("dosage"),
-                                    "isRequired": is_required,
-                                }
-                                if is_required:
-                                    required_failures.append(failure)
-                                else:
-                                    optional_failures.append(failure)
-
-                            await asyncio.sleep(1.0)
-
-                        notification_payload = {
-                            "requiredFailures": required_failures,
-                            "optionalFailures": optional_failures,
-                        }
-
-                        if required_failures:
-                            print(
-                                f"[Schedule] Schedule {schedule_id} failed: {len(required_failures)} required item(s) and {len(optional_failures)} optional item(s) failed."
-                            )
-                            _ = await self._schedule.update_status(
-                                str(schedule_id), "failed"
-                            )
-                            _ = await self._api.post(
-                                "/api/notifications/send",
-                                data={
-                                    "scheduleId": str(schedule_id),
-                                    "level": "error",
-                                    "title": "Schedule failed",
-                                    "body": (
-                                        f"Schedule {schedule_id} failed because "
-                                        "one or more required items were not dispensed."
-                                    ),
-                                    "payload": notification_payload,
-                                },
-                            )
-
-                        elif optional_failures:
-                            print(
-                                f"[Schedule] Schedule {schedule_id} completed with {len(optional_failures)} optional item(s) not dispensed."
-                            )
-                            _ = await self._schedule.update_status(
-                                str(schedule_id), "completed"
-                            )
-                            _ = await self._api.post(
-                                "/api/notifications/send",
-                                data={
-                                    "scheduleId": str(schedule_id),
-                                    "level": "warning",
-                                    "title": "Schedule completed with warnings",
-                                    "body": (
-                                        f"Schedule {schedule_id} completed, "
-                                        "but some optional items were not dispensed."
-                                    ),
-                                    "payload": {"optionalFailures": optional_failures},
-                                },
-                            )
-
-                        else:
-                            print(
-                                f"[Schedule] Schedule {schedule_id} dispensed successfully."
-                            )
-                            _ = await self._schedule.update_status(
-                                str(schedule_id), "completed"
-                            )
-                            _ = await self._api.post(
-                                "/api/notifications/send",
-                                data={
-                                    "scheduleId": str(schedule_id),
-                                    "level": "info",
-                                    "title": "Schedule completed",
-                                    "body": (
-                                        f"Schedule {schedule_id} was completed "
-                                        "successfully."
-                                    ),
-                                    "payload": {},
-                                },
-                            )
+                        await self._drop.execute(items=items, schedule_id=schedule_id)
 
             except Exception as error:
                 print(f"[Schedule] Error: {error}")

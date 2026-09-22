@@ -36,9 +36,7 @@ function ForgotPasswordFormSubmit({
 
   return (
     <form id={formId} className='px-4' onSubmit={handleSubmit}>
-      <FieldSet className='px-4' disabled={isPending}>
-        {children}
-      </FieldSet>
+      <FieldSet disabled={isPending}>{children}</FieldSet>
     </form>
   )
 }

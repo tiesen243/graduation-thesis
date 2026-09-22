@@ -18,10 +18,10 @@ import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 import { getTimezonedDate } from '@/lib/utils'
 
-const LEVEL_CONFIG = {
-  info: { label: 'Info', variant: 'info' },
-  warning: { label: 'Warning', variant: 'warning' },
-  error: { label: 'Error', variant: 'destructive' },
+export const LEVEL_CONFIG = {
+  info: { key: 'level.info', variant: 'info' },
+  warning: { key: 'level.warning', variant: 'warning' },
+  error: { key: 'level.error', variant: 'destructive' },
 } as const
 
 type NotificationItem = ListNotificationsDto.Output['notifications'][number]
@@ -32,7 +32,7 @@ interface NotificationSection {
 }
 
 export default function TabsNotificationsIndexScreen() {
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation('notification')
 
   const queryClient = useQueryClient()
   const { api } = useRuntime()
@@ -83,14 +83,16 @@ export default function TabsNotificationsIndexScreen() {
     <SectionList<NotificationItem, NotificationSection>
       sections={sections}
       keyExtractor={(item) => item.id}
-      contentContainerClassName='p-4 gap-4'
-      stickySectionHeadersEnabled={false}
+      contentContainerClassName='p-4 pb-0 gap-4'
       renderSectionHeader={({ section: { title } }) => (
-        <View className='bg-background/95 backdrop-blur-md'>
-          <Typography className='text-sm font-semibold text-muted-foreground capitalize'>
-            {title}
-          </Typography>
-        </View>
+        <Typography
+          className={cn(
+            'text-sm font-semibold text-muted-foreground capitalize',
+            sections[0]?.title !== title && '-mt-4'
+          )}
+        >
+          {title}
+        </Typography>
       )}
       renderItem={({ item }) => {
         const isUnread = !item.readAt
@@ -101,7 +103,7 @@ export default function TabsNotificationsIndexScreen() {
           <TouchableOpacity
             data-slot='card'
             className={cn(
-              'group/card mb-3 flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 ring-1 ring-foreground/10',
+              'group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 ring-1 ring-foreground/10',
               isUnread ? 'bg-ring/20 ring-ring/40' : ''
             )}
             activeOpacity={0.8}
@@ -115,7 +117,7 @@ export default function TabsNotificationsIndexScreen() {
             <CardHeader className='gap-2'>
               <View className='flex-row items-center justify-between gap-2'>
                 <Badge variant={levelConfig.variant}>
-                  <Typography>{levelConfig.label}</Typography>
+                  <Typography>{t(levelConfig.key)}</Typography>
                 </Badge>
 
                 <CardDescription className='text-xs text-muted-foreground'>

@@ -9,10 +9,13 @@ class WiFi:
     __instance: WiFi | None = None
 
     _wifi: dict | None = None
+    _wlan: network.WLAN | None = None
+    _hostname: str | None = None
 
     def __init__(self):
         config = Config.create()
         self._wifi = config.get("wifi")
+        self._hostname = config.get("device", {}).get("name", "Rozumari")
 
     async def connect(self, force: bool = True) -> bool:
         """
@@ -29,11 +32,13 @@ class WiFi:
         if self._wifi is None:
             return False
 
-        wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
+        self._wlan = network.WLAN(network.STA_IF)
+        self._wlan.active(True)
+        if self._hostname:
+            network.hostname(self._hostname)
 
-        if wlan.isconnected() and not force:
-            print(f"[Setup] Already connected to WiFi! IP: {wlan.ifconfig()[0]}")
+        if self._wlan.isconnected() and not force:
+            print(f"[Setup] Already connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
             return True
 
         ssid = self._wifi.get("ssid")
@@ -41,14 +46,14 @@ class WiFi:
         print(f"[Setup] Connecting to WiFi SSID: {ssid}...", end="")
 
         timeout = 30
-        wlan.connect(ssid, password)
-        while not wlan.isconnected() and timeout > 0:
+        self._wlan.connect(ssid, password)
+        while not self._wlan.isconnected() and timeout > 0:
             await asyncio.sleep(1)
             print(".", end="")
             timeout -= 1
 
-        if wlan.isconnected():
-            print(f"\n[Setup] Connected to WiFi! IP: {wlan.ifconfig()[0]}")
+        if self._wlan.isconnected():
+            print(f"\n[Setup] Connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
             return True
         else:
             print("\n[Setup] Failed to connect to WiFi.")
@@ -60,10 +65,23 @@ class WiFi:
 
         :return: None
         """
-        wlan = network.WLAN(network.STA_IF)
-        if wlan.isconnected():
-            wlan.disconnect()
-        wlan.active(False)
+        if self._wlan is None:
+            self._wlan = network.WLAN(network.STA_IF)
+
+        if self._wlan.isconnected():
+            self._wlan.disconnect()
+        self._wlan.active(False)
+
+    def reset(self) -> None:
+        """
+        Reset the Wi-Fi configuration to default values and disconnect from any active network.
+
+        :return: None
+        """
+        if self._wlan is None:
+            self._wlan = network.WLAN(network.STA_IF)
+
+        self._wlan.deinit()
 
     @classmethod
     def create(cls) -> WiFi:

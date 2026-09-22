@@ -5,6 +5,7 @@ from machine import Pin
 
 from lib.api import Api
 from lib.pins import Pins
+from tasks.drop import Drop
 from tasks.sync_schedule import SyncSchedule
 
 
@@ -13,10 +14,12 @@ class Streaming:
 
     _api: Api
     _led: Pin
+    _drop: Drop
     _sync_schedule: SyncSchedule
 
     def __init__(self) -> None:
         self._api = Api.create()
+        self._drop = Drop.create()
         self._sync_schedule = SyncSchedule.create()
 
         pins = Pins.create()
@@ -60,6 +63,10 @@ class Streaming:
         elif action == "sync_schedule":
             print("[Stream] Syncing schedule...")
             await self._sync_schedule.execute()
+
+        elif action == "drop":
+            print("[Stream] Executing drop command...")
+            await self._drop.execute(items=payload)
 
     async def start(self) -> None:
         """Start continuous SSE streaming listener loop with backoff logic."""
