@@ -3,6 +3,7 @@ import asyncio
 from lib.api import Api
 from lib.schedule import Schedule
 from modules.servo import Servo
+from modules.stepper import Stepper
 
 
 class Drop:
@@ -10,11 +11,13 @@ class Drop:
 
     _api: Api
     _servo: Servo
+    _stepper: Stepper
     _schedule: Schedule
 
     def __init__(self) -> None:
         self._api = Api.create()
         self._servo = Servo.create()
+        self._stepper = Stepper.create()
         self._schedule = Schedule.create()
 
     async def execute(self, items: list[dict], schedule_id: str | None = None) -> bool:

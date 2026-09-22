@@ -33,17 +33,23 @@ class WiFi:
             return False
 
         self._wlan = network.WLAN(network.STA_IF)
+
+        self._wlan.active(False)
+        await asyncio.sleep(0.5)
+
         self._wlan.active(True)
+        await asyncio.sleep(0.5)
+
         if self._hostname:
             network.hostname(self._hostname)
 
         if self._wlan.isconnected() and not force:
-            print(f"[Setup] Already connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
+            print(f"[WiFi] Already connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
             return True
 
         ssid = self._wifi.get("ssid")
         password = self._wifi.get("password")
-        print(f"[Setup] Connecting to WiFi SSID: {ssid}...", end="")
+        print(f"[WiFi] Connecting to WiFi SSID: {ssid}...", end="")
 
         timeout = 30
         self._wlan.connect(ssid, password)
@@ -53,10 +59,10 @@ class WiFi:
             timeout -= 1
 
         if self._wlan.isconnected():
-            print(f"\n[Setup] Connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
+            print(f"\n[WiFi] Connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
             return True
         else:
-            print("\n[Setup] Failed to connect to WiFi.")
+            print("\n[WiFi] Failed to connect to WiFi.")
             return False
 
     def disconnect(self) -> None:
@@ -107,27 +113,36 @@ class WiFi:
             return False
 
         wlan = network.WLAN(network.STA_IF)
-        wlan.active(True)
 
-        if wlan.isconnected():
-            wlan.disconnect()
-            await asyncio.sleep(0.2)
+        wlan.active(False)
+        await asyncio.sleep(0.5)
+
+        wlan.active(True)
+        await asyncio.sleep(0.5)
+
+        networks = wlan.scan()
+        print(f"[WiFi] Found networks: {[net[0].decode() for net in networks]}")
 
         try:
+            print(f"[WiFi] Attempting to connect to SSID: {ssid}...")
             wlan.connect(ssid, password)
         except Exception as e:
-            print(f"[Setup] WiFi connect error: {e}")
+            print(f"[WiFi] WiFi connect error: {e}")
             wlan.active(False)
             return False
 
-        for _ in range(20):
-            if wlan.isconnected() or wlan.status() == 3:
+        for _ in range(30):
+            if wlan.isconnected():
+                print(
+                    f"[WiFi] Valid credentials! Successfully reached IP: {wlan.ifconfig()[0]}"
+                )
                 wlan.disconnect()
                 wlan.active(False)
                 return True
 
             status = wlan.status()
-            if status in (1000, 1001, 1010, 201, 202):
+            if status in (201, 202, 203) or status < 0:
+                print(f"[WiFi] Connection failed with status code: {status}")
                 break
 
             await asyncio.sleep(0.5)
