@@ -1,4 +1,5 @@
 import type { UpdateCapacityDto } from '@rozumari/contract/device/dto/update-capacity.dto'
+
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import { DeviceNotFound } from '@rozumari/contract/device/schemas/device.error'
 import * as Context from 'effect/Context'
