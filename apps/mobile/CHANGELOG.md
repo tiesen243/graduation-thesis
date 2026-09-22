@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.1
+
+### Bug Fixes
+
+- Publish not triggered
+
 ## @rozumari/mobile@0.1.0
 
 ### Minor Changes
