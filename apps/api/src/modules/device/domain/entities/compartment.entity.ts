@@ -58,6 +58,7 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
     return Compartment.make({
       ...structuredClone(this),
       ...props,
+      lastRefillAt: props.capacity ? new Date() : this.lastRefillAt,
     })
   }
 }

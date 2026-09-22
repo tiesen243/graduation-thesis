@@ -51,6 +51,7 @@ export default function TabsLayout() {
       badgeBackgroundColor={destructiveColor}
       badgeTextColor='#FAFAFA'
 
+      backBehavior='history'
       activityEnabled
     >
       <NativeTabs.Trigger name='home'>

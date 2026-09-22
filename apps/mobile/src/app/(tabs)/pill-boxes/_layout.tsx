@@ -12,7 +12,7 @@ export default function TabsPillBoxesLayout() {
   const router = useRouter()
 
   return (
-    <Stack screenOptions={screenOptions}>
+    <Stack screenOptions={screenOptions} activityEnabled>
       <Stack.Screen
         name='index'
         options={{
