@@ -163,6 +163,19 @@ class Drop:
             await self._schedule.update_status(schedule_id, "completed")
             data["body"] = f"Schedule {schedule_id} completed successfully."
         else:
+            await self._api.post(
+                "/api/devices/update-capacity",
+                data={
+                    "mode": "subtraction",
+                    "slots": [
+                        {
+                            "position": item.get("slot"),
+                            "quantity": item.get("quantity", 1),
+                        }
+                        for item in items
+                    ],
+                },
+            )
             data["body"] = "Drop completed successfully."
 
         await self._api.post("/api/notifications/send", data=data)
@@ -170,7 +183,6 @@ class Drop:
 
     @classmethod
     def create(cls) -> Drop:
-        """Factory method to get or create the Drop singleton instance."""
         if cls.__instance is None:
             cls.__instance = Drop()
         return cls.__instance
