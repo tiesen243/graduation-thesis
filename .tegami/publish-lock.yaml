@@ -1,50 +1,68 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Patchs\n\n- added drop pill directly\n- added home screen for mobile app\n- improve UI\n"
-    filename: 2026-09-21-mub9w268.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: minor\n  npm:@rozumari/mobile:\n    type: minor\n  npm:@rozumari/eda:\n    type: minor\n  npm:@rozumari/firmware:\n    type: minor\n  npm:@rozumari/lib:\n    type: minor\n  npm:@rozumari/oxlint:\n    type: minor\n  npm:@rozumari/web:\n    type: minor\n  npm:@rozumari/github:\n    type: minor\n  npm:@rozumari/ui:\n    type: minor\n  npm:@rozumari/tsconfig:\n    type: minor\n  npm:@rozumari/contract:\n    type: minor\n---\n\n## Minor Changes\n\n- Bump all monorepo packages to version 0.1.0 baseline.\n- Synchronize core services, clients, and internal shared libraries across the project.\n"
+    filename: 2026-09-22-mucp9g6s.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug Fixes\n\n- Today highlight error on schedule list screen\n"
+    filename: 2026-09-22-mucl83jd.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
-  - id: npm:@rozumari/github
-    updated: false
-  - id: npm:@rozumari/eda
-    updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
   - changelogIds:
-      - 2026-09-21-mub9w268.md
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/github
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/oxlint
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/tsconfig
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
     id: npm:@rozumari/ui
     updated: true
   - changelogIds:
-      - 2026-09-21-mub9w268.md
+      - 2026-09-22-mucp9g6s.md
     id: npm:@rozumari/web
     updated: true
-  - id: npm:@rozumari/firmware
-    updated: false
   - changelogIds:
-      - 2026-09-21-mub9w268.md
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/firmware
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/eda
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/lib
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
+    id: npm:@rozumari/contract
+    updated: true
+  - changelogIds:
+      - 2026-09-22-mucp9g6s.md
     id: npm:@rozumari/api
     updated: true
   - changelogIds:
-      - 2026-09-21-mub9w268.md
+      - 2026-09-22-mucp9g6s.md
+      - 2026-09-22-mucl83jd.md
     id: npm:@rozumari/mobile
     updated: true
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/contract
-    updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/eda
+  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/ui
   - id: npm:@rozumari/web
   - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/eda
   - id: npm:@rozumari/lib
   - id: npm:@rozumari/contract
-  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/mobile
