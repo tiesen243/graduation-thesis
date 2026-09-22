@@ -8,7 +8,6 @@ import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
 import { ResetPasswordDto } from '@rozumari/contract/auth/dto/reset-password.dto'
 import { WhoAmIDto } from '@rozumari/contract/auth/dto/whoami.dto'
 import * as Effect from 'effect/Effect'
-import * as HttpEffect from 'effect/unstable/http/HttpEffect'
 import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
 import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
@@ -27,90 +26,103 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
 
     .handle('register', ({ payload }) =>
       RegisterUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.map(() => RegisterDto.make())
+        Effect.map(() => new RegisterDto())
       )
     )
 
     .handle('login', ({ payload }) =>
       LoginUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.tap((data) =>
-          HttpEffect.appendPreResponseHandler((_req, res) =>
-            HttpServerResponse.setCookies(res, [
-              [
-                COOKIE_KEYS.REFRESH_TOKEN,
-                data.refreshToken,
-                { ...COOKIE_OPTIONS, expires: data.expiresAt },
-              ],
-              [
-                COOKIE_KEYS.ACCESS_TOKEN,
-                data.accessToken,
-                { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
-              ],
-            ]).pipe(Effect.orDie)
+        Effect.flatMap((data) =>
+          HttpServerResponse.json(new LoginDto({ data })).pipe(
+            Effect.flatMap((response) =>
+              HttpServerResponse.setCookies(response, [
+                [
+                  COOKIE_KEYS.REFRESH_TOKEN,
+                  data.refreshToken,
+                  { ...COOKIE_OPTIONS, expires: data.expiresAt },
+                ],
+                [
+                  COOKIE_KEYS.ACCESS_TOKEN,
+                  data.accessToken,
+                  { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
+                ],
+              ])
+            ),
+            Effect.orDie
           )
-        ),
-
-        Effect.map((data) => LoginDto.make({ data }))
+        )
       )
     )
 
     .handle('logout', ({ headers }) =>
       LogoutUseCase.use((s) => s.execute(headers)).pipe(
-        Effect.tap(() =>
-          HttpEffect.appendPreResponseHandler((_req, res) =>
-            HttpServerResponse.setCookies(res, [
-              [COOKIE_KEYS.REFRESH_TOKEN, '', { ...COOKIE_OPTIONS, maxAge: 0 }],
-              [COOKIE_KEYS.ACCESS_TOKEN, '', { ...COOKIE_OPTIONS, maxAge: 0 }],
-            ]).pipe(Effect.orDie)
+        Effect.flatMap(() =>
+          HttpServerResponse.json(new LogoutDto()).pipe(
+            Effect.flatMap((response) =>
+              HttpServerResponse.setCookies(response, [
+                [
+                  COOKIE_KEYS.REFRESH_TOKEN,
+                  '',
+                  { ...COOKIE_OPTIONS, maxAge: 0 },
+                ],
+                [
+                  COOKIE_KEYS.ACCESS_TOKEN,
+                  '',
+                  { ...COOKIE_OPTIONS, maxAge: 0 },
+                ],
+              ])
+            ),
+            Effect.orDie
           )
-        ),
-        Effect.map(() => LogoutDto.make())
+        )
       )
     )
 
     .handle('whoami', () =>
       WhoAmIUseCase.use((s) => s.execute()).pipe(
-        Effect.map((data) => WhoAmIDto.make({ data }))
+        Effect.map((data) => new WhoAmIDto({ data }))
       )
     )
 
     .handle('refresh', ({ headers }) =>
       RefreshTokenUseCase.use((s) => s.execute(headers)).pipe(
-        Effect.tap((data) =>
-          HttpEffect.appendPreResponseHandler((_req, res) =>
-            HttpServerResponse.setCookies(res, [
-              [
-                COOKIE_KEYS.REFRESH_TOKEN,
-                data.refreshToken,
-                { ...COOKIE_OPTIONS, expires: data.expiresAt },
-              ],
-              [
-                COOKIE_KEYS.ACCESS_TOKEN,
-                data.accessToken,
-                { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
-              ],
-            ]).pipe(Effect.orDie)
+        Effect.flatMap((data) =>
+          HttpServerResponse.json(new RefreshTokenDto({ data })).pipe(
+            Effect.flatMap((response) =>
+              HttpServerResponse.setCookies(response, [
+                [
+                  COOKIE_KEYS.REFRESH_TOKEN,
+                  data.refreshToken,
+                  { ...COOKIE_OPTIONS, expires: data.expiresAt },
+                ],
+                [
+                  COOKIE_KEYS.ACCESS_TOKEN,
+                  data.accessToken,
+                  { ...COOKIE_OPTIONS, maxAge: '15 minutes' },
+                ],
+              ])
+            ),
+            Effect.orDie
           )
-        ),
-        Effect.map((data) => RefreshTokenDto.make({ data }))
+        )
       )
     )
 
     .handle('forgot-password', ({ payload }) =>
       ForgotPasswordUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.map(() => ForgotPasswordDto.make())
+        Effect.map(() => new ForgotPasswordDto())
       )
     )
 
     .handle('change-password', ({ payload }) =>
       ChangePasswordUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.map(() => ChangePasswordDto.make())
+        Effect.map(() => new ChangePasswordDto())
       )
     )
 
     .handle('reset-password', ({ payload }) =>
       ResetPasswordUseCase.use((s) => s.execute(payload)).pipe(
-        Effect.map(() => ResetPasswordDto.make())
+        Effect.map(() => new ResetPasswordDto())
       )
     )
 )

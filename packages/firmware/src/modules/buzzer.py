@@ -1,6 +1,4 @@
-import time
-
-from machine import PWM
+from machine import Pin
 
 from lib.pins import Pins
 
@@ -8,20 +6,18 @@ from lib.pins import Pins
 class Buzzer:
     __instance: Buzzer | None = None
 
-    pin: PWM
+    pin: Pin
 
     def __init__(self) -> None:
         pins = Pins.create()
         self.pin = pins.buzzer
+        self.off()
 
-    def ring(self, count: int = 3, freq: int = 2000, delay_ms: int = 100) -> None:
-        self.pin.freq(freq)
+    def on(self) -> None:
+        self.pin.value(0)
 
-        for _ in range(count):
-            self.pin.duty_u16(32768)
-            time.sleep_ms(delay_ms)  # pyright: ignore[reportAttributeAccessIssue]
-            self.pin.duty_u16(0)
-            time.sleep_ms(delay_ms)  # pyright: ignore[reportAttributeAccessIssue]
+    def off(self) -> None:
+        self.pin.value(1)
 
     @classmethod
     def create(cls) -> Buzzer:

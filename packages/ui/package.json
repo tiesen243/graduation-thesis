@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/ui",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -32,11 +32,11 @@
     "@base-ui/react": "^1.8.0",
     "@rozumari/lib": "workspace:*",
     "class-variance-authority": "^0.7.1",
-    "cn": "^0.2.5",
+    "cn": "^0.4.0",
     "date-fns": "^4.4.0",
-    "lucide-react": "^1.41.0",
-    "lucide-react-native": "^1.41.0",
-    "lucide-uniwind": "^1.41.0",
+    "lucide-react": "^1.47.0",
+    "lucide-react-native": "^1.47.0",
+    "lucide-uniwind": "^1.47.0",
     "react-day-picker": "^10.0.1",
     "react-native": "catalog:react",
     "recharts": "3.10.1"

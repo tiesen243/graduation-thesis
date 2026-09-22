@@ -3,13 +3,16 @@ import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-sche
 import { Badge } from '@rozumari/ui/components/badge'
 import { Card, CardHeader } from '@rozumari/ui/components/card'
 import {
+  AsteriskIcon,
   ClockIcon,
   HardDriveIcon,
   PillIcon,
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
-import { View } from 'react-native'
+import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
+import { Pressable, View } from 'react-native'
 
 const STATUS_CONFIG = {
   completed: {
@@ -29,6 +32,9 @@ const STATUS_CONFIG = {
 export const ScheduleCard: React.FC<{
   schedule: ListSchedulesDto.Output[number]
 }> = ({ schedule }) => {
+  const { t } = useTranslation('schedule')
+  const router = useRouter()
+
   const statusConfig =
     STATUS_CONFIG[schedule.status as keyof typeof STATUS_CONFIG]
 
@@ -56,7 +62,10 @@ export const ScheduleCard: React.FC<{
         )}
       </CardHeader>
 
-      <View className='block divide-y divide-border/50 rounded-lg px-4'>
+      <Pressable
+        className='block divide-y divide-border/50 rounded-lg px-4'
+        onPress={() => router.push(`/(tabs)/schedules/${schedule.id}`)}
+      >
         {schedule.items.map((item) => (
           <View
             key={`${schedule.id}-slot-${item.slot}`}
@@ -67,19 +76,25 @@ export const ScheduleCard: React.FC<{
               <Typography className='font-medium'>{item.medicine}</Typography>
               {item.dosage && (
                 <Typography className='text-xs text-muted-foreground'>
-                  ({item.dosage})
+                  ({item.dosage}mg)
                 </Typography>
+              )}
+              {item.isRequired && (
+                <AsteriskIcon className='-mt-1 size-3 shrink-0 text-destructive' />
               )}
             </View>
 
             <Badge variant='outline'>
               <Typography>
-                Slot {item.slot} • Quantity: {item.quantity}
+                {t('index.item', {
+                  slot: item.slot,
+                  quantity: item.quantity,
+                })}
               </Typography>
             </Badge>
           </View>
         ))}
-      </View>
+      </Pressable>
     </Card>
   )
 }

@@ -16,6 +16,8 @@ import type { Route } from './+types/root'
 export const links: Route.LinksFunction = () => [
   { rel: 'stylesheet', href: globalsCss },
   { rel: 'manifest', href: '/manifest.json' },
+
+  // Fonts
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
     rel: 'preconnect',
@@ -26,6 +28,11 @@ export const links: Route.LinksFunction = () => [
     rel: 'stylesheet',
     href: 'https://fonts.googleapis.com/css2?family=Geist+Mono:ital,wght@0,100..900;1,100..900&family=Geist:ital,wght@0,100..900;1,100..900&family=Noto+Serif+Georgian:wght@100..900&display=swap',
   },
+
+  // Icons
+  { rel: 'icon', href: '/favicon.ico' },
+  { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
+  { rel: 'icon', href: '/favicon-96x96.png', sizes: '96x96' },
 ]
 
 export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {

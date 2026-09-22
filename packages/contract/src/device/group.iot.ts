@@ -2,9 +2,27 @@ import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
+import { ShowDeviceDto } from '@/device/dto/show-device.dto'
+import { UpdateCapacityDto } from '@/device/dto/update-capacity.dto'
 import { DeviceMiddleware } from '@/device/middleware'
+import { DeviceNotFound } from '@/device/schemas/device.error'
 
 export class DeviceIoTGroup extends HttpApiGroup.make('device-iot')
+
+  .add(
+    HttpApiEndpoint.get('info', '/info', {
+      success: ShowDeviceDto,
+      error: [DeviceNotFound],
+    })
+  )
+
+  .add(
+    HttpApiEndpoint.post('update-capacity', '/update-capacity', {
+      payload: UpdateCapacityDto.Input,
+      success: UpdateCapacityDto,
+      error: [DeviceNotFound],
+    })
+  )
 
   .add(
     HttpApiEndpoint.get('subscribe', '/subscribe', {

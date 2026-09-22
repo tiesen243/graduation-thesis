@@ -16,13 +16,11 @@ import { ScheduleModule } from '@/modules/schedule/schedule.module'
 import { UserModule } from '@/modules/user/user.module'
 import { InfrastructureModule } from '@/shared/infrastructure/infrastructure.module'
 
-import * as pkgJson from '../../package.json' with { type: 'json' }
+import pkgJson from '../../package.json' with { type: 'json' }
 
 export class AppModule {
-  public static create(config: AppModule.Config) {
+  private static initialize(config: AppModule.Config) {
     const { persistence, providers } = config
-
-    const infrastructureLayer = InfrastructureModule.create(persistence)
 
     const homeModule = HomeModule.create()
     const deviceModule = DeviceModule.create({ persistence })
@@ -30,7 +28,10 @@ export class AppModule {
       { persistence },
       deviceModule.exports.deviceService
     )
-    const scheduleModule = ScheduleModule.create({ persistence })
+    const scheduleModule = ScheduleModule.create(
+      { persistence },
+      deviceModule.exports.deviceService
+    )
     const userModule = UserModule.create({ persistence })
     const authModule = AuthModule.create(
       { persistence, providers },
@@ -39,19 +40,34 @@ export class AppModule {
 
     const dashboardModule = DashboardModule.create({ persistence })
 
-    const controllerLayer = Layer.mergeAll(
-      homeModule.controller,
-      deviceModule.controller,
-      notificationModule.controller,
-      scheduleModule.controller,
-      userModule.controller,
-      authModule.controller,
+    return {
+      homeModule,
+      deviceModule,
+      notificationModule,
+      scheduleModule,
+      userModule,
+      authModule,
+      dashboardModule,
+    }
+  }
 
-      dashboardModule.controller
+  public static createHttp(config: AppModule.Config) {
+    const infrastructureLayer = InfrastructureModule.create(config.persistence)
+    const modules = this.initialize(config)
+
+    const controllerLayer = Layer.mergeAll(
+      modules.homeModule.controller,
+      modules.deviceModule.controller,
+      modules.notificationModule.controller,
+      modules.scheduleModule.controller,
+      modules.userModule.controller,
+      modules.authModule.controller,
+
+      modules.dashboardModule.controller
     ).pipe(
       Layer.provide([
-        authModule.exports.middleware,
-        deviceModule.exports.middleware,
+        modules.authModule.exports.middleware,
+        modules.deviceModule.exports.middleware,
       ]),
       Layer.provide(infrastructureLayer)
     )
@@ -74,17 +90,20 @@ export class AppModule {
       { path: '/docs', scalar: { theme: 'kepler' } }
     )
 
-    const routes = Layer.mergeAll(apiLive, docsLive)
+    return Layer.mergeAll(apiLive, docsLive)
+  }
 
-    const cli = Command.run(
+  public static createCli(config: AppModule.Config) {
+    const infrastructureLayer = InfrastructureModule.create(config.persistence)
+    const { deviceModule, userModule } = this.initialize(config)
+
+    return Command.run(
       Command.make(pkgJson.name).pipe(
         Command.withSubcommands([deviceModule.command, userModule.command]),
         Command.provide(infrastructureLayer)
       ),
       { version: pkgJson.version }
     )
-
-    return { routes, cli }
   }
 }
 

@@ -1,3 +1,4 @@
+import * as Effect from 'effect/Effect'
 import * as Schema from 'effect/Schema'
 
 import { ScheduleItemSchema } from '@/schedule/schemas/schedule-item.schema'
@@ -9,8 +10,7 @@ export class UpdateScheduleDto extends Schema.TaggedClass<UpdateScheduleDto>()(
   ApiResponse({
     message: 'Update schedule successfully',
     dataSchema: Schema.Struct({
-      schedule: ScheduleSchema,
-      items: Schema.Array(ScheduleItemSchema),
+      id: ScheduleSchema.fields.id,
     }),
   })
 ) {}
@@ -29,8 +29,9 @@ export namespace UpdateScheduleDto {
       Schema.Struct({
         slot: ScheduleItemSchema.fields.slot,
         quantity: ScheduleItemSchema.fields.quantity,
+        isRequired: ScheduleItemSchema.fields.isRequired,
       })
-    ).pipe(Schema.optionalKey),
+    ).pipe(Schema.withConstructorDefault(Effect.succeed([]))),
   })
   export type Input = typeof Input.Type
 

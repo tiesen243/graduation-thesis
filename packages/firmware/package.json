@@ -1,10 +1,13 @@
 {
   "name": "@rozumari/firmware",
-  "version": "0.0.4",
+  "version": "0.1.1",
   "private": false,
+  "main": "src/main.py",
   "scripts": {
-    "clean": "git clean -xdf .venv __pycache__",
-    "clean:board": "uv run scripts/clean.py",
-    "upload:board": "uv run scripts/upload.py"
+    "board": "uv run scripts/board.py",
+    "clean": "git clean -xdf .venv src/**/__pycache__",
+    "config": "uv run mpremote edit data/config.json",
+    "start": "uv run mpremote mount src exec --no-follow \"exec(open('/remote/main.py').read())\" repl",
+    "test": "uv run mpremote mount src exec --no-follow \"exec(open('/remote/test.py').read())\" repl"
   }
 }

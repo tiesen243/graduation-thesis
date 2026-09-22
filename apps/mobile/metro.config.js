@@ -8,7 +8,7 @@ const { withUniwindConfig } = require('uniwind/metro')
 const projectRoot = __dirname
 const monorepoRoot = path.resolve(projectRoot, '../../')
 
-const config = getDefaultConfig(__dirname)
+const config = getDefaultConfig(projectRoot)
 
 // your metro modifications
 config.resolver.nodeModulesPaths = [
@@ -23,12 +23,6 @@ if (Array.isArray(config.resolver.blockList))
 else if (config.resolver.blockList)
   config.resolver.blockList = [config.resolver.blockList, conformRegex]
 else config.resolver.blockList = [conformRegex]
-
-config.watcher = {
-  ...config.watcher,
-  healthCheck: { enabled: true },
-  ignoredFiles: [conformRegex],
-}
 
 module.exports = withUniwindConfig(config, {
   cssEntryFile: './src/globals.css',

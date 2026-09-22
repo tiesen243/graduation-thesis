@@ -1,3 +1,36 @@
+## @rozumari/firmware@0.1.1
+
+### Patchs Changes
+
+- added update-capcity api
+- completed drop pill workflow
+
+## @rozumari/firmware@0.1.0
+
+### Minor Changes
+
+- Bump all monorepo packages to version 0.1.0 baseline.
+- Synchronize core services, clients, and internal shared libraries across the project.
+
+## @rozumari/firmware@0.0.6
+
+### Bug Fixes
+
+- Remove postinstall command
+- Bump firmware version
+
+## @rozumari/firmware@0.0.5
+
+### Added BLE Device Configuration & Fixed Multi-byte Payload Transmission
+
+- Added BLE device configuration features and timezone-aware sync time selection.
+
+- Fixed multi-byte BLE frame handling on React Native to correctly parse 16-bit device info payloads without truncation
+
+- Upgraded firmware communication handlers to support 3-byte data frames for transmitting complete configuration states (UTC, language, and sync time)
+
+- Optimized configuration builder and parser logic with robust fallback mechanisms to eliminate default value bottlenecks and parsing errors
+
 ## @rozumari/firmware@0.0.4
 
 ### Add core hardware and network components:

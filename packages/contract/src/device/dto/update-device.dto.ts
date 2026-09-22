@@ -9,8 +9,6 @@ export class UpdateDeviceDto extends Schema.TaggedClass<UpdateDeviceDto>()(
     message: 'Update device successfully',
     dataSchema: Schema.Struct({
       id: DeviceSchema.fields.id,
-      name: DeviceSchema.fields.name,
-      position: DeviceSchema.fields.position,
     }),
   })
 ) {}

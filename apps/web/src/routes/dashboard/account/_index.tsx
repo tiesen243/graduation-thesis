@@ -24,6 +24,15 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { useRef, useState } from 'react'
 
 import { useSession } from '@/hooks/use-session'
+import { createMetadata } from '@/lib/metadata'
+
+import type { Route } from './+types/_index'
+
+export const meta: Route.MetaFunction = () =>
+  createMetadata({
+    title: 'Account',
+    description: 'View your account details and manage your profile picture.',
+  })
 
 export default function AccountPage() {
   const { user, status } = useSession()

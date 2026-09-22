@@ -4,6 +4,7 @@ import { index, layout, prefix, route } from '@react-router/dev/routes'
 
 export default [
   index('./routes/_index.tsx'),
+  route('/sitemap.xml', './routes/sitemap.ts'),
 
   layout('./routes/auth/__root.tsx', [
     route('/login', './routes/auth/login.tsx'),
@@ -24,6 +25,10 @@ export default [
       route('/schedules', './routes/dashboard/schedules/_index.tsx'),
       route('/schedules/create', './routes/dashboard/schedules/create.tsx'),
       route('/schedules/:id', './routes/dashboard/schedules/[id].tsx'),
+      route(
+        '/schedules/:id/edit',
+        './routes/dashboard/schedules/[id].edit.tsx'
+      ),
 
       route('/notifications', './routes/dashboard/notifications/_index.tsx'),
       route('/notifications/:id', './routes/dashboard/notifications/[id].tsx'),
@@ -33,8 +38,6 @@ export default [
         '/account/change-password',
         './routes/dashboard/account/change-password.tsx'
       ),
-
-      route('/*', './routes/dashboard/[...catch-all].tsx'),
     ])
   ),
 ] satisfies RouteConfig

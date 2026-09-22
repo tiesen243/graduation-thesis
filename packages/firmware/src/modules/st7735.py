@@ -54,17 +54,49 @@ class ST7735:
 
         self._buf = bytes(self._color_data) * 32
 
+    def size(self) -> tuple[int, int]:
+        """
+        Get the current logical canvas size based on rotation and orientation.
+
+        :return: Tuple of (width, height) in pixels.
+        """
+        return self._size
+
     def on(self, on: bool = True):
+        """
+        Turn display screen output ON or OFF.
+
+        :param on: Set `True` to enable screen output, `False` to turn off.
+        :return: None
+        """
         self._cmd(ST7735.DISPON if on else ST7735.DISPOFF)
 
     def invert(self, invert: bool = True):
+        """
+        Invert display colors.
+
+        :param invert: Set `True` to enable color inversion, `False` for normal colors.
+        :return: None
+        """
         self._cmd(ST7735.INVON if invert else ST7735.INVOFF)
 
-    def rgb_mode(self, rgb: bool = True):
+    def rgb_mode(self, rgb: bool = True) -> None:
+        """
+        Configure pixel color order mode between RGB and BGR.
+
+        :param rgb: Set `True` for RGB color order, `False` for BGR.
+        :return: None
+        """
         self._rgb = rgb
         self._set_MADCTL()
 
     def rotation(self, rotate: int) -> None:
+        """
+        Rotate display orientation and automatically swap logical canvas dimensions.
+
+        :param rotate: Rotation index (0: 0°, 1: 90°, 2: 180°, 3: 270°).
+        :return: None
+        """
         if 0 <= rotate <= 3:
             root_change = self._rotate ^ rotate
             self._rotate = rotate
@@ -74,6 +106,13 @@ class ST7735:
             self._set_MADCTL()
 
     def pixel(self, pos: tuple[int, int], color: int) -> None:
+        """
+        Draw a single pixel at the specified coordinate.
+
+        :param pos: Pixel coordinate tuple (x, y).
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         if 0 <= pos[0] < self._size[0] and 0 <= pos[1] < self._size[1]:
             self._set_window_point(pos)
             self._pushcolor(color)
@@ -87,6 +126,18 @@ class ST7735:
         size: tuple[int, int] | int = 1,
         wrap: bool = False,
     ) -> None:
+        """
+        Render string text onto display with custom fonts, scaling, and line wrapping options.
+
+        :param pos: Top-left start coordinate tuple (x, y).
+        :param text: String payload to render.
+        :param color: 16-bit RGB565 text color value.
+        :param font: Font dictionary mapping character glyph data.
+        :param size: Uniform scale factor integer or scale tuple (x_scale, y_scale).
+        :param wrap: Set `True` to wrap text to next line on reaching display border.
+        :return: None
+        """
+
         if isinstance(size, int):
             wh = (size, size)
         else:
@@ -113,6 +164,16 @@ class ST7735:
         font: dict = sysfont,
         sizes: tuple[int, int] = (1, 1),
     ) -> None:
+        """
+        Render a single scaled character glyph into memory buffer and output to screen.
+
+        :param pos: Top-left coordinate tuple (x, y).
+        :param char: Single character string to render.
+        :param color: 16-bit RGB565 color value.
+        :param font: Font dictionary mapping character glyph data.
+        :param sizes: Horizontal and vertical scaling factor tuple (width_scale, height_scale).
+        :return: None
+        """
         start_char = font.get("start", 0)
         end_char = font.get("end", 0)
         ci = ord(char)
@@ -123,23 +184,17 @@ class ST7735:
             ci = (ci - start_char) * font_width
             char_data = font.get("data", bytearray)[ci : ci + font_width]
 
-            # Kích thước ký tự sau khi scale
             w = font_width * sizes[0]
             h = font_height * sizes[1]
 
-            # Chuẩn bị buffer màu 16-bit (2 bytes / pixel) cho cả ký tự
-            # Mặc định điền màu 0x0000 (hoặc màu nền nếu muốn)
             buf = bytearray(w * h * 2)
 
-            # Tách màu 16-bit
             ch = color >> 8
             cl = color & 0xFF
 
-            # Dựng dữ liệu điểm ảnh vào Buffer
             for x_idx, c in enumerate(char_data):
                 for y_idx in range(font_height):
                     if c & 0x01:
-                        # Tô điểm ảnh theo kích thước scale (sizes)
                         for sx in range(sizes[0]):
                             for sy in range(sizes[1]):
                                 px = x_idx * sizes[0] + sx
@@ -156,9 +211,28 @@ class ST7735:
             self.image(x0, y0, x1, y1, buf)
 
     def blit(self, x: int, y: int, w: int, h: int, data: bytearray) -> None:
+        """
+        Blit a raw byte array buffer directly to a rectangular screen region.
+
+        :param x: Left coordinate starting position.
+        :param y: Top coordinate starting position.
+        :param w: Region width in pixels.
+        :param h: Region height in pixels.
+        :param data: Bytearray buffer containing 16-bit RGB565 pixel data.
+        :return: None
+        """
         self.image(x, y, x + w - 1, y + h - 1, data)
 
     def line(self, start: tuple[int, int], end: tuple[int, int], color: int):
+        """
+        Draw a straight line between two points using Bresenham's algorithm or optimized axis methods.
+
+        :param start: Starting coordinate tuple (x, y).
+        :param end: Ending coordinate tuple (x, y).
+        :param color: 16-bit RGB565 line color value.
+        :return: None
+        """
+
         if start[0] == end[0]:
             pnt = end if (end[1] < start[1]) else start
             self.vline(pnt, abs(end[1] - start[1]) + 1, color)
@@ -203,6 +277,14 @@ class ST7735:
                     sy += iny
 
     def vline(self, pos: tuple[int, int], length: int, color: int) -> None:
+        """
+        Draw a fast vertical line starting from a given position.
+
+        :param pos: Top-left coordinate tuple (x, y).
+        :param length: Line height length in pixels.
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         x, y = pos
 
         start = clamp(x, 0, self._size[0]), clamp(y, 0, self._size[1])
@@ -216,6 +298,14 @@ class ST7735:
         self._draw(length)
 
     def hline(self, pos: tuple[int, int], length: int, color: int) -> None:
+        """
+        Draw a fast horizontal line starting from a given position.
+
+        :param pos: Top-left coordinate tuple (x, y).
+        :param length: Line width length in pixels.
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         x, y = pos
 
         start = clamp(x, 0, self._size[0]), clamp(y, 0, self._size[1])
@@ -229,6 +319,15 @@ class ST7735:
         self._draw(length)
 
     def rect(self, pos: tuple[int, int], size: tuple[int, int], color: int) -> None:
+        """
+        Draw an unfilled rectangle outline.
+
+        :param pos: Top-left coordinate tuple (x, y).
+        :param size: Dimension tuple (width, height).
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
+
         self.hline(pos, size[0], color)
         self.hline((pos[0], pos[1] + size[1] - 1), size[0], color)
 
@@ -238,6 +337,14 @@ class ST7735:
     def fill_rect(
         self, pos: tuple[int, int], size: tuple[int, int], color: int
     ) -> None:
+        """
+        Draw a solid filled rectangle.
+
+        :param pos: Top-left coordinate tuple (x, y).
+        :param size: Dimension tuple (width, height).
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         start = clamp(pos[0], 0, self._size[0]), clamp(pos[1], 0, self._size[1])
         end = (
             clamp(start[0] + size[0] - 1, 0, self._size[0]),
@@ -259,6 +366,14 @@ class ST7735:
         self._draw(pixels)
 
     def circle(self, pos: tuple[int, int], radius: int, color: int) -> None:
+        """
+        Draw an unfilled circle outline using symmetry algorithm.
+
+        :param pos: Center coordinate tuple (x, y).
+        :param radius: Radius of the circle in pixels.
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         self._color_data[0] = color >> 8
         self._color_data[1] = color
 
@@ -295,6 +410,14 @@ class ST7735:
         self._data(self._color_data)
 
     def fill_circle(self, pos: tuple[int, int], radius: int, color: int) -> None:
+        """
+        Draw a solid filled circle using vertical scan lines.
+
+        :param pos: Center coordinate tuple (x, y).
+        :param radius: Radius of the circle in pixels.
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         self._color_data[0] = color >> 8
         self._color_data[1] = color
 
@@ -310,13 +433,36 @@ class ST7735:
             self.vline((pos[0] - x, y0), ln, color)
 
     def fill(self, color: int) -> None:
+        """
+        Clear and fill the entire screen canvas with a uniform color.
+
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         self.fill_rect((0, 0), self._size, color)
 
     def image(self, x0: int, y0: int, x1: int, y1: int, data: bytearray) -> None:
+        """
+        Send raw pixel bytearray data directly to a defined window bounding box.
+
+        :param x0: Left boundary pixel coordinate.
+        :param y0: Top boundary pixel coordinate.
+        :param x1: Right boundary pixel coordinate.
+        :param y1: Bottom boundary pixel coordinate.
+        :param data: Bytearray buffer of pixel colors.
+        :return: None
+        """
         self._set_window_loc((x0, y0), (x1, y1))
         self._data(data)
 
     def setvscroll(self, tfa: int, bfa: int) -> None:
+        """
+        Configure hardware vertical scrolling area definition parameters.
+
+        :param tfa: Top Fixed Area height in pixels.
+        :param bfa: Bottom Fixed Area height in pixels.
+        :return: None
+        """
         self._cmd(ST7735.VSCRDEF)
 
         data2 = bytearray([0, tfa])
@@ -332,6 +478,12 @@ class ST7735:
         self._bfa = bfa
 
     def vscroll(self, value: int) -> None:
+        """
+        Scroll screen content vertically by a designated pixel offset.
+
+        :param value: Vertical scroll pixel shift value.
+        :return: None
+        """
         a = value + self._tfa
 
         if a + self._bfa > 162:
@@ -340,16 +492,34 @@ class ST7735:
         self._vscrolladdr(a)
 
     def _vscrolladdr(self, addr: int) -> None:
+        """
+        Send vertical scroll start address register command.
+
+        :param addr: Memory line start address.
+        :return: None
+        """
         self._cmd(ST7735.VSCSAD)
         data2 = bytearray([addr >> 8, addr & 0xFF])
         self._data(data2)
 
     def _set_color(self, color: int):
+        """
+        Prepare internal 16-bit color byte structure and duplicate into block write buffers.
+
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         self._color_data[0] = color >> 8
         self._color_data[1] = color
         self._buf = bytes(self._color_data) * 32
 
     def _draw(self, pixels: int):
+        """
+        Flush pre-calculated color buffers across SPI to render pixel blocks.
+
+        :param pixels: Total count of pixels to transmit.
+        :return: None
+        """
         self.dc.value(1)
         self.cs.value(0)
 
@@ -364,31 +534,59 @@ class ST7735:
         self.cs(1)
 
     def _cmd(self, cmd: int) -> None:
+        """
+        Transmit a single command byte over SPI with DC pin pulled LOW.
+
+        :param cmd: Register command byte.
+        :return: None
+        """
         self.dc.value(0)
         self.cs.value(0)
         _ = self.spi.write(bytearray([cmd]))
         self.cs.value(1)
 
     def _data(self, data: bytearray) -> None:
+        """
+        Transmit data payload buffer over SPI with DC pin pulled HIGH.
+
+        :param data: Bytearray buffer containing data payload.
+        :return: None
+        """
         self.dc.value(1)
         self.cs.value(0)
         _ = self.spi.write(data)
         self.cs.value(1)
 
     def _set_MADCTL(self) -> None:
+        """
+        Update Memory Data Access Control (MADCTL) register for screen orientation and color modes.
+
+        :return: None
+        """
         self._cmd(ST7735.MADCTL)
         rgb = RGB if self._rgb else BGR
         self._data(bytearray([Rotations[self._rotate] | rgb]))
 
     def _reset(self) -> None:
+        """
+        Perform a hardware pin toggle reset sequence on the display module.
+
+        :return: None
+        """
         self.rs.value(1)
-        time.sleep_ms(50)  # pyright: ignore[reportAttributeAccessIssue]
+        time.sleep(0.05)
         self.rs.value(0)
-        time.sleep_ms(50)  # pyright: ignore[reportAttributeAccessIssue]
+        time.sleep(0.05)
         self.rs.value(1)
-        time.sleep_ms(150)  # pyright: ignore[reportAttributeAccessIssue]
+        time.sleep(0.15)
 
     def _set_window_point(self, pos: tuple[int, int]) -> None:
+        """
+        Set active window bounding bounds to target a single pixel coordinate.
+
+        :param pos: Pixel coordinate tuple (x, y).
+        :return: None
+        """
         x = self._offset[0] + int(pos[0])
         y = self._offset[1] + int(pos[1])
 
@@ -409,6 +607,13 @@ class ST7735:
         self._cmd(ST7735.RAMWR)
 
     def _set_window_loc(self, pos_0: tuple[int, int], pos_1: tuple[int, int]) -> None:
+        """
+        Set CASET/RASET address registers to define a rectangular drawing region window.
+
+        :param pos_0: Top-left coordinate tuple (x, y).
+        :param pos_1: Bottom-right coordinate tuple (x, y).
+        :return: None
+        """
         x0 = self._offset[0] + int(pos_0[0])
         x1 = self._offset[0] + int(pos_1[0])
         y0 = self._offset[1] + int(pos_0[1])
@@ -431,22 +636,31 @@ class ST7735:
         self._cmd(ST7735.RAMWR)
 
     def _pushcolor(self, color: int) -> None:
+        """
+        Push 16-bit color byte data to display RAM.
+
+        :param color: 16-bit RGB565 color value.
+        :return: None
+        """
         self._color_data[0] = color >> 8
         self._color_data[1] = color
         self._data(self._color_data)
 
     def init(self) -> None:
-        # 1. Reset cứng
+        """
+        Execute full hardware initialization sequence and reset display panel configuration registers.
+
+        :return: None
+        """
         self._reset()
 
-        # 2. Chuỗi khởi tạo chuẩn cho ST7735 1.8"
-        self._cmd(ST7735.SWRESET)  # Software reset
-        time.sleep_ms(150)  # pyright: ignore[reportAttributeAccessIssue]
+        self._cmd(ST7735.SWRESET)
+        time.sleep(0.15)
 
-        self._cmd(ST7735.SLPOUT)  # Out of sleep mode
-        time.sleep_ms(200)  # pyright: ignore[reportAttributeAccessIssue]
+        self._cmd(ST7735.SLPOUT)
+        time.sleep(0.20)
 
-        self._cmd(ST7735.FRMCTR1)  # Frame rate control
+        self._cmd(ST7735.FRMCTR1)
         self._data(bytearray([0x01, 0x2C, 0x2D]))
 
         self._cmd(ST7735.FRMCTR2)
@@ -455,7 +669,7 @@ class ST7735:
         self._cmd(ST7735.FRMCTR3)
         self._data(bytearray([0x01, 0x2C, 0x2D, 0x01, 0x2C, 0x2D]))
 
-        self._cmd(ST7735.INVCTR)  # Display inversion control
+        self._cmd(ST7735.INVCTR)
         self._data(bytearray([0x07]))
 
         self._cmd(ST7735.PWCTR1)  # Power control
@@ -473,21 +687,21 @@ class ST7735:
         self._cmd(ST7735.PWCTR5)
         self._data(bytearray([0x8A, 0xEE]))
 
-        self._cmd(ST7735.VMCTR1)  # VCOM control
+        self._cmd(ST7735.VMCTR1)
         self._data(bytearray([0x0E]))
 
-        self._cmd(ST7735.INVOFF)  # Don't invert display
+        self._cmd(ST7735.INVOFF)
 
-        self._set_MADCTL()  # Cấu hình màu RGB/BGR và chiều quay
+        self._set_MADCTL()
 
-        self._cmd(ST7735.COLMOD)  # Set color mode: 16-bit color (565)
+        self._cmd(ST7735.COLMOD)
         self._data(bytearray([0x05]))
 
-        self._cmd(ST7735.NORON)  # Normal display on
-        time.sleep_ms(10)  # pyright: ignore[reportAttributeAccessIssue]
+        self._cmd(ST7735.NORON)
+        time.sleep(0.01)
 
-        self._cmd(ST7735.DISPON)  # Display ON
-        time.sleep_ms(100)  # pyright: ignore[reportAttributeAccessIssue]
+        self._cmd(ST7735.DISPON)
+        time.sleep(0.1)
 
         self.cs.value(1)
 

@@ -1,0 +1,82 @@
+{
+  "title": "Profile",
+
+  "index": {
+    "account": "Account Information",
+    "joined": "Joined At",
+    "logout": "Logout"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "dark_mode": {
+      "title": "Dark Mode",
+      "description": "Enable dark mode for the application",
+      "options": {
+        "on": "On",
+        "off": "Off",
+        "system": "Use Device Settings"
+      }
+    },
+    "language": {
+      "title": "Language",
+      "description": "Select the language for the application",
+      "options": {
+        "en": "English",
+        "vi": "Vietnamese"
+      }
+    },
+    "version": "App Version"
+  },
+
+  "config": {
+    "title": "Device Configuration",
+    "messages": {
+      "success": "Device connected successfully.",
+      "failed": "Failed to connect to the device. Please try again.",
+      "disconnected": "Device disconnected successfully.",
+      "send_failed": "Failed to send configuration to the device. Please try again."
+    },
+    "device": {
+      "selector": {
+        "title": "Select Device",
+        "placeholder": "Select a device..."
+      }
+    },
+    "wifi": {
+      "title": "Wi-Fi Configuration",
+      "ssid": "Wi-Fi SSID",
+      "password": "Wi-Fi Password"
+    },
+    "language": {
+      "title": "Language Configuration",
+      "selector": {
+        "title": "Select Language",
+        "placeholder": "Select a language..."
+      },
+      "messages": {
+        "success": "Language configuration updated successfully.",
+        "failed": "Failed to update language configuration. Please try again."
+      }
+    },
+    "utc": {
+      "title": "Timezone Configuration",
+      "selector": {
+        "title": "Select Timezone",
+        "placeholder": "Select a timezone..."
+      },
+      "messages": {
+        "success": "Timezone configuration updated successfully.",
+        "failed": "Failed to update timezone configuration. Please try again."
+      }
+    },
+    "sync": {
+      "title": "Sync Time Configuration"
+    },
+    "actions": {
+      "connect": "Connect",
+      "connecting": "Connecting...",
+      "disconnect": "Disconnect"
+    }
+  }
+}

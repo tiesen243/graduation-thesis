@@ -52,10 +52,13 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
     )
   })
 
-  public update(props: Pick<Compartment, 'medicine' | 'dosage' | 'capacity'>) {
+  public update(
+    props: Partial<Pick<Compartment, 'medicine' | 'dosage' | 'capacity'>>
+  ) {
     return Compartment.make({
       ...structuredClone(this),
       ...props,
+      lastRefillAt: props.capacity ? new Date() : this.lastRefillAt,
     })
   }
 }

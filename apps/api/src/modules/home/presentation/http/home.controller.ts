@@ -9,11 +9,11 @@ import { HealthUseCase } from '@/modules/home/application/use-case/health.use-ca
 export const homeController = HttpApiBuilder.group(Api, 'home', (handlers) =>
   handlers
 
-    .handle('index', () => Effect.succeed(HomeDto.make()))
+    .handle('index', () => Effect.succeed(new HomeDto()))
 
     .handle('health', () =>
       HealthUseCase.use((s) => s.execute()).pipe(
-        Effect.map((data) => HealthDto.make({ data }))
+        Effect.map((data) => new HealthDto({ data }))
       )
     )
 )

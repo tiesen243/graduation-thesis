@@ -26,9 +26,7 @@ export const LinkDeviceButton: React.FC = () => {
   const queryClient = useQueryClient()
 
   const { mutate, isPending } = useMutation({
-    ...api.device.link.mutationOptions({
-      params: { id: deviceId as DeviceId },
-    }),
+    ...api.device.link.mutationOptions(),
     onSuccess: () => {
       toast.add({ type: 'success', title: 'Device linked successfully' })
       setIsOpen(false)
@@ -86,7 +84,7 @@ export const LinkDeviceButton: React.FC = () => {
           </DialogClose>
 
           <Button
-            onClick={() => mutate({} as never)}
+            onClick={() => mutate({ id: deviceId as DeviceId })}
             disabled={isPending || deviceId.length === 0}
           >
             {isPending ? 'Linking...' : 'Link device'}

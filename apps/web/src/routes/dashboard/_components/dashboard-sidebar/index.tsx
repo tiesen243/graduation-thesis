@@ -1,4 +1,3 @@
-import { TargetIcon } from '@rozumari/ui/components/icons'
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +9,7 @@ import {
   SidebarRail,
 } from '@rozumari/ui/components/sidebar'
 
+import Logo from '@/assets/favicon.svg'
 import { env } from '@/lib/env'
 import {
   navGroups,
@@ -26,7 +26,11 @@ export function DashboardSidebar(props: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size='lg' variant='outline'>
-              <TargetIcon className='size-6! group-data-[state=collapsed]:ml-1' />
+              <img
+                src={Logo}
+                alt='Logo'
+                className='size-6! group-data-[state=collapsed]:ml-1'
+              />
               <div className='grid flex-1 text-left leading-tight'>
                 <span className='truncate text-sm font-semibold'>
                   {env.VITE_APP_NAME}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><style>
+    #light-icon {
+      display: inline;
+    }
+    #dark-icon {
+      display: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #light-icon {
+        display: none;
+      }
+      #dark-icon {
+        display: inline;
+      }
+    }
+  </style><g id="light-icon"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g><g transform="matrix(1,0,0,1,0,0)"><svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000" fill="none"><path d="M82.5 921.5V521.5M481.5 79H82.5L82.5 521.5M481.5 79H921.5L481.5 921.5M481.5 79L599.225 318L481.5 521.5H282M82.5 521.5H282M920 921.5H481.5L282 521.5" stroke="#0D1633" stroke-width="120" stroke-linecap="round" stroke-linejoin="round"></path><path d="M770 667.558L802.696 605L849.993 658.537M887.311 689.304L949.868 722L896.331 769.297" stroke="#0D1633" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"></path><path d="M916 739.5C916 794.728 871.228 839.5 816 839.5C760.772 839.5 716 794.728 716 739.5C716 684.272 760.772 639.5 816 639.5C871.228 639.5 916 684.272 916 739.5Z" fill="#0D1633"></path></svg></g></g></svg></g><g id="dark-icon"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g><g transform="matrix(0.998003992015968,0,0,0.998003992015968,0.9980039920159811,0)"><svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1002" viewBox="0 0 1000 1002" fill="none"><path d="M61.5 902.5V502.5M460.5 60H61.5L61.5 502.5M460.5 60H900.5L460.5 902.5M460.5 60L578.225 299L460.5 502.5H261M61.5 502.5H261M899 902.5H460.5L261 502.5" stroke="#DBE4FF" stroke-width="120" stroke-linecap="round" stroke-linejoin="round"></path><path d="M749 648.558L781.696 586L828.993 639.537M866.311 670.304L928.868 703L875.331 750.297" stroke="#DBE4FF" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"></path><path d="M895 720.5C895 775.728 850.228 820.5 795 820.5C739.772 820.5 695 775.728 695 720.5C695 665.272 739.772 620.5 795 620.5C850.228 620.5 895 665.272 895 720.5Z" fill="#DBE4FF"></path></svg></g></g></svg></g></svg>

@@ -13,19 +13,25 @@ import {
 import { CalendarSyncIcon } from '@rozumari/ui/components/icons'
 import { useQuery } from '@tanstack/react-query'
 import { parseAsString, useQueryStates } from 'nuqs'
+import { useMemo } from 'react'
 import { Link } from 'react-router'
 
+import { useDate } from '@/hooks/use-date'
 import { api } from '@/lib/runtime'
 import { ScheduleGrid } from '@/routes/dashboard/_components/schedule/schedule-grid'
 import { ScheduleList } from '@/routes/dashboard/_components/schedule/schedule-list'
 import { ScheduleNav } from '@/routes/dashboard/_components/schedule/schedule-nav'
 import { ScheduleSkeleton } from '@/routes/dashboard/_components/schedule/schedule-skeleton'
 
-const { startDate, endDate } = getCurrentWeekRange()
-
 export const Schedules: React.FC<{
   deviceId?: DeviceId
 }> = ({ deviceId }) => {
+  const today = useDate()
+  const { startDate, endDate } = useMemo(
+    () => getCurrentWeekRange(new Date(today ?? new Date())),
+    [today]
+  )
+
   const [query, setQuery] = useQueryStates(
     {
       startDate: parseAsString.withDefault(startDate),
@@ -47,6 +53,7 @@ export const Schedules: React.FC<{
           startDate={query.startDate}
           endDate={query.endDate}
           setWeek={setQuery}
+          deviceId={deviceId}
         />
 
         <ScheduleSkeleton />
@@ -59,6 +66,7 @@ export const Schedules: React.FC<{
         startDate={query.startDate}
         endDate={query.endDate}
         setWeek={setQuery}
+        deviceId={deviceId}
       />
 
       {data?.data.length === 0 ? (

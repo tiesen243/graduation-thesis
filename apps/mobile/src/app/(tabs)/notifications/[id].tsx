@@ -12,29 +12,30 @@ import {
   CardTitle,
 } from '@rozumari/ui/components/card'
 import { Typography } from '@rozumari/ui/components/typography'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
+import { Link, useLocalSearchParams } from 'expo-router'
 import { useEffect } from 'react'
-import { ActivityIndicator, ScrollView, View } from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { ScrollView, View } from 'react-native'
 
+import { LEVEL_CONFIG } from '@/app/(tabs)/notifications'
+import { ActivityIndicator } from '@/components/native'
+import { PayloadView } from '@/components/notification/payload-view'
 import { useRuntime } from '@/hooks/use-runtime'
-
-const LEVEL_CONFIG = {
-  info: { label: 'Information', variant: 'info' },
-  warning: { label: 'Warning', variant: 'warning' },
-  error: { label: 'Error', variant: 'destructive' },
-} as const
+import { getTimezonedDate } from '@/lib/utils'
 
 export default function TabsNotificationsDetailScreen() {
   const { id } = useLocalSearchParams<{ id: NotificationId }>()
+  const { t, i18n } = useTranslation('notification')
+
   const queryClient = useQueryClient()
-
   const { api } = useRuntime()
-  const { data: response, isLoading } = useQuery(
-    api.notification.show.queryOptions({ params: { id } })
-  )
 
-  const notification = response?.data
+  const { data: notification, isLoading } = useQuery({
+    ...api.notification.show.queryOptions({ params: { id } }),
+    select: (res) => res.data,
+  })
 
   useEffect(() => {
     if (notification?.readAt !== null) return
@@ -54,11 +55,13 @@ export default function TabsNotificationsDetailScreen() {
             : oldData
       )
 
+      const readAt = getTimezonedDate()
+
       queryClient.setQueryData(
         api.notification.show.getQueryKey({ params: { id: notification.id } }),
-        (oldData: NonNullable<typeof response>) =>
+        (oldData: { data: NonNullable<typeof notification> }) =>
           oldData.data
-            ? { ...oldData, data: { ...oldData?.data, readAt: new Date() } }
+            ? { ...oldData, data: { ...oldData?.data, readAt } }
             : oldData
       )
 
@@ -66,7 +69,6 @@ export default function TabsNotificationsDetailScreen() {
         { queryKey: api.notification.list.getQueryKey(), exact: false },
         (oldData) => {
           if (!oldData?.pages) return oldData
-          const readAt = new Date()
 
           return {
             ...oldData,
@@ -92,44 +94,37 @@ export default function TabsNotificationsDetailScreen() {
     queryClient,
   ])
 
-  if (isLoading) {
+  if (isLoading)
     return (
       <View className='flex-1 items-center justify-center p-4'>
         <ActivityIndicator size='large' />
       </View>
     )
-  }
 
-  if (!notification) {
+  if (!notification)
     return (
       <View className='flex-1 items-center justify-center p-4'>
         <Typography className='text-muted-foreground'>
-          Notification not found.
+          {t('detail.not_found')}
         </Typography>
       </View>
     )
-  }
 
   const levelConfig =
     LEVEL_CONFIG[notification.level as keyof typeof LEVEL_CONFIG]
-  const formattedDate = Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).format(notification.createdAt)
 
   return (
     <ScrollView className='flex-1 p-4' contentContainerClassName='gap-4'>
       <View className='flex-row items-center justify-between'>
         <Badge variant={levelConfig.variant}>
-          <Typography>{levelConfig.label}</Typography>
+          <Typography>{t(levelConfig.key)}</Typography>
         </Badge>
 
         <Typography className='text-xs text-muted-foreground'>
-          {formattedDate}
+          {formatDate(notification.createdAt, {
+            mode: 'all',
+            locale: i18n.resolvedLanguage,
+          })}
         </Typography>
       </View>
 
@@ -145,25 +140,33 @@ export default function TabsNotificationsDetailScreen() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Notification Details</CardTitle>
+          <CardTitle>{t('detail.sections.details')}</CardTitle>
         </CardHeader>
 
         <CardContent>
           {notification.deviceId && (
             <View className='flex-row justify-between'>
-              <CardDescription>Device ID</CardDescription>
-              <Typography className='text-sm' selectable>
-                {notification.deviceId}
-              </Typography>
+              <CardDescription>
+                {t('detail.sections.device_id')}
+              </CardDescription>
+              <Link href={`/(tabs)/pill-boxes/${notification.deviceId}`}>
+                <Typography className='text-sm' selectable>
+                  {notification.deviceId}
+                </Typography>
+              </Link>
             </View>
           )}
 
           {notification.scheduleId && (
             <View className='flex-row justify-between'>
-              <CardDescription>Schedule ID</CardDescription>
-              <Typography className='text-sm' selectable>
-                {notification.scheduleId}
-              </Typography>
+              <CardDescription>
+                {t('detail.sections.schedule_id')}
+              </CardDescription>
+              <Link href={`/(tabs)/schedules/${notification.scheduleId}`}>
+                <Typography className='text-sm' selectable>
+                  {notification.scheduleId}
+                </Typography>
+              </Link>
             </View>
           )}
         </CardContent>
@@ -172,28 +175,11 @@ export default function TabsNotificationsDetailScreen() {
       {notification.payload && Object.keys(notification.payload).length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>Payload Metadata</CardTitle>
+            <CardTitle>{t('detail.sections.payload_metadata')}</CardTitle>
           </CardHeader>
 
           <CardContent>
-            <View className='gap-2 rounded-lg bg-muted/50 p-3'>
-              {Object.entries(notification.payload).map(([key, value]) => (
-                <View key={key} className='flex-row justify-between gap-4'>
-                  <Typography className='text-xs font-semibold text-muted-foreground'>
-                    {key}:
-                  </Typography>
-
-                  <Typography
-                    className='flex-1 text-right text-xs text-foreground'
-                    selectable
-                  >
-                    {typeof value === 'object'
-                      ? JSON.stringify(value)
-                      : String(value)}
-                  </Typography>
-                </View>
-              ))}
-            </View>
+            <PayloadView payload={notification.payload} />
           </CardContent>
         </Card>
       )}

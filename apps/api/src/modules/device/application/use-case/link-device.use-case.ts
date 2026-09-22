@@ -1,25 +1,23 @@
 import type { LinkDeviceDto } from '@rozumari/contract/device/dto/link-device.dto'
-import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
+import type { DeviceAlreadyLinked } from '@rozumari/contract/device/schemas/device.error'
 
-import {
-  DeviceAlreadyLinked,
-  DeviceNotFound,
-} from '@rozumari/contract/device/schemas/device.error'
+import { CurrentUser } from '@rozumari/contract/auth/middleware'
+import { DeviceNotFound } from '@rozumari/contract/device/schemas/device.error'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
 import { DeviceRepository } from '@/modules/device/application/ports/device.repository'
-import { Device } from '@/modules/device/domain/entities/device.entity'
 
 export class LinkDeviceUseCase extends Context.Service<
   LinkDeviceUseCase,
   {
     readonly execute: (
-      input: LinkDeviceDto.Input & { userId: UserId }
+      input: LinkDeviceDto.Input
     ) => Effect.Effect<
       LinkDeviceDto.Output,
-      DeviceNotFound | DeviceAlreadyLinked
+      DeviceNotFound | DeviceAlreadyLinked,
+      CurrentUser
     >
   }
 >()('device/application/LinkDeviceUseCase', {
@@ -28,7 +26,8 @@ export class LinkDeviceUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const { id, userId } = input
+        const { userId } = yield* CurrentUser
+        const { id } = input
 
         const [device] = yield* deviceRepository.findMany({
           where: { id: { eq: id } },
@@ -37,17 +36,7 @@ export class LinkDeviceUseCase extends Context.Service<
         if (!device)
           return yield* Effect.fail(new DeviceNotFound({ error: { id } }))
 
-        if (device.status !== 'unlinked')
-          return yield* Effect.fail(
-            new DeviceAlreadyLinked({ error: { id: device.id } })
-          )
-
-        const linkedDevice = Device.make({
-          ...device,
-          status: 'linked' as Device['status'],
-          activatedAt: device.activatedAt ?? new Date(),
-          userId,
-        })
+        const linkedDevice = yield* device.link(userId)
         yield* deviceRepository.save(linkedDevice)
 
         return {

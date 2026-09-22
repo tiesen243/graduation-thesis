@@ -1,0 +1,22 @@
+{
+  "title": "Thông báo",
+
+  "required": "Bắt buộc",
+  "optional": "Tùy chọn",
+  "level": {
+    "info": "Thông tin",
+    "warning": "Cảnh báo",
+    "error": "Lỗi"
+  },
+
+  "detail": {
+    "title": "Chi tiết thông báo",
+    "not_found": "Không tìm thấy thông báo.",
+    "sections": {
+      "details": "Chi tiết thông báo",
+      "device_id": "Mã thiết bị",
+      "schedule_id": "Mã lịch trình",
+      "payload_metadata": "Dữ liệu đính kèm"
+    }
+  }
+}

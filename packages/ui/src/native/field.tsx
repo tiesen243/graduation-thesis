@@ -2,22 +2,33 @@ import type { VariantProps } from 'class-variance-authority'
 
 import { cva } from 'class-variance-authority'
 import { useMemo } from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, Platform, View, ScrollView } from 'react-native'
 
 import { cn } from '@/lib/utils'
 import { Separator } from '@/native/separator'
 import { Typography } from '@/native/typography'
 
-function FieldSet({ className, ...props }: React.ComponentProps<typeof View>) {
+function FieldSet({
+  className,
+  containerClassName,
+  ...props
+}: React.ComponentProps<typeof ScrollView> & {
+  containerClassName?: string
+}) {
   return (
-    <View
+    <KeyboardAvoidingView
       data-slot='field-set'
-      className={cn(
-        'flex flex-col gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3',
-        className
-      )}
-      {...props}
-    />
+      className={cn('flex-1', containerClassName)}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        data-slot='field-set-content'
+        keyboardShouldPersistTaps='handled'
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName={cn('grow flex-col gap-4', className)}
+        {...props}
+      />
+    </KeyboardAvoidingView>
   )
 }
 

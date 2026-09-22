@@ -1,5 +1,5 @@
-import { buttonVariants } from '@rozumari/ui/components/button'
-import { ArrowRightIcon } from '@rozumari/ui/components/icons'
+import { Button } from '@rozumari/ui/components/button'
+import { ArrowRightIcon, DownloadIcon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { Link } from 'react-router'
 
@@ -20,9 +20,27 @@ export function CtaSection() {
           journey with us now.
         </Typography>
 
-        <Link to='/login' className={buttonVariants({ size: 'lg' })}>
-          Get Started <ArrowRightIcon data-icon='inline-end' />
-        </Link>
+        <div className='flex justify-center gap-4'>
+          <Button size='lg' nativeButton={false} render={<Link to='/login' />}>
+            Get Started <ArrowRightIcon data-icon='inline-end' />
+          </Button>
+
+          <Button
+            size='lg'
+            variant='outline'
+            nativeButton={false}
+            render={
+              <a
+                href='https://github.com/tiesen243/graduation-thesis/releases?q=%22%40rozumari%2Fmobile%22&expanded=true'
+                target='_blank'
+                rel='noopener noreferrer'
+                aria-label='Download mobile app'
+              />
+            }
+          >
+            Download mobile app <DownloadIcon data-icon='inline-end' />
+          </Button>
+        </div>
       </div>
     </section>
   )

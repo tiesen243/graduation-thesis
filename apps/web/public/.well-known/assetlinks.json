@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.rozumari.mobile",
+      "sha256_cert_fingerprints": [
+        "3E:82:91:D1:25:D7:08:E9:56:15:3E:57:7D:16:3E:1F:48:A4:23:B0:D4:E6:0F:30:F5:E3:02:69:79:D3:8E:A6"
+      ]
+    }
+  }
+]

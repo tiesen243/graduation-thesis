@@ -1,3 +1,48 @@
+## @rozumari/contract@0.1.1
+
+### Patchs Changes
+
+- added update-capcity api
+- completed drop pill workflow
+
+## @rozumari/contract@0.1.0
+
+### Minor Changes
+
+- Bump all monorepo packages to version 0.1.0 baseline.
+- Synchronize core services, clients, and internal shared libraries across the project.
+
+## @rozumari/contract@0.0.18
+
+### Patches
+
+- Updated contract
+- Fix UI
+
+## @rozumari/contract@0.0.17
+
+### Patchs
+
+- added get device info in iot route
+
+## @rozumari/contract@0.0.16
+
+### Patches
+
+- Update compartment capacity when a schedule is completed.
+
+## @rozumari/contract@0.0.15
+
+### Bug Fixes
+
+- Added check quantity of compartments before creating or updating a schedule to prevent errors when the number of compartments is insufficient.
+
+## @rozumari/contract@0.0.14
+
+### Bug Fixes
+
+- Schedule mapper error
+
 ## @rozumari/contract@0.0.13
 
 ### Feature Additions & Mobile Navigation Restructuring

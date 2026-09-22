@@ -1,0 +1,18 @@
+{
+  "title": "Welcome to our mobile app!",
+
+  "date": "Date",
+  "select_date": "Select Date",
+  "pagination": "Page {{current}} of {{total}}",
+
+  "status": "Status",
+  "slot": "Slot",
+  "available": "Available",
+  "pills": "Pills",
+
+  "saving": "Saving...",
+  "save_changes": "Save Changes",
+
+  "quantity": "Quantity",
+  "dosage": "Dosage"
+}

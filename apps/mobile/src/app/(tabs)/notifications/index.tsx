@@ -1,3 +1,6 @@
+import type { ListNotificationsDto } from '@rozumari/contract/notification/dto/list-notifications.dto'
+import type { InfiniteData } from '@tanstack/react-query'
+
 import { Badge } from '@rozumari/ui/components/badge'
 import {
   CardDescription,
@@ -5,30 +8,36 @@ import {
   CardTitle,
 } from '@rozumari/ui/components/card'
 import { Typography } from '@rozumari/ui/components/typography'
-import { cn } from '@rozumari/ui/lib/utils'
+import { cn, formatDate, formatDistanceDays } from '@rozumari/ui/lib/utils'
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useCallback, useMemo } from 'react'
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { useTranslation } from 'react-i18next'
+import { SectionList, TouchableOpacity, View } from 'react-native'
 
+import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
+import { getTimezonedDate } from '@/lib/utils'
 
-const LEVEL_CONFIG = {
-  info: { label: 'Info', variant: 'info' },
-  warning: { label: 'Warning', variant: 'warning' },
-  error: { label: 'Error', variant: 'destructive' },
+export const LEVEL_CONFIG = {
+  info: { key: 'level.info', variant: 'info' },
+  warning: { key: 'level.warning', variant: 'warning' },
+  error: { key: 'level.error', variant: 'destructive' },
 } as const
 
+type NotificationItem = ListNotificationsDto.Output['notifications'][number]
+
+interface NotificationSection {
+  title: string
+  data: NotificationItem[]
+}
+
 export default function TabsNotificationsIndexScreen() {
-  const { api } = useRuntime()
-  const router = useRouter()
+  const { t, i18n } = useTranslation('notification')
 
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
+  const router = useRouter()
 
   const { data, isRefetching, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useInfiniteQuery({
@@ -42,26 +51,62 @@ export default function TabsNotificationsIndexScreen() {
       },
     })
 
-  const flattenDate = useMemo(
-    () => data?.pages.flatMap((page) => page.data.notifications) ?? [],
-    [data?.pages]
-  )
+  const sections = useMemo(() => {
+    const notifications =
+      data?.pages.flatMap((page) => page.data.notifications) ?? []
+
+    const groups: Record<string, NotificationItem[]> = {}
+
+    for (const notification of notifications) {
+      const groupTitle = formatDistanceDays(notification.createdAt, {
+        earlierDate: getTimezonedDate(),
+        locale: i18n.language,
+      })
+
+      if (!groups[groupTitle]) groups[groupTitle] = []
+      groups[groupTitle].push(notification)
+    }
+
+    return Object.entries(groups).map(([title, d]) => ({ title, data: d }))
+  }, [data?.pages, i18n.language])
 
   const handleRefresh = useCallback(async () => {
-    await queryClient.invalidateQueries({
-      queryKey: api.notification.unread.getQueryKey(),
-    })
-    await queryClient.resetQueries({
-      queryKey: api.notification.list.getQueryKey(),
-      exact: false,
-    })
+    queryClient.setQueryData(
+      api.notification.list.getQueryKey({ query: {} }),
+      (oldData: InfiniteData<unknown, unknown>) => {
+        if (!oldData) return oldData
+        return {
+          pages: oldData.pages.slice(0, 1),
+          pageParams: oldData.pageParams.slice(0, 1),
+        }
+      }
+    )
+
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: api.notification.unread.getQueryKey(),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: api.notification.list.getQueryKey({ query: {} }),
+      }),
+    ])
   }, [api.notification.unread, api.notification.list, queryClient])
 
   return (
-    <FlatList
-      data={flattenDate}
-      keyExtractor={(n) => n.id}
-      contentContainerClassName='p-4 gap-4'
+    <SectionList<NotificationItem, NotificationSection>
+      sections={sections}
+      keyExtractor={(item) => item.id}
+      contentContainerClassName='p-4 pb-0 gap-4'
+      renderSectionHeader={({ section: { title } }) => (
+        <Typography
+          className={cn(
+            'text-sm font-semibold text-muted-foreground capitalize',
+            sections[0]?.title !== title && '-mt-4'
+          )}
+        >
+          {title}
+        </Typography>
+      )}
       renderItem={({ item }) => {
         const isUnread = !item.readAt
         const levelConfig =
@@ -85,18 +130,11 @@ export default function TabsNotificationsIndexScreen() {
             <CardHeader className='gap-2'>
               <View className='flex-row items-center justify-between gap-2'>
                 <Badge variant={levelConfig.variant}>
-                  <Typography>{levelConfig.label}</Typography>
+                  <Typography>{t(levelConfig.key)}</Typography>
                 </Badge>
 
                 <CardDescription className='text-xs text-muted-foreground'>
-                  {Intl.DateTimeFormat('en', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric',
-                    hour12: false,
-                  }).format(new Date(item.createdAt))}
+                  {formatDate(item.createdAt, { mode: 'time' })}
                 </CardDescription>
               </View>
 
@@ -107,21 +145,15 @@ export default function TabsNotificationsIndexScreen() {
           </TouchableOpacity>
         )
       }}
-
-      refreshing={isRefetching}
-      onRefresh={handleRefresh}
-
+      refreshControl={
+        <RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} />
+      }
       onEndReached={() => {
         if (hasNextPage && !isFetchingNextPage) fetchNextPage()
       }}
       onEndReachedThreshold={0.05}
-
       ListFooterComponent={
-        isFetchingNextPage ? (
-          <View className='py-4'>
-            <ActivityIndicator size='small' colorClassName='accent-primary' />
-          </View>
-        ) : null
+        isFetchingNextPage ? <ActivityIndicator /> : <View />
       }
     />
   )

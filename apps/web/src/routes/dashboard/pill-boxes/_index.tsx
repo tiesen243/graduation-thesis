@@ -13,9 +13,18 @@ import { Link } from 'react-router'
 
 import { DataTable } from '@/components/data-table'
 import { useSession } from '@/hooks/use-session'
+import { createMetadata } from '@/lib/metadata'
 import { api } from '@/lib/runtime'
 import { AddDeviceButton } from '@/routes/dashboard/pill-boxes/_components/add-device-button'
 import { LinkDeviceButton } from '@/routes/dashboard/pill-boxes/_components/link-device-button'
+
+import type { Route } from './+types/_index'
+
+export const meta: Route.MetaFunction = () =>
+  createMetadata({
+    title: 'Pill Boxes',
+    description: 'Manage your pill-boxes, check status, and handle refills.',
+  })
 
 const STATUS_VARIANTS = {
   unlinked: 'warning',
@@ -44,7 +53,7 @@ export default function PillBoxesIndexPage() {
     <>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
         <div>
-          <Typography variant='h2'>PillBoxes</Typography>
+          <Typography variant='h2'>Pill Boxes</Typography>
           <Typography>
             Manage your pill-boxes, check status, and handle refills.
           </Typography>

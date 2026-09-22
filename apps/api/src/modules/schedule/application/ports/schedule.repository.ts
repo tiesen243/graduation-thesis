@@ -20,6 +20,11 @@ interface IScheduleRepository extends IBaseRepository<Schedule> {
     startDate: string
     endDate: string
   }) => Effect<ScheduleAggregateSchema[]>
+
+  readonly findManyPendingByDeviceId: (options: {
+    deviceId: DeviceId
+    excludeScheduleId?: ScheduleId
+  }) => Effect<{ slot: string; quantity: number }[]>
 }
 
 export class ScheduleRepository extends Context.Service<

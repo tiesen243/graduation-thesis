@@ -1,3 +1,5 @@
+import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
+
 import { getCurrentWeekRange } from '@rozumari/lib/get-current-week-range'
 import { Button } from '@rozumari/ui/components/button'
 import { ButtonGroup } from '@rozumari/ui/components/button-group'
@@ -6,14 +8,12 @@ import {
   ChevronRightIcon,
 } from '@rozumari/ui/components/icons'
 import { cn } from '@rozumari/ui/lib/utils'
+import { useMutation } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 
-const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
-  const date = new Date(currentStartDate)
-  date.setDate(date.getDate() + offsetDays)
-  return getCurrentWeekRange(date)
-}
+import { useDate } from '@/hooks/use-date'
+import { api } from '@/lib/runtime'
 
 const STATUSES = [
   { label: 'Completed', color: 'bg-success' },
@@ -21,11 +21,20 @@ const STATUSES = [
   { label: 'Missed', color: 'bg-destructive' },
 ]
 
+const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
+  const date = new Date(currentStartDate)
+  date.setDate(date.getDate() + offsetDays)
+  return getCurrentWeekRange(date)
+}
+
 export const ScheduleNav: React.FC<{
   startDate: string
   endDate: string
   setWeek: (week: { startDate: string; endDate: string }) => void
-}> = ({ startDate, endDate, setWeek }) => {
+  deviceId?: DeviceId
+}> = ({ startDate, endDate, setWeek, deviceId }) => {
+  const today = useDate()
+
   const formattedRange = useMemo(() => {
     if (!startDate || !endDate) return ''
     const start = new Date(startDate)
@@ -44,9 +53,15 @@ export const ScheduleNav: React.FC<{
     return `${startStr} – ${endStr}`
   }, [startDate, endDate])
 
+  const syncSchedule = useMutation({
+    ...api.device.emit.mutationOptions({
+      params: { id: deviceId as DeviceId },
+    }),
+  })
+
   return (
     <nav className='mt-4 flex flex-wrap items-center gap-4'>
-      <div className='flex flex-1 items-center gap-3 text-xs text-muted-foreground'>
+      <div className='order-1 flex flex-1 items-center gap-3 text-xs text-muted-foreground'>
         {STATUSES.map((status) => (
           <span key={status.label} className='flex items-center gap-1.5'>
             <span className={cn('size-2 rounded-full', status.color)} />
@@ -55,14 +70,7 @@ export const ScheduleNav: React.FC<{
         ))}
       </div>
 
-      <Button
-        nativeButton={false}
-        render={<Link to='/dashboard/schedules/create' />}
-      >
-        Create Schedule
-      </Button>
-
-      <ButtonGroup>
+      <ButtonGroup className='order-2 sm:order-3'>
         <Button
           variant='outline'
           size='icon'
@@ -74,7 +82,9 @@ export const ScheduleNav: React.FC<{
 
         <Button
           variant='outline'
-          onClick={() => setWeek(getCurrentWeekRange())}
+          onClick={() =>
+            setWeek(getCurrentWeekRange(new Date(today ?? Date.now())))
+          }
         >
           {formattedRange}
         </Button>
@@ -87,6 +97,26 @@ export const ScheduleNav: React.FC<{
           <ChevronRightIcon />
           <span className='sr-only'>Next week</span>
         </Button>
+      </ButtonGroup>
+
+      <ButtonGroup className='order-3 sm:order-2'>
+        <Button
+          nativeButton={false}
+          render={<Link to={`/dashboard/schedules/create?id=${deviceId}`} />}
+        >
+          Create
+        </Button>
+
+        {deviceId && (
+          <Button
+            onClick={() =>
+              syncSchedule.mutate({ action: 'sync_schedule', payload: {} })
+            }
+            disabled={syncSchedule.isPending}
+          >
+            Sync
+          </Button>
+        )}
       </ButtonGroup>
     </nav>
   )

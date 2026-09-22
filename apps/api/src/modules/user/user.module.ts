@@ -33,7 +33,7 @@ export class UserModule {
       command: userCommand.pipe(Command.provide(layer)),
 
       exports: {
-        userService: UserServiceLayer.pipe(Layer.provide(layer)),
+        userService: UserServiceLayer.pipe(Layer.provide(infrastructureLayer)),
       },
     }
   }

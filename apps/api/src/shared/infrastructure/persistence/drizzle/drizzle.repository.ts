@@ -1,9 +1,7 @@
 import type { IndexColumn, AnyPgTable } from 'drizzle-orm/pg-core'
 
-import { and, eq } from 'drizzle-orm'
+import { and, eq, or } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
-
-import type { IBaseRepository } from '@/shared/application/repositories/base.repository'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
@@ -11,6 +9,9 @@ export interface DrizzleMapper<TEntity, TInput> {
   toEntity: (row: TInput) => TEntity
   toRow: (entity: TEntity) => TInput
 }
+
+const toCamel = (str: string) =>
+  str.replaceAll(/_(?<key>[a-z])/gu, (_, letter) => letter.toUpperCase())
 
 export const makeDrizzleRepository = Effect.fn(function* makeDrizzleRepository<
   TEntity,
@@ -66,28 +67,31 @@ export const makeDrizzleRepository = Effect.fn(function* makeDrizzleRepository<
         .pipe(Effect.asVoid, Effect.orDie)
     }),
 
-    delete: Effect.fn(function* deleteEntity(entity) {
-      const row = mapper.toRow(entity) as Record<string, unknown>
-      const rowKeys = Object.keys(row)
+    delete: Effect.fn(function* deleteEntity(entity: TEntity | TEntity[]) {
+      const items = Array.isArray(entity) ? entity : [entity]
+      if (items.length === 0) return
 
-      const getVal = (pk: IndexColumn) => {
-        const colName = pk.name
-        if (colName in row) return row[colName]
+      const pks = Array.isArray(primaryKey) ? primaryKey : [primaryKey]
+      const rows = items.map(mapper.toRow)
 
-        const matchedKey = rowKeys.find(
-          (key) =>
-            key.replaceAll('_', '').toLowerCase() ===
-            colName.replaceAll('_', '').toLowerCase()
+      const conditions = rows.map((row) =>
+        and(
+          ...pks.map((pk) => {
+            const val =
+              row[toCamel(pk.name) as keyof typeof row] ??
+              row[pk.name as keyof typeof row]
+            return eq(pk, val)
+          })
         )
+      )
+      const whereSql =
+        conditions.length === 1 ? conditions[0] : or(...conditions)
+      if (!whereSql) return
 
-        return matchedKey ? row[matchedKey] : undefined
-      }
-
-      const whereSql = Array.isArray(primaryKey)
-        ? and(...primaryKey.map((pk) => eq(pk, getVal(pk))))
-        : eq(primaryKey, getVal(primaryKey))
-
-      yield* db.delete(table).where(whereSql).pipe(Effect.orDie)
+      return yield* db
+        .delete(table)
+        .where(whereSql)
+        .pipe(Effect.asVoid, Effect.orDie)
     }),
-  } satisfies IBaseRepository<TEntity>
+  }
 })

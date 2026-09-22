@@ -37,11 +37,9 @@ export const notifications = snakeCase.table(
       .$type<ScheduleId>(),
 
     level: notificationLevelEnum().notNull().$type<NotificationLevel>(),
-
     title: t.varchar({ length: 255 }).notNull(),
     body: t.text().notNull(),
     payload: t.jsonb().$type<Record<string, unknown> | null>(),
-
     readAt: t.timestamp(),
 
     createdAt: t.timestamp().notNull(),

@@ -1,46 +1,53 @@
 import { Button } from '@rozumari/ui/components/button'
-import { SparklesIcon } from '@rozumari/ui/components/icons'
 import { Link } from 'react-router'
+
+import Logo from '@/assets/favicon.svg'
 
 export function LandingHeader() {
   return (
     <header
-      className='mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-6 lg:px-8'
+      className='sticky inset-0 z-50 bg-popover/70 py-6 backdrop-blur-2xl backdrop-saturate-150'
       aria-label='Main navigation'
     >
-      <Link
-        to='#top'
-        className='flex items-center gap-3'
-        aria-label='Rozumari home'
-      >
-        <span className='flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground'>
-          <SparklesIcon className='size-4' aria-hidden='true' />
-        </span>
-        <span className='font-serif text-xl font-semibold tracking-tight'>
-          Rozumari
-        </span>
-      </Link>
-      <div className='hidden items-center gap-8 text-sm text-muted-foreground md:flex'>
+      <nav className='container flex items-center justify-between'>
         <Link
-          to='#how-it-works'
-          className='transition-colors hover:text-foreground'
+          to='#top'
+          className='flex items-center gap-3'
+          aria-label='Rozumari home'
         >
-          How it works
+          <span className='flex size-9 items-center justify-center rounded-md bg-chart-1'>
+            <img src={Logo} alt='Rozumari logo' className='size-5' />
+          </span>
+          <span className='font-serif text-xl font-semibold tracking-tight'>
+            Rozumari
+          </span>
         </Link>
-        <Link to='#care' className='transition-colors hover:text-foreground'>
-          For families
-        </Link>
-        <Link to='#stories' className='transition-colors hover:text-foreground'>
-          Stories
-        </Link>
-      </div>
-      <Button
-        variant='outline'
-        nativeButton={false}
-        render={<Link to='login' />}
-      >
-        Log in
-      </Button>
+        <div className='hidden items-center gap-8 text-sm text-muted-foreground md:flex'>
+          <Link
+            to='#how-it-works'
+            className='transition-colors hover:text-foreground'
+          >
+            How it works
+          </Link>
+          <Link to='#care' className='transition-colors hover:text-foreground'>
+            For families
+          </Link>
+          <Link
+            to='#stories'
+            className='transition-colors hover:text-foreground'
+          >
+            Stories
+          </Link>
+        </div>
+
+        <Button
+          variant='outline'
+          nativeButton={false}
+          render={<Link to='login' />}
+        >
+          Get started
+        </Button>
+      </nav>
     </header>
   )
 }

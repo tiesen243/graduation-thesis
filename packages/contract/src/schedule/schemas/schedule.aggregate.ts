@@ -10,6 +10,7 @@ export const ScheduleAggregateSchema = Schema.Struct({
   date: ScheduleSchema.fields.date,
   time: ScheduleSchema.fields.time,
   status: ScheduleSchema.fields.status,
+  userId: ScheduleSchema.fields.userId,
   device: Schema.Struct({
     id: DeviceSchema.fields.id,
     name: DeviceSchema.fields.name,
@@ -21,6 +22,7 @@ export const ScheduleAggregateSchema = Schema.Struct({
       medicine: CompartmentSchema.fields.medicine,
       dosage: CompartmentSchema.fields.dosage,
       quantity: ScheduleItemSchema.fields.quantity,
+      isRequired: ScheduleItemSchema.fields.isRequired,
     })
   ),
 })

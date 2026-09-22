@@ -60,14 +60,28 @@ export class ChangePasswordUseCase extends Context.Service<
         }
 
         if (!input.currentPassword)
-          return yield* Effect.fail(new InvalidCredentials())
+          return yield* Effect.fail(
+            new InvalidCredentials({
+              message: 'Current password is required to change the password',
+            })
+          )
+
+        if (input.currentPassword === input.newPassword)
+          return yield* Effect.fail(
+            new InvalidCredentials({
+              message:
+                'New password must be different from the current password',
+            })
+          )
 
         const isPasswordValid = yield* passwordService.verify(
           input.currentPassword,
           account.password
         )
         if (!isPasswordValid)
-          return yield* Effect.fail(new InvalidCredentials())
+          return yield* Effect.fail(
+            new InvalidCredentials({ message: 'Current password is invalid' })
+          )
 
         const hashedPassword = yield* passwordService.hash(input.newPassword)
         yield* accountRepository.save(account.updatePassword(hashedPassword))

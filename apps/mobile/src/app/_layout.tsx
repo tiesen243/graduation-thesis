@@ -3,75 +3,66 @@ import '@/globals.css'
 import { createQueryClient } from '@rozumari/lib/create-query-client'
 import { ToasterProvider } from '@rozumari/ui/components/toast'
 import { QueryClientProvider } from '@tanstack/react-query'
-import {
-  DefaultTheme,
-  Slot,
-  ThemeProvider,
-  useRouter,
-  useSegments,
-} from 'expo-router'
+import { Camera } from 'expo-camera'
+import { DefaultTheme, Slot, ThemeProvider } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { I18nextProvider } from 'react-i18next'
+import { StatusBar } from 'react-native'
 import { Uniwind, useCSSVariable, useUniwind } from 'uniwind'
 
+import { useGeistFonts } from '@/hooks/use-geist-fonts'
 import { RuntimeProvider } from '@/hooks/use-runtime'
 import { SessionProvider, useSession } from '@/hooks/use-session'
+import { requestBLEPermissions } from '@/lib/ble'
+import { i18n } from '@/lib/i18n'
 import { getTheme } from '@/lib/secure-store'
 
 SplashScreen.preventAutoHideAsync()
 const queryClient = createQueryClient()
 
-function RootLayoutContent() {
+function RootLayoutInner() {
+  const [fontLoaded, fontError] = useGeistFonts()
   const { status } = useSession()
-  const { theme } = useUniwind()
-
-  const segments = useSegments()
-  const router = useRouter()
-
-  const backgroundColor = useCSSVariable('--color-background') as string
-  const foregroundColor = useCSSVariable('--color-foreground') as string
-  const primaryColor = useCSSVariable('--color-primary') as string
-  const cardColor = useCSSVariable('--color-card') as string
-  const popoverColor = useCSSVariable('--color-popover') as string
-  const borderColor = useCSSVariable('--color-border') as string
 
   useEffect(() => {
-    let isMounted = true
-
     void (async () => {
-      const _theme = await getTheme()
-      if (!isMounted) return
-
-      Uniwind.setTheme(_theme)
-
+      if (!fontLoaded && fontError) return
       if (status === 'loading') return
 
-      const isAuthRoute = segments[0] === '(auth)'
-      if (status === 'unauthenticated' && !isAuthRoute) {
-        if (isMounted) router.replace('/(auth)/login')
-        return
+      try {
+        const theme = await getTheme()
+        Uniwind.setTheme(theme)
+      } finally {
+        await SplashScreen.hideAsync()
       }
 
-      if (status === 'authenticated' && isAuthRoute) {
-        if (isMounted) router.replace('/(tabs)/home')
-        return
-      }
-
-      if (isMounted) await SplashScreen.hideAsync()
+      // check permission...
+      await requestBLEPermissions()
+      await Camera.requestCameraPermissionsAsync()
     })()
+  }, [fontLoaded, fontError, status])
 
-    return () => {
-      isMounted = false
-    }
-  }, [status, segments, router])
+  return <Slot />
+}
 
-  if (status === 'loading')
-    return (
-      <View className='flex-1 items-center justify-center bg-background'>
-        <ActivityIndicator size={20} colorClassName='accent-primary' />
-      </View>
-    )
+export default function RootLayout() {
+  const { theme: colorscheme } = useUniwind()
+  const [
+    backgroundColor,
+    foregroundColor,
+    primaryColor,
+    cardColor,
+    popoverColor,
+    borderColor,
+  ] = useCSSVariable([
+    '--color-background',
+    '--color-foreground',
+    '--color-primary',
+    '--color-card',
+    '--color-popover',
+    '--color-border',
+  ]) as [string, string, string, string, string, string]
 
   return (
     <ThemeProvider
@@ -86,28 +77,24 @@ function RootLayoutContent() {
           notification: popoverColor,
           border: borderColor,
         },
-        dark: theme === 'dark',
+        dark: colorscheme === 'dark',
       }}
     >
-      <ToasterProvider position='bottom'>
-        <Slot />
-      </ToasterProvider>
+      <I18nextProvider i18n={i18n} defaultNS='common'>
+        <ToasterProvider position='bottom'>
+          <QueryClientProvider client={queryClient}>
+            <RuntimeProvider>
+              <SessionProvider>
+                <RootLayoutInner />
+              </SessionProvider>
+            </RuntimeProvider>
+          </QueryClientProvider>
 
-      <StatusBar
-        barStyle={theme === 'dark' ? 'light-content' : 'dark-content'}
-      />
+          <StatusBar
+            barStyle={colorscheme === 'dark' ? 'light-content' : 'dark-content'}
+          />
+        </ToasterProvider>
+      </I18nextProvider>
     </ThemeProvider>
-  )
-}
-
-export default function RootLayout() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <RuntimeProvider>
-        <SessionProvider>
-          <RootLayoutContent />
-        </SessionProvider>
-      </RuntimeProvider>
-    </QueryClientProvider>
   )
 }

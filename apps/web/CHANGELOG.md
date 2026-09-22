@@ -1,3 +1,50 @@
+## @rozumari/web@0.1.0
+
+### Minor Changes
+
+- Bump all monorepo packages to version 0.1.0 baseline.
+- Synchronize core services, clients, and internal shared libraries across the project.
+
+## @rozumari/web@0.0.28
+
+### Patchs
+
+- added drop pill directly
+- added home screen for mobile app
+- improve UI
+
+## @rozumari/web@0.0.23
+
+### Config Deep Linking for Web and Mobile
+
+- Add Universal Links and App Links configuration for Expo mobile app (`com.rozumari.mobile`) and Web (`rozumari.vercel.app`).
+- Add `.well-known` configuration files (`apple-app-site-association` and `assetlinks.json`) for deep link domain verification.
+- Implement URL route mapping between Web React Router (`/dashboard/*`) and Mobile Expo Router routes (`/(tabs)/*`).
+- Add `redirectSystemPath` handler to parse and map incoming web URLs to corresponding app screens seamlessly.
+
+## @rozumari/web@0.0.22
+
+### Schedule Management Enhancements
+
+- Added full schedule management capabilities across Web and Mobile, including creating, editing, and listing schedules.
+- Supported compartment item slot selection with quantity and required flag configurations.
+- Refactored date range selection logic for seamless date picking.
+- Standardized UI components (`InputGroup`, form fields) for parity between Web and React Native.
+- Fixed `ON CONFLICT` database queries to properly update `is_required` status on existing schedule items.
+- Fixed pull-to-refresh behavior on empty schedule list views in Mobile.
+
+### Added update schedule
+
+- Added a form to update the schedule for the pill box, allowing users to set reminders for taking their medication.
+- Added check new schedule items is in the schedule before adding them to the schedule, preventing duplicates.
+
+## @rozumari/web@0.0.20
+
+### Bug Fixes & Improvements
+
+- **Branding:** Updated app icon branding for both web and mobile applications.
+- **Fix:** Fixed timezone offset issues affecting schedule timing and notifications.
+
 ## @rozumari/web@0.0.18
 
 ### Feature Additions & Mobile Navigation Restructuring

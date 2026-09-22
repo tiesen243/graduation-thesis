@@ -49,8 +49,8 @@ export class DeviceGroup extends HttpApiGroup.make('device')
   )
 
   .add(
-    HttpApiEndpoint.post('link', '/:id/link', {
-      params: LinkDeviceDto.Input,
+    HttpApiEndpoint.post('link', '/link', {
+      payload: LinkDeviceDto.Input,
       success: LinkDeviceDto,
       error: [DeviceNotFound, DeviceAlreadyLinked],
     })

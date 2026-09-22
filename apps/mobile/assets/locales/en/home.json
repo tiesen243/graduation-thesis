@@ -1,0 +1,15 @@
+{
+  "title": "Home",
+
+  "pending_schedules": "Pending Schedules for Today",
+
+  "low_stock_compartments": {
+    "title": "Low Stock Compartments",
+    "description": "These {{count}} compartment(s) are running low on medication. Please restock them soon to ensure smooth operation."
+  },
+
+  "recent_notifications": {
+    "title": "Recent Notifications",
+    "description": "You have {{count}} recent notification(s). Please check them to stay updated."
+  }
+}

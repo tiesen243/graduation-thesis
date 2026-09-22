@@ -45,29 +45,10 @@ export namespace CreateScheduleDto {
       Schema.Struct({
         slot: ScheduleItemSchema.fields.slot,
         quantity: ScheduleItemSchema.fields.quantity,
+        isRequired: ScheduleItemSchema.fields.isRequired,
       })
     ),
-  }).check(
-    Schema.makeFilter((data) => {
-      const now = new Date()
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const day = String(now.getDate()).padStart(2, '0')
-      const today = `${year}-${month}-${day}`
-
-      if (data.startDate < today)
-        return {
-          path: ['startDate'],
-          issue: 'Start date cannot be in the past',
-        }
-
-      if (data.endDate < data.startDate)
-        return {
-          path: ['endDate'],
-          issue: 'End date cannot be before start date',
-        }
-    })
-  )
+  })
   export type Input = typeof Input.Type
 
   export const Output = CreateScheduleDto.fields.data

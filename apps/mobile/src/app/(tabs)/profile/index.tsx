@@ -20,33 +20,27 @@ import {
 } from '@rozumari/ui/components/icons'
 import { Separator } from '@rozumari/ui/components/separator'
 import { Typography } from '@rozumari/ui/components/typography'
+import { formatDate } from '@rozumari/ui/lib/utils'
 import React, { Fragment } from 'react'
+import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, View } from 'react-native'
 
 import { useSession } from '@/hooks/use-session'
 
 export default function TabsProfileIndexScreen() {
   const { status, user, refetch, isRefetching, logout } = useSession()
+  const { t, i18n } = useTranslation(['profile'])
+
   if (status !== 'authenticated') return null
 
   const informations = [
-    {
-      icon: UserIcon,
-      title: 'User ID',
-      description: user.id,
-    },
-    {
-      icon: MailIcon,
-      title: 'Email',
-      description: user.email,
-    },
+    { icon: UserIcon, title: 'User ID', description: user.id },
+    { icon: MailIcon, title: 'Email', description: user.email },
     {
       icon: Calendar1Icon,
-      title: 'Joined At',
-      description: new Date(user.createdAt).toLocaleDateString('vi-VN', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
+      title: t('index.joined'),
+      description: formatDate(user.createdAt, {
+        locale: i18n.resolvedLanguage,
       }),
     },
   ]
@@ -61,13 +55,18 @@ export default function TabsProfileIndexScreen() {
     >
       <Card>
         <Avatar className='mx-auto size-24 overflow-visible'>
-          <AvatarImage source={{ uri: user.image || undefined }} />
+          {user.image && <AvatarImage source={{ uri: user.image }} />}
+
           <AvatarFallback>
             {user.username.charAt(0).toUpperCase()}
           </AvatarFallback>
 
           <Badge className='absolute -right-1/4 -bottom-1'>
-            <ShieldIcon className='size-3 text-primary-foreground' />
+            {user.role === 'admin' ? (
+              <ShieldIcon className='size-3 text-primary-foreground' />
+            ) : (
+              <UserIcon className='size-3 text-primary-foreground' />
+            )}
             <Typography className='pr-px uppercase'>{user.role}</Typography>
           </Badge>
         </Avatar>
@@ -79,7 +78,7 @@ export default function TabsProfileIndexScreen() {
 
       <View className='flex-1 gap-3'>
         <Typography className='text-xs text-muted-foreground uppercase'>
-          Account Information
+          {t('index.account')}
         </Typography>
 
         <Card>
@@ -98,9 +97,9 @@ export default function TabsProfileIndexScreen() {
         </Card>
       </View>
 
-      <Button variant='destructive' onPress={logout}>
+      <Button variant='destructive' size='lg' onPress={logout}>
         <LogOutIcon className='size-4 text-destructive' />
-        <Typography>Log Out</Typography>
+        <Typography>{t('index.logout')}</Typography>
       </Button>
     </ScrollView>
   )

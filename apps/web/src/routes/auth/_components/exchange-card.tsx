@@ -1,10 +1,5 @@
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@rozumari/ui/components/card'
+import { CardContent } from '@rozumari/ui/components/card'
 import { Loader2Icon } from '@rozumari/ui/components/icons'
 import { toast } from '@rozumari/ui/components/toast'
 import { useMutation } from '@tanstack/react-query'
@@ -39,15 +34,8 @@ export const ExchangeCard: React.FC<{ token: string }> = ({ token }) => {
   }, [exchange, token])
 
   return (
-    <CardHeader>
-      <CardTitle>Almost there!</CardTitle>
-      <CardDescription>
-        Authenticating your details and taking you in...
-      </CardDescription>
-
-      <CardContent className='flex items-center justify-center py-6'>
-        <Loader2Icon className='size-8 animate-spin' />
-      </CardContent>
-    </CardHeader>
+    <CardContent className='flex items-center justify-center py-6'>
+      <Loader2Icon className='size-8 animate-spin' />
+    </CardContent>
   )
 }

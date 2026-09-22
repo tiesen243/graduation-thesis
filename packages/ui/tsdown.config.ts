@@ -8,6 +8,9 @@ export default defineConfig({
     'src/native/*.tsx',
   ],
   copy: ['src/tailwind.css'],
+  outputOptions: {
+    preserveModules: true,
+  },
   dts: true,
   minify: true,
   shims: true,

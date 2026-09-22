@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Rozumari",
+  "short_name": "Rozumari",
+  "description": "Rozumari is a web application that provides users with a platform to explore and share knowledge on various topics. It offers a user-friendly interface, personalized content recommendations, and interactive features to enhance the learning experience.",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#DBE4FF",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

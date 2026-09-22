@@ -1,11 +1,16 @@
 import type { UniwindConfig } from 'uniwind'
 
+import { getLocales } from 'expo-localization'
 import * as SecureStore from 'expo-secure-store'
 
-const REFRESH_TOKEN_KEY = 'auth.refreshToken'
-const ACCESS_TOKEN_KEY = 'auth.accessToken'
+import type { SupportedLanguage } from '@/lib/i18n'
 
-const THEME_KEY = 'config.theme'
+import {
+  ACCESS_TOKEN_KEY,
+  LANGUAGE_KEY,
+  REFRESH_TOKEN_KEY,
+  THEME_KEY,
+} from '@/lib/constants'
 
 const options = (group: string) => ({
   keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
@@ -72,6 +77,31 @@ export const setTheme = async (
 ): Promise<void> => {
   try {
     await SecureStore.setItemAsync(THEME_KEY, theme, options('config'))
+  } catch {
+    // noop
+  }
+}
+
+export const getLanguage = async (): Promise<SupportedLanguage> => {
+  try {
+    const language = await SecureStore.getItemAsync(
+      LANGUAGE_KEY,
+      options('config')
+    )
+    if (language) return language as SupportedLanguage
+
+    const [{ languageCode }] = getLocales()
+    if (languageCode) return languageCode as SupportedLanguage
+
+    return 'en'
+  } catch {
+    return 'en'
+  }
+}
+
+export const setLanguage = async (language: SupportedLanguage) => {
+  try {
+    await SecureStore.setItemAsync(LANGUAGE_KEY, language, options('config'))
   } catch {
     // noop
   }

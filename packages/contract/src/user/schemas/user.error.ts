@@ -36,9 +36,35 @@ export class UserAlreadyExists extends Schema.TaggedError<UserAlreadyExists>()(
   { httpApiStatus: 409 }
 ) {}
 
+export class UserAlreadyDeleted extends Schema.TaggedError<UserAlreadyDeleted>()(
+  'UserAlreadyDeleted',
+  ApiResponse({
+    status: 400,
+    message: 'User already deleted',
+    errorSchema: Schema.Struct({ id: UserId }),
+  }),
+  { httpApiStatus: 400 }
+) {}
+
+export class UserCannotChangeOwnRole extends Schema.TaggedError<UserCannotChangeOwnRole>()(
+  'UserCannotChangeOwnRole',
+  ApiResponse({
+    status: 400,
+    message: 'User cannot change own role',
+    errorSchema: Schema.Struct({ userId: UserId }),
+  }),
+  { httpApiStatus: 400 }
+) {}
+
 export class UserError extends Schema.TaggedError<UserError>()(
   'user/domain/UserError',
   {
-    reason: Schema.Union([UserQueryError, UserNotFound, UserAlreadyExists]),
+    reason: Schema.Union([
+      UserQueryError,
+      UserNotFound,
+      UserAlreadyExists,
+      UserAlreadyDeleted,
+      UserCannotChangeOwnRole,
+    ]),
   }
 ) {}

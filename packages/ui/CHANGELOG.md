@@ -1,3 +1,39 @@
+## @rozumari/ui@0.1.0
+
+### Minor Changes
+
+- Bump all monorepo packages to version 0.1.0 baseline.
+- Synchronize core services, clients, and internal shared libraries across the project.
+
+## @rozumari/ui@0.0.9
+
+### Patchs
+
+- added drop pill directly
+- added home screen for mobile app
+- improve UI
+
+## @rozumari/ui@0.0.8
+
+### Patches
+
+- Updated contract
+- Fix UI
+
+## @rozumari/ui@0.0.7
+
+### Bug Fixes and Improvements
+
+- Fixed various UI issues and errors.
+- Improved UI component stability and consistency.
+
+## @rozumari/ui@0.0.6
+
+### Patch Changes
+
+- **@rozumari/mobile**: Added BLE connection handling with Bluetooth permissions and device state checks.
+- **@rozumari/ui**: Added `Select` component supporting single/multi-selection with bottom sheet modal UI.
+
 ## @rozumari/ui@0.0.5
 
 ### Feature Additions & Mobile Navigation Restructuring

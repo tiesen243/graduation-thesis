@@ -1,3 +1,62 @@
+## @rozumari/api@0.1.1
+
+### Patchs Changes
+
+- added update-capcity api
+- completed drop pill workflow
+
+## @rozumari/api@0.1.0
+
+### Minor Changes
+
+- Bump all monorepo packages to version 0.1.0 baseline.
+- Synchronize core services, clients, and internal shared libraries across the project.
+
+## @rozumari/api@0.0.27
+
+### Patchs
+
+- added drop pill directly
+- added home screen for mobile app
+- improve UI
+
+## @rozumari/api@0.0.25
+
+### Bug Fixes
+
+- Streaming not work when use httpEffect
+
+## @rozumari/api@0.0.24
+
+### Patchs
+
+- added get device info in iot route
+
+## @rozumari/api@0.0.23
+
+### Patches
+
+- Update compartment capacity when a schedule is completed.
+
+## @rozumari/api@0.0.22
+
+### Bug Fixes
+
+- Added check quantity of compartments before creating or updating a schedule to prevent errors when the number of compartments is insufficient.
+
+## @rozumari/api@0.0.21
+
+### Added update schedule
+
+- Added a form to update the schedule for the pill box, allowing users to set reminders for taking their medication.
+- Added check new schedule items is in the schedule before adding them to the schedule, preventing duplicates.
+
+## @rozumari/api@0.0.20
+
+### Bug Fixes
+
+- Schedule mapper error
+
 ## @rozumari/api@0.0.19
 
 ### Feature Additions & Mobile Navigation Restructuring

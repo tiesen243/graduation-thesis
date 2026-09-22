@@ -19,7 +19,6 @@ import {
   EllipsisIcon,
   PackageIcon,
   PillIcon,
-  RefreshCwIcon,
   ShieldCheckIcon,
 } from '@rozumari/ui/components/icons'
 import { TabsContent } from '@rozumari/ui/components/tabs'
@@ -27,6 +26,7 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { useMemo } from 'react'
 
 import { CompartmentCard } from '@/routes/dashboard/pill-boxes/_components/compartment-card'
+import { DropPillButton } from '@/routes/dashboard/pill-boxes/_components/drop-pill-button'
 import { Metric } from '@/routes/dashboard/pill-boxes/_components/metric'
 import { useDevice } from '@/routes/dashboard/pill-boxes/_hooks/use-device'
 
@@ -88,9 +88,7 @@ export const OverviewTab: React.FC = () => {
               </Typography>
             </div>
 
-            <Button variant='link' className='hidden sm:flex'>
-              <RefreshCwIcon data-icon='inline-start' /> Sync device
-            </Button>
+            <DropPillButton id={device.id} compartments={device.compartments} />
           </div>
 
           <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>

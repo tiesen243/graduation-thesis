@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - '@rozumari/mobile@*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Mobile release tag'
+        required: true
+        type: string
 
 # You can leverage Vercel Remote Caching with Turbo to speed up your builds
 # @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
@@ -13,23 +19,24 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
-  release:
+  android:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./tools/github/actions/setup
 
-      - name: Extract Tag Name and Version
-        id: get_tag
-        run: |
-          TAG_NAME="${GITHUB_REF#refs/tags/}"
-          VERSION="${TAG_NAME##*@}"
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
 
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
-          echo "APP_VERSION=${VERSION}" >> $GITHUB_ENV
+      - name: Setup Android
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
 
       - name: Setup EAS CLI
         uses: expo/expo-github-action@v8
@@ -38,39 +45,43 @@ jobs:
           packager: bun
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Build APK & IPA on EAS Cloud
+      - name: Extract Tag Name and Version
+        id: get_tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG_NAME="${{ inputs.tag }}"
+          else
+            TAG_NAME="${GITHUB_REF_NAME}"
+          fi
+
+          VERSION="${TAG_NAME##*@}"
+
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          echo "APP_VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Build APK
         working-directory: ./apps/mobile
         env:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
         run: |
-          eas build --platform android --profile production --non-interactive
+          mkdir -p ./build
 
-      - name: Download Artifacts from EAS Build
-        working-directory: ./apps/mobile
-        run: |
-          mkdir -p ./build-artifacts
-          eas build:list --limit=2 --json --non-interactive > builds.json
+          eas build \
+            --output="./build/rozumari-v${{ env.APP_VERSION }}.apk" \
+            --platform android \
+            --profile production \
+            --non-interactive \
+            --local
 
-          jq -c '.[] | select(.artifacts.buildUrl != null) | {platform: .platform, url: .artifacts.buildUrl}' builds.json | while read -r item; do
-            PLATFORM=$(echo "$item" | jq -r '.platform | ascii_downcase')
-            URL=$(echo "$item" | jq -r '.url')
-
-            if [ "$PLATFORM" = "android" ]; then
-              EXT="apk"
-            else
-              EXT="ipa"
-            fi
-
-            FILENAME="./build-artifacts/rozumari-v${{ env.APP_VERSION }}.${EXT}"
-            echo "Downloading $PLATFORM build to $FILENAME..."
-            curl -L "$URL" -o "$FILENAME"
-          done
-
-      - name: Upload Build Artifacts to Existing GitHub Release
+      - name: Upload Build Artifacts to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          gh release upload "${{ env.TAG_NAME }}" \
-            apps/mobile/build-artifacts/rozumari-v*.apk \
-            apps/mobile/build-artifacts/rozumari-v*.ipa \
-            --clobber
+          if compgen -G "apps/mobile/build/*" > /dev/null; then
+            gh release upload "${{ env.TAG_NAME }}" \
+              apps/mobile/build/rozumari-v${{ env.APP_VERSION }}.apk \
+              --clobber
+          else
+            echo "No APK build artifact found, skipping upload."
+            exit 1
+          fi

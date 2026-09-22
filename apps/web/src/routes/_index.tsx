@@ -4,12 +4,14 @@ import { LandingHeader } from '@/components/landing/header'
 import { HeroSectoon } from '@/components/landing/hero-section'
 import { HowItWorkSection } from '@/components/landing/how-it-work-section'
 import { StoriesSection } from '@/components/landing/stories-section'
+import { createMetadata } from '@/lib/metadata'
 
 import type { Route } from './+types/_index'
 
-export const meta: Route.MetaFunction = () => [
-  { title: 'Rozumari - Thoughtful technology for everyday care' },
-]
+export const meta: Route.MetaFunction = () =>
+  createMetadata({
+    title: 'Thoughtful technology for everyday care',
+  })
 
 export default function IndexPage() {
   return (
@@ -29,7 +31,7 @@ export default function IndexPage() {
         >
           <h2 className='sr-only'>Rozumari highlights</h2>
 
-          <div className='mx-auto flex max-w-7xl flex-col gap-6 px-6 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:px-8'>
+          <div className='container flex flex-col gap-6 px-6 py-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:px-8'>
             <p className='font-medium text-foreground'>
               Designed for real routines, not perfect ones.
             </p>

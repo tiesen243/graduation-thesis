@@ -1,58 +1,94 @@
-import uasyncio
-import ujson
+import asyncio
+import json
+
 from machine import Pin
 
 from lib.api import Api
-
-led = Pin("LED", Pin.OUT)
+from lib.pins import Pins
+from tasks.drop import Drop
+from tasks.sync_schedule import SyncSchedule
 
 
 class Streaming:
     __instance: Streaming | None = None
 
-    api: Api
+    _api: Api
+    _led: Pin
+    _drop: Drop
+    _sync_schedule: SyncSchedule
 
-    def __init__(self):
-        self.api = Api.create()
+    def __init__(self) -> None:
+        self._api = Api.create()
+        self._drop = Drop.create()
+        self._sync_schedule = SyncSchedule.create()
+
+        pins = Pins.create()
+        self._led = pins.led
+
+    def _is_digit(self, val: str) -> bool:
+        try:
+            _ = int(val, 16)
+            return True
+        except ValueError:
+            return False
 
     async def _handle_payload(self, line: str) -> None:
-        if not line or line.startswith(":keep-alive"):
+        await asyncio.sleep(0.1)
+
+        clean_line = line.strip()
+
+        if not clean_line or clean_line.startswith(":") or self._is_digit(clean_line):
             return
 
-        if line.startswith("data:"):
-            line = line[5:].strip()
+        if clean_line.startswith("data:"):
+            clean_line = clean_line[5:].strip()
 
         try:
-            data = ujson.loads(line)
-        except ValueError as e:
-            print(f"Failed to parse JSON: {e}")
+            data = json.loads(clean_line)
+        except Exception:
             return
+
+        if not isinstance(data, dict):
+            return
+
+        print(f"[Stream] Received streaming payload: {data}")
 
         action = data.get("action")
         payload = data.get("payload")
 
         if action == "led":
-            print(f"Setting LED state to: {payload}")
-            led.value(int(payload))
+            print(f"[Stream] Setting LED state to: {payload}")
+            self._led.value(int(payload))  # pyright: ignore[reportArgumentType]
+
+        elif action == "sync_schedule":
+            print("[Stream] Syncing schedule...")
+            await self._sync_schedule.execute()
+
+        elif action == "drop":
+            print("[Stream] Executing drop command...")
+            await self._drop.execute(items=payload)
 
     async def start(self) -> None:
+        """Start continuous SSE streaming listener loop with backoff logic."""
+        print("[Startup] Streaming task initiated...")
+
         retry_delay = 2
         max_delay = 60
 
         while True:
             try:
-                await self.api.stream(
+                await asyncio.sleep(0.020)
+
+                await self._api.stream(
                     endpoint="/api/devices/subscribe",
                     callback=self._handle_payload,
                     timeout=30,
                 )
                 retry_delay = 2
-            except Exception as e:  # noqa: BLE001
-                print(f"Streaming error: {e}")
+            except Exception as e:
+                print(f"[Stream] Error: {e}. Retrying in {retry_delay} seconds...")
 
-            print(f"Reconnecting in {retry_delay} seconds...")
-            await uasyncio.sleep(retry_delay)
-
+            await asyncio.sleep(retry_delay)
             retry_delay = min(retry_delay * 2, max_delay)
 
     @classmethod

@@ -1,35 +1,35 @@
-import { RadioGroup, RadioGroupItem } from '@rozumari/ui/components/radio-group'
+import { ChevronRightIcon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
-import { View } from 'react-native'
-import { Uniwind, useUniwind } from 'uniwind'
+import * as Constants from 'expo-constants'
+import { useRouter } from 'expo-router'
+import { useTranslation } from 'react-i18next'
+import { Pressable, View } from 'react-native'
 
-import { setTheme } from '@/lib/secure-store'
+import { ProfileSettingsLanguage } from '@/components/profile/settings/language'
+import { ProfileSettingsTheme } from '@/components/profile/settings/theme'
 
 export default function TabsProfileSettingsScreen() {
-  const { theme, hasAdaptiveThemes } = useUniwind()
+  const { t } = useTranslation(['profile'])
+
+  const router = useRouter()
 
   return (
-    <View className='p-4'>
-      <View className='gap-2'>
-        <Typography variant='h2'>Dark Mode</Typography>
+    <View className='gap-4 p-4'>
+      <ProfileSettingsTheme />
 
-        <RadioGroup
-          value={hasAdaptiveThemes ? 'system' : theme}
-          onValueChange={async (value) => {
-            await setTheme(value as 'light' | 'dark' | 'system')
-            Uniwind.setTheme(value as 'light' | 'dark' | 'system')
-          }}
-        >
-          <RadioGroupItem value='light'>
-            <Typography>Off</Typography>
-          </RadioGroupItem>
-          <RadioGroupItem value='dark'>
-            <Typography>On</Typography>
-          </RadioGroupItem>
-          <RadioGroupItem value='system'>
-            <Typography>Use device settings</Typography>
-          </RadioGroupItem>
-        </RadioGroup>
+      <ProfileSettingsLanguage />
+
+      <Pressable
+        onPress={() => router.push('/(tabs)/profile/config')}
+        className='flex-row items-center justify-between'
+      >
+        <Typography variant='h3'>{t('config.title')}</Typography>
+        <ChevronRightIcon className='size-5 text-foreground' />
+      </Pressable>
+
+      <View className='gap-2'>
+        <Typography variant='h3'>{t('settings.version')}</Typography>
+        <Typography>{Constants.default.expoConfig?.version}</Typography>
       </View>
     </View>
   )

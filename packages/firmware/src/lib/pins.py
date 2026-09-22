@@ -1,14 +1,14 @@
 from machine import PWM, SPI, Pin
 
-from lib.config import load_config
+from lib.config import Config
 
 
 class Pins:
     __instance: Pins | None = None
 
     def __init__(self):
-        __config = load_config()
-        pins = __config.get("pins", {})
+        config = Config.create()
+        pins = config.get("pins", {})
 
         self.led = Pin(pins.get("led"), Pin.OUT)
         self.switch = Pin(int(pins.get("switch")), Pin.IN, Pin.PULL_UP)
@@ -37,11 +37,7 @@ class Pins:
         for pin in pins.get("stepper-drawer", []):
             self.stepper_drawer.append(Pin(int(pin), Pin.OUT))
 
-        self.led_r = Pin(int(pins.get("led-r")), Pin.OUT)
-        self.led_g = Pin(int(pins.get("led-g")), Pin.OUT)
-        self.led_b = Pin(int(pins.get("led-b")), Pin.OUT)
-
-        self.buzzer = PWM(Pin(int(pins.get("buzzer"))))
+        self.buzzer = Pin(int(pins.get("buzzer")), Pin.OUT, value=1)
 
         self.tft_spi = SPI(
             1,

@@ -35,7 +35,6 @@ export const schedules = snakeCase.table(
   (t) => [
     index('schedules_user_id_index').on(t.userId),
     index('schedules_device_id_index').on(t.deviceId),
-
     index('schedules_user_id_date_index').on(t.userId, t.date),
     index('schedules_device_id_date_index').on(t.deviceId, t.date),
   ]
@@ -50,7 +49,9 @@ export const scheduleItems = snakeCase.table(
       .references(() => schedules.id, { onDelete: 'cascade' })
       .$type<ScheduleId>(),
     slot: t.varchar({ length: 3 }).notNull(),
+
     quantity: t.integer().notNull(),
+    isRequired: t.boolean().notNull(),
   }),
   (t) => [
     primaryKey({ columns: [t.scheduleId, t.slot] }),

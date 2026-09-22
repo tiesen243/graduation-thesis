@@ -11,10 +11,13 @@ dist/
 
 # expo
 .expo/
+android/
+ios/
 expo-env.d.ts
 
 # python
 __pycache__/
+*.egg-info/
 
 # environment variables
 .env*

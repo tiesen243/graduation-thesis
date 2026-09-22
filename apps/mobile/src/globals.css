@@ -5,3 +5,12 @@
 @source '../../../packages/ui/dist/native/*.mjs';
 
 @source not '../../../packages/ui/dist/components/{dialog,input-group,sidebar,tooltip,switch,toast,tabs}.mjs';
+
+@theme {
+  --font-light: 'Geist-Light';
+  --font-normal: 'Geist-Regular';
+  --font-medium: 'Geist-Medium';
+  --font-semibold: 'Geist-SemiBold';
+  --font-bold: 'Geist-Bold';
+  --font-black: 'Geist-Black';
+}

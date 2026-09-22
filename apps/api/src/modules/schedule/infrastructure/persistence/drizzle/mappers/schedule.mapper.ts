@@ -6,7 +6,6 @@ import type { DrizzleMapper } from '@/shared/infrastructure/persistence/drizzle/
 import { Schedule } from '@/modules/schedule/domain/entities/schedule.entity'
 
 export const DrizzleScheduleMapper: DrizzleMapper<Schedule, ScheduleSchema> = {
-  toEntity: (entity) =>
-    Schedule.make({ ...entity, time: entity.time.slice(0, 5) }),
+  toEntity: (entity) => Schedule.make(entity),
   toRow: encodeSync(ScheduleSchema) as never,
 }

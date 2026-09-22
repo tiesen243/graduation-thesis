@@ -6,7 +6,7 @@ import * as Effect from 'effect/Effect'
 
 import { AppModule } from '@/modules/app.module'
 
-const { cli } = AppModule.create({
+const cli = AppModule.createCli({
   persistence: 'drizzle',
   providers: [],
 })

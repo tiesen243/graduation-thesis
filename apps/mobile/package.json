@@ -1,35 +1,47 @@
 {
   "name": "@rozumari/mobile",
-  "version": "0.0.3",
+  "version": "0.1.2",
   "private": false,
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "android": "expo start --android",
-    "clean": "git clean -fdx .cache .turbo node_modules",
+    "android": "expo run:android",
+    "clean": "git clean -fdx .cache .expo .turbo android ios node_modules",
     "dev": "expo start",
-    "ios": "expo start --ios",
-    "postinstall": "cd ../.. && bun run build -F './packages/*'"
+    "eas-build-post-install": "cd ../.. && bun run build --filter './packages/*'",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:effect",
+    "@expo-google-fonts/geist": "~0.4.2",
+    "@react-native-community/datetimepicker": "~9.2.1",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
     "@rozumari/ui": "workspace:*",
     "@tanstack/react-query": "catalog:prod",
     "@tiesen/effect-tanstack-query": "catalog:prod",
     "effect": "catalog:effect",
-    "expo": "^57.0.20",
-    "expo-constants": "^57.0.17",
-    "expo-linking": "^57.0.9",
-    "expo-router": "~57.0.19",
-    "expo-secure-store": "^57.0.3",
-    "expo-splash-screen": "^57.0.8",
-    "expo-web-browser": "^57.0.2",
+    "expo": "~58.0.0-preview.4",
+    "expo-camera": "~58.0.2",
+    "expo-constants": "~58.0.4",
+    "expo-device": "~58.0.1",
+    "expo-font": "~58.0.1",
+    "expo-linking": "~58.0.4",
+    "expo-localization": "~58.0.1",
+    "expo-location": "~58.0.4",
+    "expo-router": "~58.0.5",
+    "expo-secure-store": "~58.0.0",
+    "expo-splash-screen": "~58.0.1",
+    "expo-web-browser": "~58.0.1",
+    "i18next": "catalog:i18n",
     "react": "catalog:react",
+    "react-i18next": "catalog:i18n",
     "react-native": "catalog:react",
-    "react-native-safe-area-context": "~5.7.0",
-    "react-native-svg": "15.15.4"
+    "react-native-ble-manager": "~12.5.3",
+    "react-native-calendars-datepicker": "~1.2.4",
+    "react-native-safe-area-context": "~5.9.1",
+    "react-native-svg": "~15.15.5"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
@@ -42,6 +54,7 @@
   "expo": {
     "install": {
       "exclude": [
+        "@types/react",
         "typescript"
       ]
     }

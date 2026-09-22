@@ -6,7 +6,7 @@ export default function TabsHomeLayout() {
   const screenOptions = useOptions()
 
   return (
-    <Stack screenOptions={screenOptions}>
+    <Stack screenOptions={screenOptions} activityEnabled>
       <Stack.Screen name='index' options={{ title: 'Rozumari' }} />
     </Stack>
   )
