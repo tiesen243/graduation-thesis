@@ -35,9 +35,13 @@ class SyncSchedule:
         today = f"{today[0]:04d}-{today[1]:02d}-{today[2]:02d}"
 
         resp = await self._api.get("/api/schedules/today", params={"date": today})
-        is_saved = self._schedule.save_schedules(resp.get("data", []))
+        if resp.get("error") is not None:
+            print(
+                f"[SyncSchedule] Error fetching today's schedule: {resp.get('error')}"
+            )
+            return
 
-        if is_saved:
+        if self._schedule.save_schedules(resp.get("data", [])):
             print(f"[SyncSchedule] Schedules for {today} synced successfully.")
         else:
             print(f"[SyncSchedule] Failed to save schedules for {today}.")

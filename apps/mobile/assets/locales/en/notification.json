@@ -1,14 +1,17 @@
 {
   "title": "Notifications",
 
+  "required": "Required",
+  "optional": "Optional",
+  "level": {
+    "info": "Information",
+    "warning": "Warning",
+    "error": "Error"
+  },
+
   "detail": {
     "title": "Notification detail",
     "not_found": "Notification not found.",
-    "level": {
-      "info": "Information",
-      "warning": "Warning",
-      "error": "Error"
-    },
     "sections": {
       "details": "Notification Details",
       "device_id": "Device ID",

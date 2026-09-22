@@ -21,12 +21,12 @@ class SyncInfo:
         resp = await self._api.get("/api/devices/info")
         if resp.get("error") is not None:
             print(f"[SyncInfo] Error fetching device info: {resp.get('error')}")
+            return
 
         data = resp.get("data", {}).copy()
         data.pop("compartments", None)
-        is_success = config.set("device", data)
 
-        if is_success:
+        if config.set("device", data):
             print("[SyncInfo] Device info updated successfully.")
         else:
             print("[SyncInfo] Failed to update device info.")

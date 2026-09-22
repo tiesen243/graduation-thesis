@@ -1,7 +1,7 @@
 import asyncio
 
 import ntptime
-from machine import Pin
+from machine import Pin, reset
 
 from lib.config import Config
 from lib.pins import Pins
@@ -43,7 +43,7 @@ class Bootstrap:
 
         try:
             print("[Config] Started. Waiting for switch to be released...")
-            while self._switch.value() == 1:
+            while self._switch.value() == 0:
                 await asyncio.sleep(0.1)
         finally:
             self._ble.stop()
@@ -59,7 +59,23 @@ class Bootstrap:
         self._sync_schedule = SyncSchedule.create()
         self._sync_info = SyncInfo.create()
 
-        is_connected = await self._wifi.connect()
+        retry_count, max_retries, is_connected = 0, 3, False
+        while retry_count < max_retries:
+            is_connected = await self._wifi.connect()
+            if is_connected:
+                break
+            retry_count += 1
+            print(
+                f"[Setup] WiFi connection failed (Attempt {retry_count}/{max_retries})."
+            )
+            self._wifi.reset()
+            await asyncio.sleep(2)
+
+        if not is_connected:
+            print(
+                "[Setup] WiFi connection failed after maximum retries. Resetting device..."
+            )
+            reset()
 
         print("[Setup] Syncing time...")
         retry_count, max_retries = 0, 3
@@ -89,9 +105,7 @@ class Bootstrap:
         await gathered_tasks
 
     async def start(self) -> None:
-        switch_state = self._switch.value()
-
-        if switch_state == 1:
+        if self._switch.value() == 0:
             await self._config_mode()
         else:
             await self._normal_mode()

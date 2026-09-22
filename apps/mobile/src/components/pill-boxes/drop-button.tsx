@@ -21,6 +21,7 @@ import { useRuntime } from '@/hooks/use-runtime'
 
 interface DropItemConfig {
   slot: string
+  medicine: string
   quantity: number
 }
 
@@ -44,6 +45,7 @@ export const DropButton: React.FC<{
       else
         next[compartment.position] = {
           slot: compartment.position,
+          medicine: compartment.medicine ?? '',
           quantity: 1,
         }
       return next

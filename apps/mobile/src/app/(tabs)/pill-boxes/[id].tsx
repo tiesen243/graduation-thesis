@@ -45,7 +45,7 @@ export default function TabsPillBoxesDetailsScreen() {
         <>
           <PillBoxDetailsHeader device={device} />
 
-          <View className='flex-row items-center justify-between pt-2'>
+          <View className='flex-row items-center justify-between pt-4'>
             <Typography className='font-semibold'>
               {t('details.compartment_list', {
                 count: device.compartments.length,

@@ -132,7 +132,7 @@ class Api:
                     line_bytes = await asyncio.wait_for(
                         reader.readline(), timeout=timeout
                     )
-                except TimeoutError:
+                except Exception:
                     print("[Stream] Reconnecting due to idle timeout...")
                     break
 
