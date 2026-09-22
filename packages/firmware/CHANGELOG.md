@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.1
+
+### Patchs Changes
+
+- added update-capcity api
+- completed drop pill workflow
+
 ## @rozumari/firmware@0.1.0
 
 ### Minor Changes

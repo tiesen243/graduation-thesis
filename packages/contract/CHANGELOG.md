@@ -1,3 +1,10 @@
+## @rozumari/contract@0.1.1
+
+### Patchs Changes
+
+- added update-capcity api
+- completed drop pill workflow
+
 ## @rozumari/contract@0.1.0
 
 ### Minor Changes

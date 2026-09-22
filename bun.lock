@@ -13,7 +13,7 @@
     },
     "apps/api": {
       "name": "@rozumari/api",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "bin": "./dist/cli.mjs",
       "dependencies": {
         "@effect/platform-bun": "catalog:effect",
@@ -35,7 +35,7 @@
     },
     "apps/mobile": {
       "name": "@rozumari/mobile",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@expo-google-fonts/geist": "~0.4.2",
@@ -78,7 +78,7 @@
     },
     "apps/web": {
       "name": "@rozumari/web",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@react-router/dev": "^8.4.0",
@@ -109,7 +109,7 @@
     },
     "packages/contract": {
       "name": "@rozumari/contract",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "devDependencies": {
         "@rozumari/oxlint": "workspace:*",
         "@rozumari/tsconfig": "workspace:*",
@@ -127,7 +127,7 @@
     },
     "packages/firmware": {
       "name": "@rozumari/firmware",
-      "version": "0.1.0",
+      "version": "0.1.1",
     },
     "packages/lib": {
       "name": "@rozumari/lib",
