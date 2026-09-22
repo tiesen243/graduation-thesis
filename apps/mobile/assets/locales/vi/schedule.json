@@ -9,6 +9,7 @@
       "missed": "Bỏ lỡ"
     },
     "no_schedules": "Không tìm thấy lịch trình nào. Vui lòng thêm lịch trình để xem tại đây.",
+    "label": "Hôm nay {{date}}",
     "item": "Ngăn {{slot}} - {{quantity}} viên"
   },
 

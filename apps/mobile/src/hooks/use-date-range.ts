@@ -13,7 +13,7 @@ export const useDateRange = (startDate: string, endDate: string) => {
 
     const currentDate = new Date(start)
     while (currentDate.getTime() <= end.getTime()) {
-      const iso = currentDate.toISOString().split('t')[0] ?? ''
+      const [iso = ''] = currentDate.toISOString().split('T')
       dates.push({
         iso,
         weekday: formatDate(currentDate, {

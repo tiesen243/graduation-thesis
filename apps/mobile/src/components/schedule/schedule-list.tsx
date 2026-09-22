@@ -13,7 +13,7 @@ import { ScheduleCard } from '@/components/schedule/schedule-card'
 import { useDateRange } from '@/hooks/use-date-range'
 import { getTimezonedDate } from '@/lib/utils'
 
-const [today] = getTimezonedDate().toISOString().split('t')
+const [today] = getTimezonedDate().toISOString().split('T')
 
 export const ScheduleList: React.FC<{
   schedules: ListSchedulesDto.Output
@@ -125,7 +125,7 @@ export const ScheduleList: React.FC<{
                     className='rounded-md'
                   >
                     <Typography>
-                      {isToday ? `Today (${date})` : date}
+                      {isToday ? t('index.label', { date }) : date}
                     </Typography>
                   </Badge>
                 </View>

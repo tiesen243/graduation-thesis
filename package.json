@@ -19,8 +19,8 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "oxfmt": "^0.69.0",
-    "oxlint": "^1.84.0",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
     "tegami": "^1.5.0",
     "turbo": "^2.11.2"
   },
@@ -37,7 +37,7 @@
     },
     "i18n": {
       "i18next": "^26.4.2",
-      "react-i18next": "^17.0.14"
+      "react-i18next": "^17.0.15"
     },
     "effect": {
       "@effect/platform-bun": "^4.0.0-rc.117",

@@ -9,6 +9,7 @@
       "missed": "Missed"
     },
     "no_schedules": "No schedules found. Please add a schedule to see it here.",
+    "label": "Today {{date}}",
     "item": "Slot {{slot}} - {{quantity}} pills"
   },
 
