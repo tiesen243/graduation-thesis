@@ -1,4 +1,5 @@
 import type { ListNotificationsDto } from '@rozumari/contract/notification/dto/list-notifications.dto'
+import type { InfiniteData } from '@tanstack/react-query'
 
 import { Badge } from '@rozumari/ui/components/badge'
 import {
@@ -70,13 +71,25 @@ export default function TabsNotificationsIndexScreen() {
   }, [data?.pages, i18n.language])
 
   const handleRefresh = useCallback(async () => {
-    await queryClient.invalidateQueries({
-      queryKey: api.notification.unread.getQueryKey(),
-    })
-    await queryClient.resetQueries({
-      queryKey: api.notification.list.getQueryKey(),
-      exact: false,
-    })
+    queryClient.setQueryData(
+      api.notification.list.getQueryKey({ query: {} }),
+      (oldData: InfiniteData<unknown, unknown>) => {
+        if (!oldData) return oldData
+        return {
+          pages: oldData.pages.slice(0, 1),
+          pageParams: oldData.pageParams.slice(0, 1),
+        }
+      }
+    )
+
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: api.notification.unread.getQueryKey(),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: api.notification.list.getQueryKey({ query: {} }),
+      }),
+    ])
   }, [api.notification.unread, api.notification.list, queryClient])
 
   return (

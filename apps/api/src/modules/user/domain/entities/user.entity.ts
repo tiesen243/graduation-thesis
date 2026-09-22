@@ -18,7 +18,7 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
     if (!this.isActive)
       return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
     return Effect.succeed(
-      new User({ ...structuredClone(this), deletedAt: now })
+      new User({ ...structuredClone(this), deletedAt: now, updatedAt: now })
     )
   }
 
@@ -27,6 +27,8 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
   ): Effect.Effect<User, UserAlreadyDeleted> {
     if (!this.isActive)
       return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
-    return Effect.succeed(new User({ ...structuredClone(this), role }))
+    return Effect.succeed(
+      new User({ ...structuredClone(this), role, updatedAt: new Date() })
+    )
   }
 }

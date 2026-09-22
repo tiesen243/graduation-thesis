@@ -1,6 +1,7 @@
 import { Api } from '@rozumari/contract'
 import { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
+import { UpdateCapacityDto } from '@rozumari/contract/device/dto/update-capacity.dto'
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import * as Effect from 'effect/Effect'
 import { encodeText } from 'effect/Stream'
@@ -9,6 +10,7 @@ import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+import { UpdateCapacityUseCase } from '@/modules/device/application/use-case/update-capacity.use-case'
 
 export const DeviceIoTController = HttpApiBuilder.group(
   Api,
@@ -21,6 +23,12 @@ export const DeviceIoTController = HttpApiBuilder.group(
             ShowDeviceUseCase.use((s) => s.execute({ id }))
           ),
           Effect.map((data) => new ShowDeviceDto({ data }))
+        )
+      )
+
+      .handle('update-capacity', ({ payload }) =>
+        UpdateCapacityUseCase.use((s) => s.execute(payload)).pipe(
+          Effect.map((data) => new UpdateCapacityDto({ data }))
         )
       )
 
