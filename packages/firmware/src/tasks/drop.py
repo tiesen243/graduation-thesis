@@ -1,6 +1,9 @@
 import asyncio
 
+from machine import Pin
+
 from lib.api import Api
+from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.servo import Servo
 from modules.stepper import Stepper
@@ -14,13 +17,65 @@ class Drop:
     _stepper: Stepper
     _schedule: Schedule
 
+    _sensor_pin: Pin
+    _sensor_check_detected: bool
+
     def __init__(self) -> None:
         self._api = Api.create()
         self._servo = Servo.create()
         self._stepper = Stepper.create()
         self._schedule = Schedule.create()
 
+        pins = Pins.create()
+        self._sensor_pin = pins.sensor_check
+        self._sensor_check_detected = False
+
+    def _sensor_check_irq_handler(self, _pin: Pin) -> None:
+        """Interrupt service routine triggered when an item is detected falling into the discard bin."""
+        self._sensor_check_detected = True
+
+    async def _handle_post_dispense_sequence(self) -> bool:
+        """Executes drawer opening/closing and monitors discard bin for 5 seconds."""
+        print("[Drop] Opening drawer (rotating 90 degrees)...")
+        await self._stepper.move_drawer(deg=90)
+
+        print("[Drop] Waiting 5 seconds for user to retrieve items...")
+        await asyncio.sleep(5)
+
+        print("[Drop] Closing drawer (rotating -90 degrees)...")
+        await self._stepper.move_drawer(deg=-90)
+
+        # Attach interrupt to monitor discard bin before opening flap
+        self._sensor_check_detected = False
+        _ = self._sensor_pin.irq(
+            trigger=Pin.IRQ_FALLING, handler=self._sensor_check_irq_handler
+        )
+
+        print("[Drop] Opening discard flap (rotating 90 degrees)...")
+        await self._stepper.move_discard(deg=90)
+
+        print(
+            "[Drop] Waiting 5 seconds for remaining items to drop into discard bin..."
+        )
+        await asyncio.sleep(5)
+
+        print("[Drop] Closing discard flap (rotating -90 degrees)...")
+        await self._stepper.move_discard(deg=-90)
+
+        # Disable sensor interrupt after check window completes
+        _ = self._sensor_pin.irq(handler=None)
+
+        if self._sensor_check_detected:
+            print(
+                "[Drop] Error: Patient did not take medication (items detected in discard bin)."
+            )
+            return False
+
+        print("[Drop] Discard check clear: No leftover items detected.")
+        return True
+
     async def execute(self, items: list[dict], schedule_id: str | None = None) -> bool:
+        """Executes full dispensing flow: Servo drops -> Status evaluation -> Drawer & Discard sequence -> API Notifications."""
         required_failures = []
         optional_failures = []
 
@@ -51,6 +106,7 @@ class Drop:
             "optional_failures": optional_failures,
         }
         data = {"level": "error", "title": "Drop Failure", "payload": payload}
+
         if schedule_id:
             data["scheduleId"] = schedule_id
             data["body"] = (
@@ -60,6 +116,7 @@ class Drop:
             data["scheduleId"] = None
             data["body"] = "One or more required items were not dispensed."
 
+        # Handle required dispensing failures immediately
         if required_failures:
             print(f"[Drop] Failed with required failures: {len(required_failures)}")
             await self._api.post("/api/notifications/send", data=data)
@@ -67,8 +124,24 @@ class Drop:
                 _ = await self._schedule.update_status(schedule_id, "failed")
             return False
 
-        elif optional_failures:
-            print(f"[Drop] Successfully wtih warnings: {len(optional_failures)}")
+        # Run drawer and discard workflow if dispensing succeeded
+        discard_clean = await self._handle_post_dispense_sequence()
+        if not discard_clean:
+            data["level"] = "error"
+            data["title"] = "Medication Not Taken"
+            data["body"] = "Patient did not take the medication."
+
+            if schedule_id:
+                await self._schedule.update_status(schedule_id, "failed")
+
+            await self._api.post("/api/notifications/send", data=data)
+            return False
+
+        # Process optional failures or clean success
+        if optional_failures:
+            print(
+                f"[Drop] Successfully completed with warnings: {len(optional_failures)}"
+            )
             data["level"] = "warning"
             data["title"] = "Schedule completed with warnings"
             if schedule_id:
@@ -81,7 +154,7 @@ class Drop:
             await self._api.post("/api/notifications/send", data=data)
             return True
 
-        print("[Drop] Successfully completed.")
+        print("[Drop] Successfully completed whole workflow.")
         data["level"] = "info"
         data["title"] = "Drop completed"
         data["payload"] = {}
@@ -91,12 +164,13 @@ class Drop:
             data["body"] = f"Schedule {schedule_id} completed successfully."
         else:
             data["body"] = "Drop completed successfully."
-        await self._api.post("/api/notifications/send", data=data)
 
+        await self._api.post("/api/notifications/send", data=data)
         return True
 
     @classmethod
     def create(cls) -> Drop:
+        """Factory method to get or create the Drop singleton instance."""
         if cls.__instance is None:
             cls.__instance = Drop()
         return cls.__instance

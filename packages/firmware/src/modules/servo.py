@@ -7,9 +7,7 @@ from lib.pins import Pins
 
 
 class Servo:
-    """Singleton controller for managing PWM servo motors with speed control and item dispensing."""
-
-    _instance = None
+    __instance = None
 
     _SPEED_PRESETS = {  # noqa: RUF012
         1: (2, 20),  # Very Slow
@@ -99,6 +97,6 @@ class Servo:
     @classmethod
     def create(cls) -> Servo:
         """Factory method to get or create the Servo singleton instance."""
-        if cls._instance is None:
-            cls._instance = Servo()
-        return cls._instance
+        if cls.__instance is None:
+            cls.__instance = Servo()
+        return cls.__instance
