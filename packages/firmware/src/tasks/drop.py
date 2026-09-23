@@ -110,7 +110,7 @@ class Drop:
         for item in items:
             slot = item.get("slot")
             quantity = item.get("quantity", 1)
-            is_required = item.get("required", True)
+            is_required = item.get("isRequired", True)
             if not slot:
                 print(t("drop.invalid_item", item=item))
                 continue
