@@ -1,3 +1,13 @@
+## @rozumari/firmware@0.1.4
+
+### Patch Changes
+
+- supported i18n for firmware
+
+### Patch Changes
+
+- Bump deps
+
 ## @rozumari/firmware@0.1.3
 
 ### Patch Changes
