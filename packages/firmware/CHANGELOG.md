@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.3
+
+### Patch Changes
+
+- Clamp capacity values to a minimum of zero during subtraction mode to prevent negative values.
+- Update dispensing logic to track actual dropped item counts and immediately deduct slot capacity upon physical release.
+
 ## @rozumari/firmware@0.1.2
 
 ### Patch Changes

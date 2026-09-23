@@ -1,46 +1,48 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Patch Changes\n\n- Config timeout for drop and open pill box\n- Fix default values for create schedule form\n"
-    filename: 2026-09-23-mudg6kyn.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Patch Changes\n\n- Clamp capacity values to a minimum of zero during subtraction mode to prevent negative values.\n- Update dispensing logic to track actual dropped item counts and immediately deduct slot capacity upon physical release.\n"
+    filename: 2026-09-23-mudkxx7w.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
-  - id: npm:@rozumari/github
-    updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/ui
     updated: false
   - id: npm:@rozumari/eda
     updated: false
-  - changelogIds:
-      - 2026-09-23-mudg6kyn.md
-    id: npm:@rozumari/mobile
-    updated: true
   - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/api
     updated: false
   - id: npm:@rozumari/contract
     updated: false
   - changelogIds:
-      - 2026-09-23-mudg6kyn.md
+      - 2026-09-23-mudkxx7w.md
     id: npm:@rozumari/firmware
     updated: true
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
     updated: false
+  - id: npm:@rozumari/web
+    updated: false
+  - id: npm:@rozumari/tsconfig
+    updated: false
+  - changelogIds:
+      - 2026-09-23-mudkxx7w.md
+    id: npm:@rozumari/api
+    updated: true
+  - id: npm:@rozumari/github
+    updated: false
+  - changelogIds:
+      - 2026-09-23-mudkxx7w.md
+    id: npm:@rozumari/mobile
+    updated: true
 npm:packages:
   - id: npm:rozumari
-  - id: npm:@rozumari/github
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/mobile
   - id: npm:@rozumari/lib
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/api
   - id: npm:@rozumari/contract
   - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/github
+  - id: npm:@rozumari/mobile
