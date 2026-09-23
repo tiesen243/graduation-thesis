@@ -1,44 +1,46 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug Fixes\n\n- build\n"
-    filename: 2026-09-23-mucykb3g.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Patch Changes\n\n- Config timeout for drop and open pill box\n- Fix default values for create schedule form\n"
+    filename: 2026-09-23-mudg6kyn.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/api
-    updated: false
-  - changelogIds:
-      - 2026-09-23-mucykb3g.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - id: npm:@rozumari/eda
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/oxlint
     updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
+  - id: npm:@rozumari/eda
+    updated: false
+  - changelogIds:
+      - 2026-09-23-mudg6kyn.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/web
+    updated: false
+  - id: npm:@rozumari/api
+    updated: false
   - id: npm:@rozumari/contract
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
+  - changelogIds:
+      - 2026-09-23-mudg6kyn.md
+    id: npm:@rozumari/firmware
+    updated: true
   - id: npm:@rozumari/ui
     updated: false
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/eda
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/contract
   - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/eda
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/ui

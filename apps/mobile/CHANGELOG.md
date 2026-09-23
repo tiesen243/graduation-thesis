@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.1.4
+
+### Patch Changes
+
+- Config timeout for drop and open pill box
+- Fix default values for create schedule form
+
 ## @rozumari/mobile@0.1.3
 
 ### Bug Fixes
