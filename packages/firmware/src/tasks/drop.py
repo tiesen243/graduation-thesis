@@ -45,7 +45,7 @@ class Drop:
 
     async def _handle_post_dispense_sequence(self) -> bool:
         """Executes drawer opening/closing and monitors discard bin for 5 seconds."""
-        print("[Drop] Opening drawer (rotating 90 degrees)...")
+        print("[Drop] Opening drawer...")
         await self._stepper.move_drawer(deg=90)
 
         print(
@@ -53,7 +53,7 @@ class Drop:
         )
         await asyncio.sleep(self._open_timeout)
 
-        print("[Drop] Closing drawer (rotating -90 degrees)...")
+        print("[Drop] Closing drawer...")
         await self._stepper.move_drawer(deg=-90)
 
         # Attach interrupt to monitor discard bin before opening flap
@@ -62,7 +62,7 @@ class Drop:
             trigger=Pin.IRQ_FALLING, handler=self._sensor_check_irq_handler
         )
 
-        print("[Drop] Opening discard flap (rotating 90 degrees)...")
+        print("[Drop] Opening discard flap...")
         await self._stepper.move_discard(deg=90)
 
         print(
@@ -70,7 +70,7 @@ class Drop:
         )
         await asyncio.sleep(self._close_timeout)
 
-        print("[Drop] Closing discard flap (rotating -90 degrees)...")
+        print("[Drop] Closing discard flap...")
         await self._stepper.move_discard(deg=-90)
 
         # Disable sensor interrupt after check window completes
