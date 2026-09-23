@@ -137,10 +137,12 @@ class Drop:
         if dispensed_successfully:
             await self._deduct_medicine_capacity(dispensed_successfully)
 
-        payload = {
-            "required_failures": required_failures,
-            "optional_failures": optional_failures,
-        }
+        payload = {}
+        if required_failures:
+            payload["required_failures"] = required_failures
+        if optional_failures:
+            payload["optional_failures"] = optional_failures
+
         data = {
             "level": "error",
             "title": t("notification.drop_failure"),
