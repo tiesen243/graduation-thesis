@@ -4,6 +4,7 @@ import time
 from machine import Pin
 
 from lib.config import Config
+from lib.i18n import t
 from lib.pins import Pins
 
 
@@ -41,7 +42,7 @@ class Servo:
         """Control servo position with real-time drop detection check inside the step loop."""
         servo = self._servo_map.get(slot)
         if not servo:
-            print(f"[Servo] Servo not found for slot '{slot}'")
+            print(t("servo.not_found", slot=slot))
             return False
 
         if pulse_us == 0:
@@ -81,7 +82,7 @@ class Servo:
 
     async def drop(self, slot: str, quantity: int = 1) -> tuple[bool, int]:
         """Dispense items and always disable the servo PWM when finished."""
-        print(f"[Servo] Slot {slot} | Starting dispensing: {quantity} items...")
+        print(t("servo.start", slot=slot, quantity=quantity))
         dispensed_count = 0
 
         try:
@@ -104,18 +105,12 @@ class Servo:
                             pill_dropped = True
                             dispensed_count += 1
                             control_task.cancel()
-                            print(
-                                f"[Servo] Slot {slot} | "
-                                f"Item {i + 1} dispensed successfully!"
-                            )
+                            print(t("servo.dispensed", slot=slot, item=i + 1))
                             break
 
                         if (time.time() - start_time) > self._timeout:
                             control_task.cancel()
-                            print(
-                                f"[Servo] Slot {slot} Timeout while "
-                                f"dispensing item {i + 1}!"
-                            )
+                            print(t("servo.timeout", slot=slot, item=i + 1))
                             break
 
                         await asyncio.sleep(0.005)
@@ -140,8 +135,12 @@ class Servo:
                     return False, dispensed_count
 
             print(
-                f"[Servo] Slot {slot} successfully dispensed "
-                f"{dispensed_count}/{quantity} items!"
+                t(
+                    "servo.completed",
+                    slot=slot,
+                    dispensed=dispensed_count,
+                    quantity=quantity,
+                )
             )
             return True, dispensed_count
         finally:

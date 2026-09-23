@@ -3,6 +3,7 @@ import gc
 import json
 
 from lib.config import Config
+from lib.i18n import t
 
 
 class Api:
@@ -133,7 +134,7 @@ class Api:
                         reader.readline(), timeout=timeout
                     )
                 except Exception:
-                    print("[Stream] Reconnecting due to idle timeout...")
+                    print(t("stream.idle_timeout"))
                     break
 
                 if not line_bytes:
@@ -148,7 +149,7 @@ class Api:
                 await asyncio.sleep(0)
 
         except Exception as e:
-            print(f"Error in streaming request to {url}: {e}")
+            print(t("stream.request_error", url=url, error=e))
 
         finally:
             if writer:

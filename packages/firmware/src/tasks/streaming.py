@@ -4,6 +4,7 @@ import json
 from machine import Pin
 
 from lib.api import Api
+from lib.i18n import t
 from lib.pins import Pins
 from tasks.drop import Drop
 from tasks.sync_schedule import SyncSchedule
@@ -51,26 +52,26 @@ class Streaming:
         if not isinstance(data, dict):
             return
 
-        print(f"[Stream] Received streaming payload: {data}")
+        print(t("stream.received", data=data))
 
         action = data.get("action")
         payload = data.get("payload")
 
         if action == "led":
-            print(f"[Stream] Setting LED state to: {payload}")
+            print(t("stream.led", payload=payload))
             self._led.value(int(payload))  # pyright: ignore[reportArgumentType]
 
         elif action == "sync_schedule":
-            print("[Stream] Syncing schedule...")
+            print(t("stream.sync_schedule"))
             await self._sync_schedule.execute()
 
         elif action == "drop":
-            print("[Stream] Executing drop command...")
+            print(t("stream.drop"))
             await self._drop.execute(items=payload)
 
     async def start(self) -> None:
         """Start continuous SSE streaming listener loop with backoff logic."""
-        print("[Startup] Streaming task initiated...")
+        print(t("stream.started"))
 
         retry_delay = 2
         max_delay = 60
@@ -86,7 +87,7 @@ class Streaming:
                 )
                 retry_delay = 2
             except Exception as e:
-                print(f"[Stream] Error: {e}. Retrying in {retry_delay} seconds...")
+                print(t("stream.error_retry", error=e, seconds=retry_delay))
 
             await asyncio.sleep(retry_delay)
             retry_delay = min(retry_delay * 2, max_delay)

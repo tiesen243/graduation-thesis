@@ -2,15 +2,14 @@ import asyncio
 import time
 
 from lib.config import Config
+from lib.i18n import t
 from lib.schedule import Schedule
 from lib.utils import get_current_time, rgb
 from modules.st7735 import ST7735
 
 
 class Display:
-    """LCD UI: clock, device/schedule information and temporary drop result dialog."""
-
-    __instance: "Display | None" = None
+    __instance: Display | None = None
 
     _lcd: ST7735
     _schedule: Schedule
@@ -62,9 +61,19 @@ class Display:
     def show_drop_result(self, success: bool, title: str, body: str = "") -> None:
         """Show a compact drop result dialog for 5 seconds without blocking the drop task."""
         self._dialog = {
+            "type": "result",
             "success": success,
             "title": title,
             "body": body,
+        }
+        self._dialog_until = time.ticks_add(time.ticks_ms(), 5000)
+
+    def show_schedule_info(self, schedule: dict) -> None:
+        """Show schedule details on the LCD when an automatic schedule starts."""
+        self._dialog = {
+            "type": "schedule",
+            "success": True,
+            "schedule": schedule,
         }
         self._dialog_until = time.ticks_add(time.ticks_ms(), 5000)
 
@@ -176,16 +185,18 @@ class Display:
 
         y = 57
         if not snapshot:
-            self._text(4, y, "No pending schedules", gray)
+            self._text(4, y, t("lcd.no_pending"), gray)
             self._main_drawn = True
             self._last_render = "main"
             return
 
-        self._text(4, y, "SCHEDULES", blue)
+        self._text(4, y, t("lcd.schedules"), blue)
         y += 11
-        for index, (_schedule_id, _date, schedule_time, item_count) in enumerate(snapshot, 1):
+        for index, (_schedule_id, _date, schedule_time, item_count) in enumerate(
+            snapshot, 1
+        ):
             schedule_time = schedule_time[:5] if schedule_time else "--:--"
-            item_label = "item" if item_count == 1 else "items"
+            item_label = t("lcd.item_one") if item_count == 1 else t("lcd.item_many")
             label = f"{index}. {schedule_time}  {item_count} {item_label}"
             self._text(4, y, label[:26], white)
             y += 11
@@ -206,7 +217,10 @@ class Display:
         # Update only the fields that changed. A second change touches only
         # SS; a minute change touches MM (and SS); an hour change touches HH
         # (and any other changed fields). The rest of the LCD stays untouched.
-        if clock != self._last_clock or self._last_date != f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}":
+        if (
+            clock != self._last_clock
+            or self._last_date != f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}"
+        ):
             self._update_clock(now)
 
     def _draw_dialog(self, remaining: int | None = None) -> None:
@@ -216,15 +230,24 @@ class Display:
         green = rgb(50, 220, 100)
         red = rgb(240, 70, 70)
         gray = rgb(180, 180, 180)
+        blue = rgb(50, 160, 255)
 
-        # Compact dialog: enough room for the short status without covering
-        # the whole LCD. It is intentionally redrawn only when the countdown changes.
+        dialog_type = self._dialog.get("type", "result")
+
+        self._lcd.fill(black)
+
+        if dialog_type == "schedule":
+            self._draw_schedule_dialog(remaining)
+            return
+
+        # Compact result dialog.
         box_x1, box_y1 = 20, 34
         box_x2, box_y2 = width - 20, height - 34
         accent = green if self._dialog["success"] else red
 
-        self._lcd.fill(black)
-        self._lcd.rect((box_x1, box_y1), (box_x2 - box_x1 + 1, box_y2 - box_y1 + 1), accent)
+        self._lcd.rect(
+            (box_x1, box_y1), (box_x2 - box_x1 + 1, box_y2 - box_y1 + 1), accent
+        )
 
         title = str(self._dialog["title"])[:20]
         title_x = max(box_x1 + 4, (width - len(title) * 6) // 2)
@@ -236,20 +259,79 @@ class Display:
 
         if remaining is None:
             remaining = 5
-        countdown = f"Auto close in {remaining}s"
+        countdown = t("lcd.auto_close", seconds=remaining)
         countdown_x = max(box_x1 + 4, (width - len(countdown) * 6) // 2)
         self._text(countdown_x, box_y2 - 13, countdown, white, size=1)
 
-    def _update_dialog(self, remaining: int) -> None:
-        # Keep the dialog compact and only redraw its countdown area.
+    def _draw_schedule_dialog(self, remaining: int | None = None) -> None:
+        """Render schedule details before the dispensing sequence starts."""
         width, height = self._lcd.size()
         black = rgb(0, 0, 0)
         white = rgb(255, 255, 255)
+        gray = rgb(180, 180, 180)
+        blue = rgb(50, 160, 255)
+
+        schedule = self._dialog.get("schedule", {})
+        schedule_id = str(schedule.get("id", ""))
+        date = str(schedule.get("date", ""))
+        schedule_time = str(schedule.get("time", ""))[:5]
+        items = schedule.get("items") or []
+
+        box_x1, box_y1 = 3, 3
+        box_x2, box_y2 = width - 4, height - 4
+        self._lcd.rect(
+            (box_x1, box_y1),
+            (box_x2 - box_x1 + 1, box_y2 - box_y1 + 1),
+            blue,
+        )
+
+        title = t("lcd.schedule")
+        title_x = max(box_x1 + 4, (width - len(title) * 6) // 2)
+        self._text(title_x, 7, title, blue, size=1)
+
+        self._text(7, 20, f"{t('lcd.schedule_id')}: {schedule_id}"[:25], white)
+        self._text(
+            7, 31, f"{t('lcd.schedule_datetime')}: {date} {schedule_time}"[:25], gray
+        )
+        self._text(7, 43, t("lcd.schedule_items"), blue)
+
+        y = 54
+        for item in items[:5]:
+            slot = str(item.get("slot", "-"))
+            medicine = str(item.get("medicine", "-"))
+            quantity = item.get("quantity", 0)
+            # Keep each row on one line so the complete schedule remains visible.
+            label = f"{slot} {medicine} x{quantity}"
+            self._text(7, y, label[:24], white)
+            y += 11
+
+        if remaining is None:
+            remaining = 5
+        countdown = t("lcd.auto_close", seconds=remaining)
+        countdown_x = max(box_x1 + 4, (width - len(countdown) * 6) // 2)
+        self._text(countdown_x, box_y2 - 10, countdown, gray)
+
+    def _update_dialog(self, remaining: int) -> None:
+        # Only redraw the countdown area.
+        width, height = self._lcd.size()
+        black = rgb(0, 0, 0)
+        white = rgb(255, 255, 255)
+
+        if self._dialog.get("type", "result") == "schedule":
+            box_x1, box_y1 = 3, 3
+            box_x2, box_y2 = width - 4, height - 4
+            self._lcd.fill_rect(
+                (box_x1 + 1, box_y2 - 17), (box_x2 - box_x1 - 1, 17), black
+            )
+            countdown = t("lcd.auto_close", seconds=remaining)
+            countdown_x = max(box_x1 + 4, (width - len(countdown) * 6) // 2)
+            self._text(countdown_x, box_y2 - 10, countdown, white, size=1)
+            return
+
         box_x1, box_y1 = 20, 34
         box_x2, box_y2 = width - 20, height - 34
-
         self._lcd.fill_rect((box_x1 + 1, box_y2 - 17), (box_x2 - box_x1 - 1, 17), black)
-        countdown = f"Auto close in {remaining}s"
+        countdown = t("lcd.auto_close", seconds=remaining)
         countdown_x = max(box_x1 + 4, (width - len(countdown) * 6) // 2)
         self._text(countdown_x, box_y2 - 13, countdown, white, size=1)
 
@@ -274,7 +356,7 @@ class Display:
         separator_y = logo_y + 19
         self._lcd.hline((logo_x, separator_y), text_width, blue)
 
-        status = "Configuring..."
+        status = t("lcd.configuring")
         status_width = len(status) * 6
         status_x = max(0, (width - status_width) // 2)
         self._lcd.text((status_x, separator_y + 9), status, gray, size=1)
@@ -287,7 +369,7 @@ class Display:
         self._last_schedule_snapshot = ()
 
     async def start(self) -> None:
-        print("[Startup] Display task active...")
+        print(t("display.started"))
         while True:
             try:
                 now_ms = time.ticks_ms()
@@ -295,7 +377,10 @@ class Display:
                 if time.ticks_diff(self._boot_until, now_ms) > 0:
                     # Boot logo stays untouched on the LCD.
                     pass
-                elif self._dialog is not None and time.ticks_diff(self._dialog_until, now_ms) > 0:
+                elif (
+                    self._dialog is not None
+                    and time.ticks_diff(self._dialog_until, now_ms) > 0
+                ):
                     remaining_ms = time.ticks_diff(self._dialog_until, now_ms)
                     remaining = max(1, (remaining_ms + 999) // 1000)
                     if self._last_render != "dialog":
@@ -311,14 +396,14 @@ class Display:
                         self._main_drawn = False
                     self._update_main()
             except Exception as error:
-                print(f"[Display] Error: {error}")
+                print(t("display.error", error=error))
 
             # Run frequently for responsive dialog transitions, but only touch
             # the LCD when something actually changed.
-            await asyncio.sleep_ms(100)
+            await asyncio.sleep(0.100)
 
     @classmethod
-    def create(cls) -> "Display":
+    def create(cls) -> Display:
         if cls.__instance is None:
             cls.__instance = Display()
         return cls.__instance

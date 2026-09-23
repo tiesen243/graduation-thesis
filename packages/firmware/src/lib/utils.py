@@ -1,6 +1,7 @@
 import time
 
 from lib.config import Config
+from lib.i18n import t
 
 
 def get_current_time() -> time.struct_time:
@@ -41,7 +42,7 @@ def clamp(value: int, _min: int, _max: int) -> int:
 def print_table(data: list[dict], keys: list[str] | None = None) -> None:
     """Print records as a compact ASCII table for diagnostics."""
     if not data:
-        print("Empty table")
+        print(t("utils.empty_table"))
         return
 
     if keys is None:

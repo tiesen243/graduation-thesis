@@ -1,5 +1,6 @@
 from lib.api import Api
 from lib.config import Config
+from lib.i18n import t
 
 
 class SyncInfo:
@@ -20,16 +21,16 @@ class SyncInfo:
 
         resp = await self._api.get("/api/devices/info")
         if resp.get("error") is not None:
-            print(f"[SyncInfo] Error fetching device info: {resp.get('error')}")
+            print(t("sync_info.error", error=resp.get("error")))
             return
 
         data = resp.get("data", {}).copy()
         data.pop("compartments", None)
 
         if config.set("device", data):
-            print("[SyncInfo] Device info updated successfully.")
+            print(t("sync_info.updated"))
         else:
-            print("[SyncInfo] Failed to update device info.")
+            print(t("sync_info.failed"))
 
     @classmethod
     def create(cls) -> SyncInfo:
