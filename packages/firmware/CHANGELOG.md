@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.2
+
+### Patch Changes
+
+- Config timeout for drop and open pill box
+- Fix default values for create schedule form
+
 ## @rozumari/firmware@0.1.1
 
 ### Patchs Changes
