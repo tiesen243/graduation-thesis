@@ -4,6 +4,7 @@ from machine import Pin
 
 from lib.api import Api
 from lib.config import Config
+from lib.i18n import t
 from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.servo import Servo
@@ -55,7 +56,7 @@ class Drop:
         ]
 
         if slots_payload:
-            print(f"[Drop] Deducting medicine capacity for slots: {slots_payload}")
+            print(t("drop.deducting", slots=slots_payload))
             await self._api.post(
                 "/api/devices/update-capacity",
                 data={
@@ -66,15 +67,13 @@ class Drop:
 
     async def _handle_post_dispense_sequence(self) -> bool:
         """Executes drawer opening/closing sequence and monitors the discard bin for uncollected items."""
-        print("[Drop] Opening drawer...")
+        print(t("drop.opening_drawer"))
         await self._stepper.move_drawer(deg=90)
 
-        print(
-            f"[Drop] Waiting {self._open_timeout} seconds for user to retrieve items..."
-        )
+        print(t("drop.waiting_retrieve", seconds=self._open_timeout))
         await asyncio.sleep(self._open_timeout)
 
-        print("[Drop] Closing drawer...")
+        print(t("drop.closing_drawer"))
         await self._stepper.move_drawer(deg=-90)
 
         # Attach interrupt to monitor discard bin before opening flap
@@ -83,27 +82,23 @@ class Drop:
             trigger=Pin.IRQ_FALLING, handler=self._sensor_check_irq_handler
         )
 
-        print("[Drop] Opening discard flap...")
+        print(t("drop.opening_discard"))
         await self._stepper.move_discard(deg=90)
 
-        print(
-            f"[Drop] Waiting {self._close_timeout} seconds for remaining items to drop into discard bin..."
-        )
+        print(t("drop.waiting_discard", seconds=self._close_timeout))
         await asyncio.sleep(self._close_timeout)
 
-        print("[Drop] Closing discard flap...")
+        print(t("drop.closing_discard"))
         await self._stepper.move_discard(deg=-90)
 
         # Disable sensor interrupt after check window completes
         _ = self._sensor_pin.irq(handler=None)
 
         if self._sensor_check_detected:
-            print(
-                "[Drop] Error: Patient did not take medication (items detected in discard bin)."
-            )
+            print(t("drop.not_taken_error"))
             return False
 
-        print("[Drop] Discard check clear: No leftover items detected.")
+        print(t("drop.discard_check_clear"))
         return True
 
     async def execute(self, items: list[dict], schedule_id: str | None = None) -> bool:
@@ -117,12 +112,10 @@ class Drop:
             quantity = item.get("quantity", 1)
             is_required = item.get("required", True)
             if not slot:
-                print(f"[Drop] Invalid item: {item}")
+                print(t("drop.invalid_item", item=item))
                 continue
 
-            print(
-                f"[Drop] Dispensing slot '{slot}' with requested quantity {quantity}..."
-            )
+            print(t("drop.dispensing", slot=slot, quantity=quantity))
 
             success, actual_qty = await self._servo.drop(slot=slot, quantity=quantity)
             if actual_qty > 0:
@@ -132,8 +125,7 @@ class Drop:
                 failure = {
                     "slot": slot,
                     "medicine": item.get("medicine"),
-                    "requested_quantity": quantity,
-                    "dispensed_quantity": actual_qty,
+                    "quantity": max(0, quantity - actual_qty),
                 }
                 if is_required:
                     required_failures.append(failure)
@@ -145,78 +137,102 @@ class Drop:
         if dispensed_successfully:
             await self._deduct_medicine_capacity(dispensed_successfully)
 
-        payload = {
-            "required_failures": required_failures,
-            "optional_failures": optional_failures,
+        payload = {}
+        if required_failures:
+            payload["required_failures"] = required_failures
+        if optional_failures:
+            payload["optional_failures"] = optional_failures
+
+        data = {
+            "level": "error",
+            "title": t("notification.drop_failure"),
+            "payload": payload,
         }
-        data = {"level": "error", "title": "Drop Failure", "payload": payload}
 
         if schedule_id:
             data["scheduleId"] = schedule_id
-            data["body"] = (
-                f"Schedule {schedule_id} failed because one or more required items were not fully dispensed."
+            data["body"] = t(
+                "notification.schedule_required_failed", schedule_id=schedule_id
             )
         else:
             data["scheduleId"] = None
-            data["body"] = "One or more required items were not fully dispensed."
+            data["body"] = t("notification.required_failed")
 
         # Handle required dispensing failures immediately. A schedule_id means
         # this was triggered automatically by the device schedule; without it,
         # the request came manually from the app.
-        drop_type = "AUTO" if schedule_id else "MANUAL"
         if required_failures:
-            print(f"[Drop] Failed with required failures: {len(required_failures)} ({drop_type})")
+            print(
+                t(
+                    "drop.required_failed",
+                    count=len(required_failures),
+                )
+            )
             await self._api.post("/api/notifications/send", data=data)
             if schedule_id:
                 _ = await self._schedule.update_status(schedule_id, "failed")
-            self._display.show_drop_result(False, f"{drop_type} FAILED", "Item failed")
+            self._display.show_drop_result(
+                False,
+                t("lcd.auto_failed") if schedule_id else t("lcd.manual_failed"),
+                t("lcd.drop_item_failed"),
+            )
             return False
 
         # Open drawer and handle discard sequence
         discard_clean = await self._handle_post_dispense_sequence()
         if not discard_clean:
             data["level"] = "error"
-            data["title"] = "Medication Not Taken"
-            data["body"] = "Patient did not take the medication."
+            data["title"] = t("notification.medication_not_taken")
+            data["body"] = t("notification.patient_not_taken")
 
             if schedule_id:
                 await self._schedule.update_status(schedule_id, "failed")
 
             await self._api.post("/api/notifications/send", data=data)
-            self._display.show_drop_result(False, f"{drop_type} FAILED", "Not taken")
+            self._display.show_drop_result(
+                False,
+                t("lcd.auto_failed") if schedule_id else t("lcd.manual_failed"),
+                t("lcd.drop_not_taken"),
+            )
             return False
 
         # Process optional failures or clean success
         if optional_failures:
-            print(
-                f"[Drop] Successfully completed with warnings: {len(optional_failures)}"
-            )
+            print(t("drop.success_warning", count=len(optional_failures)))
             data["level"] = "warning"
-            data["title"] = "Schedule completed with warnings"
+            data["title"] = t("notification.schedule_warning")
             if schedule_id:
                 await self._schedule.update_status(schedule_id, "completed")
-                data["body"] = (
-                    f"Schedule {schedule_id} completed, but one or more optional items were not fully dispensed."
+                data["body"] = t(
+                    "notification.schedule_optional_warning", schedule_id=schedule_id
                 )
             else:
-                data["body"] = "One or more optional items were not fully dispensed."
+                data["body"] = t("notification.optional_warning")
             await self._api.post("/api/notifications/send", data=data)
-            self._display.show_drop_result(True, f"{drop_type} DONE", "Done with warning")
+            self._display.show_drop_result(
+                True,
+                t("lcd.auto_done") if schedule_id else t("lcd.manual_done"),
+                t("lcd.drop_warning"),
+            )
             return True
 
-        print("[Drop] Successfully completed whole workflow.")
+        print(t("drop.success"))
         data["level"] = "info"
-        data["title"] = "Drop completed"
+        data["title"] = t("notification.drop_completed")
         data["payload"] = {}
 
         if schedule_id:
             await self._schedule.update_status(schedule_id, "completed")
-            data["body"] = f"Schedule {schedule_id} completed successfully."
+            data["body"] = t("notification.schedule_completed", schedule_id=schedule_id)
         else:
-            data["body"] = "Drop completed successfully."
+            data["body"] = t("notification.drop_success")
 
         await self._api.post("/api/notifications/send", data=data)
-        self._display.show_drop_result(True, f"{drop_type} DONE", "Completed")
+        self._display.show_drop_result(
+            True,
+            t("lcd.auto_done") if schedule_id else t("lcd.manual_done"),
+            t("lcd.drop_completed"),
+        )
         return True
 
     @classmethod

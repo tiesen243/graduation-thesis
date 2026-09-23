@@ -4,6 +4,7 @@ import json
 import bluetooth
 
 from lib.config import Config
+from lib.i18n import t
 from tasks.ble_handler import BLEHandler
 
 _CONFIG_SERVICE_UUID = bluetooth.UUID("ffaa5bd2-45cd-4512-bf35-c5d4276a0c7a")
@@ -66,17 +67,17 @@ class BLE:
         _, _mac = self._ble.config("mac")
         mac = ":".join(f"{byte:02X}" for byte in _mac)
 
-        print(f"Advertising as {name} ({mac})...")
+        print(t("ble.advertising", name=name, mac=mac))
 
     def _irq(self, event: int, data: tuple) -> None:
         if event == 1:  # Connect
-            print("Device connected")
+            print(t("ble.connected"))
             self._conn_handle = data[0]
             self._rx_buffer = bytearray()
             _ = asyncio.create_task(self._handler.on_connect())
 
         elif event == 2:  # Disconnect
-            print("Device disconnected")
+            print(t("ble.disconnected"))
             self._conn_handle = None
             self._rx_buffer = bytearray()
             _ = asyncio.create_task(self._async_start_advertising())
@@ -96,7 +97,7 @@ class BLE:
     async def send_code(self, action: int, status: int = 0) -> None:
         """Pack 4-bit Action and 4-bit Status (or 34-bit Integer payload) into notification frame."""
         if not self._ble or self._conn_handle is None or self._handle_tx is None:
-            print("Cannot send: Not connected")
+            print(t("ble.not_connected"))
             return
 
         # ACTION_SEND_DEVICE_INFO = 9 (hoặc khi payload truyền vào vượt mức 4-bit status)
@@ -124,7 +125,13 @@ class BLE:
 
             await asyncio.sleep(0.03)
             print(
-                f"Sent {packet_type}: 0x{packet_bytes.hex().upper()} (Action: {action}, Status/Value: {status})"
+                t(
+                    "ble.sent",
+                    packet_type=packet_type,
+                    packet_hex=packet_bytes.hex().upper(),
+                    action=action,
+                    status=status,
+                )
             )
 
     def is_connected(self) -> bool:

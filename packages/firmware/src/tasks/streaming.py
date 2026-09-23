@@ -4,7 +4,10 @@ import json
 from machine import Pin
 
 from lib.api import Api
+from lib.i18n import t
 from lib.pins import Pins
+from lib.utils import get_current_time
+from tasks.display import Display
 from tasks.drop import Drop
 from tasks.sync_schedule import SyncSchedule
 
@@ -15,11 +18,13 @@ class Streaming:
     _api: Api
     _led: Pin
     _drop: Drop
+    _display: Display
     _sync_schedule: SyncSchedule
 
     def __init__(self) -> None:
         self._api = Api.create()
         self._drop = Drop.create()
+        self._display = Display.create()
         self._sync_schedule = SyncSchedule.create()
 
         pins = Pins.create()
@@ -51,26 +56,46 @@ class Streaming:
         if not isinstance(data, dict):
             return
 
-        print(f"[Stream] Received streaming payload: {data}")
+        print(t("stream.received", data=data))
 
         action = data.get("action")
         payload = data.get("payload")
 
         if action == "led":
-            print(f"[Stream] Setting LED state to: {payload}")
+            print(t("stream.led", payload=payload))
             self._led.value(int(payload))  # pyright: ignore[reportArgumentType]
 
         elif action == "sync_schedule":
-            print("[Stream] Syncing schedule...")
+            print(t("stream.sync_schedule"))
             await self._sync_schedule.execute()
 
         elif action == "drop":
-            print("[Stream] Executing drop command...")
-            await self._drop.execute(items=payload)
+            print(t("stream.drop"))
+
+            if isinstance(payload, dict):
+                items = payload.get("items") or []
+                schedule = {
+                    "id": payload.get("id") or payload.get("scheduleId") or "",
+                    "date": payload.get("date") or "",
+                    "time": payload.get("time") or "",
+                    "items": items,
+                }
+            else:
+                items = payload if isinstance(payload, list) else []
+                now = get_current_time()
+                schedule = {
+                    "id": "",
+                    "date": f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}",
+                    "time": f"{now[3]:02d}:{now[4]:02d}",
+                    "items": items,
+                }
+
+            self._display.show_schedule_info(schedule)
+            await self._drop.execute(items=items)
 
     async def start(self) -> None:
         """Start continuous SSE streaming listener loop with backoff logic."""
-        print("[Startup] Streaming task initiated...")
+        print(t("stream.started"))
 
         retry_delay = 2
         max_delay = 60
@@ -86,7 +111,7 @@ class Streaming:
                 )
                 retry_delay = 2
             except Exception as e:
-                print(f"[Stream] Error: {e}. Retrying in {retry_delay} seconds...")
+                print(t("stream.error_retry", error=e, seconds=retry_delay))
 
             await asyncio.sleep(retry_delay)
             retry_delay = min(retry_delay * 2, max_delay)
