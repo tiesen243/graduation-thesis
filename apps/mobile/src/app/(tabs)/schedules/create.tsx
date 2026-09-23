@@ -29,8 +29,18 @@ import { CreateScheduleTimePicker } from '@/components/schedule/create/time-pick
 import { ScheduleItems } from '@/components/schedule/schedule-items'
 import { useRuntime } from '@/hooks/use-runtime'
 
+const DEFAULT_VALUES = {
+  deviceId: '' as DeviceId,
+  startDate: '',
+  endDate: '',
+  daysOfWeek: [],
+  time: '',
+  items: [],
+}
+
 function CreateScheduleFormSubmit() {
   const isPending = CreateScheduleForm.useValue((s) => s.isPending)
+  const set = CreateScheduleForm.useSet()
   const { t } = useTranslation('schedule')
 
   const queryClient = useQueryClient()
@@ -46,6 +56,7 @@ function CreateScheduleFormSubmit() {
         })
         router.push('/(tabs)/schedules')
         toast.success(t('create.messages.success'))
+        set((prev) => ({ ...prev, values: DEFAULT_VALUES }))
       },
       onError: (error) =>
         toast.error(t('create.messages.error'), error.message),
@@ -72,16 +83,7 @@ export default function TabsSchedulesCreateScreen() {
   if (!data?.data) return null
 
   return (
-    <CreateScheduleForm.Provider
-      defaultValues={{
-        deviceId: '' as DeviceId,
-        startDate: '',
-        endDate: '',
-        daysOfWeek: [],
-        time: '',
-        items: [],
-      }}
-    >
+    <CreateScheduleForm.Provider defaultValues={DEFAULT_VALUES}>
       <FieldSet className='p-4'>
         <FieldGroup>
           <CreateScheduleForm.Field

@@ -17,7 +17,7 @@ class WiFi:
         self._wifi = config.get("wifi")
         self._hostname = config.get("device", {}).get("name", "Rozumari")
 
-    async def connect(self, force: bool = True) -> bool:
+    async def connect(self) -> bool:
         """
         Establish an asynchronous Wi-Fi connection using loaded configurations.
 
@@ -42,10 +42,6 @@ class WiFi:
 
         if self._hostname:
             network.hostname(self._hostname)
-
-        if self._wlan.isconnected() and not force:
-            print(f"[WiFi] Already connected to WiFi! IP: {self._wlan.ifconfig()[0]}")
-            return True
 
         ssid = self._wifi.get("ssid")
         password = self._wifi.get("password")
