@@ -1,50 +1,44 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Patch Changes\n\n- Bump deps\n"
-    filename: 2026-09-23-mudx3y4q.md
-    v: 0.0.0
-  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Patch Changes\n\n- supported i18n for firmware\n"
-    filename: 2026-09-23-mudwghyx.md
+  - content: "---\npackages:\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Patch Changes\n\n- added buzzer\n- fix i18n content\n"
+    filename: 2026-09-23-muea03bp.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/oxlint
     updated: false
   - id: npm:@rozumari/eda
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
   - id: npm:@rozumari/tsconfig
+    updated: false
+  - id: npm:@rozumari/ui
     updated: false
   - id: npm:@rozumari/api
     updated: false
-  - changelogIds:
-      - 2026-09-23-mudx3y4q.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/contract
+    updated: false
+  - id: npm:@rozumari/mobile
+    updated: false
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/web
     updated: false
   - changelogIds:
-      - 2026-09-23-mudwghyx.md
-      - 2026-09-23-mudx3y4q.md
+      - 2026-09-23-muea03bp.md
     id: npm:@rozumari/firmware
     updated: true
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/eda
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/web
+  - id: npm:@rozumari/eda
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/api
-  - id: npm:@rozumari/mobile
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/web
   - id: npm:@rozumari/firmware
