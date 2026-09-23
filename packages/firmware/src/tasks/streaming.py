@@ -107,7 +107,7 @@ class Streaming:
                 await self._api.stream(
                     endpoint="/api/devices/subscribe",
                     callback=self._handle_payload,
-                    timeout=30,
+                    timeout=35,
                 )
                 retry_delay = 2
             except Exception as e:
