@@ -125,8 +125,7 @@ class Drop:
                 failure = {
                     "slot": slot,
                     "medicine": item.get("medicine"),
-                    "requested_quantity": quantity,
-                    "dispensed_quantity": actual_qty,
+                    "quantity": max(0, quantity - actual_qty),
                 }
                 if is_required:
                     required_failures.append(failure)
@@ -160,13 +159,11 @@ class Drop:
         # Handle required dispensing failures immediately. A schedule_id means
         # this was triggered automatically by the device schedule; without it,
         # the request came manually from the app.
-        drop_type = "AUTO" if schedule_id else "MANUAL"
         if required_failures:
             print(
                 t(
                     "drop.required_failed",
                     count=len(required_failures),
-                    drop_type=drop_type,
                 )
             )
             await self._api.post("/api/notifications/send", data=data)
@@ -174,7 +171,7 @@ class Drop:
                 _ = await self._schedule.update_status(schedule_id, "failed")
             self._display.show_drop_result(
                 False,
-                t("lcd.auto_failed") if drop_type == "AUTO" else t("lcd.manual_failed"),
+                t("lcd.auto_failed") if schedule_id else t("lcd.manual_failed"),
                 t("lcd.drop_item_failed"),
             )
             return False
@@ -192,7 +189,7 @@ class Drop:
             await self._api.post("/api/notifications/send", data=data)
             self._display.show_drop_result(
                 False,
-                t("lcd.auto_failed") if drop_type == "AUTO" else t("lcd.manual_failed"),
+                t("lcd.auto_failed") if schedule_id else t("lcd.manual_failed"),
                 t("lcd.drop_not_taken"),
             )
             return False
@@ -212,7 +209,7 @@ class Drop:
             await self._api.post("/api/notifications/send", data=data)
             self._display.show_drop_result(
                 True,
-                t("lcd.auto_done") if drop_type == "AUTO" else t("lcd.manual_done"),
+                t("lcd.auto_done") if schedule_id else t("lcd.manual_done"),
                 t("lcd.drop_warning"),
             )
             return True
@@ -231,7 +228,7 @@ class Drop:
         await self._api.post("/api/notifications/send", data=data)
         self._display.show_drop_result(
             True,
-            t("lcd.auto_done") if drop_type == "AUTO" else t("lcd.manual_done"),
+            t("lcd.auto_done") if schedule_id else t("lcd.manual_done"),
             t("lcd.drop_completed"),
         )
         return True

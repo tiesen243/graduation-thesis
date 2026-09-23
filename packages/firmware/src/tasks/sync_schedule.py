@@ -51,7 +51,7 @@ class SyncSchedule:
 
         :return: None
         """
-        print(t("sync_schedule.started"), {"sync_time": self._sync_time})
+        print(t("sync_schedule.started", sync_time=self._sync_time))
         last_synced_date = None
 
         sync_hour, sync_minute = map(int, self._sync_time.split(":"))
