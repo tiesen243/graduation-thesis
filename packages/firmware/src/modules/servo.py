@@ -8,7 +8,7 @@ from lib.pins import Pins
 
 
 class Servo:
-    __instance = None
+    __instance: Servo | None = None
 
     _SPEED_PRESETS = {  # noqa: RUF012
         1: (2, 20),  # Very Slow
@@ -68,9 +68,10 @@ class Servo:
         self._current_pulses[slot] = pulse_us
         return self._drop_detected
 
-    async def drop(self, slot: str, quantity: int = 1) -> bool:
-        """Dispense a specified quantity of items, stopping instantly upon sensor trigger."""
+    async def drop(self, slot: str, quantity: int = 1) -> tuple[bool, int]:
+        """Dispense a specified quantity of items, returning execution status and actual dispensed count."""
         print(f"[Servo] Slot {slot} | Starting dispensing: {quantity} items...")
+        dispensed_count = 0
 
         for i in range(quantity):
             self._drop_detected = False
@@ -87,6 +88,7 @@ class Servo:
             while not pill_dropped:
                 if self._drop_detected:
                     pill_dropped = True
+                    dispensed_count += 1
                     # Cancel rotation task immediately when drop is detected
                     control_task.cancel()
                     print(f"[Servo] Slot {slot} | Item {i + 1} dispensed successfully!")
@@ -109,10 +111,12 @@ class Servo:
             await asyncio.sleep(0.2)
 
             if not pill_dropped:
-                return False
+                return False, dispensed_count
 
-        print(f"[Servo] Slot {slot} successfully dispensed {quantity} items!")
-        return True
+        print(
+            f"[Servo] Slot {slot} successfully dispensed {dispensed_count}/{quantity} items!"
+        )
+        return True, dispensed_count
 
     @classmethod
     def create(cls) -> Servo:
