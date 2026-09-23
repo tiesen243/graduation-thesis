@@ -21,6 +21,7 @@ class Drop:
     _schedule: Schedule
     _display: Display
 
+    _buzzer: Pin
     _sensor_pin: Pin
     _sensor_check_detected: bool
 
@@ -35,6 +36,7 @@ class Drop:
         self._display = Display.create()
 
         pins = Pins.create()
+        self._buzzer = pins.buzzer
         self._sensor_pin = pins.sensor_check
         self._sensor_check_detected = False
 
@@ -69,12 +71,14 @@ class Drop:
         """Executes drawer opening/closing sequence and monitors the discard bin for uncollected items."""
         print(t("drop.opening_drawer"))
         await self._stepper.move_drawer(deg=90)
+        self._buzzer.value(1)  # Turn on buzzer to alert user to retrieve items
 
         print(t("drop.waiting_retrieve", seconds=self._open_timeout))
         await asyncio.sleep(self._open_timeout)
 
         print(t("drop.closing_drawer"))
         await self._stepper.move_drawer(deg=-90)
+        self._buzzer.value(0)  # Turn off buzzer after discard flap closes
 
         # Attach interrupt to monitor discard bin before opening flap
         self._sensor_check_detected = False
@@ -151,9 +155,7 @@ class Drop:
 
         if schedule_id:
             data["scheduleId"] = schedule_id
-            data["body"] = t(
-                "notification.schedule_required_failed", schedule_id=schedule_id
-            )
+            data["body"] = t("notification.schedule_required_failed")
         else:
             data["scheduleId"] = None
             data["body"] = t("notification.required_failed")
@@ -203,9 +205,7 @@ class Drop:
             data["title"] = t("notification.schedule_warning")
             if schedule_id:
                 await self._schedule.update_status(schedule_id, "completed")
-                data["body"] = t(
-                    "notification.schedule_optional_warning", schedule_id=schedule_id
-                )
+                data["body"] = t("notification.schedule_optional_warning")
             else:
                 data["body"] = t("notification.optional_warning")
             await self._api.post("/api/notifications/send", data=data)
@@ -223,7 +223,7 @@ class Drop:
 
         if schedule_id:
             await self._schedule.update_status(schedule_id, "completed")
-            data["body"] = t("notification.schedule_completed", schedule_id=schedule_id)
+            data["body"] = t("notification.schedule_completed")
         else:
             data["body"] = t("notification.drop_success")
 
