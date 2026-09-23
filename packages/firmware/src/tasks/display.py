@@ -1,3 +1,5 @@
+# pyright: reportAttributeAccessIssue=false
+
 import asyncio
 import time
 
@@ -156,7 +158,7 @@ class Display:
             self._last_date = date
 
     def _draw_main(self, now=None) -> None:
-        width, height = self._lcd.size()
+        width, _height = self._lcd.size()
         white = rgb(255, 255, 255)
         gray = rgb(170, 170, 170)
         blue = rgb(50, 160, 255)
@@ -224,13 +226,16 @@ class Display:
             self._update_clock(now)
 
     def _draw_dialog(self, remaining: int | None = None) -> None:
+        if self._dialog is None:
+            return
+
         width, height = self._lcd.size()
         black = rgb(0, 0, 0)
         white = rgb(255, 255, 255)
         green = rgb(50, 220, 100)
         red = rgb(240, 70, 70)
         gray = rgb(180, 180, 180)
-        blue = rgb(50, 160, 255)
+        _blue = rgb(50, 160, 255)
 
         dialog_type = self._dialog.get("type", "result")
 
@@ -265,8 +270,11 @@ class Display:
 
     def _draw_schedule_dialog(self, remaining: int | None = None) -> None:
         """Render schedule details before the dispensing sequence starts."""
+        if self._dialog is None:
+            return
+
         width, height = self._lcd.size()
-        black = rgb(0, 0, 0)
+        _black = rgb(0, 0, 0)
         white = rgb(255, 255, 255)
         gray = rgb(180, 180, 180)
         blue = rgb(50, 160, 255)
@@ -312,13 +320,16 @@ class Display:
         self._text(countdown_x, box_y2 - 10, countdown, gray)
 
     def _update_dialog(self, remaining: int) -> None:
+        if self._dialog is None:
+            return
+
         # Only redraw the countdown area.
         width, height = self._lcd.size()
         black = rgb(0, 0, 0)
         white = rgb(255, 255, 255)
 
         if self._dialog.get("type", "result") == "schedule":
-            box_x1, box_y1 = 3, 3
+            box_x1, _box_y1 = 3, 3
             box_x2, box_y2 = width - 4, height - 4
             self._lcd.fill_rect(
                 (box_x1 + 1, box_y2 - 17), (box_x2 - box_x1 - 1, 17), black
@@ -328,7 +339,7 @@ class Display:
             self._text(countdown_x, box_y2 - 10, countdown, white, size=1)
             return
 
-        box_x1, box_y1 = 20, 34
+        box_x1, _box_y1 = 20, 34
         box_x2, box_y2 = width - 20, height - 34
         self._lcd.fill_rect((box_x1 + 1, box_y2 - 17), (box_x2 - box_x1 - 1, 17), black)
         countdown = t("lcd.auto_close", seconds=remaining)

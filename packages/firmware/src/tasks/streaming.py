@@ -6,6 +6,8 @@ from machine import Pin
 from lib.api import Api
 from lib.i18n import t
 from lib.pins import Pins
+from lib.utils import get_current_time
+from tasks.display import Display
 from tasks.drop import Drop
 from tasks.sync_schedule import SyncSchedule
 
@@ -16,11 +18,13 @@ class Streaming:
     _api: Api
     _led: Pin
     _drop: Drop
+    _display: Display
     _sync_schedule: SyncSchedule
 
     def __init__(self) -> None:
         self._api = Api.create()
         self._drop = Drop.create()
+        self._display = Display.create()
         self._sync_schedule = SyncSchedule.create()
 
         pins = Pins.create()
@@ -67,7 +71,27 @@ class Streaming:
 
         elif action == "drop":
             print(t("stream.drop"))
-            await self._drop.execute(items=payload)
+
+            if isinstance(payload, dict):
+                items = payload.get("items") or []
+                schedule = {
+                    "id": payload.get("id") or payload.get("scheduleId") or "",
+                    "date": payload.get("date") or "",
+                    "time": payload.get("time") or "",
+                    "items": items,
+                }
+            else:
+                items = payload if isinstance(payload, list) else []
+                now = get_current_time()
+                schedule = {
+                    "id": "",
+                    "date": f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}",
+                    "time": f"{now[3]:02d}:{now[4]:02d}",
+                    "items": items,
+                }
+
+            self._display.show_schedule_info(schedule)
+            await self._drop.execute(items=items)
 
     async def start(self) -> None:
         """Start continuous SSE streaming listener loop with backoff logic."""
