@@ -3,6 +3,7 @@ import asyncio
 from machine import Pin
 
 from lib.api import Api
+from lib.config import Config
 from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.servo import Servo
@@ -20,6 +21,9 @@ class Drop:
     _sensor_pin: Pin
     _sensor_check_detected: bool
 
+    _open_timeout: int
+    _close_timeout: int
+
     def __init__(self) -> None:
         self._api = Api.create()
         self._servo = Servo.create()
@@ -30,6 +34,11 @@ class Drop:
         self._sensor_pin = pins.sensor_check
         self._sensor_check_detected = False
 
+        config = Config.create()
+        timeouts = config.get("timeouts", {})
+        self._open_timeout = timeouts.get("open", 5)
+        self._close_timeout = timeouts.get("close", 5)
+
     def _sensor_check_irq_handler(self, _pin: Pin) -> None:
         """Interrupt service routine triggered when an item is detected falling into the discard bin."""
         self._sensor_check_detected = True
@@ -39,8 +48,10 @@ class Drop:
         print("[Drop] Opening drawer (rotating 90 degrees)...")
         await self._stepper.move_drawer(deg=90)
 
-        print("[Drop] Waiting 5 seconds for user to retrieve items...")
-        await asyncio.sleep(5)
+        print(
+            f"[Drop] Waiting {self._open_timeout} seconds for user to retrieve items..."
+        )
+        await asyncio.sleep(self._open_timeout)
 
         print("[Drop] Closing drawer (rotating -90 degrees)...")
         await self._stepper.move_drawer(deg=-90)
@@ -55,9 +66,9 @@ class Drop:
         await self._stepper.move_discard(deg=90)
 
         print(
-            "[Drop] Waiting 5 seconds for remaining items to drop into discard bin..."
+            f"[Drop] Waiting {self._close_timeout} seconds for remaining items to drop into discard bin..."
         )
-        await asyncio.sleep(5)
+        await asyncio.sleep(self._close_timeout)
 
         print("[Drop] Closing discard flap (rotating -90 degrees)...")
         await self._stepper.move_discard(deg=-90)
@@ -170,7 +181,7 @@ class Drop:
                     "slots": [
                         {
                             "position": item.get("slot"),
-                            "quantity": item.get("quantity", 1),
+                            "capacity": item.get("quantity", 1),
                         }
                         for item in items
                     ],

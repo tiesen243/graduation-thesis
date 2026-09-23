@@ -11,6 +11,11 @@
     "url": "https://your-api.example.com",
     "bypass_token": "YOUR_BYPASS_TOKEN"
   },
+  "timeouts": {
+    "drop": 5,
+    "open": 10,
+    "close": 5
+  },
   "device": {
     "id": "YOUR_DEVICE_ID",
     "status": "unlinked",

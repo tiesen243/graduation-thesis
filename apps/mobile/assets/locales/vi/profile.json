@@ -63,7 +63,40 @@
       }
     },
     "sync": {
-      "title": "Cấu hình thời gian đồng bộ"
+      "title": "Cấu hình thời gian đồng bộ",
+      "messages": {
+        "success": "Cấu hình thời gian đồng bộ đã được cập nhật thành công.",
+        "failed": "Cập nhật cấu hình thời gian đồng bộ thất bại. Vui lòng thử lại."
+      }
+    },
+    "timeout": {
+      "title": "Cấu hình thời gian chờ",
+      "description": "Cài đặt thời gian chờ (tính bằng giây) cho cơ chế nhả thuốc và khay chứa.",
+      "drop": {
+        "title": "Thời gian nhả thuốc",
+        "placeholder": "Nhập thời gian nhả thuốc (giây)...",
+        "messages": {
+          "success": "Cập nhật thời gian nhả thuốc thành công.",
+          "failed": "Cập nhật thời gian nhả thuốc thất bại. Vui lòng thử lại."
+        }
+      },
+      "open": {
+        "title": "Thời gian mở khay",
+        "placeholder": "Nhập thời gian chờ lấy thuốc (giây)...",
+        "messages": {
+          "success": "Cập nhật thời gian mở khay thành công.",
+          "failed": "Cập nhật thời gian mở khay thất bại. Vui lòng thử lại."
+        }
+      },
+      "close": {
+        "title": "Thời gian xả thuốc thừa",
+        "placeholder": "Nhập thời gian xả thuốc (giây)...",
+        "messages": {
+          "success": "Cập nhật thời gian xả thuốc thành công.",
+          "failed": "Cập nhật thời gian xả thuốc thất bại. Vui lòng thử lại."
+        }
+      },
+      "save": "Lưu"
     },
     "actions": {
       "connect": "Kết nối",

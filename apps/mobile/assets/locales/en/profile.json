@@ -71,7 +71,40 @@
       }
     },
     "sync": {
-      "title": "Sync Time Configuration"
+      "title": "Sync Time Configuration",
+      "messages": {
+        "success": "Time synchronized successfully.",
+        "failed": "Failed to synchronize time. Please try again."
+      }
+    },
+    "timeout": {
+      "title": "Timeouts",
+      "description": "Configure operation timeouts in seconds for dispensing and drawer mechanisms.",
+      "drop": {
+        "title": "Dispensing Timeout",
+        "placeholder": "Enter dispensing timeout in seconds...",
+        "messages": {
+          "success": "Dispensing timeout updated successfully.",
+          "failed": "Failed to update dispensing timeout. Please try again."
+        }
+      },
+      "open": {
+        "title": "Drawer Open Duration",
+        "placeholder": "Enter drawer open duration in seconds...",
+        "messages": {
+          "success": "Drawer open duration updated successfully.",
+          "failed": "Failed to update drawer open duration. Please try again."
+        }
+      },
+      "close": {
+        "title": "Discard Flap Duration",
+        "placeholder": "Enter discard duration in seconds...",
+        "messages": {
+          "success": "Discard duration updated successfully.",
+          "failed": "Failed to update discard duration. Please try again."
+        }
+      },
+      "save": "Save"
     },
     "actions": {
       "connect": "Connect",
