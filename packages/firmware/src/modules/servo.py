@@ -68,55 +68,87 @@ class Servo:
         self._current_pulses[slot] = pulse_us
         return self._drop_detected
 
+    def stop(self, slot: str | None = None) -> None:
+        """Disable PWM output so the servo no longer receives holding pulses."""
+        if slot is None:
+            servos = self._servo_map.values()
+        else:
+            servo = self._servo_map.get(slot)
+            servos = (servo,) if servo is not None else ()
+
+        for servo in servos:
+            servo.duty_u16(0)
+
     async def drop(self, slot: str, quantity: int = 1) -> tuple[bool, int]:
-        """Dispense a specified quantity of items, returning execution status and actual dispensed count."""
+        """Dispense items and always disable the servo PWM when finished."""
         print(f"[Servo] Slot {slot} | Starting dispensing: {quantity} items...")
         dispensed_count = 0
 
-        for i in range(quantity):
-            self._drop_detected = False
-            _ = self._sensor_pin.irq(trigger=Pin.IRQ_FALLING, handler=self._irq_handler)
+        try:
+            for i in range(quantity):
+                self._drop_detected = False
+                _ = self._sensor_pin.irq(
+                    trigger=Pin.IRQ_FALLING,
+                    handler=self._irq_handler,
+                )
 
-            start_time = time.time()
-            pill_dropped = False
+                start_time = time.time()
+                pill_dropped = False
+                control_task = asyncio.create_task(
+                    self.control(slot, pulse_us=1300, speed=1)
+                )
 
-            # Create background task for rotation
-            control_task = asyncio.create_task(
-                self.control(slot, pulse_us=1300, speed=1)
+                try:
+                    while not pill_dropped:
+                        if self._drop_detected:
+                            pill_dropped = True
+                            dispensed_count += 1
+                            control_task.cancel()
+                            print(
+                                f"[Servo] Slot {slot} | "
+                                f"Item {i + 1} dispensed successfully!"
+                            )
+                            break
+
+                        if (time.time() - start_time) > self._timeout:
+                            control_task.cancel()
+                            print(
+                                f"[Servo] Slot {slot} Timeout while "
+                                f"dispensing item {i + 1}!"
+                            )
+                            break
+
+                        await asyncio.sleep(0.005)
+                finally:
+                    control_task.cancel()
+                    try:
+                        await control_task
+                    except asyncio.CancelledError:
+                        pass
+                    self._sensor_pin.irq(handler=None)
+
+                # Reset drop flag before moving back to idle.
+                self._drop_detected = False
+
+                # Return to idle, then immediately disable PWM so the servo
+                # does not keep receiving holding pulses.
+                await self.control(slot, pulse_us=1500, speed=3)
+                self.stop(slot)
+                await asyncio.sleep(0.2)
+
+                if not pill_dropped:
+                    return False, dispensed_count
+
+            print(
+                f"[Servo] Slot {slot} successfully dispensed "
+                f"{dispensed_count}/{quantity} items!"
             )
-
-            while not pill_dropped:
-                if self._drop_detected:
-                    pill_dropped = True
-                    dispensed_count += 1
-                    # Cancel rotation task immediately when drop is detected
-                    control_task.cancel()
-                    print(f"[Servo] Slot {slot} | Item {i + 1} dispensed successfully!")
-                    break
-
-                if (time.time() - start_time) > self._timeout:
-                    control_task.cancel()
-                    print(f"[Servo] Slot {slot} Timeout while dispensing item {i + 1}!")
-                    break
-
-                await asyncio.sleep(0.005)
-
-            _ = self._sensor_pin.irq(handler=None)
-
-            # Reset drop flag so returning to idle won't trigger false positive early break
+            return True, dispensed_count
+        finally:
+            # Safety net for timeout, cancellation, or unexpected exceptions.
+            self._sensor_pin.irq(handler=None)
             self._drop_detected = False
-
-            # Quickly return servo to idle position (1500us) with fast speed
-            await self.control(slot, pulse_us=1500, speed=3)
-            await asyncio.sleep(0.2)
-
-            if not pill_dropped:
-                return False, dispensed_count
-
-        print(
-            f"[Servo] Slot {slot} successfully dispensed {dispensed_count}/{quantity} items!"
-        )
-        return True, dispensed_count
+            self.stop(slot)
 
     @classmethod
     def create(cls) -> Servo:

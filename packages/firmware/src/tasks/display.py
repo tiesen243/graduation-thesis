@@ -20,6 +20,8 @@ class Display:
     _boot_until: int
     _main_drawn: bool
     _last_clock: str | None
+    _last_clock_parts: tuple | None
+    _last_date: str | None
     _last_schedule_snapshot: tuple
     _last_render: str
     _last_dialog_remaining: int
@@ -35,6 +37,8 @@ class Display:
         self._boot_until = time.ticks_add(time.ticks_ms(), 2000)
         self._main_drawn = False
         self._last_clock = None
+        self._last_clock_parts = None
+        self._last_date = None
         self._last_schedule_snapshot = ()
         self._last_render = "boot"
         self._last_dialog_remaining = 0
@@ -48,6 +52,8 @@ class Display:
         self._boot_until = time.ticks_add(time.ticks_ms(), duration_ms)
         self._main_drawn = False
         self._last_clock = None
+        self._last_clock_parts = None
+        self._last_date = None
         self._last_schedule_snapshot = ()
         self._last_dialog_remaining = 0
         self._last_render = "boot"
@@ -100,18 +106,45 @@ class Display:
         width, _ = self._lcd.size()
         white = rgb(255, 255, 255)
         gray = rgb(170, 170, 170)
-        blue = rgb(50, 160, 255)
         black = rgb(0, 0, 0)
 
-        clock = f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}"
-        date = f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}"
-
-        # Only clear the small clock/date region. Avoid full-screen redraw/flicker.
+        # Initial/full header draw. Subsequent ticks update only the changed
+        # hour/minute/second fields instead of repainting the whole clock area.
         self._lcd.fill_rect((0, 0), (width, 40), black)
-        self._text(4, 4, clock, white, size=2)
-        self._text(4, 27, date, gray, size=1)
+        self._text(4, 4, f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}", white, size=2)
+        self._text(4, 27, f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}", gray, size=1)
 
-        self._last_clock = clock
+        self._last_clock_parts = (now[3], now[4], now[5])
+        self._last_clock = f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}"
+        self._last_date = f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}"
+
+    def _update_clock(self, now) -> None:
+        white = rgb(255, 255, 255)
+        black = rgb(0, 0, 0)
+        current = (now[3], now[4], now[5])
+        previous = self._last_clock_parts
+
+        if previous is None:
+            self._draw_header(now)
+            return
+
+        # Font width is 5px at size 1, so size 2 advances by 11px per char.
+        # HH:MM:SS starts at x=4: HH x=4, MM x=37, SS x=70.
+        fields = ((0, 4), (1, 37), (2, 70))
+        for index, x in fields:
+            if current[index] != previous[index]:
+                self._lcd.fill_rect((x, 4), (22, 17), black)
+                self._text(x, 4, f"{current[index]:02d}", white, size=2)
+
+        if current != previous:
+            self._last_clock_parts = current
+            self._last_clock = f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}"
+
+        date = f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}"
+        if date != self._last_date:
+            self._lcd.fill_rect((0, 26), (110, 12), black)
+            self._text(4, 27, date, rgb(170, 170, 170), size=1)
+            self._last_date = date
 
     def _draw_main(self, now=None) -> None:
         width, height = self._lcd.size()
@@ -170,9 +203,11 @@ class Display:
             self._draw_main(now)
             return
 
-        # Update only the clock once per second. No full LCD refresh.
-        if clock != self._last_clock:
-            self._draw_header(now)
+        # Update only the fields that changed. A second change touches only
+        # SS; a minute change touches MM (and SS); an hour change touches HH
+        # (and any other changed fields). The rest of the LCD stays untouched.
+        if clock != self._last_clock or self._last_date != f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}":
+            self._update_clock(now)
 
     def _draw_dialog(self, remaining: int | None = None) -> None:
         width, height = self._lcd.size()
@@ -247,6 +282,8 @@ class Display:
         self._last_render = "config"
         self._main_drawn = False
         self._last_clock = None
+        self._last_clock_parts = None
+        self._last_date = None
         self._last_schedule_snapshot = ()
 
     async def start(self) -> None:
