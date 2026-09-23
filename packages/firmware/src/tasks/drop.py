@@ -43,8 +43,26 @@ class Drop:
         """Interrupt service routine triggered when an item is detected falling into the discard bin."""
         self._sensor_check_detected = True
 
+    async def _deduct_medicine_capacity(self, dispensed_items: list[dict]) -> None:
+        """Deducts medicine capacity for slots where items were physically dispensed."""
+        slots_payload = [
+            {"position": item["slot"], "capacity": item["quantity"]}
+            for item in dispensed_items
+            if item.get("quantity", 0) > 0
+        ]
+
+        if slots_payload:
+            print(f"[Drop] Deducting medicine capacity for slots: {slots_payload}")
+            await self._api.post(
+                "/api/devices/update-capacity",
+                data={
+                    "mode": "subtraction",
+                    "slots": slots_payload,
+                },
+            )
+
     async def _handle_post_dispense_sequence(self) -> bool:
-        """Executes drawer opening/closing and monitors discard bin for 5 seconds."""
+        """Executes drawer opening/closing sequence and monitors the discard bin for uncollected items."""
         print("[Drop] Opening drawer...")
         await self._stepper.move_drawer(deg=90)
 
@@ -86,9 +104,10 @@ class Drop:
         return True
 
     async def execute(self, items: list[dict], schedule_id: str | None = None) -> bool:
-        """Executes full dispensing flow: Servo drops -> Status evaluation -> Drawer & Discard sequence -> API Notifications."""
+        """Executes full dispensing flow: Servo drops -> Deduct actual capacity -> Drawer & Discard sequence -> API Notifications."""
         required_failures = []
         optional_failures = []
+        dispensed_successfully = []
 
         for item in items:
             slot = item.get("slot")
@@ -98,19 +117,30 @@ class Drop:
                 print(f"[Drop] Invalid item: {item}")
                 continue
 
-            print(f"[Drop] Dispensing slot '{slot}' with quantity {quantity}...")
-            success = await self._servo.drop(slot=slot, quantity=quantity)
+            print(
+                f"[Drop] Dispensing slot '{slot}' with requested quantity {quantity}..."
+            )
+
+            success, actual_qty = await self._servo.drop(slot=slot, quantity=quantity)
+            if actual_qty > 0:
+                dispensed_successfully.append({"slot": slot, "quantity": actual_qty})
+
             if not success:
                 failure = {
                     "slot": slot,
                     "medicine": item.get("medicine"),
-                    "quantity": quantity,
+                    "requested_quantity": quantity,
+                    "dispensed_quantity": actual_qty,
                 }
                 if is_required:
                     required_failures.append(failure)
                 else:
                     optional_failures.append(failure)
             await asyncio.sleep(1)
+
+        # Deduct actual capacity immediately for items physically dropped out of storage slots
+        if dispensed_successfully:
+            await self._deduct_medicine_capacity(dispensed_successfully)
 
         payload = {
             "required_failures": required_failures,
@@ -121,11 +151,11 @@ class Drop:
         if schedule_id:
             data["scheduleId"] = schedule_id
             data["body"] = (
-                f"Schedule {schedule_id} failed because one or more required items were not dispensed."
+                f"Schedule {schedule_id} failed because one or more required items were not fully dispensed."
             )
         else:
             data["scheduleId"] = None
-            data["body"] = "One or more required items were not dispensed."
+            data["body"] = "One or more required items were not fully dispensed."
 
         # Handle required dispensing failures immediately
         if required_failures:
@@ -135,7 +165,7 @@ class Drop:
                 _ = await self._schedule.update_status(schedule_id, "failed")
             return False
 
-        # Run drawer and discard workflow if dispensing succeeded
+        # Open drawer and handle discard sequence
         discard_clean = await self._handle_post_dispense_sequence()
         if not discard_clean:
             data["level"] = "error"
@@ -158,10 +188,10 @@ class Drop:
             if schedule_id:
                 await self._schedule.update_status(schedule_id, "completed")
                 data["body"] = (
-                    f"Schedule {schedule_id} completed, but one or more optional items were not dispensed."
+                    f"Schedule {schedule_id} completed, but one or more optional items were not fully dispensed."
                 )
             else:
-                data["body"] = "One or more optional items were not dispensed."
+                data["body"] = "One or more optional items were not fully dispensed."
             await self._api.post("/api/notifications/send", data=data)
             return True
 
@@ -174,19 +204,6 @@ class Drop:
             await self._schedule.update_status(schedule_id, "completed")
             data["body"] = f"Schedule {schedule_id} completed successfully."
         else:
-            await self._api.post(
-                "/api/devices/update-capacity",
-                data={
-                    "mode": "subtraction",
-                    "slots": [
-                        {
-                            "position": item.get("slot"),
-                            "capacity": item.get("quantity", 1),
-                        }
-                        for item in items
-                    ],
-                },
-            )
             data["body"] = "Drop completed successfully."
 
         await self._api.post("/api/notifications/send", data=data)
