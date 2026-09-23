@@ -40,9 +40,9 @@ export const notifications = snakeCase.table(
     title: t.varchar({ length: 255 }).notNull(),
     body: t.text().notNull(),
     payload: t.jsonb().$type<Record<string, unknown> | null>(),
-    readAt: t.timestamp(),
+    readAt: t.timestamp({ mode: 'date' }),
 
-    createdAt: t.timestamp().notNull(),
+    createdAt: t.timestamp({ mode: 'date' }).notNull(),
   }),
   (t) => [
     index('notifications_user_id_created_at_idx').on(

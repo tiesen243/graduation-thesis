@@ -30,7 +30,7 @@ export const devices = snakeCase.table(
     status: deviceStatusEnum().notNull().$type<DeviceStatus>(),
     name: t.varchar({ length: 255 }),
     position: t.varchar({ length: 255 }),
-    activatedAt: t.timestamp(),
+    activatedAt: t.timestamp({ mode: 'date' }),
   }),
   (t) => [
     uniqueIndex('devices_factory_model_index').on(t.factoryModel),
