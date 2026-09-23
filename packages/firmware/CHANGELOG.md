@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.5
+
+### Patch Changes
+
+- added buzzer
+- fix i18n content
+
 ## @rozumari/firmware@0.1.4
 
 ### Patch Changes
