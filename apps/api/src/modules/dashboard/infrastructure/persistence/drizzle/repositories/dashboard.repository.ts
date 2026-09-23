@@ -1,5 +1,5 @@
 import { DeviceStatus } from '@rozumari/contract/device/schemas/device.schema'
-import { and, count, desc, eq, isNotNull, ne, sql } from 'drizzle-orm'
+import { and, count, desc, eq, isNotNull, isNull, ne, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -42,6 +42,7 @@ export const DrizzleDashboardRepository = Layer.effect(
               db
                 .select()
                 .from(notifications)
+                .where(isNull(notifications.readAt))
                 .orderBy(desc(notifications.createdAt))
                 .limit(5),
             ],
@@ -110,7 +111,12 @@ export const DrizzleDashboardRepository = Layer.effect(
                 createdAt: notifications.createdAt,
               })
               .from(notifications)
-              .where(eq(notifications.userId, userId))
+              .where(
+                and(
+                  eq(notifications.userId, userId),
+                  isNull(notifications.readAt)
+                )
+              )
               .orderBy(desc(notifications.createdAt))
               .limit(5),
 

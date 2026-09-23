@@ -8,6 +8,7 @@ from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.servo import Servo
 from modules.stepper import Stepper
+from tasks.display import Display
 
 
 class Drop:
@@ -17,6 +18,7 @@ class Drop:
     _servo: Servo
     _stepper: Stepper
     _schedule: Schedule
+    _display: Display
 
     _sensor_pin: Pin
     _sensor_check_detected: bool
@@ -29,6 +31,7 @@ class Drop:
         self._servo = Servo.create()
         self._stepper = Stepper.create()
         self._schedule = Schedule.create()
+        self._display = Display.create()
 
         pins = Pins.create()
         self._sensor_pin = pins.sensor_check
@@ -157,12 +160,16 @@ class Drop:
             data["scheduleId"] = None
             data["body"] = "One or more required items were not fully dispensed."
 
-        # Handle required dispensing failures immediately
+        # Handle required dispensing failures immediately. A schedule_id means
+        # this was triggered automatically by the device schedule; without it,
+        # the request came manually from the app.
+        drop_type = "AUTO" if schedule_id else "MANUAL"
         if required_failures:
-            print(f"[Drop] Failed with required failures: {len(required_failures)}")
+            print(f"[Drop] Failed with required failures: {len(required_failures)} ({drop_type})")
             await self._api.post("/api/notifications/send", data=data)
             if schedule_id:
                 _ = await self._schedule.update_status(schedule_id, "failed")
+            self._display.show_drop_result(False, f"{drop_type} FAILED", "Item failed")
             return False
 
         # Open drawer and handle discard sequence
@@ -176,6 +183,7 @@ class Drop:
                 await self._schedule.update_status(schedule_id, "failed")
 
             await self._api.post("/api/notifications/send", data=data)
+            self._display.show_drop_result(False, f"{drop_type} FAILED", "Not taken")
             return False
 
         # Process optional failures or clean success
@@ -193,6 +201,7 @@ class Drop:
             else:
                 data["body"] = "One or more optional items were not fully dispensed."
             await self._api.post("/api/notifications/send", data=data)
+            self._display.show_drop_result(True, f"{drop_type} DONE", "Done with warning")
             return True
 
         print("[Drop] Successfully completed whole workflow.")
@@ -207,6 +216,7 @@ class Drop:
             data["body"] = "Drop completed successfully."
 
         await self._api.post("/api/notifications/send", data=data)
+        self._display.show_drop_result(True, f"{drop_type} DONE", "Completed")
         return True
 
     @classmethod

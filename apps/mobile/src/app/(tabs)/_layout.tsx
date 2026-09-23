@@ -46,7 +46,7 @@ export default function TabsLayout() {
 
       rippleColor={`${primaryColor}33`}
       indicatorColor={mutedColor}
-      labelVisibilityMode='labeled'
+      labelVisibilityMode='unlabeled'
 
       badgeBackgroundColor={destructiveColor}
       badgeTextColor='#FAFAFA'

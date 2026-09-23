@@ -8,8 +8,9 @@ from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.ble import BLE
 from modules.wifi import WiFi
-from tasks.schedules import Schedules
 from tasks.streaming import Streaming
+from tasks.schedules import Schedules
+from tasks.display import Display
 from tasks.sync_info import SyncInfo
 from tasks.sync_schedule import SyncSchedule
 
@@ -25,6 +26,7 @@ class Bootstrap:
     _schedules: Schedules | None = None
     _sync_schedule: SyncSchedule | None = None
     _sync_info: SyncInfo | None = None
+    _display: Display | None = None
 
     _switch: Pin
 
@@ -35,6 +37,8 @@ class Bootstrap:
     async def _config_mode(self, stop_event: asyncio.Event) -> None:
         """Run Config Mode (BLE) until the mode switch is released."""
         self._ble = BLE.create()
+        self._display = Display.create()
+        self._display.show_config_mode()
 
         if not self._ble.is_ready():
             self._ble.activate()
@@ -74,6 +78,11 @@ class Bootstrap:
         self._schedules = Schedules.create()
         self._sync_schedule = SyncSchedule.create()
         self._sync_info = SyncInfo.create()
+        self._display = Display.create()
+
+        # Leave Config Mode visually immediately. Do not keep the
+        # "Configuring..." screen while WiFi/device/schedule setup runs.
+        self._display.show_boot_logo()
 
         retry_count, max_retries, is_connected = 0, 3, False
         while retry_count < max_retries and not stop_event.is_set():
@@ -122,6 +131,7 @@ class Bootstrap:
         print("[Normal] All setups complete. Running tasks...")
 
         tasks = [
+            asyncio.create_task(self._display.start()),
             asyncio.create_task(self._sync_schedule.start()),
             asyncio.create_task(self._streaming.start()),
             asyncio.create_task(self._schedules.start()),
