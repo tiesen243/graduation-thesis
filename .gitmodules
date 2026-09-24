@@ -1,0 +1,3 @@
+[submodule "packages/eda/lib/KiCad-RP-Pico"]
+	path = packages/eda/lib/KiCad-RP-Pico
+	url = git@github.com:ncarandini/KiCad-RP-Pico.git

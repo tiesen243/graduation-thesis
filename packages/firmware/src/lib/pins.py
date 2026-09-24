@@ -26,8 +26,8 @@ class Pins:
             _servo.duty_u16(0)
             self.servos.append(_servo)
 
-        self.sensor_drop = Pin(int(pins.get("sensor-1")), Pin.IN, Pin.PULL_UP)
-        self.sensor_check = Pin(int(pins.get("sensor-2")), Pin.IN, Pin.PULL_UP)
+        self.sensor_drop = Pin(int(pins.get("sensor-drop")), Pin.IN, Pin.PULL_UP)
+        self.sensor_check = Pin(int(pins.get("sensor-check")), Pin.IN, Pin.PULL_UP)
 
         self.stepper_discard: list[Pin] = []
         for pin in pins.get("stepper-discard", []):

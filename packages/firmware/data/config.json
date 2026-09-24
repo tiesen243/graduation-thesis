@@ -29,7 +29,7 @@
     "servo-0-1": 1,
     "servo-1-0": 2,
     "servo-1-1": 3,
-    "stepper-drawer": [4, 5, 6, 7],
+    "stepper-drawer": [7, 6, 5, 4],
 
     "buzzer": 9,
     "tft-sck": 10,
@@ -39,9 +39,9 @@
     "tft-cs": 14,
     "switch": 15,
 
-    "sensor-1": 26,
-    "sensor-2": 27,
-    "stepper-discard": [16, 17, 18, 19],
+    "sensor-drop": 26,
+    "sensor-check": 27,
+    "stepper-discard": [19, 18, 17, 16],
 
     "led": "LED"
   }
