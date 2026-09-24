@@ -676,7 +676,7 @@
         "uuid": "42a0047f-f4da-41b6-a5bf-510bae675ffb"
       }
     ],
-    "used_designators": "LCD1,StepperDrawer1,D1-2,U1-3,StepperDrawerPower1,StepperDiscardPower1,PowerPer1,MotorDrawer1,SW1,SwitchPower1,SWITCH1,PowerMCU1,SensorCheck1,R1-20,StepperDiscard1,J1-6,SensorDrop1,MotorDiscard1,Buzzer1,SwitchConfig1",
+    "used_designators": "PowerMCU1,SwitchPower1,SW1,MotorDrawer1,SWITCH1,PowerPer1,StepperDiscardPower1,SwitchConfig1,Buzzer1,MotorDiscard1,SensorDrop1,J1-6,StepperDiscard1,R1-20,LCD1,SensorCheck1,StepperDrawer1,D1-2,U1-3,StepperDrawerPower1",
     "variants": []
   },
   "sheets": [
