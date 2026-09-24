@@ -19,6 +19,14 @@ expo-env.d.ts
 __pycache__/
 *.egg-info/
 
+# kicad
+.history/
+*.kicad_prl
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.lck
+fp-info-cache
+
 # environment variables
 .env*
 !.env.example
