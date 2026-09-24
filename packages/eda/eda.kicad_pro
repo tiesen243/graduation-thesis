@@ -237,7 +237,7 @@
           "max_amplitude": 1.0,
           "min_amplitude": 0.2,
           "single_sided": false,
-          "spacing": 0.6
+          "spacing": 0.8
         }
       },
       "via_dimensions": [
@@ -510,7 +510,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.6,
+        "clearance": 0.8,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -521,9 +521,9 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.6,
+        "track_width": 0.8,
         "tuning_profile": "",
-        "via_diameter": 0.6,
+        "via_diameter": 0.8,
         "via_drill": 0.3,
         "wire_width": 6
       }
@@ -676,7 +676,7 @@
         "uuid": "42a0047f-f4da-41b6-a5bf-510bae675ffb"
       }
     ],
-    "used_designators": "PowerMCU1,SwitchPower1,SW1,MotorDrawer1,SWITCH1,PowerPer1,StepperDiscardPower1,SwitchConfig1,Buzzer1,MotorDiscard1,SensorDrop1,J1-6,StepperDiscard1,R1-20,LCD1,SensorCheck1,StepperDrawer1,D1-2,U1-3,StepperDrawerPower1",
+    "used_designators": "LCD1,SensorCheck1,StepperDrawer1,D1-2,U1-3,StepperDrawerPower1,StepperDiscardPower1,PowerPer1,MotorDrawer1,SW1,SwitchPower1,SWITCH1,PowerMCU1,R1-20,StepperDiscard1,J1-6,SensorDrop1,MotorDiscard1,Buzzer1,SwitchConfig1",
     "variants": []
   },
   "sheets": [
