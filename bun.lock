@@ -123,11 +123,11 @@
     },
     "packages/eda": {
       "name": "@rozumari/eda",
-      "version": "0.1.0",
+      "version": "0.1.1",
     },
     "packages/firmware": {
       "name": "@rozumari/firmware",
-      "version": "0.1.5",
+      "version": "0.1.6",
     },
     "packages/lib": {
       "name": "@rozumari/lib",

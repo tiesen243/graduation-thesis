@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.6
+
+### Patch Changes
+
+- Added schematic design
+- Added PCB design
+
 ## @rozumari/firmware@0.1.5
 
 ### Patch Changes

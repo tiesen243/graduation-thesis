@@ -1,3 +1,10 @@
+## @rozumari/eda@0.1.1
+
+### Patch Changes
+
+- Added schematic design
+- Added PCB design
+
 ## @rozumari/eda@0.1.0
 
 ### Minor Changes
