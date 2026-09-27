@@ -9,7 +9,8 @@ from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.ble import BLE
 from modules.wifi import WiFi
-from tasks.display import Display
+from services.display import Display
+from services.link import Link
 from tasks.schedules import Schedules
 from tasks.streaming import Streaming
 from tasks.sync_info import SyncInfo
@@ -28,6 +29,7 @@ class Bootstrap:
     _sync_schedule: SyncSchedule | None = None
     _sync_info: SyncInfo | None = None
     _display: Display | None = None
+    _link: Link | None = None
 
     _switch: Pin
 
@@ -80,9 +82,8 @@ class Bootstrap:
         self._sync_schedule = SyncSchedule.create()
         self._sync_info = SyncInfo.create()
         self._display = Display.create()
+        self._link = Link.create()
 
-        # Leave Config Mode visually immediately. Do not keep the
-        # "Configuring..." screen while WiFi/device/schedule setup runs.
         self._display.show_boot_logo()
 
         retry_count, max_retries, is_connected = 0, 3, False
@@ -140,6 +141,7 @@ class Bootstrap:
 
         tasks = [
             asyncio.create_task(self._display.start()),
+            asyncio.create_task(self._link.start()),
             asyncio.create_task(self._sync_schedule.start()),
             asyncio.create_task(self._streaming.start()),
             asyncio.create_task(self._schedules.start()),

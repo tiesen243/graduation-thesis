@@ -112,5 +112,7 @@
   "lcd.schedule": "SCHEDULE",
   "lcd.schedule_id": "ID",
   "lcd.schedule_datetime": "DATE/TIME",
-  "lcd.schedule_items": "ITEMS"
+  "lcd.schedule_items": "ITEMS",
+  "link.started": "Link button watcher started",
+  "link.generating": "Generating device link token..."
 }
