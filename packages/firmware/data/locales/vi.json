@@ -112,5 +112,7 @@
   "lcd.schedule": "LICH",
   "lcd.schedule_id": "ID",
   "lcd.schedule_datetime": "NGAY/GIO",
-  "lcd.schedule_items": "THUOC"
+  "lcd.schedule_items": "THUOC",
+  "link.started": "Da khoi dong theo doi nut lien ket",
+  "link.generating": "Dang tao token lien ket thiet bi..."
 }

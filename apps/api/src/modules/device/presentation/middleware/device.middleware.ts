@@ -1,10 +1,8 @@
-import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
-
+import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import {
   CurrentDevice,
   DeviceMiddleware,
 } from '@rozumari/contract/device/middleware'
-import { DeviceNotFound } from '@rozumari/contract/device/schemas/device.error'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 import * as Redacted from 'effect/Redacted'
@@ -21,14 +19,14 @@ export const deviceMiddleware = Layer.effect(
         const token = Redacted.value(credential)
         if (!token)
           return yield* Effect.fail(
-            new DeviceNotFound({ error: { id: '' as DeviceId } })
+            new Unauthorized({ message: 'Missing token' })
           )
 
         const { sub } = yield* jwt
           .verify(token)
           .pipe(
             Effect.catchTag('shared/application/services/JwtError', () =>
-              Effect.fail(new DeviceNotFound({ error: { id: '' as DeviceId } }))
+              Effect.fail(new Unauthorized({ message: 'Invalid token' }))
             )
           )
 

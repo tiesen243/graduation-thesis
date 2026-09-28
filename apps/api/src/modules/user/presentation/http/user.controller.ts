@@ -4,7 +4,7 @@ import { ListUsersDto } from '@rozumari/contract/user/dto/list-users.dto'
 import { ShowUserDto } from '@rozumari/contract/user/dto/show-user.dto'
 import { UpdateUserDto } from '@rozumari/contract/user/dto/update-user.dto'
 import * as Effect from 'effect/Effect'
-import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
+import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
 
 import { DeleteUserUseCase } from '@/modules/user/application/use-case/delete-user.use-case'
 import { ListUsersUseCase } from '@/modules/user/application/use-case/list-users.use-case'

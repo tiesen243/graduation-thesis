@@ -2,6 +2,7 @@ import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
 import type { DeviceService } from '@/modules/device/application/ports/device.service'
+import type { Jwt } from '@/shared/application/services/jwt.service'
 import type { StreamService } from '@/shared/application/services/stream.service'
 
 import { CreateScheduleUseCase } from '@/modules/schedule/application/use-case/create-schedule.use-case'
@@ -16,7 +17,7 @@ import { scheduleController } from '@/modules/schedule/presentation/http/schedul
 export class ScheduleModule {
   public static create(
     config: Pick<AppModule.Config, 'persistence'>,
-    imports: Layer.Layer<DeviceService, never, StreamService>
+    imports: Layer.Layer<DeviceService, never, StreamService | Jwt>
   ) {
     const infrastructureLayer = ScheduleInfrastructureModule.create(
       config.persistence

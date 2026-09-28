@@ -12,6 +12,7 @@ class Pins:
 
         self.led = Pin(pins.get("led"), Pin.OUT)
         self.switch = Pin(int(pins.get("switch")), Pin.IN, Pin.PULL_UP)
+        self.link_button = Pin(int(pins.get("link-button")), Pin.IN, Pin.PULL_UP)
 
         self.servos: list[PWM] = []
         servo_pins = [

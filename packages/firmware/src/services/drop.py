@@ -9,7 +9,7 @@ from lib.pins import Pins
 from lib.schedule import Schedule
 from modules.servo import Servo
 from modules.stepper import Stepper
-from tasks.display import Display
+from services.display import Display
 
 
 class Drop:
@@ -173,7 +173,7 @@ class Drop:
             await self._api.post("/api/notifications/send", data=data)
             if schedule_id:
                 _ = await self._schedule.update_status(schedule_id, "failed")
-            self._display.show_drop_result(
+            self._display.show_result(
                 False,
                 t("lcd.auto_failed") if schedule_id else t("lcd.manual_failed"),
                 t("lcd.drop_item_failed"),
@@ -191,7 +191,7 @@ class Drop:
                 await self._schedule.update_status(schedule_id, "failed")
 
             await self._api.post("/api/notifications/send", data=data)
-            self._display.show_drop_result(
+            self._display.show_result(
                 False,
                 t("lcd.auto_failed") if schedule_id else t("lcd.manual_failed"),
                 t("lcd.drop_not_taken"),
@@ -209,7 +209,7 @@ class Drop:
             else:
                 data["body"] = t("notification.optional_warning")
             await self._api.post("/api/notifications/send", data=data)
-            self._display.show_drop_result(
+            self._display.show_result(
                 True,
                 t("lcd.auto_done") if schedule_id else t("lcd.manual_done"),
                 t("lcd.drop_warning"),
@@ -228,7 +228,7 @@ class Drop:
             data["body"] = t("notification.drop_success")
 
         await self._api.post("/api/notifications/send", data=data)
-        self._display.show_drop_result(
+        self._display.show_result(
             True,
             t("lcd.auto_done") if schedule_id else t("lcd.manual_done"),
             t("lcd.drop_completed"),

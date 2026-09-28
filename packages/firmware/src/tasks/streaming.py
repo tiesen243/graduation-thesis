@@ -7,8 +7,8 @@ from lib.api import Api
 from lib.i18n import t
 from lib.pins import Pins
 from lib.utils import get_current_time
-from tasks.display import Display
-from tasks.drop import Drop
+from services.display import Display
+from services.drop import Drop
 from tasks.sync_schedule import SyncSchedule
 
 

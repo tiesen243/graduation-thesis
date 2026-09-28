@@ -17,7 +17,7 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
+import { Link, useLocalSearchParams } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
@@ -79,7 +79,9 @@ export default function TabsSchedulesDetailsScreen() {
           </View>
           <View className='flex-row items-center gap-2'>
             <CpuIcon className='size-4 text-muted-foreground' />
-            <Typography>{device.name ?? device.id}</Typography>
+            <Link href={`/(tabs)/pill-boxes/${device.id}`} asChild>
+              <Typography>{device.name ?? device.id}</Typography>
+            </Link>
 
             {device.position && (
               <Badge variant='outline'>

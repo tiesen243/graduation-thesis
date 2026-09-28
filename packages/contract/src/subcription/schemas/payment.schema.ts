@@ -10,9 +10,7 @@ export const PaymentId = Cuid2.pipe(
 export type PaymentId = typeof PaymentId.Type
 
 export const paymentStatuses = ['pending', 'paid', 'failed'] as const
-export const PaymentStatus = Schema.Literals(paymentStatuses).pipe(
-  Schema.brand('subcription/domain/PaymentStatus')
-)
+export const PaymentStatus = Schema.Literals(paymentStatuses)
 export type PaymentStatus = typeof PaymentStatus.Type
 
 export const PaymentSchema = Schema.Struct({

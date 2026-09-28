@@ -4,55 +4,94 @@ import type { ScrollViewInstance } from 'react-native'
 import { Badge } from '@rozumari/ui/components/badge'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
-import { useCallback, useMemo, useRef } from 'react'
+import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 
 import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { ScheduleCard } from '@/components/schedule/schedule-card'
-import { useDateRange } from '@/hooks/use-date-range'
 import { getTimezonedDate } from '@/lib/utils'
 
 const [today] = getTimezonedDate().toISOString().split('T')
 
-export const ScheduleList: React.FC<{
-  schedules: ListSchedulesDto.Output
-  startDate: string
-  endDate: string
+export interface ScheduleListRef {
+  scrollToDate: (date: string) => void
+}
 
-  isLoading: boolean
-
-  refetch: () => Promise<unknown>
-  isRefetching: boolean
-}> = ({ schedules, startDate, endDate, ...props }) => {
-  const { isLoading, refetch, isRefetching } = props
+export const ScheduleList = React.forwardRef<
+  ScheduleListRef,
+  {
+    schedules: ListSchedulesDto.Output
+    isLoading: boolean
+    refetch: () => Promise<unknown>
+    isRefetching: boolean
+  }
+>(({ schedules, isLoading, refetch, isRefetching }, ref) => {
   const { t } = useTranslation('schedule')
 
-  const scrollViewRef = useRef<ScrollViewInstance>(null)
-  const groupPositions = useRef<Record<string, number>>({})
+  const scheduleScrollRef = React.useRef<ScrollViewInstance>(null)
+  const groupPositions = React.useRef<Record<string, number>>({})
 
-  const groupedSchedules = useMemo(() => {
+  const groupedSchedules = React.useMemo(() => {
     const grouped: Record<string, typeof schedules> = {}
 
-    for (const s of schedules) {
-      if (!grouped[s.date]) grouped[s.date] = []
-      grouped[s.date] = [...(grouped[s.date] ?? []), s]
+    for (const schedule of schedules) {
+      if (!grouped[schedule.date]) grouped[schedule.date] = []
+      grouped[schedule.date] = [...(grouped[schedule.date] ?? []), schedule]
     }
 
     return grouped
   }, [schedules])
 
-  const dateRange = useDateRange(startDate, endDate)
+  React.useImperativeHandle(ref, () => ({
+    scrollToDate(date) {
+      const y = groupPositions.current[date]
 
-  const handleScrollToDate = useCallback((isoDate: string) => {
-    const yOffset = groupPositions.current[isoDate]
-    if (yOffset !== undefined)
-      scrollViewRef.current?.scrollTo({ y: yOffset, animated: true })
-  }, [])
+      if (y === undefined) return
+
+      scheduleScrollRef.current?.scrollTo({
+        y,
+        animated: true,
+      })
+    },
+  }))
+
+  if (isLoading)
+    return (
+      <ScrollView
+        contentContainerClassName='flex-grow items-center justify-center'
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch as never}
+          />
+        }
+      >
+        <ActivityIndicator size='large' />
+      </ScrollView>
+    )
+
+  if (!isLoading && schedules.length === 0)
+    return (
+      <ScrollView
+        contentContainerClassName='flex-grow items-center justify-center'
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch as never}
+          />
+        }
+      >
+        <Typography className='text-muted-foreground'>
+          {t('index.no_schedules')}
+        </Typography>
+      </ScrollView>
+    )
 
   return (
     <ScrollView
-      contentContainerClassName='flex-1'
+      ref={scheduleScrollRef}
+      contentContainerClassName='grow gap-3 pb-4'
       refreshControl={
         <RefreshControl
           refreshing={isRefetching}
@@ -60,86 +99,40 @@ export const ScheduleList: React.FC<{
         />
       }
     >
-      <View className='w-full flex-row gap-2 p-4'>
-        {dateRange.map(({ iso, weekday, dayNumber }) => (
-          <Pressable
-            key={iso}
-            onPress={() => handleScrollToDate(iso)}
-            className={cn(
-              'aspect-square min-w-0 flex-1 items-center justify-center rounded-lg border bg-card',
-              iso === today ? 'border-ring bg-ring/10' : 'border-border'
-            )}
+      {Object.entries(groupedSchedules).map(([date, group]) => {
+        const isToday = date === today
+
+        return (
+          <View
+            key={date}
+            onLayout={(event) => {
+              groupPositions.current[date] = event.nativeEvent.layout.y
+            }}
           >
-            <Typography className='text-sm text-muted-foreground'>
-              {weekday}
-            </Typography>
-            <Typography
-              className={cn('font-medium', iso === today && 'text-ring')}
-            >
-              {dayNumber}
-            </Typography>
-          </Pressable>
-        ))}
-      </View>
-
-      {isLoading && (
-        <View className='flex-1 items-center justify-center'>
-          <ActivityIndicator size='large' />
-        </View>
-      )}
-
-      {!isLoading && schedules.length <= 0 && (
-        <View className='flex-1 items-center justify-center'>
-          <Typography className='text-muted-foreground'>
-            {t('index.no_schedules')}
-          </Typography>
-        </View>
-      )}
-
-      {!isLoading && schedules.length > 0 && (
-        <ScrollView
-          ref={scrollViewRef}
-          contentContainerClassName='grow gap-3 pb-4'
-        >
-          {Object.entries(groupedSchedules).map(([date, group]) => {
-            const isToday = date === today
-
-            return (
+            <View className='mb-3 flex-row items-center'>
               <View
-                key={date}
-                onLayout={(event) => {
-                  const { y } = event.nativeEvent.layout
-                  groupPositions.current[date] = y
-                }}
+                className={cn('h-px w-4', isToday ? 'bg-primary' : 'bg-border')}
+              />
+
+              <Badge
+                variant={isToday ? 'default' : 'secondary'}
+                className='rounded-md'
               >
-                <View className='mb-3 flex-row items-center'>
-                  <View
-                    className={cn(
-                      'h-px w-4',
-                      isToday ? 'bg-primary' : 'bg-border'
-                    )}
-                  />
+                <Typography>
+                  {isToday ? t('index.label', { date }) : date}
+                </Typography>
+              </Badge>
+            </View>
 
-                  <Badge
-                    variant={isToday ? 'default' : 'secondary'}
-                    className='rounded-md'
-                  >
-                    <Typography>
-                      {isToday ? t('index.label', { date }) : date}
-                    </Typography>
-                  </Badge>
-                </View>
-
-                <View className='flex-col gap-3 px-4'>
-                  {group?.map((schedule) => (
-                    <ScheduleCard key={schedule.id} schedule={schedule} />
-                  ))}
-                </View>
-              </View>
-            )
-          })}
-        </ScrollView>
-      )}
+            <View className='flex-col gap-3 px-4'>
+              {group.map((schedule) => (
+                <ScheduleCard key={schedule.id} schedule={schedule} />
+              ))}
+            </View>
+          </View>
+        )
+      })}
     </ScrollView>
   )
-}
+})
+ScheduleList.displayName = 'ScheduleList'

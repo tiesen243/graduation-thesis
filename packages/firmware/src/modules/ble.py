@@ -5,7 +5,7 @@ import bluetooth
 
 from lib.config import Config
 from lib.i18n import t
-from tasks.ble_handler import BLEHandler
+from services.ble_handler import BLEHandler
 
 _CONFIG_SERVICE_UUID = bluetooth.UUID("ffaa5bd2-45cd-4512-bf35-c5d4276a0c7a")
 _CHAR_RX_UUID = bluetooth.UUID("3d8cffcb-69d3-41d3-8f9e-fafed0bcce6b")

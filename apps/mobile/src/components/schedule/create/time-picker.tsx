@@ -46,7 +46,8 @@ export function CreateScheduleTimePicker() {
                       date.setHours(hours, minutes, seconds)
                       return date
                     })()
-                  : new Date()
+                  : // oxlint-disable-next-line react/purity
+                    new Date()
               }
               onDismiss={() => setIsOpen(false)}
               onValueChange={(_, date) => {

@@ -1,7 +1,11 @@
 import { getCurrentWeekRange } from '@rozumari/lib/get-current-week-range'
 import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { View } from 'react-native'
 
+import type { ScheduleListRef } from '@/components/schedule/schedule-list'
+
+import { ScheduleDatePager } from '@/components/schedule/schedule-date-pager'
 import { ScheduleList } from '@/components/schedule/schedule-list'
 import { ScheduleNav } from '@/components/schedule/schedule-nav'
 import { useRuntime } from '@/hooks/use-runtime'
@@ -17,24 +21,30 @@ export default function TabsSchedulesIndexScreen() {
     api.schedule.list.queryOptions({ query })
   )
 
+  const scheduleListRef = useRef<ScheduleListRef>(null)
+
   return (
-    <>
+    <View className='flex-1'>
       <ScheduleNav
         startDate={query.startDate}
         endDate={query.endDate}
         setWeek={setQuery}
       />
 
-      <ScheduleList
+      <ScheduleDatePager
         startDate={query.startDate}
         endDate={query.endDate}
+        onDatePress={(date) => scheduleListRef.current?.scrollToDate(date)}
+        onWeekChange={setQuery}
+      />
+
+      <ScheduleList
+        ref={scheduleListRef}
         schedules={data?.data ?? []}
-
         isLoading={isLoading}
-
         refetch={refetch}
         isRefetching={isRefetching}
       />
-    </>
+    </View>
   )
 }

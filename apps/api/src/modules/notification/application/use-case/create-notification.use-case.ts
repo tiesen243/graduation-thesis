@@ -3,7 +3,6 @@ import type { CreateNotificationDto } from '@rozumari/contract/notification/dto/
 
 import { CurrentDevice } from '@rozumari/contract/device/middleware'
 import { DeviceNotLinked } from '@rozumari/contract/device/schemas/device.error'
-import { DeviceStatus } from '@rozumari/contract/device/schemas/device.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -34,10 +33,7 @@ export class CreateNotificationUseCase extends Context.Service<
         const deviceId = yield* CurrentDevice
 
         const device = yield* deviceService.find(deviceId)
-        if (
-          device.status !== DeviceStatus.make('linked') ||
-          device.userId === null
-        )
+        if (device.status !== 'linked' || device.userId === null)
           return yield* Effect.fail(
             new DeviceNotLinked({ error: { id: deviceId } })
           )

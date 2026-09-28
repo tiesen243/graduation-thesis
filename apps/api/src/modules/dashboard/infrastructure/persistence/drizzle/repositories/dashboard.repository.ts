@@ -1,4 +1,3 @@
-import { DeviceStatus } from '@rozumari/contract/device/schemas/device.schema'
 import { and, count, desc, eq, isNotNull, isNull, ne, sql } from 'drizzle-orm'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -31,10 +30,7 @@ export const DrizzleDashboardRepository = Layer.effect(
             [
               db.$count(users),
               db.$count(devices),
-              db.$count(
-                devices,
-                eq(devices.status, DeviceStatus.make('linked'))
-              ),
+              db.$count(devices, eq(devices.status, 'linked')),
               db
                 .select({ status: schedules.status, count: count() })
                 .from(schedules)

@@ -3,7 +3,7 @@ import { CountUnreadNotificationsDto } from '@rozumari/contract/notification/dto
 import { ListNotificationsDto } from '@rozumari/contract/notification/dto/list-notifications.dto'
 import { ShowNotificationDto } from '@rozumari/contract/notification/dto/show-notification.dto'
 import * as Effect from 'effect/Effect'
-import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
+import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
 
 import { CountUnreadNotificationsUseCase } from '@/modules/notification/application/use-case/count-unread-notifications'
 import { ListNotificationsUseCase } from '@/modules/notification/application/use-case/list-notifications.use-case'

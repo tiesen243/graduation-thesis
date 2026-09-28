@@ -66,7 +66,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ user }) => {
       await runtime.runPromise(
         api.user.update.mutateEffect({
           params: { id: user.id as UserId },
-          payload: { role: role as UserRole },
+          payload: { role },
         })
       )
       toast.add({ type: 'success', title: 'User updated successfully' })
@@ -100,7 +100,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({ user }) => {
 
         <RadioGroup
           value={role as string}
-          onValueChange={(v) => setRole(v as UserRole)}
+          onValueChange={(v) => setRole(v)}
           disabled={isPending}
         >
           {ROLE_OPTIONS.map((option) => (

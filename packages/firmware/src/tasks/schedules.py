@@ -4,8 +4,8 @@ import time
 from lib.i18n import t
 from lib.schedule import Schedule
 from lib.utils import get_current_time, print_table
-from tasks.display import Display
-from tasks.drop import Drop
+from services.display import Display
+from services.drop import Drop
 
 
 class Schedules:

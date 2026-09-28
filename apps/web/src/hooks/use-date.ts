@@ -1,20 +1,13 @@
-import { useSyncExternalStore } from 'react'
+import { use } from 'react'
+import { browser } from 'react-dom'
 
-const emptySubscribe = () => () => {
-  // noop
-}
-
+// oxlint-disable-next-line react/purity
 export function useDate(now = new Date()) {
-  const dateString = useSyncExternalStore(
-    emptySubscribe,
-    () => {
-      const year = now.getFullYear()
-      const month = String(now.getMonth() + 1).padStart(2, '0')
-      const day = String(now.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    },
-    () => null
-  )
+  use(browser())
 
-  return dateString
+  return new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(now)
 }

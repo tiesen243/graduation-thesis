@@ -2,7 +2,7 @@ import { Api } from '@rozumari/contract'
 import { HealthDto } from '@rozumari/contract/home/dto/health.dto'
 import { HomeDto } from '@rozumari/contract/home/dto/home.dto'
 import * as Effect from 'effect/Effect'
-import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
+import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
 
 import { HealthUseCase } from '@/modules/home/application/use-case/health.use-case'
 

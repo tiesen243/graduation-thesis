@@ -5,18 +5,20 @@ import { DeviceStreamDto } from '@rozumari/contract/device/dto/device-stream.dto
 import { LinkDeviceDto } from '@rozumari/contract/device/dto/link-device.dto'
 import { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
+import { UnlinkDeviceDto } from '@rozumari/contract/device/dto/unlink-device.dto'
 import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
 import * as Effect from 'effect/Effect'
+import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
+import * as HttpServerResponse from 'effect/http/HttpServerResponse'
 import { encodeText } from 'effect/Stream'
-import * as HttpServerResponse from 'effect/unstable/http/HttpServerResponse'
-import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
 import { LinkDeviceUseCase } from '@/modules/device/application/use-case/link-device.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+import { UnlinkDeviceUseCase } from '@/modules/device/application/use-case/unlink-device.use-case'
 import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
 import { UpdateDeviceUseCase } from '@/modules/device/application/use-case/update-device.use-case'
 
@@ -56,6 +58,12 @@ export const deviceController = HttpApiBuilder.group(
       .handle('link', ({ payload }) =>
         LinkDeviceUseCase.use((s) => s.execute(payload)).pipe(
           Effect.map((data) => new LinkDeviceDto({ data }))
+        )
+      )
+
+      .handle('unlink', ({ payload }) =>
+        UnlinkDeviceUseCase.use((s) => s.execute(payload)).pipe(
+          Effect.map((data) => new UnlinkDeviceDto({ data }))
         )
       )
 

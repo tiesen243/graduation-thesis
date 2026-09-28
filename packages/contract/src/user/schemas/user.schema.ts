@@ -7,9 +7,7 @@ export const UserId = Cuid2.pipe(Schema.brand('user/domain/UserId'))
 export type UserId = typeof UserId.Type
 
 export const userRoles = ['user', 'admin'] as const
-export const UserRole = Schema.Literals(userRoles).pipe(
-  Schema.brand('user/domain/UserRole')
-)
+export const UserRole = Schema.Literals(userRoles)
 export type UserRole = typeof UserRole.Type
 
 export const UserSchema = Schema.Struct({

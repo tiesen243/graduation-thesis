@@ -1,7 +1,8 @@
-import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
-import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
+import * as HttpApiEndpoint from 'effect/http-api/HttpApiEndpoint'
+import * as HttpApiGroup from 'effect/http-api/HttpApiGroup'
 
 import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
+import { LinkDeviceGenerateDto } from '@/device/dto/link-device-generate.dto'
 import { ShowDeviceDto } from '@/device/dto/show-device.dto'
 import { UpdateCapacityDto } from '@/device/dto/update-capacity.dto'
 import { DeviceMiddleware } from '@/device/middleware'
@@ -12,6 +13,13 @@ export class DeviceIoTGroup extends HttpApiGroup.make('device-iot')
   .add(
     HttpApiEndpoint.get('info', '/info', {
       success: ShowDeviceDto,
+      error: [DeviceNotFound],
+    })
+  )
+
+  .add(
+    HttpApiEndpoint.get('link-generate', '/link/generate', {
+      success: LinkDeviceGenerateDto,
       error: [DeviceNotFound],
     })
   )

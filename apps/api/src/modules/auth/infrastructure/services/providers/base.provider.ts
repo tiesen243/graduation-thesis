@@ -1,9 +1,9 @@
 import type { Crypto } from 'effect/Crypto'
-import type { HttpClientError } from 'effect/unstable/http/HttpClientError'
+import type { HttpClientError } from 'effect/http/HttpClientError'
 
 import * as Effect from 'effect/Effect'
-import * as HttpClient from 'effect/unstable/http/HttpClient'
-import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
+import * as HttpClient from 'effect/http/HttpClient'
+import * as HttpClientResponse from 'effect/http/HttpClientResponse'
 
 import { OAuth } from '@/modules/auth/application/types'
 import { generateCodeChallenge } from '@/modules/auth/domain/utils/crypto'
