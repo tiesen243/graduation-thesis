@@ -1,3 +1,12 @@
+## @rozumari/api@0.1.3
+
+### Patch Changes
+
+- Update effect to rc 118
+- Migrate new effect apis
+- Update logic when (un)link device
+- Update UI
+
 ## @rozumari/api@0.1.2
 
 ### Patch Changes
