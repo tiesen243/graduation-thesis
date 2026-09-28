@@ -1,5 +1,5 @@
 import { Button } from '@rozumari/ui/components/button'
-import { LinkIcon } from '@rozumari/ui/components/icons'
+import { QrCodeIcon } from '@rozumari/ui/components/icons'
 import { Stack, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +23,7 @@ export default function TabsPillBoxesLayout() {
               size='icon'
               onPress={() => router.push('/(tabs)/pill-boxes/link')}
             >
-              <LinkIcon className='size-5 shrink-0 text-foreground' />
+              <QrCodeIcon className='size-5 shrink-0 text-foreground' />
             </Button>
           ),
         }}

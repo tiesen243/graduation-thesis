@@ -1,5 +1,5 @@
-import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
-import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
+import * as HttpApiEndpoint from 'effect/http-api/HttpApiEndpoint'
+import * as HttpApiGroup from 'effect/http-api/HttpApiGroup'
 
 import { AdminMiddleware, AuthMiddleware } from '@/auth/middleware'
 import { Forbidden } from '@/auth/schemas/auth.error'

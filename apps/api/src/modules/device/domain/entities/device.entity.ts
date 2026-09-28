@@ -1,6 +1,5 @@
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
-import { DeviceAlreadyLinked } from '@rozumari/contract/device/schemas/device.error'
 import { DeviceSchema } from '@rozumari/contract/device/schemas/device.schema'
 import { createId } from '@rozumari/lib/create-id'
 import * as DateTime from 'effect/DateTime'
@@ -43,16 +42,23 @@ export class Device extends Schema.TaggedClass<Device>()(
     }
   )
 
-  public link(userId: UserId): Effect.Effect<Device, DeviceAlreadyLinked> {
-    if (this.status !== 'unlinked')
-      return Effect.fail(new DeviceAlreadyLinked({ error: { id: this.id } }))
-
+  public link(userId: UserId): Effect.Effect<Device> {
     return Effect.succeed(
       new Device({
         ...structuredClone(this),
         activatedAt: this.activatedAt ?? new Date(),
         status: 'linked',
         userId,
+      })
+    )
+  }
+
+  public unlink(): Effect.Effect<Device> {
+    return Effect.succeed(
+      new Device({
+        ...structuredClone(this),
+        status: 'unlinked',
+        userId: undefined,
       })
     )
   }

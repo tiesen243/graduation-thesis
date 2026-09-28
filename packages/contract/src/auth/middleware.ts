@@ -1,8 +1,8 @@
 // oxlint-disable eslint/max-classes-per-file
 
 import * as Context from 'effect/Context'
-import * as HttpApiMiddleware from 'effect/unstable/httpapi/HttpApiMiddleware'
-import * as HttpApiSecurity from 'effect/unstable/httpapi/HttpApiSecurity'
+import * as HttpApiMiddleware from 'effect/http-api/HttpApiMiddleware'
+import * as HttpApiSecurity from 'effect/http-api/HttpApiSecurity'
 
 import type { UserId, UserRole } from '@/user/schemas/user.schema'
 

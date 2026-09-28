@@ -1,6 +1,6 @@
-import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
-import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
-import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
+import * as HttpApiEndpoint from 'effect/http-api/HttpApiEndpoint'
+import * as HttpApiGroup from 'effect/http-api/HttpApiGroup'
+import * as OpenApi from 'effect/http-api/OpenApi'
 
 import { ProviderError, Unauthorized } from '@/auth/schemas/auth.error'
 import { OAuthSchema } from '@/auth/schemas/oauth.schema'

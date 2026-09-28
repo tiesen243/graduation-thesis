@@ -1,10 +1,10 @@
 import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
 import * as BunServices from '@effect/platform-bun/BunServices'
 import * as DateTime from 'effect/DateTime'
+import * as Etag from 'effect/http/Etag'
+import * as HttpRouter from 'effect/http/HttpRouter'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
-import * as Etag from 'effect/unstable/http/Etag'
-import * as HttpRouter from 'effect/unstable/http/HttpRouter'
 
 import { AppModule } from '@/modules/app.module'
 import { FacebookProvider } from '@/modules/auth/infrastructure/services/providers/facebook.provider'

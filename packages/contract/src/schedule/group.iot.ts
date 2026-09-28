@@ -1,6 +1,6 @@
+import * as HttpApiEndpoint from 'effect/http-api/HttpApiEndpoint'
+import * as HttpApiGroup from 'effect/http-api/HttpApiGroup'
 import * as Schema from 'effect/Schema'
-import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
-import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
 
 import { DeviceMiddleware } from '@/device/middleware'
 import { DeviceNotFound } from '@/device/schemas/device.error'

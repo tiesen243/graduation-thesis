@@ -84,7 +84,7 @@ from (http://code.google.com/p/pyqrnative):
 #   http://www.denso-wave.com/qrcode/faqpatent-e.html
 """
 
-import ure as re
+import re
 
 """
 Exceptions

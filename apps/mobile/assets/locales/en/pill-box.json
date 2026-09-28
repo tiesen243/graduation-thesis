@@ -32,6 +32,16 @@
           "success": "Device updated successfully.",
           "error": "Failed to update device."
         }
+      },
+      "unlink": {
+        "actions": {
+          "submit": "Unlink",
+          "submitting": "Unlinking..."
+        },
+        "messages": {
+          "success": "Device unlinked successfully.",
+          "error": "Failed to unlink device."
+        }
       }
     },
     "compartment": {
@@ -72,9 +82,7 @@
 
   "link": {
     "title": "Link Pill Box",
-    "not_found": "Device not found",
     "dialog": {
-      "message": "Are you sure you want to link with {{deviceName}}?",
       "success": {
         "title": "Link Successful",
         "message": "The pill box has been successfully linked."

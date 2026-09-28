@@ -1,18 +1,18 @@
+import DateTimePicker from '@react-native-community/datetimepicker'
 import { getCurrentWeekRange } from '@rozumari/lib/get-current-week-range'
 import { Button } from '@rozumari/ui/components/button'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn, formatDate } from '@rozumari/ui/lib/utils'
-import { useMemo } from 'react'
+import { Activity, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
 import { getTimezonedDate } from '@/lib/utils'
 
-const getAdjacentWeekRange = (currentStartDate: string, offsetDays: number) => {
+export const getAdjacentWeekRange = (
+  currentStartDate: string,
+  offsetDays: number
+) => {
   const date = getTimezonedDate(currentStartDate)
   date.setDate(date.getDate() + offsetDays)
   return getCurrentWeekRange(date)
@@ -30,9 +30,11 @@ export const ScheduleNav: React.FC<{
   setWeek: (options: { startDate: string; endDate: string }) => void
 }> = ({ startDate, endDate, setWeek }) => {
   const { t, i18n } = useTranslation('schedule')
+  const [isOpen, setIsOpen] = useState(false)
 
   const weekRange = useMemo(() => {
     const isSameYear = startDate.split('-')[0] === endDate.split('-')[0]
+
     return `${formatDate(startDate, {
       mode: 'custom',
       custom: isSameYear ? 'MMM d' : 'MMM d, yyyy',
@@ -55,31 +57,22 @@ export const ScheduleNav: React.FC<{
         ))}
       </View>
 
-      <View className='flex-row items-center rounded-lg border border-border'>
-        <Button
-          variant='outline'
-          size='icon'
-          className='rounded-r-none border-r border-none'
-          onPress={() => setWeek(getAdjacentWeekRange(startDate, -7))}
-        >
-          <ChevronLeftIcon className='size-5 text-foreground' />
-        </Button>
-        <Button
-          variant='outline'
-          className='rounded-none border-none'
-          onPress={() => setWeek(getCurrentWeekRange(getTimezonedDate()))}
-        >
-          <Typography>{weekRange}</Typography>
-        </Button>
-        <Button
-          variant='outline'
-          size='icon'
-          className='rounded-l-none border-l border-none'
-          onPress={() => setWeek(getAdjacentWeekRange(startDate, 7))}
-        >
-          <ChevronRightIcon className='size-5 text-foreground' />
-        </Button>
-      </View>
+      <Button variant='outline' onPress={() => setIsOpen(true)}>
+        <Typography>{weekRange}</Typography>
+      </Button>
+
+      <Activity mode={isOpen ? 'visible' : 'hidden'}>
+        <DateTimePicker
+          value={getTimezonedDate(startDate)}
+          onValueChange={(_, date) => {
+            const _weekRange = getCurrentWeekRange(date)
+            setWeek(_weekRange)
+            setIsOpen(false)
+          }}
+          onDismiss={() => setIsOpen(false)}
+          onNeutralButtonPress={() => setIsOpen(false)}
+        />
+      </Activity>
     </View>
   )
 }

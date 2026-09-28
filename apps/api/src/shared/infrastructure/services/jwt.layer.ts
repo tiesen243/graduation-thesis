@@ -1,5 +1,5 @@
 import * as Effect from 'effect/Effect'
-import * as Encoding from 'effect/Encoding'
+import * as Base64Url from 'effect/encoding/Base64Url'
 import * as Layer from 'effect/Layer'
 
 import {
@@ -56,16 +56,16 @@ export const jwtLayer = (alg: Jwt.Algorithm = 'HS256') =>
       if (options.includeIssuedTimestamp)
         payload.iat = Math.floor(Date.now() / 1000)
 
-      const headerPart = Encoding.encodeBase64Url(
+      const headerPart = Base64Url.encode(
         textEncoder.encode(JSON.stringify(header))
       )
-      const payloadPart = Encoding.encodeBase64Url(
+      const payloadPart = Base64Url.encode(
         textEncoder.encode(JSON.stringify(payload))
       )
 
       const data = textEncoder.encode(`${headerPart}.${payloadPart}`)
       const signature = yield* signData(data, alg)
-      const signaturePart = Encoding.encodeBase64Url(new Uint8Array(signature))
+      const signaturePart = Base64Url.encode(new Uint8Array(signature))
 
       return `${headerPart}.${payloadPart}.${signaturePart}`
     }),
@@ -78,14 +78,14 @@ export const jwtLayer = (alg: Jwt.Algorithm = 'HS256') =>
       const data = textEncoder.encode(`${headerPart}.${payloadPart}`)
       const expectedSignature = yield* signData(data, alg)
 
-      const expectedSignaturePart = Encoding.encodeBase64Url(
+      const expectedSignaturePart = Base64Url.encode(
         new Uint8Array(expectedSignature)
       )
       if (expectedSignaturePart !== signaturePart)
         return yield* Effect.fail(new JwtError({ reason: new InvalidToken() }))
 
-      const decodedPayload = Encoding.decodeBase64Url(payloadPart)
-      const decodedHeader = Encoding.decodeBase64Url(headerPart)
+      const decodedPayload = Base64Url.decode(payloadPart)
+      const decodedHeader = Base64Url.decode(headerPart)
       if (decodedPayload._tag === 'Failure' || decodedHeader._tag === 'Failure')
         return yield* Effect.fail(new JwtError({ reason: new InvalidToken() }))
 

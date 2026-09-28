@@ -2,6 +2,7 @@ import * as Layer from 'effect/Layer'
 
 import type { AppModule } from '@/modules/app.module'
 import type { DeviceService } from '@/modules/device/application/ports/device.service'
+import type { Jwt } from '@/shared/application/services/jwt.service'
 import type { StreamService } from '@/shared/application/services/stream.service'
 
 import { CountUnreadNotificationsUseCase } from '@/modules/notification/application/use-case/count-unread-notifications'
@@ -15,7 +16,7 @@ import { notificationController } from '@/modules/notification/presentation/http
 export class NotificationModule {
   public static create(
     config: Pick<AppModule.Config, 'persistence'>,
-    imports: Layer.Layer<DeviceService, never, StreamService>
+    imports: Layer.Layer<DeviceService, never, StreamService | Jwt>
   ) {
     const infrastructureLayer = NotificationInfrastructureModule.create(
       config.persistence

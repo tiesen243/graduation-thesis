@@ -31,6 +31,7 @@ export const UpdateScheduleDatePicker = () => {
               display='spinner'
               positiveButton={{ textColor: foregroundColor }}
               negativeButton={{ textColor: foregroundColor }}
+              // oxlint-disable-next-line react/purity
               value={field.value ? new Date(field.value) : new Date()}
               onDismiss={() => setIsOpen(false)}
               onValueChange={(_event, date) => {

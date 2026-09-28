@@ -2,7 +2,7 @@
 
 import * as Crypto from 'effect/Crypto'
 import * as Effect from 'effect/Effect'
-import * as Encoding from 'effect/Encoding'
+import * as Base64Url from 'effect/encoding/Base64Url'
 
 export function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
   if (a.byteLength !== b.byteLength) return false
@@ -39,7 +39,7 @@ export const generateStateOrCode = Effect.gen(function* generateStateOrCode() {
 
   const randomValues = yield* crypto.randomBytes(32).pipe(Effect.orDie)
 
-  return Encoding.encodeBase64Url(randomValues)
+  return Base64Url.encode(randomValues)
 })
 
 export const generateCodeChallenge = Effect.fn(function* generateCodeChallenge(
@@ -52,5 +52,5 @@ export const generateCodeChallenge = Effect.fn(function* generateCodeChallenge(
     .digest('SHA-256', encodedVerifier)
     .pipe(Effect.orDie)
 
-  return Encoding.encodeBase64Url(digest)
+  return Base64Url.encode(digest)
 })

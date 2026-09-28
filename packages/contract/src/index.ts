@@ -1,4 +1,4 @@
-import * as HttpApi from 'effect/unstable/httpapi/HttpApi'
+import * as HttpApi from 'effect/http-api/HttpApi'
 
 import { AuthGroup } from '@/auth/group.auth'
 import { OAuthGroup } from '@/auth/group.oauth'

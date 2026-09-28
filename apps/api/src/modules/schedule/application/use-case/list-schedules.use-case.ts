@@ -1,7 +1,9 @@
 import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules.dto'
-import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
+import type {
+  UserId,
+  UserRole,
+} from '@rozumari/contract/user/schemas/user.schema'
 
-import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -24,7 +26,7 @@ export class ListSchedulesUseCase extends Context.Service<
         const { userId, userRole, deviceId, startDate, endDate } = input
 
         return yield* scheduleRepository.findManyWithItems({
-          userId: userRole === UserRole.make('admin') ? undefined : userId,
+          userId: userRole === 'admin' ? undefined : userId,
           deviceId,
           startDate,
           endDate,

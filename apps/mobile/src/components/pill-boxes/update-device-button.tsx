@@ -8,7 +8,7 @@ import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -58,9 +58,25 @@ function SaveDeviceFormSubmit({
 
 export function UpdateDeviceButton({
   device,
-}: Readonly<{ device: { name: string | null; position: string | null } }>) {
+}: Readonly<{
+  device: { id: DeviceId; name: string | null; position: string | null }
+}>) {
   const { t } = useTranslation('pill-box')
   const [isOpen, setIsOpen] = React.useState(false)
+
+  const { api } = useRuntime()
+  const unlinkMutation = useMutation({
+    ...api.device.unlink.mutationOptions(),
+    onSuccess: () => {
+      toast.success(t('details.device.unlink.messages.success'))
+      setIsOpen(false)
+    },
+    onError: (error) =>
+      toast.error(
+        t('details.device.unlink.messages.error'),
+        error.message ?? undefined
+      ),
+  })
 
   return (
     <>
@@ -118,7 +134,17 @@ export function UpdateDeviceButton({
                   )}
                 />
 
-                <Field>
+                <Field className='flex-row justify-end'>
+                  <Button
+                    variant='destructive'
+                    onPress={() => unlinkMutation.mutate({ id: device.id })}
+                    disabled={unlinkMutation.isPending}
+                  >
+                    {unlinkMutation.isPending
+                      ? t('details.device.unlink.actions.submitting')
+                      : t('details.device.unlink.actions.submit')}
+                  </Button>
+
                   <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
                 </Field>
               </Pressable>

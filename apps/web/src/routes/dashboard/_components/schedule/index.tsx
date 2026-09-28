@@ -28,6 +28,7 @@ export const Schedules: React.FC<{
 }> = ({ deviceId }) => {
   const today = useDate()
   const { startDate, endDate } = useMemo(
+    // oxlint-disable-next-line react/purity
     () => getCurrentWeekRange(new Date(today ?? new Date())),
     [today]
   )

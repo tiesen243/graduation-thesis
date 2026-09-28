@@ -1,5 +1,5 @@
+import * as Command from 'effect/cli/Command'
 import * as Layer from 'effect/Layer'
-import * as Command from 'effect/unstable/cli/Command'
 
 import type { AppModule } from '@/modules/app.module'
 

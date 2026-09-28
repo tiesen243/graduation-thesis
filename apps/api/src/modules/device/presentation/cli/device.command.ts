@@ -1,6 +1,6 @@
+import * as Command from 'effect/cli/Command'
+import * as Flag from 'effect/cli/Flag'
 import * as Effect from 'effect/Effect'
-import * as Command from 'effect/unstable/cli/Command'
-import * as Flag from 'effect/unstable/cli/Flag'
 
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { Jwt } from '@/shared/application/services/jwt.service'

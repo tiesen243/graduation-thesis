@@ -5,7 +5,7 @@ import { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-schedules
 import { ShowScheduleDto } from '@rozumari/contract/schedule/dto/show-schedule.dto'
 import { UpdateScheduleDto } from '@rozumari/contract/schedule/dto/update-schedule.dto'
 import * as Effect from 'effect/Effect'
-import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
+import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
 
 import { CreateScheduleUseCase } from '@/modules/schedule/application/use-case/create-schedule.use-case'
 import { ListSchedulesUseCase } from '@/modules/schedule/application/use-case/list-schedules.use-case'

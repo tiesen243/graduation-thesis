@@ -1,12 +1,12 @@
 // oxlint-disable max-classes-per-file
 
 import * as Context from 'effect/Context'
-import * as HttpApiMiddleware from 'effect/unstable/httpapi/HttpApiMiddleware'
-import * as HttpApiSecurity from 'effect/unstable/httpapi/HttpApiSecurity'
+import * as HttpApiMiddleware from 'effect/http-api/HttpApiMiddleware'
+import * as HttpApiSecurity from 'effect/http-api/HttpApiSecurity'
 
 import type { DeviceId } from '@/device/schemas/device.schema'
 
-import { DeviceNotFound } from '@/device/schemas/device.error'
+import { Unauthorized } from '@/auth/schemas/auth.error'
 
 export class CurrentDevice extends Context.Service<CurrentDevice, DeviceId>()(
   'device/middleware/CurrentDevice'
@@ -36,5 +36,5 @@ export class DeviceMiddleware extends HttpApiMiddleware.Service<
     bearer: HttpApiSecurity.bearer,
   },
 
-  error: DeviceNotFound,
+  error: Unauthorized,
 }) {}

@@ -1,4 +1,3 @@
-import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 import type { CameraView as ICameraView } from 'expo-camera'
 
 import { Button } from '@rozumari/ui/components/button'
@@ -50,66 +49,35 @@ export default function TabsPillBoxesLinkScreen() {
   }, [])
 
   const handleBarCodeScanned = useCallback(
-    async ({
-      data: scannedDeviceId,
-    }: Readonly<{ type: string; data: string }>) => {
+    async ({ data: token }: Readonly<{ type: string; data: string }>) => {
       if (isScannedRef.current) return
 
       isScannedRef.current = true
       clearScanTimeout()
 
       await cameraRef.current?.pausePreview()
-      setScanState('processing')
+      setScanState('linking')
 
       try {
-        const response = await api.device.show.query({
-          params: { id: scannedDeviceId as DeviceId },
+        const response = await api.device.link.mutate({ payload: { token } })
+        if (response.error)
+          return Alert.alert(
+            t('link.dialog.error.title'),
+            t('link.dialog.error.message')
+          )
+
+        await queryClient.invalidateQueries({
+          queryKey: api.device.me.getQueryKey(),
         })
-        if (!response?.data) throw new Error(t('link.not_found'))
-
-        const deviceName = response.data.name ?? response.data.factoryModel
-
         Alert.alert(
-          t('link.title'),
-          t('link.dialog.message', { deviceName }),
+          t('link.dialog.success.title'),
+          t('link.dialog.success.message'),
           [
-            { text: 'Cancel', style: 'cancel', onPress: resetState },
             {
               text: 'OK',
-              onPress: async () => {
-                setScanState('linking')
-
-                try {
-                  await api.device.link.mutate({
-                    payload: { id: response.data.id },
-                  })
-
-                  await queryClient.invalidateQueries({
-                    queryKey: api.device.me.getQueryKey(),
-                  })
-                  Alert.alert(
-                    t('link.dialog.success.title'),
-                    t('link.dialog.success.message'),
-                    [
-                      {
-                        text: 'OK',
-                        onPress: () => router.push('/(tabs)/pill-boxes'),
-                      },
-                    ]
-                  )
-                } catch (error) {
-                  Alert.alert(
-                    t('link.dialog.error.title'),
-                    error instanceof Error
-                      ? error.message
-                      : t('link.dialog.error.message'),
-                    [{ text: 'OK', onPress: resetState }]
-                  )
-                }
-              },
+              onPress: () => router.push('/(tabs)/pill-boxes'),
             },
-          ],
-          { cancelable: false }
+          ]
         )
       } catch (error) {
         Alert.alert(
@@ -117,15 +85,16 @@ export default function TabsPillBoxesLinkScreen() {
           error instanceof Error
             ? error.message
             : t('link.dialog.error.message'),
-          [{ text: 'OK', onPress: resetState }]
+          [{ text: 'OK' }]
         )
+      } finally {
+        await resetState()
       }
     },
     [
       t,
       router,
       api.device.link,
-      api.device.show,
       api.device.me,
       queryClient,
       clearScanTimeout,

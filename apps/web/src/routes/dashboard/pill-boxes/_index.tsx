@@ -16,7 +16,7 @@ import { useSession } from '@/hooks/use-session'
 import { createMetadata } from '@/lib/metadata'
 import { api } from '@/lib/runtime'
 import { AddDeviceButton } from '@/routes/dashboard/pill-boxes/_components/add-device-button'
-import { LinkDeviceButton } from '@/routes/dashboard/pill-boxes/_components/link-device-button'
+import { UnlinkButton } from '@/routes/dashboard/pill-boxes/_components/unlink-button'
 
 import type { Route } from './+types/_index'
 
@@ -59,7 +59,7 @@ export default function PillBoxesIndexPage() {
           </Typography>
         </div>
 
-        {user?.role === 'admin' ? <AddDeviceButton /> : <LinkDeviceButton />}
+        {user?.role === 'admin' && <AddDeviceButton />}
       </div>
 
       <InputGroup
@@ -106,13 +106,17 @@ export default function PillBoxesIndexPage() {
           },
           _: {
             header: 'Actions',
-            action: ({ id }) => (
-              <Link
-                to={`/dashboard/pill-boxes/${id}`}
-                className={buttonVariants({ variant: 'link' })}
-              >
-                View
-              </Link>
+            action: ({ id, name, factoryModel }) => (
+              <>
+                <Link
+                  to={`/dashboard/pill-boxes/${id}`}
+                  className={buttonVariants({ variant: 'link' })}
+                >
+                  View
+                </Link>
+
+                <UnlinkButton id={id} name={name} factoryModel={factoryModel} />
+              </>
             ),
           },
         }}

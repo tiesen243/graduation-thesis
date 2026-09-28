@@ -1,5 +1,5 @@
-import * as HttpApiEndpoint from 'effect/unstable/httpapi/HttpApiEndpoint'
-import * as HttpApiGroup from 'effect/unstable/httpapi/HttpApiGroup'
+import * as HttpApiEndpoint from 'effect/http-api/HttpApiEndpoint'
+import * as HttpApiGroup from 'effect/http-api/HttpApiGroup'
 
 import { AdminMiddleware, AuthMiddleware } from '@/auth/middleware'
 import { Forbidden } from '@/auth/schemas/auth.error'
@@ -8,6 +8,7 @@ import { DeviceStreamDto } from '@/device/dto/device-stream.dto'
 import { LinkDeviceDto } from '@/device/dto/link-device.dto'
 import { ListDevicesDto } from '@/device/dto/list-devices.dto'
 import { ShowDeviceDto } from '@/device/dto/show-device.dto'
+import { UnlinkDeviceDto } from '@/device/dto/unlink-device.dto'
 import { UpdateCompartmentDto } from '@/device/dto/update-compartment.dto'
 import { UpdateDeviceDto } from '@/device/dto/update-device.dto'
 import { CompartmentNotFound } from '@/device/schemas/compartment.error'
@@ -52,7 +53,15 @@ export class DeviceGroup extends HttpApiGroup.make('device')
     HttpApiEndpoint.post('link', '/link', {
       payload: LinkDeviceDto.Input,
       success: LinkDeviceDto,
-      error: [DeviceNotFound, DeviceAlreadyLinked],
+      error: [DeviceNotFound, DeviceAlreadyLinked, Forbidden],
+    })
+  )
+
+  .add(
+    HttpApiEndpoint.post('unlink', '/unlink', {
+      payload: UnlinkDeviceDto.Input,
+      success: UnlinkDeviceDto,
+      error: [DeviceNotFound, Forbidden],
     })
   )
 
