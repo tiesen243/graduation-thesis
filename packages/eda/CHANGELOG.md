@@ -1,3 +1,9 @@
+## @rozumari/eda@0.1.3
+
+### Bug Fixes
+
+- Trigger build
+
 ## @rozumari/eda@0.1.2
 
 ### Patch Changes
