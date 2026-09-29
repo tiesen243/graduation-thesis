@@ -9,7 +9,7 @@ import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
@@ -64,11 +64,19 @@ export function UpdateDeviceButton({
   const { t } = useTranslation('pill-box')
   const [isOpen, setIsOpen] = React.useState(false)
 
+  const queryClient = useQueryClient()
   const { api } = useRuntime()
+  const router = useRouter()
+
   const unlinkMutation = useMutation({
     ...api.device.unlink.mutationOptions(),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: api.device.me.getQueryKey(),
+      })
+
       toast.success(t('details.device.unlink.messages.success'))
+      router.push('/(tabs)/pill-boxes')
       setIsOpen(false)
     },
     onError: (error) =>

@@ -3,7 +3,6 @@ import asyncio
 from lib.api import Api
 from lib.i18n import t
 from lib.pins import Pins
-from lib.uqr import QRCode
 from modules.wifi import WiFi
 from services.display import Display
 
@@ -30,7 +29,7 @@ class Link:
 
         print(t("link.generating"))
 
-        response = await self._api.post("/api/devices/link/generate")
+        response = await self._api.get("/api/devices/link/generate")
         if not isinstance(response, dict) and response.get("error") is not None:
             print(t("link.invalid_response"))
             return
@@ -38,11 +37,6 @@ class Link:
         token = response.get("data")
         if not isinstance(token, str):
             return
-
-        qr = QRCode()
-        qr.add_data(token)
-        micro_matrix = qr.get_matrix()
-        print(micro_matrix)
 
         self._display.show_link_qr(
             token,

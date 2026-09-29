@@ -1375,6 +1375,13 @@ class QRCode:
 
         return code
 
+    def get_size(self) -> tuple[int, int]:
+        """
+        Return the size of the QR Code matrix, including the border.
+        """
+        matrix = self.get_matrix()
+        return len(matrix), len(matrix[0])
+
     def render_matrix(self):
         top_bottom_map = {
             (False, False): " ",
