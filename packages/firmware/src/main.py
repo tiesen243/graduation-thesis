@@ -10,7 +10,7 @@ from lib.schedule import Schedule
 from modules.ble import BLE
 from modules.wifi import WiFi
 from services.display import Display
-from services.link import Link
+from tasks.link import Link
 from tasks.schedules import Schedules
 from tasks.streaming import Streaming
 from tasks.sync_info import SyncInfo

@@ -1,8 +1,11 @@
 import asyncio
 
+from machine import Pin
+
 from lib.api import Api
 from lib.i18n import t
 from lib.pins import Pins
+from lib.uqr import QRCode
 from modules.wifi import WiFi
 from services.display import Display
 
@@ -10,7 +13,7 @@ from services.display import Display
 class Link:
     __instance: Link | None = None
 
-    _button = None
+    _button: Pin
     _api: Api
     _wifi: WiFi
     _display: Display
@@ -31,27 +34,23 @@ class Link:
 
         response = await self._api.get("/api/devices/link/generate")
         if not isinstance(response, dict) and response.get("error") is not None:
-            print(t("link.invalid_response"))
+            print(t("link.invalid", error=response.get("error") or ""))
             return
 
         token = response.get("data")
         if not isinstance(token, str):
             return
 
-        self._display.show_link_qr(
-            token,
-            duration_ms=60_000,
-        )
+        qr = QRCode()
+        qr.add_data(token)
+        print(t("link.generated"), "\n", qr.render_matrix())
+        self._display.show_link_qr(qr, duration_ms=60_000)
 
     async def start(self) -> None:
         """
         Trigger link generation after
         press -> release.
         """
-
-        if self._button is None:
-            print(t("link.button_missing"))
-            return
 
         last_state = self._button.value()
         pressed = last_state == 0
