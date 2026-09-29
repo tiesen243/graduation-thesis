@@ -141,10 +141,7 @@ class Display:
             > 0
         )
 
-    def show_link_qr(self, token: str, size: int = 2, duration_ms: int = 60000) -> None:
-        qr = QRCode()
-        qr.add_data(token)
-
+    def show_link_qr(self, qr: QRCode, size: int = 2, duration_ms: int = 60000) -> None:
         matrix = qr.get_matrix()
         qr_width, qr_height = qr.get_size()
 

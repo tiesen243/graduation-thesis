@@ -113,6 +113,8 @@
   "lcd.schedule_id": "ID",
   "lcd.schedule_datetime": "NGAY/GIO",
   "lcd.schedule_items": "THUOC",
-  "link.started": "Da khoi dong theo doi nut lien ket",
-  "link.generating": "Dang tao token lien ket thiet bi..."
+  "link.started": "Đã khởi động trình theo dõi nút liên kết",
+  "link.generating": "Đang tạo token liên kết thiết bị...",
+  "link.generated": "Token liên kết thiết bị đã được tạo:",
+  "link.invalid": "Phản hồi liên kết không hợp lệ: {error}"
 }

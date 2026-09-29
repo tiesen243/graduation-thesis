@@ -539,7 +539,7 @@
     "last_paths": {
       "idf": "",
       "netlist": "./",
-      "plot": "",
+      "plot": "/home/tiesen/Projects/graduation-thesis/packages/eda/",
       "specctra_dsn": "",
       "step": "",
       "vrml": ""

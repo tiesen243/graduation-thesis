@@ -87,7 +87,8 @@
       },
       "error": {
         "title": "Liên kết thất bại",
-        "message": "Đã xảy ra lỗi khi liên kết hộp thuốc. Vui lòng thử lại."
+        "message": "Đã xảy ra lỗi khi liên kết hộp thuốc. Vui lòng thử lại.",
+        "no_qr": "Vui lòng đưa máy ảnh vào mã QR"
       }
     },
     "scan_failed": {

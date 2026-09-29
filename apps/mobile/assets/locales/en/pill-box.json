@@ -89,7 +89,8 @@
       },
       "error": {
         "title": "Link Failed",
-        "message": "An error occurred while linking the pill box. Please try again."
+        "message": "An error occurred while linking the pill box. Please try again.",
+        "no_qr": "Please point the camera at a QR code"
       }
     },
     "scan_failed": {

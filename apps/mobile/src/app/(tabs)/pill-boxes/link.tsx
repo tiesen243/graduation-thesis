@@ -1,4 +1,7 @@
-import type { CameraView as ICameraView } from 'expo-camera'
+import type {
+  BarcodeScanningResult,
+  CameraView as ICameraView,
+} from 'expo-camera'
 
 import { Button } from '@rozumari/ui/components/button'
 import { Card, CardContent } from '@rozumari/ui/components/card'
@@ -6,7 +9,7 @@ import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert, View } from 'react-native'
 
@@ -22,114 +25,75 @@ try {
   // noop
 }
 
-type ScanState = 'idle' | 'scanning' | 'linking'
+type ScanState = 'idle' | 'linking'
+
+interface QrBounds {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 export default function TabsPillBoxesLinkScreen() {
   const { t } = useTranslation('pill-box')
-  const { api } = useRuntime()
+
   const queryClient = useQueryClient()
+  const { api } = useRuntime()
   const router = useRouter()
 
   const [scanState, setScanState] = useState<ScanState>('idle')
+  const [qrBounds, setQrBounds] = useState<QrBounds | null>(null)
 
   const cameraRef = useRef<ICameraView>(null)
-  const scanTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const isScannedRef = useRef(false)
+  const scannedTokenRef = useRef<string | null>(null)
+  const boundsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const clearScanTimeout = useCallback(() => {
-    if (!scanTimeoutRef.current) return
+  const handleBarcodeScanned = useCallback((result: BarcodeScanningResult) => {
+    if (result.bounds)
+      setQrBounds({ ...result.bounds.origin, ...result.bounds.size })
+    scannedTokenRef.current = result.data
 
-    clearTimeout(scanTimeoutRef.current)
-    scanTimeoutRef.current = null
+    if (boundsTimeoutRef.current) clearTimeout(boundsTimeoutRef.current)
+    boundsTimeoutRef.current = setTimeout(() => {
+      setQrBounds(null)
+      scannedTokenRef.current = null
+    }, 500)
   }, [])
 
-  const resetScan = useCallback(async () => {
-    clearScanTimeout()
-
-    isScannedRef.current = false
-
-    await cameraRef.current?.resumePreview()
-    setScanState('idle')
-  }, [clearScanTimeout])
-
-  const handleBarCodeScanned = useCallback(
-    async ({ data: token }: Readonly<{ type: string; data: string }>) => {
-      if (isScannedRef.current) return
-
-      isScannedRef.current = true
-      clearScanTimeout()
-
-      await cameraRef.current?.pausePreview()
-      setScanState('linking')
-
-      try {
-        const response = await api.device.link.mutate({
-          payload: { token },
-        })
-
-        if (response.error)
-          return Alert.alert(
-            t('link.dialog.error.title'),
-            t('link.dialog.error.message'),
-            [{ text: 'OK', onPress: resetScan }]
-          )
-
-        await queryClient.invalidateQueries({
-          queryKey: api.device.me.getQueryKey(),
-        })
-
-        Alert.alert(
-          t('link.dialog.success.title'),
-          t('link.dialog.success.message'),
-          [{ text: 'OK', onPress: () => router.push('/(tabs)/pill-boxes') }]
-        )
-      } catch (error) {
-        Alert.alert(
-          t('link.dialog.error.title'),
-          error instanceof Error
-            ? error.message
-            : t('link.dialog.error.message'),
-          [{ text: 'OK', onPress: resetScan }]
-        )
-      }
-    },
-    [
-      t,
-      router,
-      api.device.link,
-      api.device.me,
-      queryClient,
-      clearScanTimeout,
-      resetScan,
-    ]
-  )
-
-  const handleStartScan = useCallback(async () => {
+  const handleStartLink = useCallback(async () => {
     if (scanState !== 'idle') return
 
-    clearScanTimeout()
+    const token = scannedTokenRef.current
+    if (!token)
+      return Alert.alert(
+        t('link.dialog.error.title'),
+        t('link.dialog.error.no_qr')
+      )
 
-    isScannedRef.current = false
+    setScanState('linking')
+    await cameraRef.current?.pausePreview()
 
-    await cameraRef.current?.resumePreview()
-    setScanState('scanning')
+    try {
+      await api.device.link.mutate({ payload: { token } })
+      await queryClient.invalidateQueries({
+        queryKey: api.device.me.getQueryKey(),
+      })
 
-    scanTimeoutRef.current = setTimeout(async () => {
-      if (isScannedRef.current) return
-
-      isScannedRef.current = true
-
-      await cameraRef.current?.pausePreview()
-
-      setScanState('linking')
-
-      Alert.alert(t('link.scan_failed.title'), t('link.scan_failed.message'), [
-        { text: 'OK', onPress: resetScan },
-      ])
-    }, 5000)
-  }, [scanState, t, clearScanTimeout, resetScan])
-
-  useEffect(() => () => clearScanTimeout(), [clearScanTimeout])
+      Alert.alert(
+        t('link.dialog.success.title'),
+        t('link.dialog.success.message'),
+        [{ text: 'OK', onPress: () => router.back() }]
+      )
+    } catch (error) {
+      Alert.alert(
+        t('link.dialog.error.title'),
+        error instanceof Error ? error.message : t('link.dialog.error.message')
+      )
+    } finally {
+      await cameraRef.current?.resumePreview()
+      setScanState('idle')
+    }
+  }, [api.device.link, api.device.me, queryClient, router, scanState, t])
 
   if (!CameraView) return null
 
@@ -143,9 +107,23 @@ export default function TabsPillBoxesLinkScreen() {
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
         barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
         onBarcodeScanned={
-          scanState === 'scanning' ? handleBarCodeScanned : undefined
+          scanState === 'idle' ? handleBarcodeScanned : undefined
         }
       />
+
+      {qrBounds && !isBusy && (
+        <View
+          pointerEvents='none'
+          style={{
+            position: 'absolute',
+            left: qrBounds.x - 8,
+            top: qrBounds.y - 8,
+            width: qrBounds.width + 16,
+            height: qrBounds.height + 16,
+          }}
+          className='rounded-sm border-2 border-warning bg-warning/20'
+        />
+      )}
 
       {isBusy && (
         <View
@@ -164,7 +142,7 @@ export default function TabsPillBoxesLinkScreen() {
         <CardContent className='items-center justify-center p-0'>
           <View className='size-20 items-center justify-center rounded-full border-4 border-card-foreground/80 p-1'>
             <Button
-              onPress={handleStartScan}
+              onPress={handleStartLink}
               disabled={isBusy}
               className={cn(
                 'size-full rounded-full bg-card-foreground disabled:opacity-100',
