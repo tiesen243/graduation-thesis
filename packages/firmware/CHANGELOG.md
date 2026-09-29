@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.9
+
+### Bug Fixes
+
+- QRCode scan error
+- Add some i18n stuff
+
 ## @rozumari/firmware@0.1.8
 
 ### Patch Changes

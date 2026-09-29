@@ -1,48 +1,48 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Patch Changes\n\n- Showing link device QR when press button\n- Bump expo version to 58\n"
-    filename: 2026-09-29-mumvkic2.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/eda:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n---\n\n## Bug Fixes\n\n- QRCode scan error\n- Add some i18n stuff\n"
+    filename: 2026-09-30-mun1tu4d.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
+  - id: npm:@rozumari/tsconfig
+    updated: false
   - id: npm:@rozumari/oxlint
     updated: false
+  - id: npm:@rozumari/web
+    updated: false
+  - id: npm:@rozumari/api
+    updated: false
+  - id: npm:@rozumari/lib
+    updated: false
   - changelogIds:
-      - 2026-09-29-mumvkic2.md
+      - 2026-09-30-mun1tu4d.md
     id: npm:@rozumari/mobile
     updated: true
   - changelogIds:
-      - 2026-09-29-mumvkic2.md
-    id: npm:@rozumari/web
+      - 2026-09-30-mun1tu4d.md
+    id: npm:@rozumari/eda
     updated: true
-  - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/api
-    updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/eda
-    updated: false
   - id: npm:@rozumari/ui
     updated: false
-  - id: npm:@rozumari/contract
-    updated: false
   - changelogIds:
-      - 2026-09-29-mumvkic2.md
+      - 2026-09-30-mun1tu4d.md
     id: npm:@rozumari/firmware
     updated: true
+  - id: npm:@rozumari/contract
+    updated: false
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/web
   - id: npm:@rozumari/api
   - id: npm:@rozumari/lib
+  - id: npm:@rozumari/mobile
   - id: npm:@rozumari/eda
   - id: npm:@rozumari/ui
-  - id: npm:@rozumari/contract
   - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/contract
