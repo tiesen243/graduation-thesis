@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.11
+
+### Bug Fixes
+
+- Build expo camera from source
+
 ## @rozumari/mobile@0.1.10
 
 ### Bug Fixes
