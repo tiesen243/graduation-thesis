@@ -6,7 +6,8 @@ import time
 from lib.config import Config
 from lib.i18n import t
 from lib.schedule import Schedule
-from lib.utils import get_current_time, rgb
+from lib.uqr import QRCode
+from lib.utils import get_current_time
 from modules.st7735 import ST7735
 
 
@@ -140,35 +141,55 @@ class Display:
             > 0
         )
 
-    def show_link_qr(
-        self,
-        token: str,
-        duration_ms: int = 60000,
-    ) -> None:
-        pass
+    def show_link_qr(self, token: str, size: int = 2, duration_ms: int = 60000) -> None:
+        qr = QRCode()
+        qr.add_data(token)
 
-    def _text(
-        self,
-        x: int,
-        y: int,
-        value: str,
-        color: int,
-        size: int = 1,
-    ) -> None:
-        self._lcd.text(
-            (x, y),
-            str(value),
-            color,
-            size=size,
+        matrix = qr.get_matrix()
+        qr_width, qr_height = qr.get_size()
+
+        width, height = self._lcd.size()
+
+        pixel_width, pixel_height = qr_width * size, qr_height * size
+        x, y = (width - pixel_width) // 2, (height - pixel_height) // 2
+
+        buffer = bytearray(pixel_width * pixel_height * 2)
+        white_hi, white_lo = self._lcd.WHITE >> 8, self._lcd.WHITE & 0xFF
+
+        for row in range(qr_height):
+            for col in range(qr_width):
+                if not matrix[row][col]:  # pyright: ignore[reportOptionalSubscript]
+                    continue
+
+                px, py = col * size, row * size
+                for dy in range(size):
+                    row_offset = ((py + dy) * pixel_width + px) * 2
+
+                    for dx in range(size):
+                        index = row_offset + dx * 2
+                        buffer[index] = white_hi
+                        buffer[index + 1] = white_lo
+
+        self._lcd.fill(self._lcd.BLACK)
+        self._lcd.blit(x, y, pixel_width, pixel_height, buffer)
+
+        self._link_qr_matrix = matrix
+        self._link_qr_until = time.ticks_add(
+            time.ticks_ms(),
+            duration_ms,
         )
+
+        self._dialog = None
+        self._main_drawn = False
+        self._last_clock = None
+        self._last_clock_parts = None
+        self._last_date = None
+        self._last_schedule_snapshot = ()
+        self._last_render = "link_qr"
 
     def _draw_boot_logo(self) -> None:
         """Show the Rozumari boot logo centered."""
         width, height = self._lcd.size()
-
-        black = rgb(0, 0, 0)
-        white = rgb(255, 255, 255)
-        blue = rgb(50, 160, 255)
 
         logo = "Rozumari"
         size = 2
@@ -186,20 +207,11 @@ class Display:
             (height - 16) // 2,
         )
 
-        self._lcd.fill(black)
+        self._lcd.fill(self._lcd.BLACK)
 
-        self._lcd.text(
-            (x, y),
-            logo,
-            white,
-            size=size,
-        )
+        self._lcd.text((x, y), logo, self._lcd.WHITE, size=size)
 
-        self._lcd.hline(
-            (x, y + 19),
-            text_width,
-            blue,
-        )
+        self._lcd.hline((x, y + 19), text_width, self._lcd.BLUE)
 
     def _get_pending_snapshot(self) -> tuple:
         schedules = self._schedule.get_schedules()
@@ -226,30 +238,18 @@ class Display:
     def _draw_header(self, now) -> None:
         width, _ = self._lcd.size()
 
-        white = rgb(255, 255, 255)
-        gray = rgb(170, 170, 170)
-        black = rgb(0, 0, 0)
-
         self._lcd.fill_rect(
             (0, 0),
             (width, 40),
-            black,
+            self._lcd.BLACK,
         )
 
-        self._text(
-            4,
-            4,
-            f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}",
-            white,
-            size=2,
+        self._lcd.text(
+            (4, 4), f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}", self._lcd.WHITE, size=2
         )
 
-        self._text(
-            4,
-            27,
-            f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}",
-            gray,
-            size=1,
+        self._lcd.text(
+            (4, 27), f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}", self._lcd.GRAY
         )
 
         self._last_clock_parts = (
@@ -263,14 +263,7 @@ class Display:
         self._last_date = f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}"
 
     def _update_clock(self, now) -> None:
-        white = rgb(255, 255, 255)
-        black = rgb(0, 0, 0)
-
-        current = (
-            now[3],
-            now[4],
-            now[5],
-        )
+        current = (now[3], now[4], now[5])
 
         previous = self._last_clock_parts
 
@@ -290,16 +283,10 @@ class Display:
                 self._lcd.fill_rect(
                     (x, 4),
                     (22, 17),
-                    black,
+                    self._lcd.BLACK,
                 )
 
-                self._text(
-                    x,
-                    4,
-                    f"{current[index]:02d}",
-                    white,
-                    size=2,
-                )
+                self._lcd.text((x, 4), f"{current[index]:02d}", self._lcd.WHITE, size=2)
 
         if current != previous:
             self._last_clock_parts = current
@@ -312,29 +299,16 @@ class Display:
             self._lcd.fill_rect(
                 (0, 26),
                 (110, 12),
-                black,
+                self._lcd.BLACK,
             )
 
-            self._text(
-                4,
-                27,
-                date,
-                rgb(170, 170, 170),
-                size=1,
-            )
+            self._lcd.text((4, 27), date, self._lcd.GRAY)
 
             self._last_date = date
 
     def _draw_main(self, now=None) -> None:
         width, _height = self._lcd.size()
-
-        white = rgb(255, 255, 255)
-        gray = rgb(170, 170, 170)
-        blue = rgb(50, 160, 255)
-        green = rgb(60, 220, 100)
-        black = rgb(0, 0, 0)
-
-        self._lcd.fill(black)
+        self._lcd.fill(self._lcd.BLACK)
 
         if now is None:
             now = get_current_time()
@@ -344,17 +318,10 @@ class Display:
         self._lcd.hline(
             (0, 40),
             width,
-            blue,
+            self._lcd.BLUE,
         )
 
-        device = (
-            self._config.get(
-                "device",
-                {},
-            )
-            or {}
-        )
-
+        device = self._config.get("device", {}) or {}
         device_name = device.get("name", "") or device.get("factoryModel", "")
 
         device_position = device.get(
@@ -367,13 +334,7 @@ class Display:
         if device_position:
             device_label = f"{device_label} - {device_position}"
 
-        self._text(
-            4,
-            44,
-            device_label[:25],
-            green,
-            size=1,
-        )
+        self._lcd.text((4, 44), device_label[:25], self._lcd.GREEN)
 
         snapshot = self._get_pending_snapshot()
 
@@ -382,23 +343,13 @@ class Display:
         y = 57
 
         if not snapshot:
-            self._text(
-                4,
-                y,
-                t("lcd.no_pending"),
-                gray,
-            )
+            self._lcd.text((4, y), t("lcd.no_pending"), self._lcd.GRAY)
 
             self._main_drawn = True
             self._last_render = "main"
             return
 
-        self._text(
-            4,
-            y,
-            t("lcd.schedules"),
-            blue,
-        )
+        self._lcd.text((4, y), t("lcd.schedules"), self._lcd.BLUE)
 
         y += 11
 
@@ -417,12 +368,7 @@ class Display:
 
             label = f"{index}. {schedule_time}  {item_count} {item_label}"
 
-            self._text(
-                4,
-                y,
-                label[:26],
-                white,
-            )
+            self._lcd.text((4, y), label[:26], self._lcd.WHITE)
 
             y += 11
 
@@ -456,20 +402,9 @@ class Display:
             return
 
         width, height = self._lcd.size()
+        dialog_type = self._dialog.get("type", "result")
 
-        black = rgb(0, 0, 0)
-        white = rgb(255, 255, 255)
-        green = rgb(50, 220, 100)
-        red = rgb(240, 70, 70)
-        gray = rgb(180, 180, 180)
-        blue = rgb(50, 160, 255)
-
-        dialog_type = self._dialog.get(
-            "type",
-            "result",
-        )
-
-        self._lcd.fill(black)
+        self._lcd.fill(self._lcd.BLACK)
 
         if dialog_type == "schedule":
             self._draw_schedule_dialog(
@@ -484,9 +419,9 @@ class Display:
         )
 
         if dialog_type == "info":
-            accent = blue
+            accent = self._lcd.BLUE
         else:
-            accent = green if self._dialog["success"] else red
+            accent = self._lcd.GREEN if self._dialog["success"] else self._lcd.RED
 
         self._lcd.rect(
             (box_x1, box_y1),
@@ -504,13 +439,7 @@ class Display:
             (width - len(title) * 6) // 2,
         )
 
-        self._text(
-            title_x,
-            box_y1 + 8,
-            title,
-            accent,
-            size=1,
-        )
+        self._lcd.text((title_x, box_y1 + 8), title, accent)
 
         body = str(
             self._dialog.get(
@@ -524,13 +453,7 @@ class Display:
             (width - len(body) * 6) // 2,
         )
 
-        self._text(
-            body_x,
-            box_y1 + 25,
-            body,
-            gray,
-            size=1,
-        )
+        self._lcd.text((body_x, box_y1 + 25), body, self._lcd.GRAY)
 
         if remaining is None:
             remaining = 5
@@ -545,13 +468,7 @@ class Display:
             (width - len(countdown) * 6) // 2,
         )
 
-        self._text(
-            countdown_x,
-            box_y2 - 13,
-            countdown,
-            white,
-            size=1,
-        )
+        self._lcd.text((countdown_x, box_y2 - 13), countdown, self._lcd.WHITE)
 
     def _draw_schedule_dialog(
         self,
@@ -563,21 +480,10 @@ class Display:
 
         width, height = self._lcd.size()
 
-        white = rgb(255, 255, 255)
-        gray = rgb(180, 180, 180)
-        blue = rgb(50, 160, 255)
-
-        schedule = self._dialog.get(
-            "schedule",
-            {},
-        )
-
+        schedule = self._dialog.get("schedule", {})
         schedule_id = str(schedule.get("id", ""))
-
         date = str(schedule.get("date", ""))
-
         schedule_time = str(schedule.get("time", ""))[:5]
-
         items = schedule.get("items") or []
 
         box_x1, box_y1 = 3, 3
@@ -592,7 +498,7 @@ class Display:
                 box_x2 - box_x1 + 1,
                 box_y2 - box_y1 + 1,
             ),
-            blue,
+            self._lcd.BLUE,
         )
 
         title = t("lcd.schedule")
@@ -602,34 +508,19 @@ class Display:
             (width - len(title) * 6) // 2,
         )
 
-        self._text(
-            title_x,
-            7,
-            title,
-            blue,
-            size=1,
+        self._lcd.text((title_x, 7), title, self._lcd.BLUE)
+
+        self._lcd.text(
+            (7, 20), f"{t('lcd.schedule_id')}: {schedule_id}"[:25], self._lcd.WHITE
         )
 
-        self._text(
-            7,
-            20,
-            f"{t('lcd.schedule_id')}: {schedule_id}"[:25],
-            white,
-        )
-
-        self._text(
-            7,
-            31,
+        self._lcd.text(
+            (7, 31),
             (f"{t('lcd.schedule_datetime')}: {date} {schedule_time}")[:25],
-            gray,
+            self._lcd.GRAY,
         )
 
-        self._text(
-            7,
-            43,
-            t("lcd.schedule_items"),
-            blue,
-        )
+        self._lcd.text((7, 43), t("lcd.schedule_items"), self._lcd.BLUE)
 
         y = 54
 
@@ -645,12 +536,7 @@ class Display:
 
             label = f"{slot} {medicine} x{quantity}"
 
-            self._text(
-                7,
-                y,
-                label[:24],
-                white,
-            )
+            self._lcd.text((7, y), label[:24], self._lcd.WHITE)
 
             y += 11
 
@@ -667,13 +553,7 @@ class Display:
             (width - len(countdown) * 6) // 2,
         )
 
-        self._text(
-            countdown_x,
-            box_y2 - 10,
-            countdown,
-            gray,
-            size=1,
-        )
+        self._lcd.text((countdown_x, box_y2 - 10), countdown, self._lcd.GRAY)
 
     def _update_dialog(
         self,
@@ -683,9 +563,6 @@ class Display:
             return
 
         width, height = self._lcd.size()
-
-        black = rgb(0, 0, 0)
-        white = rgb(255, 255, 255)
 
         if (
             self._dialog.get(
@@ -704,7 +581,7 @@ class Display:
                     box_x2 - box_x1 - 1,
                     17,
                 ),
-                black,
+                self._lcd.BLACK,
             )
 
             countdown = t(
@@ -717,13 +594,7 @@ class Display:
                 (width - len(countdown) * 6) // 2,
             )
 
-            self._text(
-                countdown_x,
-                box_y2 - 10,
-                countdown,
-                white,
-                size=1,
-            )
+            self._lcd.text((countdown_x, box_y2 - 10), countdown, self._lcd.WHITE)
 
             return
 
@@ -733,11 +604,8 @@ class Display:
 
         self._lcd.fill_rect(
             (box_x1 + 1, box_y2 - 17),
-            (
-                box_x2 - box_x1 - 1,
-                17,
-            ),
-            black,
+            (box_x2 - box_x1 - 1, 17),
+            self._lcd.BLACK,
         )
 
         countdown = t(
@@ -750,13 +618,7 @@ class Display:
             (width - len(countdown) * 6) // 2,
         )
 
-        self._text(
-            countdown_x,
-            box_y2 - 13,
-            countdown,
-            white,
-            size=1,
-        )
+        self._lcd.text((countdown_x, box_y2 - 13), countdown, self._lcd.WHITE)
 
     def show_config_mode(self) -> None:
         """Render the persistent Config Mode screen."""
@@ -766,12 +628,7 @@ class Display:
 
         width, height = self._lcd.size()
 
-        black = rgb(0, 0, 0)
-        white = rgb(255, 255, 255)
-        blue = rgb(50, 160, 255)
-        gray = rgb(170, 170, 170)
-
-        self._lcd.fill(black)
+        self._lcd.fill(self._lcd.BLACK)
 
         logo = "Rozumari"
         size = 2
@@ -789,20 +646,11 @@ class Display:
             (height - 38) // 2 - 8,
         )
 
-        self._lcd.text(
-            (logo_x, logo_y),
-            logo,
-            white,
-            size=size,
-        )
+        self._lcd.text((logo_x, logo_y), logo, self._lcd.WHITE, size=size)
 
         separator_y = logo_y + 19
 
-        self._lcd.hline(
-            (logo_x, separator_y),
-            text_width,
-            blue,
-        )
+        self._lcd.hline((logo_x, separator_y), text_width, self._lcd.BLUE)
 
         status = t("lcd.configuring")
 
@@ -813,12 +661,7 @@ class Display:
             (width - status_width) // 2,
         )
 
-        self._lcd.text(
-            (status_x, separator_y + 9),
-            status,
-            gray,
-            size=1,
-        )
+        self._lcd.text((status_x, separator_y + 9), status, self._lcd.GRAY)
 
         self._last_render = "config"
         self._main_drawn = False
