@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.8
+
+### Patch Changes
+
+- Showing link device QR when press button
+- Bump expo version to 58
+
 ## @rozumari/firmware@0.1.7
 
 ### Patch Changes
