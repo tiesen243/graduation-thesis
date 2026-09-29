@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.1.10
+
+### Bug Fixes
+
+- QRCode scan error
+- Add some i18n stuff
+
 ## @rozumari/mobile@0.1.9
 
 ### Patch Changes

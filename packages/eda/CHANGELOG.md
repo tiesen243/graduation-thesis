@@ -1,3 +1,10 @@
+## @rozumari/eda@0.1.4
+
+### Bug Fixes
+
+- QRCode scan error
+- Add some i18n stuff
+
 ## @rozumari/eda@0.1.3
 
 ### Bug Fixes
