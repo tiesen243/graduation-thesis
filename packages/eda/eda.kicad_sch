@@ -3346,16 +3346,6 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 102.87) (xy 128.27 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "894f3b93-8e63-4380-87fd-5d1f66400301")
-	)
-	(wire
-		(pts
 			(xy 113.03 111.76) (xy 128.27 111.76)
 		)
 		(stroke
@@ -3603,6 +3593,16 @@
 			(type default)
 		)
 		(uuid "cc9e0289-e750-4908-afae-3d6fa4d2167c")
+	)
+	(wire
+		(pts
+			(xy 113.03 102.87) (xy 128.27 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d40600b4-9d0f-4b85-b161-341ebb2d4584")
 	)
 	(wire
 		(pts
@@ -6757,7 +6757,8 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x02_Pin")
-		(at 107.95 102.87 0)
+		(at 107.95 105.41 0)
+		(mirror x)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6765,10 +6766,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "ca469709-bbfe-486a-84b1-5064246dd76b")
 		(property "Reference" "SwitchConfig1"
-			(at 108.585 100.33 0)
+			(at 107.95 100.33 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6778,7 +6778,7 @@
 			)
 		)
 		(property "Value" ""
-			(at 108.585 100.33 0)
+			(at 108.585 107.95 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6788,7 +6788,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 107.95 102.87 0)
+			(at 107.95 105.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6799,7 +6799,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 102.87 0)
+			(at 107.95 105.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6810,7 +6810,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x02, script generated"
-			(at 107.95 102.87 0)
+			(at 107.95 105.41 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6866,7 +6866,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.00mm:PinHeader_1x10_P2.00mm_Vertical"
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical"
 			(at 107.95 83.82 0)
 			(hide yes)
 			(show_name no)
