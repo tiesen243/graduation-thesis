@@ -1,3 +1,9 @@
+## @rozumari/api@0.1.4
+
+### Patch Changes
+
+- Change password hasing algorithm to Argon2
+
 ## @rozumari/api@0.1.3
 
 ### Patch Changes
