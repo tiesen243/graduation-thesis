@@ -6,21 +6,23 @@ import * as Schema from 'effect/Schema'
 
 import { BaseProvider } from '@/modules/auth/infrastructure/services/providers/base.provider'
 
-const GoogleUserSchema = Schema.Struct({
-  sub: AccountProviderId,
-  name: Schema.String,
-  email: Schema.String,
-  picture: Schema.String,
+const XUserResponseSchema = Schema.Struct({
+  data: Schema.Struct({
+    id: AccountProviderId,
+    username: Schema.String,
+    confirmed_email: Schema.String,
+    profile_image_url: Schema.String,
+  }),
 })
 
-export class GoogleProvider extends BaseProvider {
+export class TwitterProvider extends BaseProvider {
   public constructor(clientId: string, clientSecret: string, redirectUri = '') {
-    super('google', clientId, clientSecret, redirectUri)
+    super('twitter', clientId, clientSecret, redirectUri)
   }
 
-  private authorizationEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
-  private tokenEndpoint = 'https://oauth2.googleapis.com/token'
-  private apiEndpoint = 'https://openidconnect.googleapis.com/v1/userinfo'
+  private authorizationEndpoint = 'https://x.com/i/oauth2/authorize'
+  private tokenEndpoint = 'https://api.x.com/2/oauth2/token'
+  private apiEndpoint = 'https://api.x.com/2/users/me'
 
   public override createAuthorizationUrl = (
     state: string,
@@ -29,7 +31,7 @@ export class GoogleProvider extends BaseProvider {
     this.createAuthorizationUrlWithPKCE(
       this.authorizationEndpoint,
       state,
-      ['openid', 'email', 'profile'],
+      ['tweet.read', 'users.read', 'offline.access', 'users.email'],
       codeVerifier
     )
 
@@ -46,19 +48,24 @@ export class GoogleProvider extends BaseProvider {
 
       const response = yield* httpClient
         .get(this.apiEndpoint, {
+          urlParams: new URLSearchParams({
+            'user.fields': 'id,username,confirmed_email,profile_image_url',
+          }),
           headers: { Authorization: `Bearer ${token.access_token}` },
         })
         .pipe(
           Effect.flatMap(HttpClientResponse.filterStatusOk),
-          Effect.flatMap(HttpClientResponse.schemaBodyJson(GoogleUserSchema)),
+          Effect.flatMap(
+            HttpClientResponse.schemaBodyJson(XUserResponseSchema)
+          ),
           Effect.orDie
         )
 
       return {
-        id: response.sub,
-        name: response.name,
-        email: response.email,
-        image: response.picture,
+        id: response.data.id,
+        name: response.data.username,
+        email: response.data.confirmed_email,
+        image: response.data.profile_image_url,
       }
     }
   )

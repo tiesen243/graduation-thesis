@@ -1,5 +1,4 @@
 import { Button } from '@rozumari/ui/components/button'
-import { Typography } from '@rozumari/ui/components/typography'
 import * as Linking from 'expo-linking'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
@@ -42,12 +41,10 @@ export function OAuthButton({ provider }: { provider: string }) {
   }
 
   return (
-    <Button onPress={handleLogin} className='flex-1'>
-      <Typography>
-        {t('oauth.continue_with', {
-          provider: provider.charAt(0).toUpperCase() + provider.slice(1),
-        })}
-      </Typography>
+    <Button onPress={handleLogin} variant='outline' className='flex-1'>
+      {t('oauth.continue_with', {
+        provider: provider.charAt(0).toUpperCase() + provider.slice(1),
+      })}
     </Button>
   )
 }

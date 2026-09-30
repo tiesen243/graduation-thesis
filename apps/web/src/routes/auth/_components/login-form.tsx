@@ -9,7 +9,12 @@ import {
   FieldSeparator,
   FieldSet,
 } from '@rozumari/ui/components/field'
-import { FacebookIcon, GoogleIcon } from '@rozumari/ui/components/icons'
+import {
+  FacebookIcon,
+  GithubIcon,
+  GoogleIcon,
+  TwitterIcon,
+} from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
@@ -27,7 +32,9 @@ const loginForm = FormBuilder.empty
 
 const PROVIDERS = [
   { name: 'facebook', label: 'Facebook', icon: FacebookIcon },
+  { name: 'github', label: 'GitHub', icon: GithubIcon },
   { name: 'google', label: 'Google', icon: GoogleIcon },
+  { name: 'twitter', label: 'Twitter', icon: TwitterIcon },
 ]
 
 function LoginFormSubmit({
@@ -114,7 +121,7 @@ export const LoginForm: React.FC = () => (
         or
       </FieldSeparator>
 
-      <Field className='grid grid-cols-1 pt-5 md:grid-cols-2'>
+      <Field className='grid grid-cols-1 md:grid-cols-2'>
         {PROVIDERS.map((provider) => (
           <Button
             key={provider.name}
@@ -126,7 +133,8 @@ export const LoginForm: React.FC = () => (
               />
             }
           >
-            <provider.icon /> Continue with {provider.label}
+            <provider.icon data-icon='inline-start' /> Continue with{' '}
+            {provider.label}
           </Button>
         ))}
       </Field>
