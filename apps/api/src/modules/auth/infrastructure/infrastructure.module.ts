@@ -10,7 +10,7 @@ import { InMemoryAccountRepository } from '@/modules/auth/infrastructure/persist
 import { InMemorySessionRepository } from '@/modules/auth/infrastructure/persistence/in-memory/repositories/session.repository'
 import { AuthServiceLayer } from '@/modules/auth/infrastructure/services/auth.service'
 import { OAuthServiceLayer } from '@/modules/auth/infrastructure/services/oauth.layer'
-import { PasswordServiceLayer } from '@/modules/auth/infrastructure/services/password.service'
+import { Argon2PasswordService } from '@/modules/auth/infrastructure/services/password/argon2'
 
 export class AuthInfrastructureModule {
   public static create(
@@ -22,7 +22,7 @@ export class AuthInfrastructureModule {
     const serviceLayer = Layer.mergeAll(
       AuthServiceLayer,
       OAuthServiceLayer(providers),
-      PasswordServiceLayer()
+      Argon2PasswordService()
     )
 
     return Layer.provideMerge(serviceLayer, infrasLayer)

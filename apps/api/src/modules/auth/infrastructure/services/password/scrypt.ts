@@ -1,3 +1,4 @@
+import * as Crypto from 'effect/Crypto'
 import * as Effect from 'effect/Effect'
 import * as Hex from 'effect/encoding/Hex'
 import * as Layer from 'effect/Layer'
@@ -7,23 +8,25 @@ import { PasswordService } from '@/modules/auth/application/ports/password.servi
 import { constantTimeEqual } from '@/modules/auth/domain/utils/crypto'
 import { env } from '@/shared/env'
 
-export const PasswordServiceLayer = ({
+export const ScryptPasswordService = ({
   secret = env.AUTH_SECRET,
   dkLen = 64,
   ...config
-}: PasswordService.Config = {}) =>
+}: PasswordService.ScryptConfig = {}) =>
   Layer.effect(
     PasswordService,
-    Effect.sync(() => {
+    Effect.gen(function* make() {
+      const crypto = yield* Crypto.Crypto
+
+      const textEncoder = new TextEncoder()
+
       const options = {
         N: 16_384,
         r: 8,
         p: 1,
         maxmem: 32 * 1024 * 1024,
         ...config,
-      } satisfies PasswordService.Config
-
-      const textEncoder = new TextEncoder()
+      } satisfies PasswordService.ScryptConfig
 
       const scryptFn = (
         password: Uint8Array,
@@ -44,34 +47,31 @@ export const PasswordServiceLayer = ({
         const nonce = textEncoder.encode(salt)
 
         const key = yield* scryptFn(password, nonce)
-
         return new Uint8Array(key)
       })
 
-      const hash = Effect.fn(function* hash(password: string) {
-        const salt = Hex.encode(crypto.getRandomValues(new Uint8Array(16)))
-        const key = yield* generateKey(password.normalize('NFKC'), salt)
-        return `${salt}:${Hex.encode(key)}`
-      })
-
-      const verify = Effect.fn(function* verify(
-        password: string,
-        hashedPassword: string
-      ) {
-        const parts = hashedPassword.split(':')
-        if (parts.length !== 2) return false
-
-        const [salt = '', key = ''] = parts
-        const targetKey = yield* generateKey(password.normalize('NFKC'), salt)
-
-        const decodedKey = Hex.decode(key)
-        if (decodedKey._tag === 'Failure') return false
-        return constantTimeEqual(targetKey, decodedKey.success)
-      })
-
       return {
-        hash,
-        verify,
+        hash: Effect.fn(function* hash(password: string) {
+          const salt = Hex.encode(
+            yield* crypto.randomBytes(16).pipe(Effect.orDie)
+          )
+          const key = yield* generateKey(password.normalize('NFKC'), salt)
+          return `${salt}:${Hex.encode(key)}`
+        }),
+        verify: Effect.fn(function* verify(
+          password: string,
+          hashedPassword: string
+        ) {
+          const parts = hashedPassword.split(':')
+          if (parts.length !== 2) return false
+
+          const [salt = '', key = ''] = parts
+          const targetKey = yield* generateKey(password.normalize('NFKC'), salt)
+
+          const decodedKey = Hex.decode(key)
+          if (decodedKey._tag === 'Failure') return false
+          return constantTimeEqual(targetKey, decodedKey.success)
+        }),
       }
     })
   )
