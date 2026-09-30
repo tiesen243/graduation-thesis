@@ -408,7 +408,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Connector:Conn_01x04_Pin"
+		(symbol "Connector:Conn_01x05_Pin"
 			(pin_names
 				(offset 1.016)
 				(hide yes)
@@ -419,7 +419,7 @@
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
 			(property "Reference" "J"
-				(at 0 5.08 0)
+				(at 0 7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -428,7 +428,7 @@
 					)
 				)
 			)
-			(property "Value" "Conn_01x04_Pin"
+			(property "Value" "Conn_01x05_Pin"
 				(at 0 -7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -460,7 +460,7 @@
 					)
 				)
 			)
-			(property "Description" "Generic connector, single row, 01x04, script generated"
+			(property "Description" "Generic connector, single row, 01x05, script generated"
 				(at 0 0 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -503,7 +503,18 @@
 					)
 				)
 			)
-			(symbol "Conn_01x04_Pin_1_1"
+			(symbol "Conn_01x05_Pin_1_1"
+				(rectangle
+					(start 0.8636 5.207)
+					(end 0 4.953)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
 				(rectangle
 					(start 0.8636 2.667)
 					(end 0 2.413)
@@ -546,6 +557,18 @@
 					)
 					(fill
 						(type outline)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 5.08) (xy 0.8636 5.08)
+					)
+					(stroke
+						(width 0.1524)
+						(type default)
+					)
+					(fill
+						(type none)
 					)
 				)
 				(polyline
@@ -597,7 +620,7 @@
 					)
 				)
 				(pin passive line
-					(at 5.08 2.54 180)
+					(at 5.08 5.08 180)
 					(length 3.81)
 					(name "Pin_1"
 						(effects
@@ -615,7 +638,7 @@
 					)
 				)
 				(pin passive line
-					(at 5.08 0 180)
+					(at 5.08 2.54 180)
 					(length 3.81)
 					(name "Pin_2"
 						(effects
@@ -633,7 +656,7 @@
 					)
 				)
 				(pin passive line
-					(at 5.08 -2.54 180)
+					(at 5.08 0 180)
 					(length 3.81)
 					(name "Pin_3"
 						(effects
@@ -651,7 +674,7 @@
 					)
 				)
 				(pin passive line
-					(at 5.08 -5.08 180)
+					(at 5.08 -2.54 180)
 					(length 3.81)
 					(name "Pin_4"
 						(effects
@@ -661,6 +684,24 @@
 						)
 					)
 					(number "4"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 -5.08 180)
+					(length 3.81)
+					(name "Pin_5"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2985,16 +3026,6 @@
 	)
 	(wire
 		(pts
-			(xy 113.03 111.76) (xy 128.27 111.76)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "368c3a34-37ca-4373-9a32-09979e95a867")
-	)
-	(wire
-		(pts
 			(xy 120.65 91.44) (xy 128.27 91.44)
 		)
 		(stroke
@@ -3325,6 +3356,16 @@
 	)
 	(wire
 		(pts
+			(xy 113.03 111.76) (xy 128.27 111.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9ad8c2a7-50c8-4641-b1b2-c5745ecf1abb")
+	)
+	(wire
+		(pts
 			(xy 133.35 102.87) (xy 138.43 102.87)
 		)
 		(stroke
@@ -3612,6 +3653,26 @@
 			(type default)
 		)
 		(uuid "e0a5d7d0-9a01-4a1b-af6a-cd2b7c379dd4")
+	)
+	(wire
+		(pts
+			(xy 167.64 147.32) (xy 172.72 147.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e0bfbed9-3d61-4712-8afc-ad80e1d77d7c")
+	)
+	(wire
+		(pts
+			(xy 167.64 113.03) (xy 171.45 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e6bb4e98-96a8-45ad-88b8-7f9795bfdf37")
 	)
 	(wire
 		(pts
@@ -4293,6 +4354,16 @@
 		)
 		(uuid "bc0b8936-3c35-4626-be06-ddaf901cfc59")
 	)
+	(label "5V"
+		(at 167.64 113.03 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "bf1a787a-47a4-40a7-bfa7-610e87d6b84a")
+	)
 	(label "GND"
 		(at 177.8 123.19 180)
 		(effects
@@ -4372,6 +4443,16 @@
 			(justify left bottom)
 		)
 		(uuid "d873dbe9-730f-43bf-8673-ec0092652ffc")
+	)
+	(label "5V"
+		(at 167.64 147.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "dac1e0ab-4904-49c2-afdb-0fe1c443edc2")
 	)
 	(label "Serv00"
 		(at 133.35 35.56 0)
@@ -5488,7 +5569,8 @@
 	)
 	(symbol
 		(lib_id "Connector:Conn_01x02_Pin")
-		(at 107.95 111.76 0)
+		(at 107.95 114.3 0)
+		(mirror x)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -5496,10 +5578,9 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "6cfb747d-6bd0-4b79-9050-54877f5fd130")
 		(property "Reference" "SwitchPower1"
-			(at 108.585 109.22 0)
+			(at 107.95 109.22 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5509,7 +5590,7 @@
 			)
 		)
 		(property "Value" ""
-			(at 108.585 109.22 0)
+			(at 108.585 116.84 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -5519,7 +5600,7 @@
 			)
 		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 107.95 111.76 0)
+			(at 107.95 114.3 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5530,7 +5611,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 111.76 0)
+			(at 107.95 114.3 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5541,7 +5622,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x02, script generated"
-			(at 107.95 111.76 0)
+			(at 107.95 114.3 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -5927,93 +6008,6 @@
 			(project "eda"
 				(path "/42a0047f-f4da-41b6-a5bf-510bae675ffb"
 					(reference "U1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector:Conn_01x04_Pin")
-		(at 176.53 105.41 0)
-		(mirror y)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "7fb1f6a1-948e-4bc3-9321-0562af86457f")
-		(property "Reference" "MotorDrawer1"
-			(at 176.53 100.33 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" ""
-			(at 175.895 100.33 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical"
-			(at 176.53 105.41 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 176.53 105.41 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x04, script generated"
-			(at 176.53 105.41 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "4"
-			(uuid "c37b6b82-eef2-41f6-8eb0-8f9169894079")
-		)
-		(pin "1"
-			(uuid "39ed24bd-9f71-4432-937d-c204ca64af1d")
-		)
-		(pin "2"
-			(uuid "80aba1a3-1179-4471-abb7-2d754315862d")
-		)
-		(pin "3"
-			(uuid "d7537b48-ac9e-4056-a265-cb00169fcf4f")
-		)
-		(instances
-			(project "eda"
-				(path "/42a0047f-f4da-41b6-a5bf-510bae675ffb"
-					(reference "MotorDrawer1")
 					(unit 1)
 				)
 			)
@@ -6945,6 +6939,96 @@
 		)
 	)
 	(symbol
+		(lib_id "Connector:Conn_01x05_Pin")
+		(at 176.53 107.95 180)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "ddb4b448-733b-47bc-9c42-ee64682a988b")
+		(property "Reference" "MotorDrawer1"
+			(at 176.53 100.33 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" ""
+			(at 177.8 106.6801 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
+			(at 176.53 107.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 176.53 107.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x05, script generated"
+			(at 176.53 107.95 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "4"
+			(uuid "42ebd6f7-9bc5-4328-88a3-40d0d1ea00b3")
+		)
+		(pin "3"
+			(uuid "94c979b7-2151-4e7d-93cd-8823124c890a")
+		)
+		(pin "2"
+			(uuid "6c3a6f0d-8b86-48ab-b79d-b7be2dc39715")
+		)
+		(pin "1"
+			(uuid "f6b4f2a1-7e38-4f3e-99b1-11759ed562f7")
+		)
+		(pin "5"
+			(uuid "ece5afe5-8a07-4d6e-b1dc-e3fde9baa69b")
+		)
+		(instances
+			(project "eda"
+				(path "/42a0047f-f4da-41b6-a5bf-510bae675ffb"
+					(reference "MotorDrawer1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Transistor_Array:ULN2003")
 		(at 156.21 107.95 0)
 		(unit 1)
@@ -7228,9 +7312,8 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Conn_01x04_Pin")
-		(at 177.8 139.7 0)
-		(mirror y)
+		(lib_id "Connector:Conn_01x05_Pin")
+		(at 177.8 142.24 180)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7238,7 +7321,7 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(uuid "e31b3c77-20dc-4214-a7b0-8e56e0c36702")
+		(uuid "ea2735de-b6c3-42c3-85f3-b5e094e7ebd4")
 		(property "Reference" "MotorDiscard1"
 			(at 177.8 134.62 0)
 			(show_name no)
@@ -7251,17 +7334,18 @@
 			)
 		)
 		(property "Value" ""
-			(at 177.165 134.62 0)
+			(at 179.07 140.9701 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+				(justify right)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical"
-			(at 177.8 139.7 0)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical"
+			(at 177.8 142.24 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7272,7 +7356,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 177.8 139.7 0)
+			(at 177.8 142.24 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7282,8 +7366,8 @@
 				)
 			)
 		)
-		(property "Description" "Generic connector, single row, 01x04, script generated"
-			(at 177.8 139.7 0)
+		(property "Description" "Generic connector, single row, 01x05, script generated"
+			(at 177.8 142.24 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7294,16 +7378,19 @@
 			)
 		)
 		(pin "4"
-			(uuid "e2418484-530c-437b-8544-331d40356a1e")
-		)
-		(pin "1"
-			(uuid "086bc008-362b-4773-98a7-59df40132140")
-		)
-		(pin "2"
-			(uuid "f0b2b7f0-389c-4fd4-b8b7-bfcd473d0a21")
+			(uuid "332afea7-2480-4847-bc08-708ec1754af4")
 		)
 		(pin "3"
-			(uuid "ccb0e121-cdf3-42ed-a356-eb00b6499658")
+			(uuid "84e4cc4c-42e9-4e19-a0cc-8bdc1cde723d")
+		)
+		(pin "2"
+			(uuid "e56e6d79-8d3b-46d1-aed4-d022291f4b6b")
+		)
+		(pin "1"
+			(uuid "d6f12d59-789b-449c-a15f-5bf5c0580637")
+		)
+		(pin "5"
+			(uuid "d9ae66dc-ad92-46fe-a468-0d31dc58c56a")
 		)
 		(instances
 			(project "eda"
