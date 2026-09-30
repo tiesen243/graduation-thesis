@@ -14,5 +14,15 @@
   "save_changes": "Save Changes",
 
   "quantity": "Quantity",
-  "dosage": "Dosage"
+  "dosage": "Dosage",
+
+  "daysOfWeeks": {
+    "mon": "Monday",
+    "tue": "Tuesday",
+    "wed": "Wednesday",
+    "thu": "Thursday",
+    "fri": "Friday",
+    "sat": "Saturday",
+    "sun": "Sunday"
+  }
 }

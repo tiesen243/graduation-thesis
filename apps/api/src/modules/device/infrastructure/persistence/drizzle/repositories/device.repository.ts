@@ -40,7 +40,16 @@ export const DrizzleDeviceRepository = Layer.effect(
                   'deviceId', ${compartments.deviceId}
                 ) ORDER BY ${compartments.position} ASC
               ) FILTER (WHERE ${compartments.deviceId} IS NOT NULL),
-            '[]'::json)`.as('compartments'),
+            '[]'::json)`
+              .mapWith((r) =>
+                r.map((_r) => ({
+                  ..._r,
+                  lastRefillAt: _r.lastRefillAt
+                    ? new Date(_r.lastRefillAt)
+                    : null,
+                }))
+              )
+              .as('compartments'),
           })
           .from(devices)
           .where(eq(devices.id, deviceId))

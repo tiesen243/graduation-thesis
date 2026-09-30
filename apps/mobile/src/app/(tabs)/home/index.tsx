@@ -14,9 +14,9 @@ import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { ActivityIndicator, ScrollView, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 
-import { RefreshControl } from '@/components/native'
+import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const LEVEL_MAPPING = {
@@ -71,20 +71,23 @@ export default function TabsHomeIndexScreen() {
             })}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {lowStockCompartments.map((compartment) => (
-            <Card key={`${compartment.deviceId}-${compartment.position}`}>
-              <Link href={`/(tabs)/pill-boxes/${compartment.deviceId}`}>
-                <CardHeader className='w-full'>
-                  <CardTitle>{compartment.medicine}</CardTitle>
-                  <CardDescription>
-                    Position: {compartment.position}
-                  </CardDescription>
-                </CardHeader>
-              </Link>
-            </Card>
-          ))}
-        </CardContent>
+
+        {lowStockCompartments.length !== 0 && (
+          <CardContent>
+            {lowStockCompartments.map((compartment) => (
+              <Card key={`${compartment.deviceId}-${compartment.position}`}>
+                <Link href={`/(tabs)/pill-boxes/${compartment.deviceId}`}>
+                  <CardHeader className='w-full'>
+                    <CardTitle>{compartment.medicine}</CardTitle>
+                    <CardDescription>
+                      Position: {compartment.position}
+                    </CardDescription>
+                  </CardHeader>
+                </Link>
+              </Card>
+            ))}
+          </CardContent>
+        )}
       </Card>
 
       <Card>
@@ -97,32 +100,34 @@ export default function TabsHomeIndexScreen() {
           </CardDescription>
         </CardHeader>
 
-        <View className='gap-3 px-4'>
-          {recentNotifications.map((notification) => (
-            <Card key={notification.id}>
-              <Link href={`/(tabs)/notifications/${notification.id}`}>
-                <CardHeader className='w-full flex-row items-start gap-2'>
-                  {
-                    LEVEL_MAPPING[
-                      notification.level as keyof typeof LEVEL_MAPPING
-                    ]
-                  }
-                  <View className='flex-1 gap-1'>
-                    <CardTitle>{notification.title}</CardTitle>
-                    <CardDescription>{notification.body}</CardDescription>
-                  </View>
+        {recentNotifications.length !== 0 && (
+          <CardContent className='gap-3'>
+            {recentNotifications.map((notification) => (
+              <Card key={notification.id}>
+                <Link href={`/(tabs)/notifications/${notification.id}`}>
+                  <CardHeader className='w-full flex-row items-start gap-2'>
+                    {
+                      LEVEL_MAPPING[
+                        notification.level as keyof typeof LEVEL_MAPPING
+                      ]
+                    }
+                    <View className='flex-1 gap-1'>
+                      <CardTitle>{notification.title}</CardTitle>
+                      <CardDescription>{notification.body}</CardDescription>
+                    </View>
 
-                  <CardDescription>
-                    {formatDate(notification.createdAt, {
-                      mode: 'custom',
-                      custom: 'HH:mm',
-                    })}
-                  </CardDescription>
-                </CardHeader>
-              </Link>
-            </Card>
-          ))}
-        </View>
+                    <CardDescription>
+                      {formatDate(notification.createdAt, {
+                        mode: 'custom',
+                        custom: 'HH:mm',
+                      })}
+                    </CardDescription>
+                  </CardHeader>
+                </Link>
+              </Card>
+            ))}
+          </CardContent>
+        )}
       </Card>
     </ScrollView>
   )

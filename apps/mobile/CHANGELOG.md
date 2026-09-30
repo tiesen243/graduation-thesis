@@ -1,3 +1,77 @@
+## @rozumari/mobile@0.1.13
+
+### Patch Changes
+
+- Fix some style
+
+## @rozumari/mobile@0.1.12
+
+### Bug Fixes
+
+- Expo camera cannot scan qr due to enableMinifyInReleaseBuilds
+- Fix memory allocation failed when render qr code
+
+## @rozumari/mobile@0.1.11
+
+### Bug Fixes
+
+- Build expo camera from source
+
+## @rozumari/mobile@0.1.10
+
+### Bug Fixes
+
+- QRCode scan error
+- Add some i18n stuff
+
+## @rozumari/mobile@0.1.9
+
+### Patch Changes
+
+- Showing link device QR when press button
+- Bump expo version to 58
+
+## @rozumari/mobile@0.1.8
+
+### Bug Fixes
+
+- Trigger build
+
+## @rozumari/mobile@0.1.7
+
+### Patch Changes
+
+- Update effect to rc 118
+- Migrate new effect apis
+- Update logic when (un)link device
+- Update UI
+
+## @rozumari/mobile@0.1.6
+
+### Patch Changes
+
+- Bump deps
+
+## @rozumari/mobile@0.1.5
+
+### Patch Changes
+
+- Clamp capacity values to a minimum of zero during subtraction mode to prevent negative values.
+- Update dispensing logic to track actual dropped item counts and immediately deduct slot capacity upon physical release.
+
+## @rozumari/mobile@0.1.4
+
+### Patch Changes
+
+- Config timeout for drop and open pill box
+- Fix default values for create schedule form
+
+## @rozumari/mobile@0.1.3
+
+### Bug Fixes
+
+- build
+
 ## @rozumari/mobile@0.1.1
 
 ### Bug Fixes

@@ -22,7 +22,7 @@ export class DeviceStreamUseCase extends Context.Service<
 
     readonly emit: (
       input: DeviceStreamDto.Params & DeviceStreamDto.Emit & { userId?: UserId }
-    ) => Effect.Effect<DeviceStreamDto.EmitSuccess, DeviceNotFound>
+    ) => Effect.Effect<DeviceStreamDto.EmitSuccess>
   }
 >()('device/application/DeviceStreamUseCase', {
   make: Effect.gen(function* make() {
@@ -59,17 +59,6 @@ export class DeviceStreamUseCase extends Context.Service<
       }),
 
       emit: Effect.fn(function* emit(input) {
-        const [device] = yield* deviceRepository.findMany({
-          where: {
-            id: { eq: input.id },
-            ...(input.userId ? { userId: { eq: input.userId } } : {}),
-          },
-        })
-        if (!device)
-          return yield* Effect.fail(
-            new DeviceNotFound({ error: { id: input.id } })
-          )
-
         yield* streamService.publish(
           input.id,
           JSON.stringify({ action: input.action, payload: input.payload })

@@ -30,11 +30,11 @@ export function SyncTimeConfig() {
       registerByteHandler((action, status) => {
         if (action === ACTION_CODES.SET_SYNC_TIME_RES) {
           if (status === STATUS_CODES.SUCCESS)
-            toast.success('Sync time updated!')
-          else toast.error('Failed to update sync time!')
+            toast.success(t('config.sync.messages.success'))
+          else toast.error(t('config.sync.messages.failed'))
         }
       }),
-    [registerByteHandler]
+    [registerByteHandler, t]
   )
 
   if (!isConnected) return null

@@ -1,3 +1,71 @@
+## @rozumari/firmware@0.1.10
+
+### Bug Fixes
+
+- Expo camera cannot scan qr due to enableMinifyInReleaseBuilds
+- Fix memory allocation failed when render qr code
+
+## @rozumari/firmware@0.1.9
+
+### Bug Fixes
+
+- QRCode scan error
+- Add some i18n stuff
+
+## @rozumari/firmware@0.1.8
+
+### Patch Changes
+
+- Showing link device QR when press button
+- Bump expo version to 58
+
+## @rozumari/firmware@0.1.7
+
+### Patch Changes
+
+- Update effect to rc 118
+- Migrate new effect apis
+- Update logic when (un)link device
+- Update UI
+
+## @rozumari/firmware@0.1.6
+
+### Patch Changes
+
+- Added schematic design
+- Added PCB design
+
+## @rozumari/firmware@0.1.5
+
+### Patch Changes
+
+- added buzzer
+- fix i18n content
+
+## @rozumari/firmware@0.1.4
+
+### Patch Changes
+
+- supported i18n for firmware
+
+### Patch Changes
+
+- Bump deps
+
+## @rozumari/firmware@0.1.3
+
+### Patch Changes
+
+- Clamp capacity values to a minimum of zero during subtraction mode to prevent negative values.
+- Update dispensing logic to track actual dropped item counts and immediately deduct slot capacity upon physical release.
+
+## @rozumari/firmware@0.1.2
+
+### Patch Changes
+
+- Config timeout for drop and open pill box
+- Fix default values for create schedule form
+
 ## @rozumari/firmware@0.1.1
 
 ### Patchs Changes

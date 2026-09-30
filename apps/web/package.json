@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/web",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "private": false,
   "type": "module",
   "scripts": {
@@ -33,8 +33,8 @@
     "@types/bun": "catalog:dev",
     "@types/react": "catalog:react",
     "@types/react-dom": "catalog:react",
-    "@vercel/react-router": "^1.3.6",
+    "@vercel/react-router": "^1.3.7",
     "typescript": "catalog:dev",
-    "vite": "^8.3.0"
+    "vite": "^8.3.1"
   }
 }

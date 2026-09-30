@@ -1,3 +1,19 @@
+## @rozumari/ui@0.1.2
+
+### Bug Fixes
+
+- Expo camera cannot scan qr due to enableMinifyInReleaseBuilds
+- Fix memory allocation failed when render qr code
+
+## @rozumari/ui@0.1.1
+
+### Patch Changes
+
+- Update effect to rc 118
+- Migrate new effect apis
+- Update logic when (un)link device
+- Update UI
+
 ## @rozumari/ui@0.1.0
 
 ### Minor Changes

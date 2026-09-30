@@ -1,3 +1,19 @@
+## @rozumari/web@0.1.3
+
+### Patch Changes
+
+- Showing link device QR when press button
+- Bump expo version to 58
+
+## @rozumari/web@0.1.2
+
+### Patch Changes
+
+- Update effect to rc 118
+- Migrate new effect apis
+- Update logic when (un)link device
+- Update UI
+
 ## @rozumari/web@0.1.0
 
 ### Minor Changes

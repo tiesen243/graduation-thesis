@@ -14,9 +14,10 @@ import { useCSSVariable } from 'uniwind'
 import { CreateScheduleForm } from '@/components/schedule/create/_config'
 
 export function CreateScheduleTimePicker() {
-  const { t } = useTranslation('schedule')
-  const [isOpen, setIsOpen] = useState(false)
   const foregroundColor = useCSSVariable('--color-foreground') as string
+  const { t } = useTranslation('schedule')
+
+  const [isOpen, setIsOpen] = useState(false)
 
   return (
     <CreateScheduleForm.Field
@@ -46,7 +47,8 @@ export function CreateScheduleTimePicker() {
                       date.setHours(hours, minutes, seconds)
                       return date
                     })()
-                  : new Date()
+                  : // oxlint-disable-next-line react/purity
+                    new Date()
               }
               onDismiss={() => setIsOpen(false)}
               onValueChange={(_, date) => {

@@ -1,3 +1,44 @@
+## @rozumari/eda@0.1.6
+
+### Patch Changes
+
+- Fix some style
+
+## @rozumari/eda@0.1.5
+
+### Bug Fixes
+
+- Add missing VCC for stepper
+
+## @rozumari/eda@0.1.4
+
+### Bug Fixes
+
+- QRCode scan error
+- Add some i18n stuff
+
+## @rozumari/eda@0.1.3
+
+### Bug Fixes
+
+- Trigger build
+
+## @rozumari/eda@0.1.2
+
+### Patch Changes
+
+- Update effect to rc 118
+- Migrate new effect apis
+- Update logic when (un)link device
+- Update UI
+
+## @rozumari/eda@0.1.1
+
+### Patch Changes
+
+- Added schematic design
+- Added PCB design
+
 ## @rozumari/eda@0.1.0
 
 ### Minor Changes

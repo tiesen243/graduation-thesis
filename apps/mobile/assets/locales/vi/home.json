@@ -9,7 +9,7 @@
   },
 
   "recent_notifications": {
-    "title": "Thông báo gần đây",
+    "title": "Thông báo chưa đọc gần đây",
     "description": "Bạn có {{count}} thông báo gần đây. Vui lòng kiểm tra để cập nhật thông tin."
   }
 }

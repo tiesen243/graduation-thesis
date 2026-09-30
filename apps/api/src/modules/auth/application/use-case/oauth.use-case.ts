@@ -1,12 +1,14 @@
 import type { AccountProvider } from '@rozumari/contract/auth/schemas/account.schema'
 import type { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import type { Token } from '@rozumari/contract/auth/schemas/token.schema'
-import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
+import type {
+  UserId,
+  UserRole,
+} from '@rozumari/contract/user/schemas/user.schema'
 import type { Crypto } from 'effect/Crypto'
-import type { HttpClient } from 'effect/unstable/http/HttpClient'
+import type { HttpClient } from 'effect/http/HttpClient'
 
 import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
-import { UserRole } from '@rozumari/contract/user/schemas/user.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -82,7 +84,7 @@ export class OAuthUseCase extends Context.Service<
               )
 
             ;({ userId } = account)
-            userRole = user?.role ?? UserRole.make('user')
+            userRole = user?.role ?? 'user'
           } else {
             if (user) {
               yield* Effect.log(`User found: ${user}`)

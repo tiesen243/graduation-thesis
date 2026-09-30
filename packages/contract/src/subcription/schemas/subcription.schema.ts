@@ -17,9 +17,7 @@ export const subcriptionStatuses = [
   'expired',
   'canceled',
 ] as const
-export const SubcriptionStatus = Schema.Literals(subcriptionStatuses).pipe(
-  Schema.brand('subcription/domain/SubcriptionStatus')
-)
+export const SubcriptionStatus = Schema.Literals(subcriptionStatuses)
 export type SubcriptionStatus = typeof SubcriptionStatus.Type
 
 export const SubcriptionSchema = Schema.Struct({

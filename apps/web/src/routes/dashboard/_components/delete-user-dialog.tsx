@@ -1,7 +1,4 @@
-import type {
-  UserId,
-  UserSchema,
-} from '@rozumari/contract/user/schemas/user.schema'
+import type { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
 
 import {
   AlertDialog,
@@ -34,7 +31,7 @@ export const DeleteUserDialog: React.FC<DeleteUserDialogProps> = ({ user }) => {
     setIsPending(true)
     try {
       await runtime.runPromise(
-        api.user.delete.mutateEffect({ params: { id: user.id as UserId } })
+        api.user.delete.mutateEffect({ params: { id: user.id } })
       )
       toast.add({ type: 'success', title: 'User deleted successfully' })
       await queryClient.invalidateQueries({

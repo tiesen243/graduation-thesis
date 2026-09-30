@@ -1,4 +1,5 @@
 {
+  "ignore": ["./src/lib/uqr.py"],
   "reportPrivateUsage": "error",
   "reportMissingModuleSource": "none"
 }

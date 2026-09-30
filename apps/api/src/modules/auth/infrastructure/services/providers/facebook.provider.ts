@@ -2,9 +2,9 @@ import type { Crypto } from 'effect/Crypto'
 
 import { AccountProviderId } from '@rozumari/contract/auth/schemas/account.schema'
 import * as Effect from 'effect/Effect'
+import * as HttpClient from 'effect/http/HttpClient'
+import * as HttpClientResponse from 'effect/http/HttpClientResponse'
 import * as Schema from 'effect/Schema'
-import * as HttpClient from 'effect/unstable/http/HttpClient'
-import * as HttpClientResponse from 'effect/unstable/http/HttpClientResponse'
 
 import { BaseProvider } from '@/modules/auth/infrastructure/services/providers/base.provider'
 

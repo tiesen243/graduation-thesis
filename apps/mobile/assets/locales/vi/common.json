@@ -14,5 +14,15 @@
   "save_changes": "Lưu thay đổi",
 
   "quantity": "Số lượng",
-  "dosage": "Liều lượng"
+  "dosage": "Liều lượng",
+
+  "daysOfWeeks": {
+    "mon": "Thứ Hai",
+    "tue": "Thứ Ba",
+    "wed": "Thứ Tư",
+    "thu": "Thứ Năm",
+    "fri": "Thứ Sáu",
+    "sat": "Thứ Bảy",
+    "sun": "Chủ Nhật"
+  }
 }

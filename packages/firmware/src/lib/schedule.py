@@ -1,6 +1,7 @@
 import json
 
 from lib.api import Api
+from lib.i18n import t
 
 
 class Schedule:
@@ -27,10 +28,10 @@ class Schedule:
                     self._schedules = data
                     return True
                 else:
-                    print(f"Data in {self._path} is not a list.")
+                    print(t("schedule.data_not_list", path=self._path))
                     return False
         except Exception as e:
-            print(f"Error loading schedules from {self._path}: {e}")
+            print(t("schedule.load_error", path=self._path, error=e))
             return False
 
     def get_schedules(self) -> list[dict]:
@@ -81,7 +82,7 @@ class Schedule:
                 json.dump(self._schedules, f)
             return True
         except Exception as e:
-            print(f"Error saving schedules to {self._path}: {e}")
+            print(t("schedule.save_error", path=self._path, error=e))
             return False
 
     @classmethod

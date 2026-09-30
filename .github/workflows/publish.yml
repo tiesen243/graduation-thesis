@@ -3,7 +3,8 @@ name: Publish
 on:
   push:
     tags:
-      - '@rozumari/mobile@*.*.*'
+      - '@rozumari/*@*.*.*'
+
   workflow_dispatch:
     inputs:
       tag:
@@ -20,6 +21,7 @@ env:
 
 jobs:
   android:
+    if: contains(github.ref, '@rozumari/mobile@')
     runs-on: ubuntu-latest
     permissions:
       contents: write

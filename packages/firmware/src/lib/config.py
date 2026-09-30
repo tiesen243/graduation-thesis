@@ -18,7 +18,9 @@ class Config:
                 json.dump(self._config, f)
             return True
         except Exception as e:
-            print(f"Error saving configuration to {self._file_path}: {e}")
+            from lib.i18n import t
+
+            print(t("config.save_error", path=self._file_path, error=e))
             return False
 
     def _load(self) -> dict:

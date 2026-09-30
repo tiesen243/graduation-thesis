@@ -29,6 +29,16 @@
           "success": "Cập nhật thiết bị thành công.",
           "error": "Cập nhật thiết bị thất bại."
         }
+      },
+      "unlink": {
+        "actions": {
+          "submit": "Hủy liên kết",
+          "submitting": "Đang hủy liên kết..."
+        },
+        "messages": {
+          "success": "Hủy liên kết thiết bị thành công.",
+          "error": "Hủy liên kết thiết bị thất bại."
+        }
       }
     },
     "compartment": {
@@ -70,16 +80,15 @@
 
   "link": {
     "title": "Liên kết hộp thuốc",
-    "not_found": "Không tìm thấy thiết bị",
     "dialog": {
-      "message": "Bạn có chắc chắn muốn liên kết với {{deviceName}} không?",
       "success": {
         "title": "Liên kết thành công",
         "message": "Hộp thuốc đã được liên kết thành công."
       },
       "error": {
         "title": "Liên kết thất bại",
-        "message": "Đã xảy ra lỗi khi liên kết hộp thuốc. Vui lòng thử lại."
+        "message": "Đã xảy ra lỗi khi liên kết hộp thuốc. Vui lòng thử lại.",
+        "no_qr": "Vui lòng đưa máy ảnh vào mã QR"
       }
     },
     "scan_failed": {

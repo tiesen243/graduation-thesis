@@ -19,7 +19,8 @@ function FieldSet({
     <KeyboardAvoidingView
       data-slot='field-set'
       className={cn('flex-1', containerClassName)}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
     >
       <ScrollView
         data-slot='field-set-content'

@@ -1,11 +1,11 @@
+// oxlint-disable node/global-require unicorn/prefer-module
+
 import { useQuery } from '@tanstack/react-query'
 import { NativeTabs } from 'expo-router/native-tabs'
 import { useTranslation } from 'react-i18next'
 import { useCSSVariable } from 'uniwind'
 
 import { useRuntime } from '@/hooks/use-runtime'
-
-// oxlint-disable node/global-require unicorn/prefer-module
 
 export default function TabsLayout() {
   const [
@@ -46,13 +46,14 @@ export default function TabsLayout() {
 
       rippleColor={`${primaryColor}33`}
       indicatorColor={mutedColor}
-      labelVisibilityMode='labeled'
+      labelVisibilityMode='unlabeled'
 
       badgeBackgroundColor={destructiveColor}
       badgeTextColor='#FAFAFA'
 
-      backBehavior='history'
       activityEnabled
+      backBehavior='history'
+      tabBarRespectsIMEInsets
     >
       <NativeTabs.Trigger name='home'>
         <NativeTabs.Trigger.Label>{t('home:title')}</NativeTabs.Trigger.Label>

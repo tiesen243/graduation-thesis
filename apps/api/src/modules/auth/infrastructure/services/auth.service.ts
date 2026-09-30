@@ -11,7 +11,7 @@ import type {
 import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import * as DateTime from 'effect/DateTime'
 import * as Effect from 'effect/Effect'
-import * as Encoding from 'effect/Encoding'
+import * as Hex from 'effect/encoding/Hex'
 import * as Layer from 'effect/Layer'
 
 import { AuthService } from '@/modules/auth/application/ports/auth.service'
@@ -73,7 +73,7 @@ export const AuthServiceLayer = Layer.effect(
 
           const session = Session.make({
             id: id as SessionId,
-            token: Encoding.encodeHex(hashedSecret),
+            token: Hex.encode(hashedSecret),
             expiresAt: DateTime.toDate(expiresAt),
             userId,
           })
@@ -104,7 +104,7 @@ export const AuthServiceLayer = Layer.effect(
         let { session } = agg
 
         const hashedSecret = yield* hashSecret(secret).pipe(Effect.orDie)
-        const storedSecret = Encoding.decodeHex(session.token)
+        const storedSecret = Hex.decode(session.token)
         if (storedSecret._tag === 'Failure')
           return yield* Effect.fail(
             new Unauthorized({ message: 'Invalid refresh token' })

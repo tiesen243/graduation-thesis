@@ -11,6 +11,11 @@
     "url": "https://your-api.example.com",
     "bypass_token": "YOUR_BYPASS_TOKEN"
   },
+  "timeouts": {
+    "drop": 5,
+    "open": 10,
+    "close": 5
+  },
   "device": {
     "id": "YOUR_DEVICE_ID",
     "status": "unlinked",
@@ -24,9 +29,7 @@
     "servo-0-1": 1,
     "servo-1-0": 2,
     "servo-1-1": 3,
-    "stepper-drawer": [4, 5, 6, 7],
-
-    "buzzer": 9,
+    "stepper-drawer": [7, 6, 5, 4],
     "tft-sck": 10,
     "tft-sda": 11,
     "tft-dc": 12,
@@ -34,9 +37,11 @@
     "tft-cs": 14,
     "switch": 15,
 
-    "sensor-1": 26,
-    "sensor-2": 27,
-    "stepper-discard": [16, 17, 18, 19],
+    "sensor-check": 27,
+    "sensor-drop": 26,
+    "link-button": 21,
+    "buzzer": 20,
+    "stepper-discard": [19, 18, 17, 16],
 
     "led": "LED"
   }

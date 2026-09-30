@@ -1,13 +1,15 @@
+import * as Command from 'effect/cli/Command'
 import * as Layer from 'effect/Layer'
-import * as Command from 'effect/unstable/cli/Command'
 
 import type { AppModule } from '@/modules/app.module'
 
 import { AddDeviceUseCase } from '@/modules/device/application/use-case/add-device.use-case'
 import { DeviceStreamUseCase } from '@/modules/device/application/use-case/device-stream.use-case'
+import { LinkDeviceGenerateUseCase } from '@/modules/device/application/use-case/link-device-generate.use-case'
 import { LinkDeviceUseCase } from '@/modules/device/application/use-case/link-device.use-case'
 import { ListDevicesUseCase } from '@/modules/device/application/use-case/list-devices.use-case'
 import { ShowDeviceUseCase } from '@/modules/device/application/use-case/show-device.use-case'
+import { UnlinkDeviceUseCase } from '@/modules/device/application/use-case/unlink-device.use-case'
 import { UpdateCapacityUseCase } from '@/modules/device/application/use-case/update-capacity.use-case'
 import { UpdateCompartmentUseCase } from '@/modules/device/application/use-case/update-compartment.use-case'
 import { UpdateDeviceUseCase } from '@/modules/device/application/use-case/update-device.use-case'
@@ -27,9 +29,11 @@ export class DeviceModule {
     const useCaseLayer = Layer.mergeAll(
       AddDeviceUseCase.layer,
       DeviceStreamUseCase.layer,
+      LinkDeviceGenerateUseCase.layer,
       LinkDeviceUseCase.layer,
       ListDevicesUseCase.layer,
       ShowDeviceUseCase.layer,
+      UnlinkDeviceUseCase.layer,
       UpdateCapacityUseCase.layer,
       UpdateCompartmentUseCase.layer,
       UpdateDeviceUseCase.layer

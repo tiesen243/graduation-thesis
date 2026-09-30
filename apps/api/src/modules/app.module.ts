@@ -1,9 +1,9 @@
 import { Api } from '@rozumari/contract'
+import * as Command from 'effect/cli/Command'
+import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
+import * as HttpApiScalar from 'effect/http-api/HttpApiScalar'
+import * as OpenApi from 'effect/http-api/OpenApi'
 import * as Layer from 'effect/Layer'
-import * as Command from 'effect/unstable/cli/Command'
-import * as HttpApiBuilder from 'effect/unstable/httpapi/HttpApiBuilder'
-import * as HttpApiScalar from 'effect/unstable/httpapi/HttpApiScalar'
-import * as OpenApi from 'effect/unstable/httpapi/OpenApi'
 
 import type { BaseProvider } from '@/modules/auth/infrastructure/services/providers/base.provider'
 

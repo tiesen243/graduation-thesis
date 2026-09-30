@@ -36,7 +36,12 @@ export class ListDevicesUseCase extends Context.Service<
               name: { like: `%${query}%`, mode: 'insensitive' },
             },
           }
-        if (userId) where = { ...where, userId: { eq: userId } }
+        if (userId)
+          where = {
+            ...where,
+            userId: { eq: userId },
+            status: { eq: 'linked' },
+          }
 
         const [devices, total] = yield* Effect.all(
           [

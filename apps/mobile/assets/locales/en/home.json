@@ -9,7 +9,7 @@
   },
 
   "recent_notifications": {
-    "title": "Recent Notifications",
+    "title": "Recent Unread Notifications",
     "description": "You have {{count}} recent notification(s). Please check them to stay updated."
   }
 }

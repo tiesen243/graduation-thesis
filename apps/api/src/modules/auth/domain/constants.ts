@@ -1,4 +1,4 @@
-import type { Cookie } from 'effect/unstable/http/Cookies'
+import type { Cookie } from 'effect/http/Cookies'
 
 import { COOKIE_ACCESS_TOKEN_KEY } from '@rozumari/contract/auth/middleware'
 

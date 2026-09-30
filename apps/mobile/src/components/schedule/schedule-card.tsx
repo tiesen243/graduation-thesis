@@ -71,14 +71,14 @@ export const ScheduleCard: React.FC<{
             key={`${schedule.id}-slot-${item.slot}`}
             className='flex-row flex-wrap items-center justify-between gap-4 bg-muted/40 p-2 text-sm'
           >
-            <View className='flex-row items-center gap-2'>
-              <PillIcon className='size-3.5 shrink-0 text-primary' />
+            <View className='flex-row items-center gap-1'>
+              <PillIcon className='mr-1 size-3.5 shrink-0 text-primary' />
               <Typography className='font-medium'>{item.medicine}</Typography>
-              {item.dosage && (
+              {item.dosage ? (
                 <Typography className='text-xs text-muted-foreground'>
                   ({item.dosage}mg)
                 </Typography>
-              )}
+              ) : null}
               {item.isRequired && (
                 <AsteriskIcon className='-mt-1 size-3 shrink-0 text-destructive' />
               )}

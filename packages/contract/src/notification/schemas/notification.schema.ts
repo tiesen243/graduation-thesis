@@ -13,9 +13,7 @@ export const NotificationId = Cuid2.pipe(
 export type NotificationId = typeof NotificationId.Type
 
 export const notificationLevels = ['info', 'warning', 'error'] as const
-export const NotificationLevel = Schema.Literals(notificationLevels).pipe(
-  Schema.brand('notification/domain/NotificationLevel')
-)
+export const NotificationLevel = Schema.Literals(notificationLevels)
 export type NotificationLevel = typeof NotificationLevel.Type
 
 export const NotificationSchema = Schema.Struct({

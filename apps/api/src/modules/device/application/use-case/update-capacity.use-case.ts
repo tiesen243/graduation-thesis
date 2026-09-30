@@ -44,6 +44,8 @@ export class UpdateCapacityUseCase extends Context.Service<
           if (mode === 'replacement') ({ capacity } = slot)
           else if (mode === 'addition') capacity += slot.capacity
           else if (mode === 'subtraction') capacity -= slot.capacity
+          capacity = Math.max(0, capacity)
+
           updatedCompartments.push(compartment.update({ capacity }))
         }
 

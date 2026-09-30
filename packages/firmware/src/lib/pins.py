@@ -12,6 +12,7 @@ class Pins:
 
         self.led = Pin(pins.get("led"), Pin.OUT)
         self.switch = Pin(int(pins.get("switch")), Pin.IN, Pin.PULL_UP)
+        self.link_button = Pin(int(pins.get("link-button")), Pin.IN, Pin.PULL_UP)
 
         self.servos: list[PWM] = []
         servo_pins = [
@@ -26,8 +27,8 @@ class Pins:
             _servo.duty_u16(0)
             self.servos.append(_servo)
 
-        self.sensor_drop = Pin(int(pins.get("sensor-1")), Pin.IN, Pin.PULL_UP)
-        self.sensor_check = Pin(int(pins.get("sensor-2")), Pin.IN, Pin.PULL_UP)
+        self.sensor_drop = Pin(int(pins.get("sensor-drop")), Pin.IN, Pin.PULL_UP)
+        self.sensor_check = Pin(int(pins.get("sensor-check")), Pin.IN, Pin.PULL_UP)
 
         self.stepper_discard: list[Pin] = []
         for pin in pins.get("stepper-discard", []):
@@ -37,7 +38,7 @@ class Pins:
         for pin in pins.get("stepper-drawer", []):
             self.stepper_drawer.append(Pin(int(pin), Pin.OUT))
 
-        self.buzzer = Pin(int(pins.get("buzzer")), Pin.OUT, value=1)
+        self.buzzer = Pin(int(pins.get("buzzer")), Pin.OUT)
 
         self.tft_spi = SPI(
             1,

@@ -79,6 +79,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-web-browser',
     'react-native-ble-manager',
     [
+      'expo-build-properties',
+      {
+        android: {
+          enableMinifyInReleaseBuilds: false,
+        },
+      },
+    ],
+    [
       'expo-camera',
       {
         cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera.',

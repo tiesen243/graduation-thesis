@@ -32,6 +32,16 @@
           "success": "Device updated successfully.",
           "error": "Failed to update device."
         }
+      },
+      "unlink": {
+        "actions": {
+          "submit": "Unlink",
+          "submitting": "Unlinking..."
+        },
+        "messages": {
+          "success": "Device unlinked successfully.",
+          "error": "Failed to unlink device."
+        }
       }
     },
     "compartment": {
@@ -72,16 +82,15 @@
 
   "link": {
     "title": "Link Pill Box",
-    "not_found": "Device not found",
     "dialog": {
-      "message": "Are you sure you want to link with {{deviceName}}?",
       "success": {
         "title": "Link Successful",
         "message": "The pill box has been successfully linked."
       },
       "error": {
         "title": "Link Failed",
-        "message": "An error occurred while linking the pill box. Please try again."
+        "message": "An error occurred while linking the pill box. Please try again.",
+        "no_qr": "Please point the camera at a QR code"
       }
     },
     "scan_failed": {

@@ -61,4 +61,14 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
       lastRefillAt: props.capacity ? new Date() : this.lastRefillAt,
     })
   }
+
+  public unlink() {
+    return Compartment.make({
+      ...structuredClone(this),
+      medicine: null,
+      dosage: 0,
+      capacity: 0,
+      lastRefillAt: null,
+    })
+  }
 }

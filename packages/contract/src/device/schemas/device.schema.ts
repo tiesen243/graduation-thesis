@@ -8,9 +8,7 @@ export const DeviceId = Cuid2.pipe(Schema.brand('device/domain/DeviceId'))
 export type DeviceId = typeof DeviceId.Type
 
 export const deviceStatuses = ['unlinked', 'linked', 'suspended'] as const
-export const DeviceStatus = Schema.Literals(deviceStatuses).pipe(
-  Schema.brand('device/domain/DeviceStatus')
-)
+export const DeviceStatus = Schema.Literals(deviceStatuses)
 export type DeviceStatus = typeof DeviceStatus.Type
 
 export const DeviceSchema = Schema.Struct({

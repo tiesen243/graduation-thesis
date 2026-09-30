@@ -2,6 +2,7 @@ import asyncio
 
 from lib.api import Api
 from lib.config import Config
+from lib.i18n import t
 from lib.schedule import Schedule
 from lib.utils import get_current_time
 
@@ -36,15 +37,13 @@ class SyncSchedule:
 
         resp = await self._api.get("/api/schedules/today", params={"date": today})
         if resp.get("error") is not None:
-            print(
-                f"[SyncSchedule] Error fetching today's schedule: {resp.get('error')}"
-            )
+            print(t("sync_schedule.error_fetch", error=resp.get("error")))
             return
 
         if self._schedule.save_schedules(resp.get("data", [])):
-            print(f"[SyncSchedule] Schedules for {today} synced successfully.")
+            print(t("sync_schedule.synced", date=today))
         else:
-            print(f"[SyncSchedule] Failed to save schedules for {today}.")
+            print(t("sync_schedule.save_failed", date=today))
 
     async def start(self) -> None:
         """
@@ -52,9 +51,7 @@ class SyncSchedule:
 
         :return: None
         """
-        print(
-            "[Startup] SyncSchedule task initiated...", {"sync_time": self._sync_time}
-        )
+        print(t("sync_schedule.started", sync_time=self._sync_time))
         last_synced_date = None
 
         sync_hour, sync_minute = map(int, self._sync_time.split(":"))
@@ -67,13 +64,13 @@ class SyncSchedule:
 
                 if current_hour >= sync_hour and last_synced_date != today_str:
                     print(
-                        f"[SyncSchedule] It's past {sync_hour}:{sync_minute}. Starting daily schedule sync..."
+                        t("sync_schedule.past_sync", hour=sync_hour, minute=sync_minute)
                     )
                     await self.execute()
                     last_synced_date = today_str
 
             except Exception as e:
-                print(f"[SyncSchedule] Error: {e}")
+                print(t("sync_schedule.error", error=e))
 
             await asyncio.sleep(1800)
 

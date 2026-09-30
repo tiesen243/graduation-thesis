@@ -4,7 +4,6 @@ import type { ScheduleInvalid } from '@rozumari/contract/schedule/schemas/schedu
 import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 import type { CurrentTimeZone } from 'effect/DateTime'
 
-import { ScheduleStatus } from '@rozumari/contract/schedule/schemas/schedule.schema'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -61,7 +60,7 @@ export class CreateScheduleUseCase extends Context.Service<
             deviceId: input.deviceId,
             date,
             time: input.time,
-            status: ScheduleStatus.make('pending'),
+            status: 'pending',
           })
 
           const items = input.items.map((item) =>

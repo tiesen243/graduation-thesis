@@ -28,7 +28,10 @@ export const ACTION_CODES = {
   SET_UTC_RES: 3,
   SET_LANGUAGE_RES: 4,
   SET_SYNC_TIME_RES: 5,
-  SEND_DEVICE_INFO: 6,
+  SET_DROP_TIMEOUT_RES: 6,
+  SET_OPEN_TIMEOUT_RES: 7,
+  SET_CLOSE_TIMEOUT_RES: 8,
+  SEND_DEVICE_INFO: 9,
 } as const
 
 export const STATUS_CODES = {
@@ -40,6 +43,7 @@ interface DeviceInfo {
   utc: number
   language: 'en' | 'vi'
   syncTime: { hours: number; minutes: number }
+  timeouts: { drop: number; open: number; close: number }
 }
 
 interface BLEContextType {
@@ -60,22 +64,42 @@ interface BLEContextType {
   ) => () => void
 }
 
-const parseDeviceInfo = (statusCode: number): DeviceInfo => {
-  // 4 bit UTC: [Sign (1b)][Abs Value (3b)]
-  const utcBits = statusCode & 0x0f
+const parseDeviceInfo = (rawBytes: number[]): DeviceInfo => {
+  // Mảng 6 bytes: [ActionByte, b0, b1, b2, b3, b4]
+  const [, b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0] = rawBytes
+  const payload =
+    BigInt(b0) |
+    (BigInt(b1) << 8n) |
+    (BigInt(b2) << 16n) |
+    (BigInt(b3) << 24n) |
+    (BigInt(b4) << 32n)
+
+  // 1. UTC Offset (bits 0..3)
+  const utcBits = Number(payload & 0x0fn)
   const signBit = (utcBits >> 3) & 0x01
   const absVal = utcBits & 0x07
   const utc = signBit === 1 ? absVal : -absVal
 
-  // 1 bit Language (bit 4): 0 -> 'en', 1 -> 'vi'
-  const langBit = (statusCode >> 4) & 0x01
+  // 2. Language (bit 4)
+  const langBit = Number((payload >> 4n) & 0x01n)
   const language: 'en' | 'vi' = langBit === 1 ? 'vi' : 'en'
 
-  // 11 bit sync timestamp (bits 5-15): [hours (5b)][minutes (6b)]
-  const hours = (statusCode >> 5) & 0x1f
-  const minutes = (statusCode >> 10) & 0x3f
+  // 3. Sync Time (bits 5..15)
+  const syncTimeBits = Number((payload >> 5n) & 0x07_ffn)
+  const hours = syncTimeBits & 0x1f
+  const minutes = (syncTimeBits >> 5) & 0x3f
 
-  return { utc, language, syncTime: { hours, minutes } }
+  // 4. Timeouts (bits 16..33)
+  const drop = Number((payload >> 16n) & 0x3fn)
+  const open = Number((payload >> 22n) & 0x3fn)
+  const close = Number((payload >> 28n) & 0x3fn)
+
+  return {
+    utc,
+    language,
+    syncTime: { hours, minutes },
+    timeouts: { drop, open, close },
+  }
 }
 
 const BLEContext = React.createContext<BLEContextType | null>(null)
@@ -118,8 +142,9 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
   )
 
   const handleByteNotification = React.useCallback((byteValue: number) => {
-    const actionCode = (byteValue >> 5) & 0x07
-    const statusCode = byteValue & 0x1f
+    // 4-bit Action Code (bits 4..7) and 4-bit Status Code (bits 0..3)
+    const actionCode = (byteValue >> 4) & 0x0f
+    const statusCode = byteValue & 0x0f
 
     if (actionCode === ACTION_CODES.PONG) toast.success('Pong received!')
     for (const handler of byteHandlersRef.current)
@@ -206,22 +231,15 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
                   ? data.value
                   : [...(data.value as Uint8Array)]
 
-                if (rawArray.length >= 3) {
-                  const [actionByte, statusByte1, statusByte2] = rawArray
-                  if (
-                    actionByte === undefined ||
-                    statusByte1 === undefined ||
-                    statusByte2 === undefined
-                  )
-                    return
+                // Nhận gói tin 6 Bytes chứa Device Info
+                if (rawArray.length >= 6) {
+                  const actionByte = rawArray[0] ?? 0
+                  const actionCode = (actionByte >> 4) & 0x0f
 
-                  const actionCode = (actionByte >> 5) & 0x07
-                  const statusCode16Bit = statusByte1 | (statusByte2 << 8)
-
-                  if (actionCode !== ACTION_CODES.SEND_DEVICE_INFO) return
-
-                  const parsedInfo = parseDeviceInfo(statusCode16Bit)
-                  setDeviceInfo(parsedInfo)
+                  if (actionCode === ACTION_CODES.SEND_DEVICE_INFO) {
+                    const parsedInfo = parseDeviceInfo(rawArray)
+                    setDeviceInfo(parsedInfo)
+                  }
                 } else if (rawArray.length === 1)
                   handleByteNotification(rawArray[0] ?? 0)
               }

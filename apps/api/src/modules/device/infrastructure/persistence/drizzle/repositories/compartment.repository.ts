@@ -33,7 +33,10 @@ export const DrizzleCompartmentRepository = Layer.effect(
             .onConflictDoUpdate({
               target: primaryKey,
               set: {
+                medicine: sql`excluded.medicine`,
                 capacity: sql`excluded.capacity`,
+                dosage: sql`excluded.dosage`,
+                lastRefillAt: sql`excluded.last_refill_at`,
               },
             })
             .pipe(Effect.asVoid, Effect.orDie)
