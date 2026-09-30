@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.14
+
+### Patch Changes
+
+- added oauth with Twitter and Github
+
 ## @rozumari/mobile@0.1.13
 
 ### Patch Changes

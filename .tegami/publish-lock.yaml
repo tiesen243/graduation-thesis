@@ -1,6 +1,6 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Patch Changes\n\n- Change password hasing algorithm to Argon2\n"
-    filename: 2026-09-30-munv1az3.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Patch Changes\n\n- added oauth with Twitter and Github\n"
+    filename: 2026-09-30-muo59gve.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
@@ -9,36 +9,42 @@ core:packages:
     updated: false
   - id: npm:@rozumari/oxlint
     updated: false
-  - id: npm:@rozumari/web
-    updated: false
   - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/mobile
-    updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/contract
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
-  - id: npm:@rozumari/lib
     updated: false
   - id: npm:@rozumari/eda
     updated: false
   - changelogIds:
-      - 2026-09-30-munv1az3.md
+      - 2026-09-30-muo59gve.md
     id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-09-30-muo59gve.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - changelogIds:
+      - 2026-09-30-muo59gve.md
+    id: npm:@rozumari/web
+    updated: true
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/contract
+    updated: false
+  - id: npm:@rozumari/firmware
+    updated: false
+  - changelogIds:
+      - 2026-09-30-muo59gve.md
+    id: npm:@rozumari/ui
     updated: true
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/lib
   - id: npm:@rozumari/eda
   - id: npm:@rozumari/api
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/ui
