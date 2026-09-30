@@ -1,3 +1,9 @@
+## @rozumari/eda@0.1.5
+
+### Bug Fixes
+
+- Add missing VCC for stepper
+
 ## @rozumari/eda@0.1.4
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug Fixes\n\n- Build expo camera from source\n"
-    filename: 2026-09-30-mun4288z.md
+  - content: "---\npackages:\n  npm:@rozumari/eda:\n    type: patch\n---\n\n## Bug Fixes\n\n- Add missing VCC for stepper\n"
+    filename: 2026-09-30-mungocbk.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
@@ -11,34 +11,34 @@ core:packages:
     updated: false
   - id: npm:@rozumari/lib
     updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
+  - changelogIds:
+      - 2026-09-30-mungocbk.md
+    id: npm:@rozumari/eda
+    updated: true
   - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/eda
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
-  - id: npm:@rozumari/contract
     updated: false
   - id: npm:@rozumari/web
     updated: false
+  - id: npm:@rozumari/tsconfig
+    updated: false
+  - id: npm:@rozumari/ui
+    updated: false
   - id: npm:@rozumari/api
     updated: false
-  - changelogIds:
-      - 2026-09-30-mun4288z.md
-    id: npm:@rozumari/mobile
-    updated: true
+  - id: npm:@rozumari/contract
+    updated: false
+  - id: npm:@rozumari/mobile
+    updated: false
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
   - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/lib
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/web
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/api
+  - id: npm:@rozumari/contract
   - id: npm:@rozumari/mobile
