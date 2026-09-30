@@ -23,6 +23,7 @@
     "@tiesen/effect-tanstack-query": "catalog:prod",
     "effect": "catalog:effect",
     "expo": "~58.0.0",
+    "expo-build-properties": "~58.0.9",
     "expo-camera": "~58.0.5",
     "expo-constants": "~58.0.9",
     "expo-device": "~58.0.3",
@@ -56,13 +57,6 @@
       "exclude": [
         "typescript"
       ]
-    },
-    "autolinking": {
-      "android": {
-        "buildFromSource": [
-          "expo-camera"
-        ]
-      }
     }
   }
 }

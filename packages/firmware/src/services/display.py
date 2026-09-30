@@ -1,6 +1,7 @@
 # pyright: reportAttributeAccessIssue=false
 
 import asyncio
+import gc
 import time
 
 from lib.config import Config
@@ -27,13 +28,12 @@ class Display:
     _last_schedule_snapshot: tuple
     _last_render: str
     _last_dialog_remaining: int
-    _link_qr_matrix: list[list[bool]] | None
     _link_qr_until: int
 
     def __init__(self) -> None:
         self._lcd = ST7735.create()
         self._lcd.init()
-        self._lcd.rotation(1)  # 160x128, easier to show schedule information
+        self._lcd.rotation(1)
 
         self._schedule = Schedule.create()
         self._config = Config.create()
@@ -50,16 +50,13 @@ class Display:
         self._last_render = "boot"
         self._last_dialog_remaining = 0
 
-        self._link_qr_matrix = None
         self._link_qr_until = 0
 
-        # Boot logo is rendered immediately after LCD initialization.
         self.show_boot_logo()
 
     def show_boot_logo(self, duration_ms: int = 2000) -> None:
         """Render the default boot screen and restart its display duration."""
         self._dialog = None
-        self._link_qr_matrix = None
         self._link_qr_until = 0
 
         self._boot_until = time.ticks_add(
@@ -130,9 +127,6 @@ class Display:
 
     def is_link_qr_active(self) -> bool:
         """Return True while the temporary link QR screen is active."""
-        if self._link_qr_matrix is None:
-            return False
-
         return (
             time.ticks_diff(
                 self._link_qr_until,
@@ -141,36 +135,67 @@ class Display:
             > 0
         )
 
-    def show_link_qr(self, qr: QRCode, size: int = 2, duration_ms: int = 60000) -> None:
+    def show_link_qr(
+        self,
+        qr: QRCode,
+        size: int = 2,
+        duration_ms: int = 60000,
+    ) -> None:
+        """Render QR code without keeping the QR matrix or full framebuffer."""
+        gc.collect()
+
         matrix = qr.get_matrix()
         qr_width, qr_height = qr.get_size()
 
         width, height = self._lcd.size()
 
-        pixel_width, pixel_height = qr_width * size, qr_height * size
-        x, y = (width - pixel_width) // 2, (height - pixel_height) // 2
+        pixel_width = qr_width * size
+        pixel_height = qr_height * size
 
-        buffer = bytearray(pixel_width * pixel_height * 2)
-        white_hi, white_lo = self._lcd.WHITE >> 8, self._lcd.WHITE & 0xFF
+        x = (width - pixel_width) // 2
+        y = (height - pixel_height) // 2
+
+        x = max(x, 0)
+
+        y = max(y, 0)
+
+        self._lcd.fill(self._lcd.BLACK)
+
+        white_hi = self._lcd.WHITE >> 8
+        white_lo = self._lcd.WHITE & 0xFF
+
+        row_buffer = bytearray(pixel_width * 2)
 
         for row in range(qr_height):
+            for index in range(len(row_buffer)):
+                row_buffer[index] = 0
+
             for col in range(qr_width):
                 if not matrix[row][col]:  # pyright: ignore[reportOptionalSubscript]
                     continue
 
-                px, py = col * size, row * size
-                for dy in range(size):
-                    row_offset = ((py + dy) * pixel_width + px) * 2
+                pixel_x = col * size
 
-                    for dx in range(size):
-                        index = row_offset + dx * 2
-                        buffer[index] = white_hi
-                        buffer[index + 1] = white_lo
+                for dx in range(size):
+                    index = (pixel_x + dx) * 2
+                    row_buffer[index] = white_hi
+                    row_buffer[index + 1] = white_lo
 
-        self._lcd.fill(self._lcd.BLACK)
-        self._lcd.blit(x, y, pixel_width, pixel_height, buffer)
+            pixel_y = y + row * size
 
-        self._link_qr_matrix = matrix
+            for dy in range(size):
+                self._lcd.blit(
+                    x,
+                    pixel_y + dy,
+                    pixel_width,
+                    1,
+                    row_buffer,
+                )
+
+        del row_buffer
+        del matrix
+        gc.collect()
+
         self._link_qr_until = time.ticks_add(
             time.ticks_ms(),
             duration_ms,
@@ -242,11 +267,16 @@ class Display:
         )
 
         self._lcd.text(
-            (4, 4), f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}", self._lcd.WHITE, size=2
+            (4, 4),
+            f"{now[3]:02d}:{now[4]:02d}:{now[5]:02d}",
+            self._lcd.WHITE,
+            size=2,
         )
 
         self._lcd.text(
-            (4, 27), f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}", self._lcd.GRAY
+            (4, 27),
+            f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}",
+            self._lcd.GRAY,
         )
 
         self._last_clock_parts = (
@@ -261,14 +291,12 @@ class Display:
 
     def _update_clock(self, now) -> None:
         current = (now[3], now[4], now[5])
-
         previous = self._last_clock_parts
 
         if previous is None:
             self._draw_header(now)
             return
 
-        # HH:MM:SS
         fields = (
             (0, 4),
             (1, 37),
@@ -283,7 +311,12 @@ class Display:
                     self._lcd.BLACK,
                 )
 
-                self._lcd.text((x, 4), f"{current[index]:02d}", self._lcd.WHITE, size=2)
+                self._lcd.text(
+                    (x, 4),
+                    f"{current[index]:02d}",
+                    self._lcd.WHITE,
+                    size=2,
+                )
 
         if current != previous:
             self._last_clock_parts = current
@@ -299,12 +332,17 @@ class Display:
                 self._lcd.BLACK,
             )
 
-            self._lcd.text((4, 27), date, self._lcd.GRAY)
+            self._lcd.text(
+                (4, 27),
+                date,
+                self._lcd.GRAY,
+            )
 
             self._last_date = date
 
     def _draw_main(self, now=None) -> None:
         width, _height = self._lcd.size()
+
         self._lcd.fill(self._lcd.BLACK)
 
         if now is None:
@@ -319,6 +357,7 @@ class Display:
         )
 
         device = self._config.get("device", {}) or {}
+
         device_name = device.get("name", "") or device.get("factoryModel", "")
 
         device_position = device.get(
@@ -331,7 +370,11 @@ class Display:
         if device_position:
             device_label = f"{device_label} - {device_position}"
 
-        self._lcd.text((4, 44), device_label[:25], self._lcd.GREEN)
+        self._lcd.text(
+            (4, 44),
+            device_label[:25],
+            self._lcd.GREEN,
+        )
 
         snapshot = self._get_pending_snapshot()
 
@@ -340,13 +383,21 @@ class Display:
         y = 57
 
         if not snapshot:
-            self._lcd.text((4, y), t("lcd.no_pending"), self._lcd.GRAY)
+            self._lcd.text(
+                (4, y),
+                t("lcd.no_pending"),
+                self._lcd.GRAY,
+            )
 
             self._main_drawn = True
             self._last_render = "main"
             return
 
-        self._lcd.text((4, y), t("lcd.schedules"), self._lcd.BLUE)
+        self._lcd.text(
+            (4, y),
+            t("lcd.schedules"),
+            self._lcd.BLUE,
+        )
 
         y += 11
 
@@ -365,7 +416,11 @@ class Display:
 
             label = f"{index}. {schedule_time}  {item_count} {item_label}"
 
-            self._lcd.text((4, y), label[:26], self._lcd.WHITE)
+            self._lcd.text(
+                (4, y),
+                label[:26],
+                self._lcd.WHITE,
+            )
 
             y += 11
 
@@ -379,12 +434,10 @@ class Display:
 
         snapshot = self._get_pending_snapshot()
 
-        # Redraw complete screen only when schedule data changes.
         if snapshot != self._last_schedule_snapshot or not self._main_drawn:
             self._draw_main(now)
             return
 
-        # Update only changed clock/date fields.
         if (
             clock != self._last_clock
             or self._last_date != f"{now[2]:02d}/{now[1]:02d}/{now[0]:04d}"
@@ -404,9 +457,7 @@ class Display:
         self._lcd.fill(self._lcd.BLACK)
 
         if dialog_type == "schedule":
-            self._draw_schedule_dialog(
-                remaining,
-            )
+            self._draw_schedule_dialog(remaining)
             return
 
         box_x1, box_y1 = 20, 34
@@ -436,21 +487,24 @@ class Display:
             (width - len(title) * 6) // 2,
         )
 
-        self._lcd.text((title_x, box_y1 + 8), title, accent)
+        self._lcd.text(
+            (title_x, box_y1 + 8),
+            title,
+            accent,
+        )
 
-        body = str(
-            self._dialog.get(
-                "body",
-                "",
-            )
-        )[:22]
+        body = str(self._dialog.get("body", ""))[:22]
 
         body_x = max(
             box_x1 + 4,
             (width - len(body) * 6) // 2,
         )
 
-        self._lcd.text((body_x, box_y1 + 25), body, self._lcd.GRAY)
+        self._lcd.text(
+            (body_x, box_y1 + 25),
+            body,
+            self._lcd.GRAY,
+        )
 
         if remaining is None:
             remaining = 5
@@ -465,19 +519,23 @@ class Display:
             (width - len(countdown) * 6) // 2,
         )
 
-        self._lcd.text((countdown_x, box_y2 - 13), countdown, self._lcd.WHITE)
+        self._lcd.text(
+            (countdown_x, box_y2 - 13),
+            countdown,
+            self._lcd.WHITE,
+        )
 
     def _draw_schedule_dialog(
         self,
         remaining: int | None = None,
     ) -> None:
-        """Render schedule details before dispensing."""
         if self._dialog is None:
             return
 
         width, height = self._lcd.size()
 
         schedule = self._dialog.get("schedule", {})
+
         schedule_id = str(schedule.get("id", ""))
         date = str(schedule.get("date", ""))
         schedule_time = str(schedule.get("time", ""))[:5]
@@ -505,10 +563,16 @@ class Display:
             (width - len(title) * 6) // 2,
         )
 
-        self._lcd.text((title_x, 7), title, self._lcd.BLUE)
+        self._lcd.text(
+            (title_x, 7),
+            title,
+            self._lcd.BLUE,
+        )
 
         self._lcd.text(
-            (7, 20), f"{t('lcd.schedule_id')}: {schedule_id}"[:25], self._lcd.WHITE
+            (7, 20),
+            f"{t('lcd.schedule_id')}: {schedule_id}"[:25],
+            self._lcd.WHITE,
         )
 
         self._lcd.text(
@@ -517,13 +581,16 @@ class Display:
             self._lcd.GRAY,
         )
 
-        self._lcd.text((7, 43), t("lcd.schedule_items"), self._lcd.BLUE)
+        self._lcd.text(
+            (7, 43),
+            t("lcd.schedule_items"),
+            self._lcd.BLUE,
+        )
 
         y = 54
 
         for item in items[:5]:
             slot = str(item.get("slot", "-"))
-
             medicine = str(item.get("medicine", "-"))
 
             quantity = item.get(
@@ -533,7 +600,11 @@ class Display:
 
             label = f"{slot} {medicine} x{quantity}"
 
-            self._lcd.text((7, y), label[:24], self._lcd.WHITE)
+            self._lcd.text(
+                (7, y),
+                label[:24],
+                self._lcd.WHITE,
+            )
 
             y += 11
 
@@ -550,7 +621,11 @@ class Display:
             (width - len(countdown) * 6) // 2,
         )
 
-        self._lcd.text((countdown_x, box_y2 - 10), countdown, self._lcd.GRAY)
+        self._lcd.text(
+            (countdown_x, box_y2 - 10),
+            countdown,
+            self._lcd.GRAY,
+        )
 
     def _update_dialog(
         self,
@@ -561,13 +636,7 @@ class Display:
 
         width, height = self._lcd.size()
 
-        if (
-            self._dialog.get(
-                "type",
-                "result",
-            )
-            == "schedule"
-        ):
+        if self._dialog.get("type", "result") == "schedule":
             box_x1 = 3
             box_x2 = width - 4
             box_y2 = height - 4
@@ -591,7 +660,11 @@ class Display:
                 (width - len(countdown) * 6) // 2,
             )
 
-            self._lcd.text((countdown_x, box_y2 - 10), countdown, self._lcd.WHITE)
+            self._lcd.text(
+                (countdown_x, box_y2 - 10),
+                countdown,
+                self._lcd.WHITE,
+            )
 
             return
 
@@ -601,7 +674,10 @@ class Display:
 
         self._lcd.fill_rect(
             (box_x1 + 1, box_y2 - 17),
-            (box_x2 - box_x1 - 1, 17),
+            (
+                box_x2 - box_x1 - 1,
+                17,
+            ),
             self._lcd.BLACK,
         )
 
@@ -615,12 +691,15 @@ class Display:
             (width - len(countdown) * 6) // 2,
         )
 
-        self._lcd.text((countdown_x, box_y2 - 13), countdown, self._lcd.WHITE)
+        self._lcd.text(
+            (countdown_x, box_y2 - 13),
+            countdown,
+            self._lcd.WHITE,
+        )
 
     def show_config_mode(self) -> None:
         """Render the persistent Config Mode screen."""
         self._dialog = None
-        self._link_qr_matrix = None
         self._link_qr_until = 0
 
         width, height = self._lcd.size()
@@ -643,11 +722,20 @@ class Display:
             (height - 38) // 2 - 8,
         )
 
-        self._lcd.text((logo_x, logo_y), logo, self._lcd.WHITE, size=size)
+        self._lcd.text(
+            (logo_x, logo_y),
+            logo,
+            self._lcd.WHITE,
+            size=size,
+        )
 
         separator_y = logo_y + 19
 
-        self._lcd.hline((logo_x, separator_y), text_width, self._lcd.BLUE)
+        self._lcd.hline(
+            (logo_x, separator_y),
+            text_width,
+            self._lcd.BLUE,
+        )
 
         status = t("lcd.configuring")
 
@@ -658,7 +746,11 @@ class Display:
             (width - status_width) // 2,
         )
 
-        self._lcd.text((status_x, separator_y + 9), status, self._lcd.GRAY)
+        self._lcd.text(
+            (status_x, separator_y + 9),
+            status,
+            self._lcd.GRAY,
+        )
 
         self._last_render = "config"
         self._main_drawn = False
@@ -674,13 +766,14 @@ class Display:
             try:
                 now_ms = time.ticks_ms()
 
-                # Boot screen.
-                if time.ticks_diff(
-                    self._boot_until,
-                    now_ms,
-                ) > 0 or (
-                    self._link_qr_matrix is not None
-                    and time.ticks_diff(
+                # Boot screen / QR screen.
+                if (
+                    time.ticks_diff(
+                        self._boot_until,
+                        now_ms,
+                    )
+                    > 0
+                    or time.ticks_diff(
                         self._link_qr_until,
                         now_ms,
                     )
@@ -689,8 +782,7 @@ class Display:
                     pass
 
                 # QR expired -> return normal UI.
-                elif self._link_qr_matrix is not None:
-                    self._link_qr_matrix = None
+                elif self._link_qr_until:
                     self._link_qr_until = 0
                     self._dialog = None
                     self._main_drawn = False
@@ -717,18 +809,13 @@ class Display:
                     )
 
                     if self._last_render != "dialog":
-                        self._draw_dialog(
-                            remaining,
-                        )
+                        self._draw_dialog(remaining)
 
                         self._last_dialog_remaining = remaining
-
                         self._last_render = "dialog"
 
                     elif remaining != self._last_dialog_remaining:
-                        self._update_dialog(
-                            remaining,
-                        )
+                        self._update_dialog(remaining)
 
                         self._last_dialog_remaining = remaining
 
@@ -754,4 +841,5 @@ class Display:
     def create(cls) -> Display:
         if cls.__instance is None:
             cls.__instance = cls()
+
         return cls.__instance
