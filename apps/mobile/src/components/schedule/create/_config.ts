@@ -13,13 +13,13 @@ export const CreateScheduleForm = FormBuilder.empty
   .make()
 
 export const DAYS_OF_WEEK = [
-  { value: 2, label: 'Monday' },
-  { value: 3, label: 'Tuesday' },
-  { value: 4, label: 'Wednesday' },
-  { value: 5, label: 'Thursday' },
-  { value: 6, label: 'Friday' },
-  { value: 7, label: 'Saturday' },
-  { value: 1, label: 'Sunday' },
+  { value: 2, label: 'daysOfWeeks.mon' },
+  { value: 3, label: 'daysOfWeeks.tue' },
+  { value: 4, label: 'daysOfWeeks.wed' },
+  { value: 5, label: 'daysOfWeeks.thu' },
+  { value: 6, label: 'daysOfWeeks.fri' },
+  { value: 7, label: 'daysOfWeeks.sat' },
+  { value: 1, label: 'daysOfWeeks.sun' },
 ] as const
 
 export const DAYS_OF_WEEK_MAP = Object.fromEntries(

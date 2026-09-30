@@ -14,7 +14,7 @@ import {
 } from '@/components/schedule/create/_config'
 
 export const DaysOfWeekSelector = () => {
-  const { t } = useTranslation('schedule')
+  const { t } = useTranslation(['common', 'schedule'])
 
   return (
     <CreateScheduleForm.Field
@@ -29,7 +29,9 @@ export const DaysOfWeekSelector = () => {
 
         return (
           <Field>
-            <FieldLabel>{t('create.fields.repeat_on.label')}</FieldLabel>
+            <FieldLabel>
+              {t('schedule:create.fields.repeat_on.label')}
+            </FieldLabel>
 
             <View className='flex flex-row flex-wrap gap-x-4 gap-y-2'>
               {DAYS_OF_WEEK.map((day) => {
@@ -39,7 +41,7 @@ export const DaysOfWeekSelector = () => {
                   <Checkbox
                     key={day.value}
                     checked={selected}
-                    label={day.label}
+                    label={t(day.label)}
                     onCheckedChange={() => toggle(day.value)}
                   />
                 )
@@ -47,7 +49,7 @@ export const DaysOfWeekSelector = () => {
             </View>
 
             <FieldDescription>
-              {t('create.fields.repeat_on.description')}
+              {t('schedule:create.fields.repeat_on.description')}
             </FieldDescription>
 
             <FieldError errors={meta.errors} />
