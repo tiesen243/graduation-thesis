@@ -1,46 +1,44 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/eda:\n    type: patch\n---\n\n## Patch Changes\n\n- Fix some style\n"
-    filename: 2026-09-30-munsffnb.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n---\n\n## Patch Changes\n\n- Change password hasing algorithm to Argon2\n"
+    filename: 2026-09-30-munv1az3.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/lib
-    updated: false
   - id: npm:@rozumari/oxlint
-    updated: false
-  - id: npm:@rozumari/contract
-    updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
-  - changelogIds:
-      - 2026-09-30-munsffnb.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - id: npm:@rozumari/api
     updated: false
   - id: npm:@rozumari/web
     updated: false
-  - changelogIds:
-      - 2026-09-30-munsffnb.md
-    id: npm:@rozumari/eda
-    updated: true
   - id: npm:@rozumari/tsconfig
     updated: false
+  - id: npm:@rozumari/mobile
+    updated: false
+  - id: npm:@rozumari/firmware
+    updated: false
+  - id: npm:@rozumari/contract
+    updated: false
+  - id: npm:@rozumari/ui
+    updated: false
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/eda
+    updated: false
+  - changelogIds:
+      - 2026-09-30-munv1az3.md
+    id: npm:@rozumari/api
+    updated: true
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/lib
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/api
   - id: npm:@rozumari/web
-  - id: npm:@rozumari/eda
   - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/eda
+  - id: npm:@rozumari/api
