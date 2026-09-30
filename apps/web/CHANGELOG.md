@@ -1,3 +1,9 @@
+## @rozumari/web@0.1.5
+
+### Patch Changes
+
+- added oauth with Twitter and Github
+
 ## @rozumari/web@0.1.3
 
 ### Patch Changes
