@@ -14,12 +14,21 @@ export class PasswordService extends Context.Service<
 >()('auth/application/Password') {}
 
 export namespace PasswordService {
-  export interface Config {
+  export interface ScryptConfig {
     secret?: string
     dkLen?: number
     N?: number
     r?: number
     p?: number
     maxmem?: number
+  }
+
+  export interface Argon2Config {
+    secret?: string
+    algorithm?: 'argon2d' | 'argon2i' | 'argon2id'
+    parallelism?: number
+    tagLength?: number
+    memory?: number
+    passes?: number
   }
 }
