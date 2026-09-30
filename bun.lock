@@ -35,7 +35,7 @@
     },
     "apps/mobile": {
       "name": "@rozumari/mobile",
-      "version": "0.1.12",
+      "version": "0.1.13",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@expo-google-fonts/geist": "~0.4.2",
@@ -124,7 +124,7 @@
     },
     "packages/eda": {
       "name": "@rozumari/eda",
-      "version": "0.1.5",
+      "version": "0.1.6",
     },
     "packages/firmware": {
       "name": "@rozumari/firmware",
