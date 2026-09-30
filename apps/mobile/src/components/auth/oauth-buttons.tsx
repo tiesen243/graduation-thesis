@@ -18,8 +18,8 @@ export const OAuthButtons = () => {
         </FieldLabel>
       </FieldSeparator>
 
-      <Field orientation='horizontal'>
-        {['facebook', 'google'].map((provider) => (
+      <Field orientation='responsive'>
+        {['facebook', 'github', 'google', 'twitter'].map((provider) => (
           <OAuthButton key={provider} provider={provider} />
         ))}
       </Field>

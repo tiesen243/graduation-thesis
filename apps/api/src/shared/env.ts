@@ -45,8 +45,12 @@ export const env = effectEnv({
     AUTH_SECRET: Schema.String,
     AUTH_FACEBOOK_ID: Schema.String,
     AUTH_FACEBOOK_SECRET: Schema.String,
+    AUTH_GITHUB_ID: Schema.String,
+    AUTH_GITHUB_SECRET: Schema.String,
     AUTH_GOOGLE_ID: Schema.String,
     AUTH_GOOGLE_SECRET: Schema.String,
+    AUTH_TWITTER_ID: Schema.String,
+    AUTH_TWITTER_SECRET: Schema.String,
 
     RESEND_API_KEY: Schema.String,
 

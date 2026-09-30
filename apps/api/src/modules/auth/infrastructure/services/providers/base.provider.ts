@@ -105,7 +105,10 @@ export abstract class BaseProvider {
       const response = yield* httpClient
         .post(endpoint, {
           urlParams,
-          headers: { Authorization: `Basic ${this.credentials}` },
+          headers: {
+            Authorization: `Basic ${this.credentials}`,
+            Accept: 'application/json',
+          },
         })
         .pipe(
           Effect.flatMap(HttpClientResponse.filterStatusOk),
@@ -121,8 +124,5 @@ export abstract class BaseProvider {
     const credentials = `${this.clientId}:${this.clientSecret}`
     const bytes = new TextEncoder().encode(credentials)
     return btoa(String.fromCodePoint(...bytes))
-      .replaceAll('+', '-')
-      .replaceAll('/', '_')
-      .replaceAll(/[=]/gu, '')
   }
 }

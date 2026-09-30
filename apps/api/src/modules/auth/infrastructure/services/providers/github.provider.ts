@@ -3,24 +3,30 @@ import * as Effect from 'effect/Effect'
 import * as HttpClient from 'effect/http/HttpClient'
 import * as HttpClientResponse from 'effect/http/HttpClientResponse'
 import * as Schema from 'effect/Schema'
+import * as SchemaGetter from 'effect/SchemaGetter'
 
 import { BaseProvider } from '@/modules/auth/infrastructure/services/providers/base.provider'
 
-const GoogleUserSchema = Schema.Struct({
-  sub: AccountProviderId,
-  name: Schema.String,
+const GithubUserSchema = Schema.Struct({
+  id: Schema.Number.pipe(
+    Schema.decodeTo(AccountProviderId, {
+      decode: SchemaGetter.transform((s) => s.toString()),
+      encode: SchemaGetter.transform((s) => Math.trunc(Number(s))),
+    })
+  ),
+  login: Schema.String,
   email: Schema.String,
-  picture: Schema.String,
+  avatar_url: Schema.String,
 })
 
-export class GoogleProvider extends BaseProvider {
+export class GithubProvider extends BaseProvider {
   public constructor(clientId: string, clientSecret: string, redirectUri = '') {
-    super('google', clientId, clientSecret, redirectUri)
+    super('github', clientId, clientSecret, redirectUri)
   }
 
-  private authorizationEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
-  private tokenEndpoint = 'https://oauth2.googleapis.com/token'
-  private apiEndpoint = 'https://openidconnect.googleapis.com/v1/userinfo'
+  private authorizationEndpoint = 'https://github.com/login/oauth/authorize'
+  private tokenEndpoint = 'https://github.com/login/oauth/access_token'
+  private apiEndpoint = 'https://api.github.com/user'
 
   public override createAuthorizationUrl = (
     state: string,
@@ -29,7 +35,7 @@ export class GoogleProvider extends BaseProvider {
     this.createAuthorizationUrlWithPKCE(
       this.authorizationEndpoint,
       state,
-      ['openid', 'email', 'profile'],
+      ['read:user', 'user:email'],
       codeVerifier
     )
 
@@ -50,15 +56,15 @@ export class GoogleProvider extends BaseProvider {
         })
         .pipe(
           Effect.flatMap(HttpClientResponse.filterStatusOk),
-          Effect.flatMap(HttpClientResponse.schemaBodyJson(GoogleUserSchema)),
+          Effect.flatMap(HttpClientResponse.schemaBodyJson(GithubUserSchema)),
           Effect.orDie
         )
 
       return {
-        id: response.sub,
-        name: response.name,
+        id: response.id,
+        name: response.login,
         email: response.email,
-        image: response.picture,
+        image: response.avatar_url,
       }
     }
   )

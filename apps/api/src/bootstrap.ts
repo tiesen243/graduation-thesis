@@ -8,14 +8,18 @@ import * as References from 'effect/References'
 
 import { AppModule } from '@/modules/app.module'
 import { FacebookProvider } from '@/modules/auth/infrastructure/services/providers/facebook.provider'
+import { GithubProvider } from '@/modules/auth/infrastructure/services/providers/github.provider'
 import { GoogleProvider } from '@/modules/auth/infrastructure/services/providers/google.provider'
+import { TwitterProvider } from '@/modules/auth/infrastructure/services/providers/twitter.provider'
 import { env } from '@/shared/env'
 
 const routes = AppModule.createHttp({
   persistence: 'drizzle',
   providers: [
     new FacebookProvider(env.AUTH_FACEBOOK_ID, env.AUTH_FACEBOOK_SECRET),
+    new GithubProvider(env.AUTH_GITHUB_ID, env.AUTH_GITHUB_SECRET),
     new GoogleProvider(env.AUTH_GOOGLE_ID, env.AUTH_GOOGLE_SECRET),
+    new TwitterProvider(env.AUTH_TWITTER_ID, env.AUTH_TWITTER_SECRET),
   ],
 })
 
