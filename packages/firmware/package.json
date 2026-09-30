@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/firmware",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": false,
   "main": "src/main.py",
   "scripts": {

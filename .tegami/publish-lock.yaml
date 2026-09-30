@@ -1,44 +1,48 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/eda:\n    type: patch\n---\n\n## Bug Fixes\n\n- Add missing VCC for stepper\n"
-    filename: 2026-09-30-mungocbk.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/firmware:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Bug Fixes\n\n- Expo camera cannot scan qr due to enableMinifyInReleaseBuilds\n- Fix memory allocation failed when render qr code\n"
+    filename: 2026-09-30-munk3q4y.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - id: npm:@rozumari/lib
-    updated: false
-  - changelogIds:
-      - 2026-09-30-mungocbk.md
-    id: npm:@rozumari/eda
-    updated: true
-  - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
+    updated: false
+  - changelogIds:
+      - 2026-09-30-munk3q4y.md
+    id: npm:@rozumari/firmware
+    updated: true
+  - id: npm:@rozumari/eda
     updated: false
   - id: npm:@rozumari/api
     updated: false
-  - id: npm:@rozumari/contract
+  - changelogIds:
+      - 2026-09-30-munk3q4y.md
+    id: npm:@rozumari/ui
+    updated: true
+  - changelogIds:
+      - 2026-09-30-munk3q4y.md
+    id: npm:@rozumari/mobile
+    updated: true
+  - id: npm:@rozumari/lib
     updated: false
-  - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/web
+    updated: true
+  - id: npm:@rozumari/contract
     updated: false
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/eda
-  - id: npm:@rozumari/firmware
-  - id: npm:@rozumari/web
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/eda
   - id: npm:@rozumari/api
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/contract

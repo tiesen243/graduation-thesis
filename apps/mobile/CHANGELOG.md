@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.1.12
+
+### Bug Fixes
+
+- Expo camera cannot scan qr due to enableMinifyInReleaseBuilds
+- Fix memory allocation failed when render qr code
+
 ## @rozumari/mobile@0.1.11
 
 ### Bug Fixes
