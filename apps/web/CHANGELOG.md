@@ -1,3 +1,9 @@
+## @rozumari/web@0.1.7
+
+### Patch Changes
+
+- add missing icon
+
 ## @rozumari/web@0.1.6
 
 ### Patch Changes
