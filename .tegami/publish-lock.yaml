@@ -1,50 +1,55 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/ui:\n    type: patch\n---\n\n## Patch Changes\n\n- added oauth with Twitter and Github\n"
-    filename: 2026-09-30-muo59gve.md
+  - content: "---\npackages:\n  npm:@rozumari/api:\n    type: patch\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n  npm:@rozumari/contract:\n    type: patch\n---\n\n## Patch Changes\n\n- Bump effect to v4\n- Added list linked social accounts\n"
+    filename: 2026-10-01-mup96cty.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Patch Changes\n\n- migrate all Modal to new Dialog\n"
+    filename: 2026-10-01-mupgcmbr.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
-  - id: npm:@rozumari/github
-    updated: false
   - id: npm:@rozumari/oxlint
     updated: false
-  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/github
     updated: false
   - id: npm:@rozumari/eda
     updated: false
   - changelogIds:
-      - 2026-09-30-muo59gve.md
+      - 2026-10-01-mup96cty.md
     id: npm:@rozumari/api
     updated: true
   - changelogIds:
-      - 2026-09-30-muo59gve.md
+      - 2026-10-01-mup96cty.md
+      - 2026-10-01-mupgcmbr.md
     id: npm:@rozumari/mobile
     updated: true
+  - id: npm:@rozumari/ui
+    updated: false
   - changelogIds:
-      - 2026-09-30-muo59gve.md
+      - 2026-10-01-mup96cty.md
+      - 2026-10-01-mupgcmbr.md
     id: npm:@rozumari/web
     updated: true
-  - id: npm:@rozumari/lib
+  - changelogIds:
+      - 2026-10-01-mup96cty.md
+    id: npm:@rozumari/contract
+    updated: true
+  - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/lib
     updated: false
   - id: npm:@rozumari/firmware
     updated: false
-  - changelogIds:
-      - 2026-09-30-muo59gve.md
-    id: npm:@rozumari/ui
-    updated: true
 npm:packages:
   - id: npm:rozumari
-  - id: npm:@rozumari/github
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/github
   - id: npm:@rozumari/eda
   - id: npm:@rozumari/api
   - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/lib
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/ui
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/tsconfig
+  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/firmware
