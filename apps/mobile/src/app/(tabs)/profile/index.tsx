@@ -21,6 +21,7 @@ import {
 import { Separator } from '@rozumari/ui/components/separator'
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
+import { useQueryClient } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, View } from 'react-native'
@@ -28,11 +29,15 @@ import { ScrollView, View } from 'react-native'
 import { RefreshControl } from '@/components/native'
 import { AccountList } from '@/components/profile/account-list'
 import { Username } from '@/components/profile/username'
+import { useRuntime } from '@/hooks/use-runtime'
 import { useSession } from '@/hooks/use-session'
 
 export default function TabsProfileIndexScreen() {
   const { status, user, refetch, isRefetching, logout } = useSession()
   const { t, i18n } = useTranslation(['profile'])
+
+  const queryClient = useQueryClient()
+  const { api } = useRuntime()
 
   if (status !== 'authenticated') return null
 
@@ -48,11 +53,19 @@ export default function TabsProfileIndexScreen() {
     },
   ]
 
+  const handleRefresh = () =>
+    Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: api.auth.accounts.getQueryKey(),
+      }),
+      refetch(),
+    ]) as unknown as Promise<void>
+
   return (
     <ScrollView
       contentContainerClassName='grow gap-6 p-4'
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+        <RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} />
       }
     >
       <Card>
