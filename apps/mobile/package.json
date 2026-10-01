@@ -48,6 +48,7 @@
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/react": "catalog:react",
+    "react-native-svg-transformer": "^1.5.3",
     "tailwindcss": "catalog:tailwind",
     "typescript": "catalog:dev",
     "uniwind": "catalog:tailwind"
