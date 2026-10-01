@@ -121,8 +121,8 @@ export const LoginForm: React.FC = () => (
               />
             }
           >
-            <provider.Icon data-icon='inline-start' /> Continue with{' '}
-            {provider.name}
+            <provider.Icon data-icon='inline-start' />
+            Continue with {provider.name}
           </Button>
         ))}
       </Field>
