@@ -43,7 +43,10 @@ export class FacebookProvider extends BaseProvider {
 
       const urlParams = new URLSearchParams()
       urlParams.set('access_token', token.access_token)
-      urlParams.set('fields', ['id', 'name', 'picture', 'email'].join(','))
+      urlParams.set(
+        'fields',
+        ['id', 'name', 'picture.width(512).height(512)', 'email'].join(',')
+      )
 
       const response = yield* httpClient
         .get(this.apiEndpoint, { urlParams })

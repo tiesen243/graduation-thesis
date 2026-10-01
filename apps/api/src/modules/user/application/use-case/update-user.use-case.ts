@@ -27,12 +27,8 @@ export class UpdateUserUseCase extends Context.Service<
     const userRepository = yield* UserRepository
 
     return {
-      execute: Effect.fn(function* execute({ id, role }) {
+      execute: Effect.fn(function* execute({ id, role, username }) {
         const { userId } = yield* CurrentUser
-        if (userId === id)
-          return yield* Effect.fail(
-            new Forbidden({ message: 'You cannot update your own role' })
-          )
 
         const [user] = yield* userRepository.findMany({
           where: { id: { eq: id } },
@@ -41,13 +37,33 @@ export class UpdateUserUseCase extends Context.Service<
         if (!user)
           return yield* Effect.fail(new UserNotFound({ error: { id } }))
 
-        const updatedUser = yield* user.changeRole(role)
+        let updatedUser = user
+
+        if (role && role !== user.role) {
+          if (userId === user.id)
+            return yield* Effect.fail(
+              new Forbidden({ message: 'You cannot change your own role' })
+            )
+          updatedUser = yield* user.update({ role })
+        }
+
+        if (username && username !== user.username) {
+          const [existingUser] = yield* userRepository.findMany({
+            where: { username: { eq: username } },
+            limit: 1,
+          })
+          if (existingUser && existingUser.id !== user.id)
+            return yield* Effect.fail(
+              new Forbidden({ message: 'Username already exists' })
+            )
+          updatedUser = yield* updatedUser.update({ username })
+        }
+
+        if (updatedUser === user) return { id: user.id }
+
         yield* userRepository.save(updatedUser)
 
-        return {
-          id: updatedUser.id,
-          role: updatedUser.role,
-        }
+        return { id: updatedUser.id }
       }),
     }
   }),

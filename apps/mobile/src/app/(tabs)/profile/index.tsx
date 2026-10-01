@@ -21,10 +21,12 @@ import {
 import { Separator } from '@rozumari/ui/components/separator'
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RefreshControl, ScrollView, View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 
+import { RefreshControl } from '@/components/native'
+import { AccountList } from '@/components/profile/account-list'
 import { useSession } from '@/hooks/use-session'
 
 export default function TabsProfileIndexScreen() {
@@ -47,8 +49,7 @@ export default function TabsProfileIndexScreen() {
 
   return (
     <ScrollView
-      contentContainerClassName='p-4 gap-6 flex-1'
-      showsVerticalScrollIndicator={false}
+      contentContainerClassName='grow gap-6 p-4'
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
@@ -76,7 +77,7 @@ export default function TabsProfileIndexScreen() {
         </CardContent>
       </Card>
 
-      <View className='flex-1 gap-3'>
+      <View className='gap-3'>
         <Typography className='text-xs text-muted-foreground uppercase'>
           {t('index.account')}
         </Typography>
@@ -96,6 +97,16 @@ export default function TabsProfileIndexScreen() {
           ))}
         </Card>
       </View>
+
+      <View className='gap-3'>
+        <Typography className='text-xs text-muted-foreground uppercase'>
+          {t('index.accounts.title')}
+        </Typography>
+
+        <AccountList />
+      </View>
+
+      <View className='flex-1' />
 
       <Button variant='destructive' size='lg' onPress={logout}>
         <LogOutIcon className='size-4 text-destructive' />

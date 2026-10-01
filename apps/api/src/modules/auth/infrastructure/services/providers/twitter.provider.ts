@@ -65,7 +65,9 @@ export class TwitterProvider extends BaseProvider {
         id: response.data.id,
         name: response.data.username,
         email: response.data.confirmed_email,
-        image: response.data.profile_image_url,
+        image: response.data.profile_image_url
+          ? response.data.profile_image_url.replace('_normal', '')
+          : null,
       }
     }
   )

@@ -1,4 +1,5 @@
 import type { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
+import type { Crypto } from 'effect/Crypto'
 
 import {
   AccountProvider,
@@ -9,21 +10,19 @@ import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
-import type { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
-
 import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
 import { PasswordService } from '@/modules/auth/application/ports/password.service'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { UserService } from '@/modules/user/application/ports/user.service'
 import { ResendService } from '@/shared/application/services/resend.service'
-import { withTransaction } from '@/shared/utils'
+import { getGravatarUrl, withTransaction } from '@/shared/utils'
 
 export class RegisterUseCase extends Context.Service<
   RegisterUseCase,
   {
     execute: (
       input: RegisterDto.Input
-    ) => Effect.Effect<RegisterDto.Output, UserAlreadyExists, DrizzleClient>
+    ) => Effect.Effect<RegisterDto.Output, UserAlreadyExists, Crypto>
   }
 >()('auth/application/RegisterUseCase', {
   make: Effect.gen(function* make() {
@@ -45,8 +44,10 @@ export class RegisterUseCase extends Context.Service<
 
         const hashedPassword = yield* passwordService.hash(plainPassword)
 
+        const image = yield* getGravatarUrl(email)
+
         yield* Effect.gen(function* executeTx() {
-          const user = yield* userService.create({ username, email })
+          const user = yield* userService.create({ username, email, image })
 
           const account = Account.make({
             provider: AccountProvider.make('credentials'),

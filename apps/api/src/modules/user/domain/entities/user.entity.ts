@@ -22,13 +22,20 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
     )
   }
 
-  public changeRole(
-    role: User['role']
+  public update(
+    data: Partial<Pick<User, 'username' | 'role' | 'image'>>
   ): Effect.Effect<User, UserAlreadyDeleted> {
     if (!this.isActive)
       return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
+
     return Effect.succeed(
-      new User({ ...structuredClone(this), role, updatedAt: new Date() })
+      new User({
+        ...structuredClone(this),
+        username: data.username ?? this.username,
+        role: data.role ?? this.role,
+        image: data.image ?? this.image,
+        updatedAt: new Date(),
+      })
     )
   }
 }

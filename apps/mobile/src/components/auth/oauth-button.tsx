@@ -1,9 +1,9 @@
 import { Button } from '@rozumari/ui/components/button'
+import { toast } from '@rozumari/ui/components/toast'
 import * as Linking from 'expo-linking'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'
-import { ToastAndroid } from 'react-native'
 
 import { useSession } from '@/hooks/use-session'
 import { setTokens } from '@/lib/secure-store'
@@ -11,15 +11,21 @@ import { getBaseUrl } from '@/lib/utils'
 
 WebBrowser.maybeCompleteAuthSession()
 
-export function OAuthButton({ provider }: { provider: string }) {
+export function OAuthButton({
+  provider,
+  children,
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  provider: { id: string; name: string }
+}) {
+  const { t } = useTranslation('auth')
   const { refetch } = useSession()
   const router = useRouter()
-  const { t } = useTranslation('auth')
 
   const handleLogin = async () => {
     try {
       const redirectUri = Linking.createURL('login/oauth/callback')
-      const authUrl = `${getBaseUrl()}/api/auth/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`
+      const authUrl = `${getBaseUrl()}/api/auth/${provider.id}?redirect_uri=${encodeURIComponent(redirectUri)}`
 
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri)
 
@@ -34,17 +40,16 @@ export function OAuthButton({ provider }: { provider: string }) {
         await refetch()
 
         router.navigate('/(tabs)/home')
+        toast.success('Login successful!')
       }
     } catch {
-      ToastAndroid.show('Login failed. Please try again.', ToastAndroid.SHORT)
+      toast.error('Login failed. Please try again.')
     }
   }
 
   return (
-    <Button onPress={handleLogin} variant='outline' className='flex-1'>
-      {t('oauth.continue_with', {
-        provider: provider.charAt(0).toUpperCase() + provider.slice(1),
-      })}
+    <Button onPress={handleLogin} variant='outline' {...props}>
+      {children ?? t('oauth.continue_with', { provider: provider.name })}
     </Button>
   )
 }

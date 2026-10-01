@@ -4,7 +4,20 @@
   "index": {
     "account": "Account Information",
     "joined": "Joined At",
-    "logout": "Logout"
+    "logout": "Logout",
+    "accounts": {
+      "title": "Linked Accounts",
+      "not_connected": "Not connected",
+      "connect": "Connect",
+      "disconnect": "Disconnect",
+      "cancel": "Cancel",
+
+      "disconnect_dialog": {
+        "title": "Disconnect Account",
+        "message": "Are you sure you want to disconnect your {{provider_name}} account?",
+        "success": "Account disconnected successfully"
+      }
+    }
   },
 
   "settings": {

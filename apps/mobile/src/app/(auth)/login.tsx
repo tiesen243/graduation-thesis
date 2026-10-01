@@ -15,7 +15,7 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { Linking, View } from 'react-native'
 
 import { OAuthButtons } from '@/components/auth/oauth-buttons'
 import { useRuntime } from '@/hooks/use-runtime'
@@ -96,6 +96,11 @@ export default function LoginScreen() {
                     size='sm'
                     focusable={false}
                     accessible={false}
+                    onPress={() =>
+                      Linking.openURL(
+                        `${process.env.EXPO_PUBLIC_WEB_URL}/forgot-password`
+                      )
+                    }
                   >
                     {t('login.actions.forgot_password')}
                   </Button>

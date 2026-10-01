@@ -1,3 +1,10 @@
+import type { AccountProvider } from '@rozumari/contract/auth/schemas/account.schema'
+
+import FacebookIcon from '@/assets/social-icons/facebook.svg'
+import GitHubIcon from '@/assets/social-icons/github.svg'
+import GoogleIcon from '@/assets/social-icons/google.svg'
+import TwitterIcon from '@/assets/social-icons/x.svg'
+
 export const REFRESH_TOKEN_KEY = 'auth.refreshToken'
 export const ACCESS_TOKEN_KEY = 'auth.accessToken'
 
@@ -7,3 +14,14 @@ export const LANGUAGE_KEY = 'config.language'
 export const BLE_SERVICE_UUID = 'ffaa5bd2-45cd-4512-bf35-c5d4276a0c7a'
 export const BLE_RX_UUID = '3d8cffcb-69d3-41d3-8f9e-fafed0bcce6b'
 export const BLE_TX_UUID = '09cbb497-1c8a-4ad6-b196-3459c1820a1a'
+
+export const SUPPORTED_PROVIDERS = [
+  { id: 'facebook', name: 'Facebook', Icon: FacebookIcon },
+  { id: 'github', name: 'GitHub', Icon: GitHubIcon },
+  { id: 'google', name: 'Google', Icon: GoogleIcon },
+  { id: 'twitter', name: 'Twitter / X', Icon: TwitterIcon },
+] as never as readonly {
+  id: AccountProvider
+  name: string
+  Icon: React.FC<React.SVGProps<SVGSVGElement>>
+}[]

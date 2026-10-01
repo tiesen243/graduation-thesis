@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@effect/ai-openrouter": "catalog:effect",
     "@effect/platform-bun": "catalog:effect",
     "@effect/sql-pg": "catalog:effect",
     "@rozumari/contract": "workspace:*",
@@ -26,7 +27,6 @@
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
     "drizzle-kit": "^1.0.0-rc.5-5935859",
-    "pg": "^8.23.0",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   }

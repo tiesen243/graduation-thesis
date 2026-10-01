@@ -65,6 +65,7 @@ jobs:
         working-directory: ./apps/mobile
         env:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_WEB_URL: ${{ secrets.EXPO_PUBLIC_WEB_URL }}
         run: |
           mkdir -p ./build
 

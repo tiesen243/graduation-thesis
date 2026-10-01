@@ -46,12 +46,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         data: [
           {
             scheme: 'https',
-            host: `${appName}.vercel.app`,
+            host: process.env.EXPO_PUBLIC_WEB_URL,
             pathPrefix: '/',
           },
           {
             scheme: 'http',
-            host: `${appName}.vercel.app`,
+            host: process.env.EXPO_PUBLIC_WEB_URL,
             pathPrefix: '/',
           },
         ],
