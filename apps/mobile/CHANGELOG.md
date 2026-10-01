@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.17
+
+### Patch Changes
+
+- add missing icon
+
 ## @rozumari/mobile@0.1.16
 
 ### Bug Fixes
