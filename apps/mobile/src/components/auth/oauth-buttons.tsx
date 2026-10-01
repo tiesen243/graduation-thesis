@@ -6,6 +6,7 @@ import {
 import { useTranslation } from 'react-i18next'
 
 import { OAuthButton } from '@/components/auth/oauth-button'
+import { SUPPORTED_PROVIDERS } from '@/lib/constants'
 
 export const OAuthButtons = () => {
   const { t } = useTranslation('auth')
@@ -19,8 +20,8 @@ export const OAuthButtons = () => {
       </FieldSeparator>
 
       <Field orientation='responsive'>
-        {['facebook', 'github', 'google', 'twitter'].map((provider) => (
-          <OAuthButton key={provider} provider={provider} />
+        {SUPPORTED_PROVIDERS.map((provider) => (
+          <OAuthButton key={provider.id} provider={provider} />
         ))}
       </Field>
     </>

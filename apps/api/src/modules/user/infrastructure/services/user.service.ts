@@ -1,3 +1,4 @@
+import { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -34,6 +35,21 @@ export const UserServiceLayer = Layer.effect(
         yield* userRepository.save(user)
 
         return user
+      }),
+
+      update: Effect.fn(function* update(id, data) {
+        if (!data.image) return
+
+        const [user] = yield* userRepository.findMany({
+          where: { id: { eq: id } },
+          limit: 1,
+        })
+
+        if (!user)
+          return yield* Effect.fail(new UserNotFound({ error: { id } }))
+
+        const updatedUser = yield* user.update(data)
+        yield* userRepository.save(updatedUser)
       }),
     }
   })

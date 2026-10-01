@@ -59,6 +59,8 @@ export class Device extends Schema.TaggedClass<Device>()(
         ...structuredClone(this),
         status: 'unlinked',
         userId: undefined,
+        name: null,
+        position: null,
       })
     )
   }

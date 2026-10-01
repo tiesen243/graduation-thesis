@@ -1,6 +1,7 @@
 import * as HttpApiEndpoint from 'effect/http-api/HttpApiEndpoint'
 import * as HttpApiGroup from 'effect/http-api/HttpApiGroup'
 
+import { AccountsDto } from '@/auth/dto/accounts.dto'
 import { ChangePasswordDto } from '@/auth/dto/change-password.dto'
 import { ForgotPasswordDto } from '@/auth/dto/forgot-password.dto'
 import { LoginDto } from '@/auth/dto/login.dto'
@@ -8,9 +9,14 @@ import { LogoutDto } from '@/auth/dto/logout.dto'
 import { RefreshTokenDto } from '@/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@/auth/dto/register.dto'
 import { ResetPasswordDto } from '@/auth/dto/reset-password.dto'
+import { UnlinkDto } from '@/auth/dto/unlink.dto'
 import { WhoAmIDto } from '@/auth/dto/whoami.dto'
 import { AuthMiddleware } from '@/auth/middleware'
-import { InvalidCredentials, Unauthorized } from '@/auth/schemas/auth.error'
+import {
+  InvalidCredentials,
+  ProviderError,
+  Unauthorized,
+} from '@/auth/schemas/auth.error'
 import { UserAlreadyExists, UserNotFound } from '@/user/schemas/user.error'
 
 export class AuthGroup extends HttpApiGroup.make('auth')
@@ -50,6 +56,20 @@ export class AuthGroup extends HttpApiGroup.make('auth')
   .add(
     HttpApiEndpoint.get('whoami', '/whoami', {
       success: WhoAmIDto,
+    }).middleware(AuthMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.get('accounts', '/accounts', {
+      success: AccountsDto,
+    }).middleware(AuthMiddleware)
+  )
+
+  .add(
+    HttpApiEndpoint.post('unlink', '/unlink', {
+      payload: UnlinkDto.Input,
+      success: UnlinkDto,
+      error: ProviderError,
     }).middleware(AuthMiddleware)
   )
 

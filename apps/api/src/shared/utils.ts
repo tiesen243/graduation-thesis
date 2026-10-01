@@ -1,4 +1,6 @@
+import * as Crypto from 'effect/Crypto'
 import * as Effect from 'effect/Effect'
+import * as Hex from 'effect/encoding/Hex'
 
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
@@ -43,3 +45,17 @@ export const toDateString = (d: Date) => {
   const day = String(d.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
 }
+
+export const getGravatarUrl = Effect.fn(function* getGravatarUrl(
+  email: string
+) {
+  const crypto = yield* Crypto.Crypto
+
+  const cleanedEmail = email.trim().toLowerCase()
+  const encodedEmail = new TextEncoder().encode(cleanedEmail)
+
+  const hash = yield* crypto.digest('SHA-256', encodedEmail).pipe(Effect.orDie)
+  const hexHash = Hex.encode(hash)
+
+  return `https://www.gravatar.com/avatar/${hexHash}?s=512&d=identicon`
+})

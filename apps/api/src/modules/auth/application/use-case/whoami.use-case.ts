@@ -11,7 +11,7 @@ import { UserService } from '@/modules/user/application/ports/user.service'
 export class WhoAmIUseCase extends Context.Service<
   WhoAmIUseCase,
   {
-    execute: (
+    readonly execute: (
       input: WhoAmIDto.Input
     ) => Effect.Effect<WhoAmIDto.Output, Unauthorized, CurrentUser>
   }

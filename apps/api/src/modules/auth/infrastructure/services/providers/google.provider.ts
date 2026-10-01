@@ -58,7 +58,7 @@ export class GoogleProvider extends BaseProvider {
         id: response.sub,
         name: response.name,
         email: response.email,
-        image: response.picture,
+        image: response.picture ? response.picture.replace('=s96-c', '') : null,
       }
     }
   )

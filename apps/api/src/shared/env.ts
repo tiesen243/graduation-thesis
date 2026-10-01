@@ -53,6 +53,7 @@ export const env = effectEnv({
     AUTH_TWITTER_SECRET: Schema.String,
 
     RESEND_API_KEY: Schema.String,
+    OPENROUTER_API_KEY: Schema.String,
 
     TIMEZONE: Schema.TimeZoneFromString.pipe(
       Schema.withDecodingDefault(Effect.succeed('Asia/Ho_Chi_Minh'))

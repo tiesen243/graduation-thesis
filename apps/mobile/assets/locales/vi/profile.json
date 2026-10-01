@@ -1,10 +1,25 @@
 {
   "title": "Hồ sơ",
+
   "index": {
     "account": "Thông tin tài khoản",
     "joined": "Tham gia vào",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "accounts": {
+      "title": "Tài khoản đã liên kết",
+      "not_connected": "Chưa liên kết",
+      "id_label": "ID: {{id}}",
+      "connect": "Liên kết",
+      "disconnect": "Hủy liên kết",
+      "cancel": "Hủy",
+      "disconnect_dialog": {
+        "title": "Hủy liên kết tài khoản",
+        "message": "Bạn có chắc chắn muốn hủy liên kết tài khoản {{provider_name}} không?",
+        "success": "Hủy liên kết tài khoản thành công"
+      }
+    }
   },
+
   "settings": {
     "title": "Cài đặt",
     "dark_mode": {
@@ -16,6 +31,7 @@
         "system": "Sử dụng cài đặt thiết bị"
       }
     },
+
     "language": {
       "title": "Ngôn ngữ",
       "description": "Chọn ngôn ngữ cho ứng dụng",
@@ -26,6 +42,7 @@
     },
     "version": "Phiên bản ứng dụng"
   },
+
   "config": {
     "title": "Cấu hình thiết bị",
     "messages": {

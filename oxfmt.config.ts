@@ -1,7 +1,7 @@
 import { defineConfig } from 'oxfmt'
 
 export default defineConfig({
-  ignorePatterns: ['uniwind-types.d.ts'],
+  ignorePatterns: ['uniwind-types.d.ts', 'packages/eda/lib/*'],
 
   printWidth: 80,
   tabWidth: 2,

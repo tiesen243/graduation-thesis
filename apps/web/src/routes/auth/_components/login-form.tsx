@@ -9,18 +9,13 @@ import {
   FieldSeparator,
   FieldSet,
 } from '@rozumari/ui/components/field'
-import {
-  FacebookIcon,
-  GithubIcon,
-  GoogleIcon,
-  TwitterIcon,
-} from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { Link, useNavigate } from 'react-router'
 
 import { useSession } from '@/hooks/use-session'
+import { SUPPORTED_PROVIDERS } from '@/lib/constants'
 import { env } from '@/lib/env'
 import { api } from '@/lib/runtime'
 import { getBaseUrl } from '@/lib/utils'
@@ -29,13 +24,6 @@ const loginForm = FormBuilder.empty
   .add('email', LoginDto.Input.fields.email)
   .add('password', LoginDto.Input.fields.password)
   .make()
-
-const PROVIDERS = [
-  { name: 'facebook', label: 'Facebook', icon: FacebookIcon },
-  { name: 'github', label: 'GitHub', icon: GithubIcon },
-  { name: 'google', label: 'Google', icon: GoogleIcon },
-  { name: 'twitter', label: 'Twitter', icon: TwitterIcon },
-]
 
 function LoginFormSubmit({
   children,
@@ -122,19 +110,19 @@ export const LoginForm: React.FC = () => (
       </FieldSeparator>
 
       <Field className='grid grid-cols-1 md:grid-cols-2'>
-        {PROVIDERS.map((provider) => (
+        {SUPPORTED_PROVIDERS.map((provider) => (
           <Button
             key={provider.name}
             variant='outline'
             nativeButton={false}
             render={
               <Link
-                to={`${env.VITE_API_URL}/api/auth/${provider.name}?redirect_uri=${getBaseUrl()}/login`}
+                to={`${env.VITE_API_URL}/api/auth/${provider.id}?redirect_uri=${getBaseUrl()}/login`}
               />
             }
           >
-            <provider.icon data-icon='inline-start' /> Continue with{' '}
-            {provider.label}
+            <provider.Icon data-icon='inline-start' /> Continue with{' '}
+            {provider.name}
           </Button>
         ))}
       </Field>
