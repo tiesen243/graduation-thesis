@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.16
+
+### Bug Fixes
+
+- missing `react-native-svg-transformer` deps
+
 ## @rozumari/mobile@0.1.15
 
 ### Patch Changes
