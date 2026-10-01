@@ -1,3 +1,14 @@
+## @rozumari/mobile@0.1.15
+
+### Patch Changes
+
+- Bump effect to v4
+- Added list linked social accounts
+
+### Patch Changes
+
+- migrate all Modal to new Dialog
+
 ## @rozumari/mobile@0.1.14
 
 ### Patch Changes

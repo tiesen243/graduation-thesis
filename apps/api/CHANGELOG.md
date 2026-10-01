@@ -1,3 +1,10 @@
+## @rozumari/api@0.1.6
+
+### Patch Changes
+
+- Bump effect to v4
+- Added list linked social accounts
+
 ## @rozumari/api@0.1.5
 
 ### Patch Changes

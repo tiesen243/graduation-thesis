@@ -1,3 +1,10 @@
+## @rozumari/contract@0.1.3
+
+### Patch Changes
+
+- Bump effect to v4
+- Added list linked social accounts
+
 ## @rozumari/contract@0.1.2
 
 ### Patch Changes
