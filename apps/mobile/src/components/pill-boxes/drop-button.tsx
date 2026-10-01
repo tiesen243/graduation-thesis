@@ -2,20 +2,23 @@ import type { CompartmentSchema } from '@rozumari/contract/device/schemas/compar
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { Button } from '@rozumari/ui/components/button'
+import { CardDescription, CardTitle } from '@rozumari/ui/components/card'
 import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@rozumari/ui/components/card'
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from '@rozumari/ui/components/dialog'
 import { MinusIcon, PlusIcon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Pressable, ScrollView, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -32,7 +35,7 @@ export const DropButton: React.FC<{
   const { t } = useTranslation(['common', 'pill-box'])
 
   const { api } = useRuntime()
-  const [modalVisible, setModalVisible] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const [selectedItems, setSelectedItems] = useState<
     Record<string, DropItemConfig>
   >({})
@@ -65,14 +68,14 @@ export const DropButton: React.FC<{
     })
   }
 
-  const handleCloseModal = () => {
-    setModalVisible(false)
+  const handleClose = () => {
+    setIsOpen(false)
     setSelectedItems({})
   }
 
   const dropMutation = useMutation({
     ...api.device.emit.mutationOptions({ params: { id } }),
-    onSuccess: handleCloseModal,
+    onSuccess: handleClose,
   })
 
   const handleConfirmDrop = () => {
@@ -89,118 +92,107 @@ export const DropButton: React.FC<{
   )
 
   return (
-    <>
-      <Button size='sm' variant='outline' onPress={() => setModalVisible(true)}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger size='sm' variant='outline'>
         {t('pill-box:details.drop.button')}
-      </Button>
+      </DialogTrigger>
 
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType='fade'
-        onRequestClose={handleCloseModal}
-      >
-        <View className='flex-1 justify-center bg-black/50 p-4'>
-          <Card>
-            <CardHeader>
-              <CardTitle>{t('pill-box:details.drop.title')}</CardTitle>
-              <CardDescription>
-                {t('pill-box:details.drop.description')}
-              </CardDescription>
-            </CardHeader>
+      <DialogContent>
+        <DialogHeader>
+          <CardTitle>{t('pill-box:details.drop.title')}</CardTitle>
+          <CardDescription>
+            {t('pill-box:details.drop.description')}
+          </CardDescription>
+        </DialogHeader>
 
-            <ScrollView className='px-4' contentContainerClassName='gap-3'>
-              {availableCompartments.length === 0 ? (
-                <CardDescription>
-                  {t('pill-box:details.drop.empty')}
-                </CardDescription>
-              ) : (
-                availableCompartments.map((item) => {
-                  const isSelected = !!selectedItems[item.position]
-                  const currentDropQty =
-                    selectedItems[item.position]?.quantity ?? 1
+        <View className='gap-3'>
+          {availableCompartments.length === 0 ? (
+            <DialogDescription>
+              {t('pill-box:details.drop.empty')}
+            </DialogDescription>
+          ) : (
+            availableCompartments.map((item) => {
+              const isSelected = !!selectedItems[item.position]
+              const currentDropQty = selectedItems[item.position]?.quantity ?? 1
 
-                  return (
-                    <Pressable
-                      key={item.position}
-                      onPress={() => toggleSelectSlot(item)}
-                      className={cn(
-                        'flex-row items-center justify-between rounded-lg border p-3',
-                        isSelected
-                          ? 'border-primary bg-primary/10'
-                          : 'border-border bg-card'
-                      )}
+              return (
+                <Pressable
+                  key={item.position}
+                  onPress={() => toggleSelectSlot(item)}
+                  className={cn(
+                    'flex-row items-center justify-between rounded-lg border p-3',
+                    isSelected
+                      ? 'border-primary bg-primary/10'
+                      : 'border-border bg-card'
+                  )}
+                >
+                  <View className='flex-1 pr-2'>
+                    <CardTitle>{item.medicine}</CardTitle>
+                    <CardDescription className='capitalize'>
+                      {t('slot')}: {item.position} | {t('available')}:{' '}
+                      {item.capacity}
+                    </CardDescription>
+                  </View>
+
+                  {isSelected && (
+                    <View
+                      className='flex-row items-center gap-2 rounded-lg border border-primary/20'
+                      onStartShouldSetResponder={() => true}
                     >
-                      <View className='flex-1 pr-2'>
-                        <CardTitle>{item.medicine}</CardTitle>
-                        <CardDescription className='capitalize'>
-                          {t('slot')}: {item.position} | {t('available')}:{' '}
-                          {item.capacity}
-                        </CardDescription>
-                      </View>
+                      <Button
+                        size='icon-sm'
+                        variant='ghost'
+                        className='rounded-r-none border-0 border-r border-primary/20'
+                        onPress={() =>
+                          updateQuantity(item.position, -1, item.capacity)
+                        }
+                      >
+                        <MinusIcon className='size-4 shrink-0 text-foreground' />
+                      </Button>
 
-                      {isSelected && (
-                        <View
-                          className='flex-row items-center gap-2 rounded-lg border border-primary/20'
-                          onStartShouldSetResponder={() => true}
-                        >
-                          <Button
-                            size='icon-sm'
-                            variant='ghost'
-                            className='rounded-r-none border-0 border-r border-primary/20'
-                            onPress={() =>
-                              updateQuantity(item.position, -1, item.capacity)
-                            }
-                          >
-                            <MinusIcon className='size-4 shrink-0 text-foreground' />
-                          </Button>
+                      <Typography className='w-6 text-center text-sm font-medium'>
+                        {currentDropQty}
+                      </Typography>
 
-                          <Typography className='w-6 text-center text-sm font-medium'>
-                            {currentDropQty}
-                          </Typography>
-
-                          <Button
-                            size='icon-sm'
-                            variant='ghost'
-                            className='rounded-l-none border-0 border-l border-primary/20'
-                            onPress={() =>
-                              updateQuantity(item.position, 1, item.capacity)
-                            }
-                          >
-                            <PlusIcon className='size-4 shrink-0 text-foreground' />
-                          </Button>
-                        </View>
-                      )}
-                    </Pressable>
-                  )
-                })
-              )}
-            </ScrollView>
-
-            <CardFooter className='flex-row items-center justify-end gap-2'>
-              <Button
-                variant='ghost'
-                onPress={handleCloseModal}
-                disabled={dropMutation.isPending}
-              >
-                {t('pill-box:details.drop.actions.cancel')}
-              </Button>
-
-              <Button
-                onPress={handleConfirmDrop}
-                disabled={
-                  Object.keys(selectedItems).length === 0 ||
-                  dropMutation.isPending
-                }
-              >
-                {dropMutation.isPending
-                  ? t('pill-box:details.drop.actions.submitting')
-                  : t('pill-box:details.drop.actions.submit')}
-              </Button>
-            </CardFooter>
-          </Card>
+                      <Button
+                        size='icon-sm'
+                        variant='ghost'
+                        className='rounded-l-none border-0 border-l border-primary/20'
+                        onPress={() =>
+                          updateQuantity(item.position, 1, item.capacity)
+                        }
+                      >
+                        <PlusIcon className='size-4 shrink-0 text-foreground' />
+                      </Button>
+                    </View>
+                  )}
+                </Pressable>
+              )
+            })
+          )}
         </View>
-      </Modal>
-    </>
+
+        <DialogFooter className='flex-row items-center justify-end gap-2'>
+          <DialogClose
+            variant='outline'
+            onPress={handleClose}
+            disabled={dropMutation.isPending}
+          >
+            {t('pill-box:details.drop.actions.cancel')}
+          </DialogClose>
+
+          <Button
+            onPress={handleConfirmDrop}
+            disabled={
+              Object.keys(selectedItems).length === 0 || dropMutation.isPending
+            }
+          >
+            {dropMutation.isPending
+              ? t('pill-box:details.drop.actions.submitting')
+              : t('pill-box:details.drop.actions.submit')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

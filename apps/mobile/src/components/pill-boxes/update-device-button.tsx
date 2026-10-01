@@ -2,17 +2,24 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
 import { Button } from '@rozumari/ui/components/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@rozumari/ui/components/dialog'
 import { Field, FieldError, FieldLabel } from '@rozumari/ui/components/field'
 import { PencilIcon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
-import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -87,79 +94,70 @@ export function UpdateDeviceButton({
   })
 
   return (
-    <>
-      <Button size='sm' variant='ghost' onPress={() => setIsOpen(true)}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger size='sm' variant='ghost'>
         <PencilIcon className='size-4 text-muted-foreground' />
-      </Button>
+      </DialogTrigger>
 
-      <Modal
-        animationType='fade'
-        visible={isOpen}
-        onRequestClose={() => setIsOpen(false)}
-        transparent
-      >
-        <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
-          <View className='flex-1 justify-center bg-black/50 p-4'>
-            <updateDeviceForm.Provider defaultValues={device}>
-              <Pressable className='gap-4 rounded-lg border border-border bg-popover p-4'>
-                <Typography className='text-lg font-semibold'>
-                  {t('details.device.update.title')}
-                </Typography>
-                <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  {t('details.device.update.description')}
-                </Typography>
+      <updateDeviceForm.Provider defaultValues={device}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('details.device.update.title')}</DialogTitle>
+            <DialogDescription>
+              {t('details.device.update.description')}
+            </DialogDescription>
+          </DialogHeader>
 
-                <updateDeviceForm.Field
-                  name='name'
-                  render={({ field, meta, helpers: { handleChange } }) => (
-                    <Field>
-                      <FieldLabel>{t('details.device.name')}</FieldLabel>
-                      <Input
-                        {...field}
-                        value={field.value ?? ''}
-                        placeholder={t('details.device.name_placeholder')}
-                        onChangeText={handleChange}
-                      />
-                      <FieldError errors={meta.errors} />
-                    </Field>
-                  )}
+          <updateDeviceForm.Field
+            name='name'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>{t('details.device.name')}</FieldLabel>
+                <Input
+                  {...field}
+                  value={field.value ?? ''}
+                  placeholder={t('details.device.name_placeholder')}
+                  onChangeText={handleChange}
+                />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
+
+          <updateDeviceForm.Field
+            name='position'
+            render={({ field, meta, helpers: { handleChange } }) => (
+              <Field>
+                <FieldLabel>{t('details.device.position')}</FieldLabel>
+                <Input
+                  {...field}
+                  value={field.value ?? ''}
+                  placeholder={t('details.device.position_placeholder')}
+                  onChangeText={handleChange}
                 />
 
-                <updateDeviceForm.Field
-                  name='position'
-                  render={({ field, meta, helpers: { handleChange } }) => (
-                    <Field>
-                      <FieldLabel>{t('details.device.position')}</FieldLabel>
-                      <Input
-                        {...field}
-                        value={field.value ?? ''}
-                        placeholder={t('details.device.position_placeholder')}
-                        onChangeText={handleChange}
-                      />
+                <FieldError errors={meta.errors} />
+              </Field>
+            )}
+          />
 
-                      <FieldError errors={meta.errors} />
-                    </Field>
-                  )}
-                />
+          <DialogFooter>
+            <Field className='flex-row justify-end'>
+              <Button
+                variant='destructive'
+                onPress={() => unlinkMutation.mutate({ id: device.id })}
+                disabled={unlinkMutation.isPending}
+              >
+                {unlinkMutation.isPending
+                  ? t('details.device.unlink.actions.submitting')
+                  : t('details.device.unlink.actions.submit')}
+              </Button>
 
-                <Field className='flex-row justify-end'>
-                  <Button
-                    variant='destructive'
-                    onPress={() => unlinkMutation.mutate({ id: device.id })}
-                    disabled={unlinkMutation.isPending}
-                  >
-                    {unlinkMutation.isPending
-                      ? t('details.device.unlink.actions.submitting')
-                      : t('details.device.unlink.actions.submit')}
-                  </Button>
-
-                  <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
-                </Field>
-              </Pressable>
-            </updateDeviceForm.Provider>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </>
+              <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
+            </Field>
+          </DialogFooter>
+        </DialogContent>
+      </updateDeviceForm.Provider>
+    </Dialog>
   )
 }

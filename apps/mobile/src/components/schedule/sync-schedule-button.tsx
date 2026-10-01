@@ -2,12 +2,13 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { Button } from '@rozumari/ui/components/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@rozumari/ui/components/card'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@rozumari/ui/components/dialog'
 import { RefreshCwIcon } from '@rozumari/ui/components/icons'
 import {
   Select,
@@ -20,7 +21,6 @@ import { toast } from '@rozumari/ui/components/toast'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, TouchableWithoutFeedback, View } from 'react-native'
 
 import { useRuntime } from '@/hooks/use-runtime'
 
@@ -44,70 +44,58 @@ export const SyncScheduleButton = () => {
   })
 
   return (
-    <>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Button variant='ghost' size='icon' onPress={() => setOpen(true)}>
         <RefreshCwIcon className='size-5 text-foreground' />
       </Button>
 
-      <Modal
-        visible={open}
-        onRequestClose={() => setOpen(false)}
-        animationType='fade'
-        transparent
-      >
-        <TouchableWithoutFeedback onPress={() => setOpen(false)}>
-          <View className='flex-1 items-center justify-center bg-black/50 px-4'>
-            <TouchableWithoutFeedback>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{t('sync.title')}</CardTitle>
-                  <CardDescription>{t('sync.description')}</CardDescription>
-                </CardHeader>
-                <CardContent className='gap-4'>
-                  <Select
-                    value={selectedDevice}
-                    onValueChange={setSelectedDevice as never}
-                  >
-                    <SelectTrigger>
-                      <SelectValue
-                        items={
-                          data?.data.devices.map((device) => ({
-                            value: device.id,
-                            label: device.name ?? device.factoryModel,
-                          })) ?? []
-                        }
-                        placeholder={t('sync.select_device')}
-                      />
-                    </SelectTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('sync.title')}</DialogTitle>
+          <DialogDescription>{t('sync.description')}</DialogDescription>
+        </DialogHeader>
 
-                    <SelectContent>
-                      {data?.data.devices.map((device) => (
-                        <SelectItem key={device.id} value={device.id}>
-                          {device.name ?? device.factoryModel}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+        <Select
+          value={selectedDevice}
+          onValueChange={setSelectedDevice as never}
+        >
+          <SelectTrigger>
+            <SelectValue
+              items={
+                data?.data.devices.map((device) => ({
+                  value: device.id,
+                  label: device.name ?? device.factoryModel,
+                })) ?? []
+              }
+              placeholder={t('sync.select_device')}
+            />
+          </SelectTrigger>
 
-                  <Button
-                    disabled={!selectedDevice || syncSchedule.isPending}
-                    onPress={() =>
-                      syncSchedule.mutate({
-                        action: 'sync_schedule',
-                        payload: {},
-                      })
-                    }
-                  >
-                    {syncSchedule.isPending
-                      ? t('sync.actions.syncing')
-                      : t('sync.title')}
-                  </Button>
-                </CardContent>
-              </Card>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </>
+          <SelectContent title={t('sync.select_device')}>
+            {data?.data.devices.map((device) => (
+              <SelectItem key={device.id} value={device.id}>
+                {device.name ?? device.factoryModel}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <DialogFooter>
+          <Button
+            disabled={!selectedDevice || syncSchedule.isPending}
+            onPress={() =>
+              syncSchedule.mutate({
+                action: 'sync_schedule',
+                payload: {},
+              })
+            }
+          >
+            {syncSchedule.isPending
+              ? t('sync.actions.syncing')
+              : t('sync.title')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
