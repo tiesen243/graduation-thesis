@@ -1,23 +1,20 @@
-// oxlint-disable react/refs
+import type { Pressable } from 'react-native'
 
 import { CheckIcon, ChevronDownIcon } from 'lucide-uniwind'
 import * as React from 'react'
-import {
-  Animated,
-  Dimensions,
-  Easing,
-  Modal,
-  Pressable,
-  ScrollView,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
+import { ScrollView, View } from 'react-native'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/native/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/native/dialog'
 import { Typography, TypographyContext } from '@/native/typography'
-
-const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 interface SelectContextValue<TMultiple extends boolean = false> {
   open: boolean
@@ -25,8 +22,6 @@ interface SelectContextValue<TMultiple extends boolean = false> {
   value?: TMultiple extends true ? string[] : string
   onValueChange?: (value: TMultiple extends true ? string[] : string) => void
   multiple?: TMultiple
-
-  translateY: Animated.Value
 }
 
 const SelectContext = React.createContext<SelectContextValue | null>(null)
@@ -42,6 +37,8 @@ type SelectProps<TMultiple extends boolean = false> = React.PropsWithChildren<{
   value?: TMultiple extends true ? string[] : string
   defaultValue?: TMultiple extends true ? string[] : string
   onValueChange?: (value: TMultiple extends true ? string[] : string) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   multiple?: TMultiple
 }>
 
@@ -50,9 +47,11 @@ function Select<TMultiple extends boolean = false>({
   value: valueProp,
   defaultValue,
   onValueChange,
+  open: openProp,
+  onOpenChange,
   multiple,
 }: SelectProps<TMultiple>) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(openProp ?? false)
   const [uncontrolledValue, setUncontrolledValue] = React.useState<
     (TMultiple extends true ? string[] : string) | undefined
   >(defaultValue)
@@ -60,7 +59,13 @@ function Select<TMultiple extends boolean = false>({
   const isControlled = valueProp !== undefined
   const currentValue = isControlled ? valueProp : uncontrolledValue
 
-  const translateY = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current
+  const handleOpenChange = React.useCallback(
+    (newOpen: boolean) => {
+      setOpen(newOpen)
+      onOpenChange?.(newOpen)
+    },
+    [onOpenChange]
+  )
 
   const handleValueChange = React.useCallback(
     (newValue: TMultiple extends true ? string[] : string) => {
@@ -73,16 +78,21 @@ function Select<TMultiple extends boolean = false>({
   const memoizedValue = React.useMemo(
     () => ({
       open,
-      setOpen,
-      translateY,
+      setOpen: handleOpenChange,
       value: currentValue,
       onValueChange: handleValueChange,
       multiple,
     }),
-    [open, setOpen, translateY, currentValue, handleValueChange, multiple]
+    [open, handleOpenChange, currentValue, handleValueChange, multiple]
   ) as never
 
-  return <SelectContext value={memoizedValue}>{children}</SelectContext>
+  return (
+    <SelectContext value={memoizedValue}>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        {children}
+      </Dialog>
+    </SelectContext>
+  )
 }
 
 function SelectTrigger({
@@ -93,23 +103,9 @@ function SelectTrigger({
 }: React.ComponentProps<typeof Pressable> & {
   invalid?: boolean
 }) {
-  const { setOpen, translateY } = useSelectContext()
-
-  const handlePress = React.useCallback(() => {
-    setOpen(true)
-
-    Animated.timing(translateY, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-      easing: Easing.out(Easing.ease),
-    }).start()
-  }, [setOpen, translateY])
-
   return (
-    <Pressable
+    <DialogTrigger
       data-slot='select-trigger'
-      onPress={handlePress}
       className={cn(
         'flex h-10 w-fit flex-row items-center justify-between gap-1.5 rounded-lg border border-input bg-transparent py-2 pr-2 pl-2.5 outline-none select-none focus:border-ring focus:ring-3 focus:ring-ring/50 dark:bg-input/30 dark:active:bg-input/50',
         invalid &&
@@ -122,7 +118,7 @@ function SelectTrigger({
         {children as React.ReactNode}
       </View>
       <ChevronDownIcon className='size-4 text-muted-foreground/60' />
-    </Pressable>
+    </DialogTrigger>
   )
 }
 
@@ -181,70 +177,44 @@ function SelectContent({
   children,
   className,
   title = 'Select an option',
-  ...props
-}: React.ComponentProps<typeof Modal> & { title?: string }) {
-  const { open, setOpen, multiple, onValueChange, translateY } =
-    useSelectContext()
-
-  const handleClose = React.useCallback(
-    () =>
-      Animated.timing(translateY, {
-        toValue: SCREEN_HEIGHT,
-        duration: 150,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }).start(() => setOpen(false)),
-    [translateY, setOpen]
-  )
+}: {
+  children: React.ReactNode
+  className?: string
+  title?: string
+}) {
+  const { multiple, onValueChange } = useSelectContext()
 
   return (
-    <Modal
-      data-slot='select-content'
-      animationType='fade'
-      visible={open}
-      onRequestClose={handleClose}
-      transparent
-      {...props}
-    >
-      <TouchableWithoutFeedback onPress={handleClose}>
-        <View className='flex-1 justify-end bg-black/50'>
-          <TouchableWithoutFeedback>
-            <Animated.View
-              style={{ transform: [{ translateY }] }}
-              className={cn(
-                'max-h-2/3 min-h-1/3 w-full rounded-t-xl bg-popover py-4',
-                className
-              )}
-            >
-              <View className='mb-3 flex-row items-center justify-between border-b border-border px-4 pb-2'>
-                <Typography className='flex-1 text-base font-semibold text-popover-foreground'>
-                  {title}
-                </Typography>
-                {multiple && (
-                  <Button
-                    size='sm'
-                    variant='ghost'
-                    onPress={() => onValueChange?.([] as never)}
-                  >
-                    Clear
-                  </Button>
-                )}
-                <Button size='sm' variant='ghost' onPress={handleClose}>
-                  Done
-                </Button>
-              </View>
+    <DialogContent className={cn('px-0', className)}>
+      <DialogHeader className='flex-row items-center justify-between border-b border-foreground/20 px-4 pb-3'>
+        <DialogTitle className='text-base font-semibold text-popover-foreground'>
+          {title}
+        </DialogTitle>
 
-              <ScrollView
-                className='gap-y-1.5 px-4'
-                showsVerticalScrollIndicator={false}
-              >
-                {children}
-              </ScrollView>
-            </Animated.View>
-          </TouchableWithoutFeedback>
+        <View className='flex-row items-center gap-1'>
+          {multiple && (
+            <Button
+              size='sm'
+              variant='ghost'
+              onPress={() => onValueChange?.([] as never)}
+            >
+              Clear
+            </Button>
+          )}
+
+          <DialogClose size='sm' variant='ghost'>
+            Done
+          </DialogClose>
         </View>
-      </TouchableWithoutFeedback>
-    </Modal>
+      </DialogHeader>
+
+      <ScrollView
+        className='gap-y-1.5 px-4'
+        showsVerticalScrollIndicator={false}
+      >
+        {children}
+      </ScrollView>
+    </DialogContent>
   )
 }
 
@@ -252,8 +222,9 @@ function SelectItem({
   value: itemValue,
   children,
   className,
+  disabled,
   ...props
-}: React.ComponentProps<typeof Pressable> & {
+}: React.ComponentProps<typeof Button> & {
   value: string
 }) {
   const { value, onValueChange, multiple, setOpen } = useSelectContext()
@@ -263,7 +234,7 @@ function SelectItem({
     : value === itemValue
 
   const handleSelect = React.useCallback(() => {
-    if (props.disabled) return
+    if (disabled) return
 
     if (multiple) {
       const currentValues = Array.isArray(value) ? [...value] : []
@@ -272,19 +243,12 @@ function SelectItem({
         : [...currentValues, itemValue]
 
       onValueChange?.(nextValues as never)
-    } else {
-      onValueChange?.(itemValue as never)
-      setOpen(false)
+      return
     }
-  }, [
-    itemValue,
-    isSelected,
-    multiple,
-    onValueChange,
-    setOpen,
-    value,
-    props.disabled,
-  ])
+
+    onValueChange?.(itemValue as never)
+    setOpen(false)
+  }, [disabled, itemValue, isSelected, multiple, onValueChange, setOpen, value])
 
   const selectTextClassName = cn(
     'flex-1 text-sm font-normal text-popover-foreground',
@@ -295,6 +259,7 @@ function SelectItem({
     <Button
       size='lg'
       variant='ghost'
+      disabled={disabled}
       onPress={handleSelect}
       className={cn('justify-between', isSelected && 'bg-accent/50', className)}
       {...props}

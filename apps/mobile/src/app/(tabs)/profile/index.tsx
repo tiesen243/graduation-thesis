@@ -27,6 +27,7 @@ import { ScrollView, View } from 'react-native'
 
 import { RefreshControl } from '@/components/native'
 import { AccountList } from '@/components/profile/account-list'
+import { Username } from '@/components/profile/username'
 import { useSession } from '@/hooks/use-session'
 
 export default function TabsProfileIndexScreen() {
@@ -72,9 +73,7 @@ export default function TabsProfileIndexScreen() {
           </Badge>
         </Avatar>
 
-        <CardContent className='items-center'>
-          <CardTitle>{user.username}</CardTitle>
-        </CardContent>
+        <Username />
       </Card>
 
       <View className='gap-3'>

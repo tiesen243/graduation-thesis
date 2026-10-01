@@ -28,7 +28,7 @@ export class UpdateUserUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute({ id, role, username }) {
-        const { userId } = yield* CurrentUser
+        const { userId, userRole } = yield* CurrentUser
 
         const [user] = yield* userRepository.findMany({
           where: { id: { eq: id } },
@@ -40,6 +40,13 @@ export class UpdateUserUseCase extends Context.Service<
         let updatedUser = user
 
         if (role && role !== user.role) {
+          if (userRole !== 'admin')
+            return yield* Effect.fail(
+              new Forbidden({
+                message: 'You are not allowed to change user role',
+              })
+            )
+
           if (userId === user.id)
             return yield* Effect.fail(
               new Forbidden({ message: 'You cannot change your own role' })

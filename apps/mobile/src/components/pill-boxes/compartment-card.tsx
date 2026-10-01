@@ -1,8 +1,8 @@
 import type { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 
 import { Badge } from '@rozumari/ui/components/badge'
-import { Button } from '@rozumari/ui/components/button'
 import { Card, CardContent, CardHeader } from '@rozumari/ui/components/card'
+import { DialogTrigger } from '@rozumari/ui/components/dialog'
 import {
   MoreVerticalIcon,
   PillIcon,
@@ -38,15 +38,9 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
 
         {hasMedicine && (
           <UpdateCompartmentButton compartment={compartment}>
-            {(setIsOpen) => (
-              <Button
-                size='icon-sm'
-                variant='ghost'
-                onPress={() => setIsOpen(true)}
-              >
-                <MoreVerticalIcon className='size-4 shrink-0 text-muted-foreground' />
-              </Button>
-            )}
+            <DialogTrigger size='icon-sm' variant='ghost'>
+              <MoreVerticalIcon className='size-4 shrink-0 text-muted-foreground' />
+            </DialogTrigger>
           </UpdateCompartmentButton>
         )}
       </CardHeader>
@@ -84,18 +78,12 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
           </View>
 
           <UpdateCompartmentButton compartment={compartment} hideDelete>
-            {(setIsOpen) => (
-              <Button
-                size='sm'
-                variant='outline'
-                onPress={() => setIsOpen(true)}
-              >
-                <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
-                <Typography>
-                  {t('pill-box:details.compartment.add_medicine')}
-                </Typography>
-              </Button>
-            )}
+            <DialogTrigger size='sm' variant='outline'>
+              <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
+              <Typography>
+                {t('pill-box:details.compartment.add_medicine')}
+              </Typography>
+            </DialogTrigger>
           </UpdateCompartmentButton>
         </CardContent>
       )}

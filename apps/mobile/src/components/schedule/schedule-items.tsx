@@ -125,7 +125,10 @@ export function ScheduleItems({
                         }))}
                       />
                     </SelectTrigger>
-                    <SelectContent>
+
+                    <SelectContent
+                      title={t('schedule:items.select_compartment')}
+                    >
                       {availableCompartments.map((c) => (
                         <SelectItem
                           key={c.position}
