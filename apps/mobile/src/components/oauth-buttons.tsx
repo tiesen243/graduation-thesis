@@ -6,13 +6,14 @@ import {
 } from '@rozumari/ui/components/field'
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
+import { useQueryClient } from '@tanstack/react-query'
 import * as Linking from 'expo-linking'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'
 import { useCSSVariable } from 'uniwind'
 
-import { useSession } from '@/hooks/use-session'
+import { useRuntime } from '@/hooks/use-runtime'
 import { SUPPORTED_PROVIDERS } from '@/lib/constants'
 import { setTokens } from '@/lib/secure-store'
 import { getBaseUrl } from '@/lib/utils'
@@ -29,7 +30,8 @@ export function OAuthButton({
 }) {
   const foregroundColor = useCSSVariable('--color-foreground') as string
   const { t } = useTranslation('auth')
-  const { refetch } = useSession()
+  const queryClient = useQueryClient()
+  const { api } = useRuntime()
   const router = useRouter()
 
   const handleLogin = async () => {
@@ -45,9 +47,19 @@ export function OAuthButton({
         const accessToken = queryParams?.access_token as string
         const refreshToken = queryParams?.refresh_token as string
 
-        if (accessToken && refreshToken)
-          await setTokens(accessToken, refreshToken)
-        await refetch()
+        if (!accessToken || !refreshToken)
+          throw new Error('Missing access token or refresh token')
+
+        await setTokens(accessToken, refreshToken)
+
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: api.auth.whoami.getQueryKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: api.auth.accounts.getQueryKey(),
+          }),
+        ])
 
         router.navigate('/(tabs)/home')
         toast.success(t('login.messages.success'))
