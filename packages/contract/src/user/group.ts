@@ -19,7 +19,7 @@ export class UserGroup extends HttpApiGroup.make('user')
       query: ListUsersDto.Input,
       success: ListUsersDto,
       error: UserQueryError,
-    })
+    }).middleware(AdminMiddleware)
   )
 
   .add(
@@ -27,7 +27,7 @@ export class UserGroup extends HttpApiGroup.make('user')
       params: ShowUserDto.Input,
       success: ShowUserDto,
       error: UserNotFound,
-    })
+    }).middleware(AdminMiddleware)
   )
 
   .add(
@@ -44,10 +44,9 @@ export class UserGroup extends HttpApiGroup.make('user')
       params: DeleteUserDto.Input,
       success: DeleteUserDto,
       error: [UserNotFound, UserAlreadyDeleted, Forbidden],
-    })
+    }).middleware(AdminMiddleware)
   )
 
-  .middleware(AdminMiddleware)
   .middleware(AuthMiddleware)
 
   .prefix('/api/users') {}
