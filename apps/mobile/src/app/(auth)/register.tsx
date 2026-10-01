@@ -16,7 +16,7 @@ import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import { OAuthButtons } from '@/components/auth/oauth-buttons'
+import { OAuthButtons } from '@/components/oauth-buttons'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const registerForm = FormBuilder.empty

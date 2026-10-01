@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
 import { useCSSVariable } from 'uniwind'
 
-import { OAuthButton } from '@/components/auth/oauth-button'
+import { OAuthButton } from '@/components/oauth-buttons'
 import { useRuntime } from '@/hooks/use-runtime'
 import { SUPPORTED_PROVIDERS } from '@/lib/constants'
 
