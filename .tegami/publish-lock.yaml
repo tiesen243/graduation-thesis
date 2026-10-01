@@ -1,46 +1,48 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n  npm:@rozumari/web:\n    type: patch\n---\n\n## Patch Changes\n\n- add missing icon\n"
-    filename: 2026-10-01-muphgfu3.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug Fixes\n\n- missing refetch accounts\n"
+    filename: 2026-10-01-mupjaz9p.md
+    v: 0.0.0
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Bug Fixes\n\n- Missing i18n\n"
+    filename: 2026-10-01-mupixfvk.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
   - id: npm:@rozumari/github
     updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - changelogIds:
-      - 2026-10-01-muphgfu3.md
-    id: npm:@rozumari/mobile
-    updated: true
-  - changelogIds:
-      - 2026-10-01-muphgfu3.md
-    id: npm:@rozumari/web
-    updated: true
-  - id: npm:@rozumari/api
-    updated: false
   - id: npm:@rozumari/tsconfig
     updated: false
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
     updated: false
   - id: npm:@rozumari/eda
     updated: false
-  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/lib
+    updated: false
+  - id: npm:@rozumari/api
     updated: false
   - id: npm:@rozumari/firmware
     updated: false
-  - id: npm:@rozumari/lib
+  - id: npm:@rozumari/web
     updated: false
+  - id: npm:@rozumari/ui
+    updated: false
+  - id: npm:@rozumari/contract
+    updated: false
+  - changelogIds:
+      - 2026-10-01-mupjaz9p.md
+      - 2026-10-01-mupixfvk.md
+    id: npm:@rozumari/mobile
+    updated: true
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
-  - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/mobile
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/api
   - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/oxlint
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/contract
-  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/lib
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/firmware
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/ui
+  - id: npm:@rozumari/contract
+  - id: npm:@rozumari/mobile
