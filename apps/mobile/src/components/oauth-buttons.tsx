@@ -50,10 +50,10 @@ export function OAuthButton({
         await refetch()
 
         router.navigate('/(tabs)/home')
-        toast.success('Login successful!')
+        toast.success(t('login.messages.success'))
       }
     } catch {
-      toast.error('Login failed. Please try again.')
+      toast.error(t('login.messages.failed'))
     }
   }
 
