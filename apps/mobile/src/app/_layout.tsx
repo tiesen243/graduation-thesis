@@ -30,16 +30,14 @@ function RootLayoutInner() {
       if (!fontLoaded && fontError) return
       if (status === 'loading') return
 
-      try {
-        const theme = await getTheme()
-        Uniwind.setTheme(theme)
-      } finally {
-        await SplashScreen.hideAsync()
-      }
+      const theme = await getTheme()
+      Uniwind.setTheme(theme)
 
       // check permission...
       await requestBLEPermissions()
       await Camera.requestCameraPermissionsAsync()
+
+      await SplashScreen.hideAsync()
     })()
   }, [fontLoaded, fontError, status])
 

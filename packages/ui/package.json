@@ -53,6 +53,7 @@
   "peerDependencies": {
     "@effect/atom-react": "catalog:effect",
     "effect": "catalog:effect",
-    "react": "catalog:react"
+    "react": "catalog:react",
+    "react-native-safe-area-context": "catalog:prod"
   }
 }
