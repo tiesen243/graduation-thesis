@@ -37,6 +37,7 @@ jobs:
         uses: expo/expo-github-action@v8
         with:
           token: ${{ secrets.EXPO_TOKEN }}
+          eas-version: 24.11.0
           packager: bun
 
       - name: Extract Tag Name and Version
