@@ -44,7 +44,7 @@ jobs:
 
       - name: Setup EAS CLI
         env:
-          EXPO_TOKEN: ${{ secrets:EXPO_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           bun install -g eas-cli
 
@@ -53,7 +53,7 @@ jobs:
       - name: Build APK
         working-directory: ./apps/mobile
         env:
-          EXPO_TOKEN: ${{ secrets:EXPO_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_WEB_URL: ${{ secrets.EXPO_PUBLIC_WEB_URL }}
           EXPO_PUBLIC_TURNSTILE_KEY: ${{ secrets.EXPO_PUBLIC_TURNSTILE_KEY }}
