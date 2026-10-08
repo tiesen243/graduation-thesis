@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.23
+
+### Bug Fixes
+
+- Build error
+
 ## @rozumari/mobile@0.1.22
 
 ### Bug Fixes
