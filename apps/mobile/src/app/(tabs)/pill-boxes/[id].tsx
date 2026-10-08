@@ -31,16 +31,7 @@ export default function TabsPillBoxesDetailsScreen() {
         autoReconnect: '3 seconds',
         keepAlive: { timeout: '35 seconds' },
         onData: ({ action, payload }) => {
-          if (action === 'message' && payload && typeof payload === 'object') {
-            const { type, content } = payload as {
-              type?: string
-              content: string
-            }
-
-            if (type === 'success') toast.success(content)
-            else if (type === 'error') toast.error(content)
-            else toast.show(content)
-          } else console.log('subscription data', action, payload)
+          if (action === 'message') toast.show(payload as string)
         },
         onError: (error) => toast.error(error.message),
       }

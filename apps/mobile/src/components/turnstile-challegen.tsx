@@ -74,7 +74,7 @@ export function TurnstileChallenge({
   }
 
   return (
-    <View className='h-16 w-full'>
+    <View className='h-18 w-full'>
       <WebView
         ref={webViewRef}
         originWhitelist={['*']}

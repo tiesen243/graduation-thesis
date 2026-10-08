@@ -20,6 +20,7 @@ export const SyncButton: React.FC<{ id: DeviceId }> = ({ id }) => {
 
   return (
     <Button
+      size='sm'
       variant='outline'
       onPress={() =>
         syncMutation.mutate({ action: 'sync_schedule', payload: {} })
