@@ -1,50 +1,42 @@
 // oxlint-disable react/refs
 import type { GestureResponderEvent } from 'react-native'
 
+import { Button } from '@rozumari/ui/components/button'
+import {
+  Typography,
+  TypographyContext,
+} from '@rozumari/ui/components/typography'
+import { cn } from '@rozumari/ui/lib/utils'
 import * as React from 'react'
 import {
   Animated,
   Dimensions,
   Easing,
-  Keyboard,
+  KeyboardAvoidingView,
   Modal,
   PanResponder,
-  Platform,
   TouchableWithoutFeedback,
   View,
 } from 'react-native'
 
-import { cn } from '@/lib/utils'
-import { Button } from '@/native/button'
-import { Typography, TypographyContext } from '@/native/typography'
-
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
-const DEFAULT_MAX_MIN_HEIGHT = SCREEN_HEIGHT / 3
+const MIN_SHEET_HEIGHT = SCREEN_HEIGHT * 0.25
 const MAX_SHEET_HEIGHT = SCREEN_HEIGHT * 0.75
-
-const SHEET_ANIMATION_DURATION = 300
-const KEYBOARD_ANIMATION_DURATION = 250
 
 interface DialogContextValue {
   open: boolean
   setOpen: (open: boolean) => void
   translateY: Animated.Value
-  sheetHeight: Animated.Value
-  minSheetHeight: React.RefObject<number>
-  getSheetHeight: () => number
-  setCurrentSheetHeight: (height: number) => void
-  setSheetHeight: (height: number) => void
+  sheetHeight: Animated.Value & { __getValue: () => number }
 }
 
 const DialogContext = React.createContext<DialogContextValue | null>(null)
 
 const useDialogContext = () => {
   const context = React.use(DialogContext)
-
   if (!context)
     throw new Error('useDialogContext must be used within a DialogProvider')
-
   return context
 }
 
@@ -63,35 +55,13 @@ function Dialog({
   const isOpen = isControlled ? open : internalOpen
   const _setOpen = isControlled ? onOpenChange : setInternalOpen
 
-  const minSheetHeight = React.useRef(DEFAULT_MAX_MIN_HEIGHT)
-  const currentSheetHeight = React.useRef(DEFAULT_MAX_MIN_HEIGHT)
-
   const translateY = React.useRef(new Animated.Value(SCREEN_HEIGHT)).current
-
-  const sheetHeight = React.useRef(
-    new Animated.Value(DEFAULT_MAX_MIN_HEIGHT)
-  ).current
-
-  const getSheetHeight = React.useCallback(() => currentSheetHeight.current, [])
-
-  const setCurrentSheetHeight = React.useCallback((height: number) => {
-    currentSheetHeight.current = height
-  }, [])
-
-  const setSheetHeight = React.useCallback(
-    (height: number) => {
-      currentSheetHeight.current = height
-      sheetHeight.setValue(height)
-    },
-    [sheetHeight]
-  )
+  const sheetHeight = React.useRef(new Animated.Value(MIN_SHEET_HEIGHT)).current
 
   const setOpen = React.useCallback(
     (_open: boolean) => {
       if (_open) {
         _setOpen(true)
-
-        translateY.stopAnimation()
 
         return Animated.timing(translateY, {
           toValue: 0,
@@ -101,11 +71,9 @@ function Dialog({
         }).start()
       }
 
-      translateY.stopAnimation()
-
       Animated.timing(translateY, {
         toValue: SCREEN_HEIGHT,
-        duration: SHEET_ANIMATION_DURATION,
+        duration: 300,
         easing: Easing.in(Easing.ease),
         useNativeDriver: false,
       }).start(() => _setOpen(false))
@@ -118,22 +86,9 @@ function Dialog({
       open: isOpen,
       setOpen,
       translateY,
-      sheetHeight,
-      minSheetHeight,
-      getSheetHeight,
-      setCurrentSheetHeight,
-      setSheetHeight,
+      sheetHeight: sheetHeight as Animated.Value & { __getValue: () => number },
     }),
-    [
-      isOpen,
-      setOpen,
-      translateY,
-      sheetHeight,
-      minSheetHeight,
-      getSheetHeight,
-      setCurrentSheetHeight,
-      setSheetHeight,
-    ]
+    [isOpen, setOpen, translateY, sheetHeight]
   )
 
   return (
@@ -165,46 +120,7 @@ function DialogContent({
   children,
   ...props
 }: React.ComponentProps<typeof Modal>) {
-  const { open, setOpen, translateY, sheetHeight } = useDialogContext()
-
-  React.useEffect(() => {
-    const showEvent =
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow'
-
-    const hideEvent =
-      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide'
-
-    const showSub = Keyboard.addListener(showEvent, (event) => {
-      const targetY = -event.endCoordinates.height
-
-      translateY.stopAnimation()
-
-      Animated.timing(translateY, {
-        toValue: targetY,
-        duration:
-          Platform.OS === 'ios' ? event.duration : KEYBOARD_ANIMATION_DURATION,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: false,
-      }).start()
-    })
-
-    const hideSub = Keyboard.addListener(hideEvent, (event) => {
-      translateY.stopAnimation()
-
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration:
-          Platform.OS === 'ios' ? event.duration : KEYBOARD_ANIMATION_DURATION,
-        easing: Easing.out(Easing.ease),
-        useNativeDriver: false,
-      }).start()
-    })
-
-    return () => {
-      showSub.remove()
-      hideSub.remove()
-    }
-  }, [translateY])
+  const { open, setOpen, sheetHeight, translateY } = useDialogContext()
 
   return (
     <Modal
@@ -216,7 +132,10 @@ function DialogContent({
       {...props}
     >
       <TouchableWithoutFeedback onPress={() => setOpen(false)}>
-        <View className='inset-0 z-50 flex-1 justify-end bg-black/10'>
+        <KeyboardAvoidingView
+          behavior='padding'
+          className='inset-0 z-50 flex-1 justify-end bg-black/10 dark:bg-black/50'
+        >
           <TouchableWithoutFeedback>
             <Animated.View
               style={{
@@ -234,7 +153,7 @@ function DialogContent({
               </TypographyContext>
             </Animated.View>
           </TouchableWithoutFeedback>
-        </View>
+        </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </Modal>
   )
@@ -269,38 +188,29 @@ function DialogHeader({
   className,
   ...props
 }: React.ComponentProps<typeof View>) {
-  const {
-    setOpen,
-    translateY,
-    sheetHeight,
-    minSheetHeight,
-    getSheetHeight,
-    setSheetHeight,
-    setCurrentSheetHeight,
-  } = useDialogContext()
+  const { setOpen, translateY, sheetHeight } = useDialogContext()
 
-  const startHeight = React.useRef(DEFAULT_MAX_MIN_HEIGHT)
+  const startHeight = React.useRef(MIN_SHEET_HEIGHT)
   const isExpanded = React.useRef(false)
 
-  const dragAnim = React.useRef(new Animated.Value(0)).current
+  const drag = React.useRef(new Animated.Value(0)).current
 
   const animateIndicator = React.useCallback(
-    (dragging: boolean) => {
-      Animated.timing(dragAnim, {
+    (dragging: boolean) =>
+      Animated.timing(drag, {
         toValue: dragging ? 1 : 0,
         duration: 200,
         useNativeDriver: false,
-      }).start()
-    },
-    [dragAnim]
+      }).start(),
+    [drag]
   )
 
-  const scaleX = dragAnim.interpolate({
+  const scaleX = drag.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 1.05],
   })
 
-  const opacity = dragAnim.interpolate({
+  const opacity = drag.interpolate({
     inputRange: [0, 1],
     outputRange: [0.3, 0.8],
   })
@@ -315,95 +225,73 @@ function DialogHeader({
       onPanResponderGrant: () => {
         animateIndicator(true)
 
-        startHeight.current = getSheetHeight()
+        startHeight.current = sheetHeight.__getValue()
         isExpanded.current = startHeight.current >= MAX_SHEET_HEIGHT - 10
       },
 
       onPanResponderMove: (_, gestureState) => {
         const { dy } = gestureState
-        const minHeight = minSheetHeight.current
 
         if (!isExpanded.current) {
           if (dy < 0) {
             translateY.setValue(0)
-
-            const newHeight = Math.min(MAX_SHEET_HEIGHT, minHeight - dy)
-
-            setSheetHeight(newHeight)
-            return
+            const newHeight = Math.min(MAX_SHEET_HEIGHT, MIN_SHEET_HEIGHT - dy)
+            return sheetHeight.setValue(newHeight)
           }
 
-          translateY.setValue(dy)
-          return
+          return translateY.setValue(dy)
         }
 
         translateY.setValue(0)
 
         if (dy < 0) {
           const overdrag = Math.abs(dy) / 3
-
-          setSheetHeight(MAX_SHEET_HEIGHT + overdrag)
-          return
+          return sheetHeight.setValue(MAX_SHEET_HEIGHT + overdrag)
         }
 
-        setSheetHeight(Math.max(minHeight, MAX_SHEET_HEIGHT - dy))
+        sheetHeight.setValue(Math.max(MIN_SHEET_HEIGHT, MAX_SHEET_HEIGHT - dy))
       },
 
       onPanResponderRelease: (_, gestureState) => {
         animateIndicator(false)
 
         const { dy, vy } = gestureState
-        const minHeight = minSheetHeight.current
-        const expandDistance = MAX_SHEET_HEIGHT - minHeight
+        const expandDistance = MAX_SHEET_HEIGHT - MIN_SHEET_HEIGHT
 
         if (!isExpanded.current) {
           if (dy >= 0) {
-            if (dy > 80 || vy > 0.5) {
-              setOpen(false)
-              return
-            }
+            if (dy > 80 || vy > 0.5) return setOpen(false)
 
-            Animated.spring(translateY, {
+            return Animated.spring(translateY, {
               toValue: 0,
               bounciness: 4,
               useNativeDriver: false,
             }).start()
-
-            return
           }
 
           const targetHeight =
             Math.abs(dy) > expandDistance * 0.5 || vy < -0.5
               ? MAX_SHEET_HEIGHT
-              : minHeight
+              : MIN_SHEET_HEIGHT
 
-          setCurrentSheetHeight(targetHeight)
-
-          Animated.spring(sheetHeight, {
+          return Animated.spring(sheetHeight, {
             toValue: targetHeight,
             bounciness: 4,
             useNativeDriver: false,
           }).start()
-
-          return
         }
 
-        if (dy < 0) {
-          setCurrentSheetHeight(MAX_SHEET_HEIGHT)
-
-          Animated.spring(sheetHeight, {
+        if (dy < 0)
+          return Animated.spring(sheetHeight, {
             toValue: MAX_SHEET_HEIGHT,
             bounciness: 6,
             useNativeDriver: false,
           }).start()
 
-          return
-        }
-
         const targetHeight =
-          dy > expandDistance * 0.3 || vy > 0.3 ? minHeight : MAX_SHEET_HEIGHT
-
-        setCurrentSheetHeight(targetHeight)
+          dy > expandDistance * 0.3 || vy > 0.3
+            ? MIN_SHEET_HEIGHT
+            : MAX_SHEET_HEIGHT
 
         Animated.spring(sheetHeight, {
           toValue: targetHeight,
@@ -412,46 +300,43 @@ function DialogHeader({
         }).start()
       },
 
-      onPanResponderTerminate: () => {
-        animateIndicator(false)
-      },
+      onPanResponderTerminate: () => animateIndicator(false),
     })
   ).current
 
   return (
-    <View data-slot='dialog-header' {...panResponder.panHandlers}>
-      <View className='items-center justify-center pt-3'>
+    <View
+      data-slot='dialog-header'
+      {...panResponder.panHandlers}
+      className={cn('flex flex-col gap-2', className)}
+      {...props}
+    >
+      <View className='items-center justify-center pt-3 pb-2'>
         <Animated.View
           style={{
             transform: [{ scaleX }],
             opacity,
           }}
-          className='h-1.5 w-12 rounded-full bg-muted-foreground'
+          className='h-1.5 w-16 rounded-full bg-muted-foreground'
         />
       </View>
 
-      <View className={cn('flex flex-col gap-2', className)} {...props}>
-        {props.children}
-      </View>
+      {props.children}
     </View>
   )
 }
 
 function DialogFooter({
   className,
-  showCloseButton = false,
   children,
   ...props
-}: React.ComponentProps<typeof View> & {
-  showCloseButton?: boolean
-}) {
+}: React.ComponentProps<typeof View>) {
   return (
     <View
       data-slot='dialog-footer'
       className={cn('flex flex-row justify-end gap-2', className)}
       {...props}
     >
-      {showCloseButton && <DialogClose>Close</DialogClose>}
       {children}
     </View>
   )

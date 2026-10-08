@@ -53,7 +53,6 @@ export default function TabsLayout() {
 
       activityEnabled
       backBehavior='history'
-      tabBarRespectsIMEInsets
     >
       <NativeTabs.Trigger name='home'>
         <NativeTabs.Trigger.Label>{t('home:title')}</NativeTabs.Trigger.Label>

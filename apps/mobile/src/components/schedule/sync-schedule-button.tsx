@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from '@rozumari/ui/components/dialog'
 import { RefreshCwIcon } from '@rozumari/ui/components/icons'
 import {
@@ -45,9 +46,9 @@ export const SyncScheduleButton = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Button variant='ghost' size='icon' onPress={() => setOpen(true)}>
+      <DialogTrigger variant='ghost' size='icon'>
         <RefreshCwIcon className='size-5 text-foreground' />
-      </Button>
+      </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
