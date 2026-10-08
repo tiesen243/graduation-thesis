@@ -42,7 +42,8 @@
     "react-native-ble-manager": "~12.5.3",
     "react-native-calendars-datepicker": "~1.2.4",
     "react-native-safe-area-context": "~5.9.1",
-    "react-native-svg": "~15.15.5"
+    "react-native-svg": "~15.15.5",
+    "react-native-webview": "^14.0.1"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
