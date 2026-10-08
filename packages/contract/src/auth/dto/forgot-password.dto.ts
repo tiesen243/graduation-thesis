@@ -12,6 +12,7 @@ export class ForgotPasswordDto extends Schema.TaggedClass<ForgotPasswordDto>()(
 export namespace ForgotPasswordDto {
   export const Input = Schema.Struct({
     email: Email,
+    challengeToken: Schema.String,
   })
   export type Input = typeof Input.Type
 

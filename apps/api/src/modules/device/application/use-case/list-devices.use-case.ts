@@ -1,6 +1,6 @@
 import type { ListDevicesDto } from '@rozumari/contract/device/dto/list-devices.dto'
-import type { UserId } from '@rozumari/contract/user/schemas/user.schema'
 
+import { CurrentUser } from '@rozumari/contract/auth/middleware'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -14,8 +14,8 @@ export class ListDevicesUseCase extends Context.Service<
   ListDevicesUseCase,
   {
     readonly execute: (
-      input: ListDevicesDto.Input & { userId?: UserId }
-    ) => Effect.Effect<ListDevicesDto.Output>
+      input: ListDevicesDto.Input
+    ) => Effect.Effect<ListDevicesDto.Output, never, CurrentUser>
   }
 >()('device/application/ListDevicesUseCase', {
   make: Effect.gen(function* make() {
@@ -23,7 +23,8 @@ export class ListDevicesUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const { query, userId, page = 1, limit = 10 } = input
+        const { userId, userRole } = yield* CurrentUser
+        const { query, page = 1, limit = 10 } = input
         const offset = (page - 1) * limit
 
         let where: NonNullable<
@@ -36,7 +37,7 @@ export class ListDevicesUseCase extends Context.Service<
               name: { like: `%${query}%`, mode: 'insensitive' },
             },
           }
-        if (userId)
+        if (userRole === 'user')
           where = {
             ...where,
             userId: { eq: userId },

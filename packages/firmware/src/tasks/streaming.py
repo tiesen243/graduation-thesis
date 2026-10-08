@@ -67,7 +67,21 @@ class Streaming:
 
         elif action == "sync_schedule":
             print(t("stream.sync_schedule"))
-            await self._sync_schedule.execute()
+            result = await self._sync_schedule.execute()
+            await self._api.post(
+                "/api/devices/emit",
+                data={
+                    "action": "message",
+                    "payload": {
+                        "type": "success" if result else "error",
+                        "content": t(
+                            "stream.sync_schedule_success"
+                            if result
+                            else "stream.sync_schedule_failed"
+                        ),
+                    },
+                },
+            )
 
         elif action == "drop":
             print(t("stream.drop"))
@@ -91,7 +105,20 @@ class Streaming:
                 }
 
             self._display.show_schedule_info(schedule)
-            await self._drop.execute(items=items)
+            result = await self._drop.execute(items=items)
+
+            await self._api.post(
+                "/api/devices/emit",
+                data={
+                    "action": "message",
+                    "payload": {
+                        "type": "success" if result else "error",
+                        "content": t(
+                            "stream.drop_success" if result else "stream.drop_failed"
+                        ),
+                    },
+                },
+            )
 
     async def start(self) -> None:
         """Start continuous SSE streaming listener loop with backoff logic."""

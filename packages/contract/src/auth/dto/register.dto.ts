@@ -14,6 +14,7 @@ export namespace RegisterDto {
     username: Username,
     email: Email,
     password: Password,
+    challengeToken: Schema.String,
   })
   export type Input = typeof Input.Type
 

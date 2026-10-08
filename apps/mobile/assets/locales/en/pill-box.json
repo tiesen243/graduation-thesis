@@ -67,6 +67,15 @@
         }
       }
     },
+
+    "sync": {
+      "title": "Syncing schedule",
+      "messages": {
+        "success": "Sync request sent",
+        "error": "Failed to send sync request"
+      }
+    },
+
     "drop": {
       "button": "Drop Medicine",
       "title": "Select Medicine to Drop",
@@ -76,6 +85,10 @@
         "submit": "Confirm Drop",
         "submitting": "Dropping...",
         "cancel": "Cancel"
+      },
+      "messages": {
+        "success": "Dispense request sent",
+        "error": "Failed to send dispense request"
       }
     }
   },

@@ -6,7 +6,6 @@ import {
   FieldDescription,
   FieldError,
   FieldLabel,
-  FieldSeparator,
   FieldSet,
 } from '@rozumari/ui/components/field'
 import { Input } from '@rozumari/ui/components/input'
@@ -14,16 +13,28 @@ import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { Link, useNavigate } from 'react-router'
 
+import { TurnstileChallenge } from '@/components/turnstile-challegen.tsx'
 import { useSession } from '@/hooks/use-session'
-import { SUPPORTED_PROVIDERS } from '@/lib/constants'
-import { env } from '@/lib/env'
 import { api } from '@/lib/runtime'
-import { getBaseUrl } from '@/lib/utils'
+import { OAuthButtons } from '@/routes/auth/_components/oauth-buttonts'
 
 const loginForm = FormBuilder.empty
   .add('email', LoginDto.Input.fields.email)
   .add('password', LoginDto.Input.fields.password)
+  .add('challengeToken', LoginDto.Input.fields.challengeToken)
   .make()
+
+function LoginFormChallenge() {
+  const set = loginForm.useSet()
+
+  return (
+    <TurnstileChallenge
+      setToken={(challengeToken) =>
+        set((prev) => ({ ...prev, values: { ...prev.values, challengeToken } }))
+      }
+    />
+  )
+}
 
 function LoginFormSubmit({
   children,
@@ -54,7 +65,9 @@ function LoginFormSubmit({
 }
 
 export const LoginForm: React.FC = () => (
-  <loginForm.Provider defaultValues={{ email: '', password: '' }}>
+  <loginForm.Provider
+    defaultValues={{ email: '', password: '', challengeToken: '' }}
+  >
     <LoginFormSubmit>
       <loginForm.Field
         name='email'
@@ -97,6 +110,8 @@ export const LoginForm: React.FC = () => (
         )}
       />
 
+      <LoginFormChallenge />
+
       <Field>
         <Button type='submit'>Login</Button>
 
@@ -105,27 +120,7 @@ export const LoginForm: React.FC = () => (
         </FieldDescription>
       </Field>
 
-      <FieldSeparator className='md:[&>[data-slot=field-separator-content]]:bg-card'>
-        or
-      </FieldSeparator>
-
-      <Field className='grid grid-cols-1 md:grid-cols-2'>
-        {SUPPORTED_PROVIDERS.map((provider) => (
-          <Button
-            key={provider.name}
-            variant='outline'
-            nativeButton={false}
-            render={
-              <Link
-                to={`${env.VITE_API_URL}/api/auth/${provider.id}?redirect_uri=${getBaseUrl()}/login`}
-              />
-            }
-          >
-            <provider.Icon data-icon='inline-start' />
-            Continue with {provider.name}
-          </Button>
-        ))}
-      </Field>
+      <OAuthButtons />
     </LoginFormSubmit>
   </loginForm.Provider>
 )

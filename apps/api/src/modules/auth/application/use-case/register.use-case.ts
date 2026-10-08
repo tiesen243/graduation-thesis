@@ -1,5 +1,7 @@
 import type { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
-import type { Crypto } from 'effect/Crypto'
+import type { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
+import type * as Crypto from 'effect/Crypto'
+import type * as HttpClient from 'effect/http/HttpClient'
 
 import {
   AccountProvider,
@@ -15,6 +17,7 @@ import { PasswordService } from '@/modules/auth/application/ports/password.servi
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { UserService } from '@/modules/user/application/ports/user.service'
 import { ResendService } from '@/shared/application/services/resend.service'
+import { verifyTurnstileToken } from '@/shared/turnstile'
 import { getGravatarUrl, withTransaction } from '@/shared/utils'
 
 export class RegisterUseCase extends Context.Service<
@@ -22,7 +25,11 @@ export class RegisterUseCase extends Context.Service<
   {
     execute: (
       input: RegisterDto.Input
-    ) => Effect.Effect<RegisterDto.Output, UserAlreadyExists, Crypto>
+    ) => Effect.Effect<
+      RegisterDto.Output,
+      UserAlreadyExists | Forbidden,
+      Crypto.Crypto | HttpClient.HttpClient
+    >
   }
 >()('auth/application/RegisterUseCase', {
   make: Effect.gen(function* make() {
@@ -34,7 +41,13 @@ export class RegisterUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const { username, email, password: plainPassword } = input
+        const {
+          username,
+          email,
+          password: plainPassword,
+          challengeToken,
+        } = input
+        yield* verifyTurnstileToken(challengeToken)
 
         const _user = yield* userService.findByIdentifier({ username, email })
         if (_user)

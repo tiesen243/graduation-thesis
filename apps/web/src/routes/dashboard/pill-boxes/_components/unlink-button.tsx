@@ -30,7 +30,7 @@ export const UnlinkButton: React.FC<{
     ...api.device.unlink.mutationOptions(),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: api.device.me.getQueryKey(),
+        queryKey: api.device.list.getQueryKey(),
       })
       toast.success('Pill box unlinked successfully.')
       setIsOpen(false)

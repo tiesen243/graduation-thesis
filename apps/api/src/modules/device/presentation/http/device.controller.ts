@@ -34,15 +34,6 @@ export const deviceController = HttpApiBuilder.group(
         )
       )
 
-      .handle('me', ({ query }) =>
-        CurrentUser.pipe(
-          Effect.flatMap(({ userId }) =>
-            ListDevicesUseCase.use((s) => s.execute({ ...query, userId }))
-          ),
-          Effect.map((data) => new ListDevicesDto({ data }))
-        )
-      )
-
       .handle('show', ({ params }) =>
         ShowDeviceUseCase.use((s) => s.execute(params)).pipe(
           Effect.map((data) => new ShowDeviceDto({ data }))

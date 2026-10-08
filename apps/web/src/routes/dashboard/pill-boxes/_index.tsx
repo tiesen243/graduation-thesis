@@ -43,11 +43,7 @@ export default function PillBoxesIndexPage() {
   )
 
   const { user } = useSession()
-  const { data, isLoading } = useQuery(
-    user?.role === 'admin'
-      ? api.device.list.queryOptions({ query })
-      : api.device.me.queryOptions({ query })
-  )
+  const { data, isLoading } = useQuery(api.device.list.queryOptions({ query }))
 
   return (
     <>
@@ -106,7 +102,7 @@ export default function PillBoxesIndexPage() {
           },
           _: {
             header: 'Actions',
-            action: ({ id, name, factoryModel }) => (
+            action: ({ id, name, factoryModel, status }) => (
               <>
                 <Link
                   to={`/dashboard/pill-boxes/${id}`}
@@ -115,7 +111,13 @@ export default function PillBoxesIndexPage() {
                   View
                 </Link>
 
-                <UnlinkButton id={id} name={name} factoryModel={factoryModel} />
+                {status === 'linked' && (
+                  <UnlinkButton
+                    id={id}
+                    name={name}
+                    factoryModel={factoryModel}
+                  />
+                )}
               </>
             ),
           },

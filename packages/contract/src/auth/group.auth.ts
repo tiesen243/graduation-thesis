@@ -13,6 +13,7 @@ import { UnlinkDto } from '@/auth/dto/unlink.dto'
 import { WhoAmIDto } from '@/auth/dto/whoami.dto'
 import { AuthMiddleware } from '@/auth/middleware'
 import {
+  Forbidden,
   InvalidCredentials,
   ProviderError,
   Unauthorized,
@@ -25,7 +26,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('register', '/register', {
       payload: RegisterDto.Input,
       success: RegisterDto,
-      error: UserAlreadyExists,
+      error: [UserAlreadyExists, Forbidden],
     })
   )
 
@@ -33,7 +34,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('login', '/login', {
       payload: LoginDto.Input,
       success: LoginDto,
-      error: [InvalidCredentials, UserNotFound],
+      error: [InvalidCredentials, UserNotFound, Forbidden],
     })
   )
 
@@ -85,6 +86,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
     HttpApiEndpoint.post('forgot-password', '/forgot-password', {
       payload: ForgotPasswordDto.Input,
       success: ForgotPasswordDto,
+      error: Forbidden,
     })
   )
 
@@ -93,6 +95,7 @@ export class AuthGroup extends HttpApiGroup.make('auth')
       headers: ResetPasswordDto.Headers,
       payload: ResetPasswordDto.Input,
       success: ResetPasswordDto,
+      error: Forbidden,
     }).middleware(AuthMiddleware)
   )
 

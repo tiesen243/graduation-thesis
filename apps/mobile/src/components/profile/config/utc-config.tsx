@@ -74,12 +74,10 @@ export function UtcConfig() {
         onValueChange={(value) =>
           sendBleCommand('set_utc', { utc: Math.trunc(Number(value)) })
         }
+        items={[...UTC_OPTIONS]}
       >
         <SelectTrigger>
-          <SelectValue
-            placeholder={t('config.utc.selector.placeholder')}
-            items={[...UTC_OPTIONS]}
-          />
+          <SelectValue placeholder={t('config.utc.selector.placeholder')} />
         </SelectTrigger>
         <SelectContent title={t('config.utc.selector.title')}>
           {UTC_OPTIONS.map((item) => (

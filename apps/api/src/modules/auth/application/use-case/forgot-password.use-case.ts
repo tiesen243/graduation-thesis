@@ -1,4 +1,6 @@
 import type { ForgotPasswordDto } from '@rozumari/contract/auth/dto/forgot-password.dto'
+import type { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
+import type * as HttpClient from 'effect/http/HttpClient'
 
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
@@ -8,13 +10,18 @@ import { UserService } from '@/modules/user/application/ports/user.service'
 import { Jwt } from '@/shared/application/services/jwt.service'
 import { ResendService } from '@/shared/application/services/resend.service'
 import { env } from '@/shared/env'
+import { verifyTurnstileToken } from '@/shared/turnstile'
 
 export class ForgotPasswordUseCase extends Context.Service<
   ForgotPasswordUseCase,
   {
     readonly execute: (
       input: ForgotPasswordDto.Input
-    ) => Effect.Effect<ForgotPasswordDto.Output>
+    ) => Effect.Effect<
+      ForgotPasswordDto.Output,
+      Forbidden,
+      HttpClient.HttpClient
+    >
   }
 >()('auth/application/ForgotPasswordUseCase', {
   make: Effect.gen(function* make() {
@@ -27,9 +34,10 @@ export class ForgotPasswordUseCase extends Context.Service<
       execute: Effect.fn(function* execute(input) {
         if (resendService._tag === 'None') return null
 
-        const user = yield* userService.findByIdentifier({
-          email: input.email,
-        })
+        const { email, challengeToken } = input
+        yield* verifyTurnstileToken(challengeToken)
+
+        const user = yield* userService.findByIdentifier({ email })
         if (!user) return null
 
         const token = yield* jwt.sign(

@@ -12,11 +12,25 @@ import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { Link } from 'react-router'
 
+import { TurnstileChallenge } from '@/components/turnstile-challegen'
 import { api } from '@/lib/runtime'
 
 const forgotPasswordForm = FormBuilder.empty
   .add('email', ForgotPasswordDto.Input.fields.email)
+  .add('challengeToken', ForgotPasswordDto.Input.fields.challengeToken)
   .make()
+
+function ForgotPasswordFormChallenge() {
+  const set = forgotPasswordForm.useSet()
+
+  return (
+    <TurnstileChallenge
+      setToken={(challengeToken) =>
+        set((prev) => ({ ...prev, values: { ...prev.values, challengeToken } }))
+      }
+    />
+  )
+}
 
 function ForgotPasswordFormSubmit({
   children,
@@ -42,7 +56,9 @@ function ForgotPasswordFormSubmit({
 }
 
 export const ForgotPasswordForm: React.FC = () => (
-  <forgotPasswordForm.Provider defaultValues={{ email: '' }}>
+  <forgotPasswordForm.Provider
+    defaultValues={{ email: '', challengeToken: '' }}
+  >
     <ForgotPasswordFormSubmit>
       <forgotPasswordForm.Field
         name='email'
@@ -59,6 +75,8 @@ export const ForgotPasswordForm: React.FC = () => (
           </Field>
         )}
       />
+
+      <ForgotPasswordFormChallenge />
 
       <Field>
         <Button type='submit'>Send Reset Link</Button>

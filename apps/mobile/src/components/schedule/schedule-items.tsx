@@ -1,5 +1,4 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
-// oxlint-disable react-hooks/rules-of-hooks
 
 import { Badge } from '@rozumari/ui/components/badge'
 import { Button } from '@rozumari/ui/components/button'
@@ -112,6 +111,10 @@ export function ScheduleItems({
                         slot: value ?? '',
                       })
                     }
+                    items={availableCompartments.map((c) => ({
+                      value: c.position,
+                      label: `${c.medicine} (Slot ${c.position})`,
+                    }))}
                   >
                     <SelectTrigger
                       className='w-full'
@@ -119,10 +122,6 @@ export function ScheduleItems({
                     >
                       <SelectValue
                         placeholder={t('schedule:items.select_compartment')}
-                        items={availableCompartments.map((c) => ({
-                          value: c.position,
-                          label: `${c.medicine} (Slot ${c.position})`,
-                        }))}
                       />
                     </SelectTrigger>
 
@@ -196,8 +195,9 @@ export function ScheduleItems({
                       isRequired: !!checked,
                     })
                   }
-                  label={t('schedule:items.required')}
-                />
+                >
+                  <Typography>{t('schedule:items.required')}</Typography>
+                </Checkbox>
               </CardContent>
             </Card>
           )
