@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/mobile",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "private": false,
   "type": "module",
   "main": "index.ts",
