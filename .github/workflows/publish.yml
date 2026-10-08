@@ -36,7 +36,7 @@ jobs:
       - name: Setup EAS CLI
         uses: expo/expo-github-action@v8
         with:
-          eas-version: latest
+          eas-version: 24.12.0
           packager: bun
           token: ${{ secrets.EXPO_TOKEN }}
 
