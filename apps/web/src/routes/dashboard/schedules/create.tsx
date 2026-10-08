@@ -24,7 +24,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
-import { useSession } from '@/hooks/use-session'
 import { api } from '@/lib/runtime'
 import {
   CreateScheduleForm,
@@ -73,12 +72,9 @@ function CreateScheduleFormSubmit({
 
 export default function SchedulesCreatePage() {
   const [searchParams] = useSearchParams()
-  const { user, status } = useSession()
 
   const { data, isLoading } = useQuery(
-    user?.role === 'admin'
-      ? api.device.list.queryOptions({ query: { limit: 100 } })
-      : api.device.me.queryOptions({ query: { limit: 100 } })
+    api.device.list.queryOptions({ query: {} })
   )
 
   const deviceOptions = useMemo(
@@ -90,7 +86,7 @@ export default function SchedulesCreatePage() {
     [data]
   )
 
-  if (status === 'unauthenticated' || isLoading || !data)
+  if (isLoading || !data?.data)
     return (
       <div className='flex h-64 min-h-[calc(100dvh-8rem)] items-center justify-center'>
         <Loader2Icon className='size-8 animate-spin' />

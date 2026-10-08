@@ -52,14 +52,14 @@ export function LanguageConfig() {
         onValueChange={(value) =>
           sendBleCommand('set_language', { language: value })
         }
+        items={LANGUAGES.map((item) => ({
+          value: item.value,
+          label: t(item.key),
+        }))}
       >
         <SelectTrigger>
           <SelectValue
             placeholder={t('config.language.selector.placeholder')}
-            items={LANGUAGES.map((item) => ({
-              value: item.value,
-              label: t(item.key),
-            }))}
           />
         </SelectTrigger>
         <SelectContent title={t('config.language.selector.title')}>

@@ -39,7 +39,7 @@ function LoginFormChallenge() {
           values: { ...prev.values, challengeToken },
         }))
       }
-     />
+    />
   )
 }
 

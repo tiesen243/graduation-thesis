@@ -76,7 +76,7 @@ export default function TabsPillBoxesLinkScreen() {
     try {
       await api.device.link.mutate({ payload: { token } })
       await queryClient.invalidateQueries({
-        queryKey: api.device.me.getQueryKey(),
+        queryKey: api.device.list.getQueryKey(),
       })
 
       Alert.alert(
@@ -93,7 +93,7 @@ export default function TabsPillBoxesLinkScreen() {
       await cameraRef.current?.resumePreview()
       setScanState('idle')
     }
-  }, [api.device.link, api.device.me, queryClient, router, scanState, t])
+  }, [api.device.link, api.device.list, queryClient, router, scanState, t])
 
   if (!CameraView) return null
 

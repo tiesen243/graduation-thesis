@@ -1,16 +1,21 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from '@rozumari/ui/components/bottom-sheet'
 import { Button } from '@rozumari/ui/components/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@rozumari/ui/components/dialog'
-import { Field, FieldError, FieldLabel } from '@rozumari/ui/components/field'
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldSet,
+} from '@rozumari/ui/components/field'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
@@ -128,25 +133,27 @@ export function UpdateCompartmentButton({
   const { t } = useTranslation(['common', 'pill-box'])
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
       {children}
 
-      <updateCompartmentForm.Provider
-        defaultValues={{
-          ...compartment,
-          medicine: compartment.medicine ?? '',
-        }}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {t('pill-box:details.compartment.update.title')}{' '}
-              {compartment.position}
-            </DialogTitle>
-            <DialogDescription>
-              {t('pill-box:details.compartment.update.description')}
-            </DialogDescription>
+      <BottomSheetContent>
+        <BottomSheetHeader>
+          <BottomSheetTitle>
+            {t('pill-box:details.compartment.update.title')}{' '}
+            {compartment.position}
+          </BottomSheetTitle>
+          <BottomSheetDescription>
+            {t('pill-box:details.compartment.update.description')}
+          </BottomSheetDescription>
+        </BottomSheetHeader>
 
+        <updateCompartmentForm.Provider
+          defaultValues={{
+            ...compartment,
+            medicine: compartment.medicine ?? '',
+          }}
+        >
+          <FieldSet className='p-4'>
             <updateCompartmentForm.Field
               name='medicine'
               render={({ field, meta, helpers: { handleChange } }) => (
@@ -210,22 +217,23 @@ export function UpdateCompartmentButton({
                 </Field>
               )}
             />
+          </FieldSet>
 
-            <DialogFooter>
-              {!hideDelete && (
-                <DeleteCompartmentFormSubmit
-                  position={compartment.position}
-                  setIsOpen={setIsOpen}
-                />
-              )}
-              <SaveCompartmentFormSubmit
+          <BottomSheetFooter>
+            <SaveCompartmentFormSubmit
+              position={compartment.position}
+              setIsOpen={setIsOpen}
+            />
+
+            {!hideDelete && (
+              <DeleteCompartmentFormSubmit
                 position={compartment.position}
                 setIsOpen={setIsOpen}
               />
-            </DialogFooter>
-          </DialogHeader>
-        </DialogContent>
-      </updateCompartmentForm.Provider>
-    </Dialog>
+            )}
+          </BottomSheetFooter>
+        </updateCompartmentForm.Provider>
+      </BottomSheetContent>
+    </BottomSheet>
   )
 }

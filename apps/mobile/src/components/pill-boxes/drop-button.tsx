@@ -1,18 +1,19 @@
 import type { CompartmentSchema } from '@rozumari/contract/device/schemas/compartment.schema'
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
+import {
+  BottomSheet,
+  BottomSheetClose,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTrigger,
+} from '@rozumari/ui/components/bottom-sheet'
 import { Button } from '@rozumari/ui/components/button'
 import { CardDescription, CardTitle } from '@rozumari/ui/components/card'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTrigger,
-} from '@rozumari/ui/components/dialog'
 import { MinusIcon, PlusIcon } from '@rozumari/ui/components/icons'
+import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useMutation } from '@tanstack/react-query'
@@ -69,13 +70,16 @@ export const DropButton: React.FC<{
   }
 
   const handleClose = () => {
-    setIsOpen(false)
+    toast.success(t('pill-box:details.drop.messages.success'))
     setSelectedItems({})
+    setIsOpen(false)
   }
 
   const dropMutation = useMutation({
     ...api.device.emit.mutationOptions({ params: { id } }),
     onSuccess: handleClose,
+    onError: (error) =>
+      toast.error(t('pill-box:details.drop.messages.error'), error.message),
   })
 
   const handleConfirmDrop = () => {
@@ -92,24 +96,24 @@ export const DropButton: React.FC<{
   )
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger size='sm' variant='outline'>
+    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+      <BottomSheetTrigger size='sm' variant='outline'>
         {t('pill-box:details.drop.button')}
-      </DialogTrigger>
+      </BottomSheetTrigger>
 
-      <DialogContent>
-        <DialogHeader>
+      <BottomSheetContent>
+        <BottomSheetHeader>
           <CardTitle>{t('pill-box:details.drop.title')}</CardTitle>
           <CardDescription>
             {t('pill-box:details.drop.description')}
           </CardDescription>
-        </DialogHeader>
+        </BottomSheetHeader>
 
-        <View className='gap-3'>
+        <View className='gap-3 p-4'>
           {availableCompartments.length === 0 ? (
-            <DialogDescription>
+            <BottomSheetDescription>
               {t('pill-box:details.drop.empty')}
-            </DialogDescription>
+            </BottomSheetDescription>
           ) : (
             availableCompartments.map((item) => {
               const isSelected = !!selectedItems[item.position]
@@ -172,15 +176,7 @@ export const DropButton: React.FC<{
           )}
         </View>
 
-        <DialogFooter className='flex-row items-center justify-end gap-2'>
-          <DialogClose
-            variant='outline'
-            onPress={handleClose}
-            disabled={dropMutation.isPending}
-          >
-            {t('pill-box:details.drop.actions.cancel')}
-          </DialogClose>
-
+        <BottomSheetFooter>
           <Button
             onPress={handleConfirmDrop}
             disabled={
@@ -191,8 +187,15 @@ export const DropButton: React.FC<{
               ? t('pill-box:details.drop.actions.submitting')
               : t('pill-box:details.drop.actions.submit')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+
+          <BottomSheetClose
+            onPress={handleClose}
+            disabled={dropMutation.isPending}
+          >
+            {t('pill-box:details.drop.actions.cancel')}
+          </BottomSheetClose>
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
   )
 }

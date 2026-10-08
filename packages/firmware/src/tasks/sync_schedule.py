@@ -21,7 +21,7 @@ class SyncSchedule:
         self._api = Api.create()
         self._schedule = Schedule.create()
 
-    async def execute(self):
+    async def execute(self) -> bool:
         """
         Fetch today's schedule from the server using the current system date and persist it locally.
 
@@ -38,12 +38,14 @@ class SyncSchedule:
         resp = await self._api.get("/api/schedules/today", params={"date": today})
         if resp.get("error") is not None:
             print(t("sync_schedule.error_fetch", error=resp.get("error")))
-            return
+            return False
 
         if self._schedule.save_schedules(resp.get("data", [])):
             print(t("sync_schedule.synced", date=today))
+            return True
         else:
             print(t("sync_schedule.save_failed", date=today))
+            return False
 
     async def start(self) -> None:
         """

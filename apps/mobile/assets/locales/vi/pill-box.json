@@ -65,6 +65,14 @@
       }
     },
 
+    "sync": {
+      "title": "Đồng bộ lịch",
+      "messages": {
+        "success": "Đã gửi yêu cầu đồng bộ lịch",
+        "error": "Không thể gửi yêu cầu đồng bộ"
+      }
+    },
+
     "drop": {
       "button": "Thả thuốc",
       "title": "Chọn thuốc để thả",
@@ -74,6 +82,10 @@
         "submit": "Xác nhận thả",
         "submitting": "Đang thả...",
         "cancel": "Hủy"
+      },
+      "messages": {
+        "success": "Đã gửi yêu cầu thả thuốc",
+        "error": "Không thể gửi yêu cầu thả thuốc"
       }
     }
   },

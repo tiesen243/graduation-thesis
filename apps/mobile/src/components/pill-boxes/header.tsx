@@ -36,6 +36,7 @@ export function PillBoxDetailsHeader({
         <CardTitle className='flex-1'>
           {device?.name || t('pill-box:details.device.unnamed_device')}
         </CardTitle>
+
         <UpdateDeviceButton device={device} />
       </CardHeader>
 

@@ -1,8 +1,8 @@
 import type { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dto'
 
 import { Badge } from '@rozumari/ui/components/badge'
+import { BottomSheetTrigger } from '@rozumari/ui/components/bottom-sheet'
 import { Card, CardContent, CardHeader } from '@rozumari/ui/components/card'
-import { DialogTrigger } from '@rozumari/ui/components/dialog'
 import {
   MoreVerticalIcon,
   PillIcon,
@@ -38,9 +38,9 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
 
         {hasMedicine && (
           <UpdateCompartmentButton compartment={compartment}>
-            <DialogTrigger size='icon-sm' variant='ghost'>
+            <BottomSheetTrigger size='icon-sm' variant='ghost'>
               <MoreVerticalIcon className='size-4 shrink-0 text-muted-foreground' />
-            </DialogTrigger>
+            </BottomSheetTrigger>
           </UpdateCompartmentButton>
         )}
       </CardHeader>
@@ -78,12 +78,12 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
           </View>
 
           <UpdateCompartmentButton compartment={compartment} hideDelete>
-            <DialogTrigger size='sm' variant='outline'>
+            <BottomSheetTrigger size='sm' variant='outline'>
               <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
               <Typography>
                 {t('pill-box:details.compartment.add_medicine')}
               </Typography>
-            </DialogTrigger>
+            </BottomSheetTrigger>
           </UpdateCompartmentButton>
         </CardContent>
       )}

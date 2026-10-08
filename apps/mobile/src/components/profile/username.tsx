@@ -1,3 +1,13 @@
+import {
+  BottomSheet,
+  BottomSheetClose,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+  BottomSheetTrigger,
+} from '@rozumari/ui/components/bottom-sheet'
 import { Button } from '@rozumari/ui/components/button'
 import { CardContent, CardTitle } from '@rozumari/ui/components/card'
 import { FieldSet } from '@rozumari/ui/components/field'
@@ -8,16 +18,6 @@ import { useMutation } from '@tanstack/react-query'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/dialog'
 import { useRuntime } from '@/hooks/use-runtime'
 import { useSession } from '@/hooks/use-session'
 
@@ -42,40 +42,25 @@ export const Username: React.FC = () => {
   if (status !== 'authenticated') return null
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
       <CardContent className='flex-row items-center justify-center gap-2'>
         <CardTitle>{user.username}</CardTitle>
 
-        <DialogTrigger variant='ghost' size='icon-xs'>
+        <BottomSheetTrigger variant='ghost' size='icon-xs'>
           <PencilIcon className='size-3 shrink-0 text-foreground' />
-        </DialogTrigger>
+        </BottomSheetTrigger>
       </CardContent>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Change Username</DialogTitle>
-          <DialogDescription>
+      <BottomSheetContent>
+        <BottomSheetHeader>
+          <BottomSheetTitle>Change Username</BottomSheetTitle>
+          <BottomSheetDescription>
             Enter a new username for your account. Please note that changing
             your username may affect your profile URL and how others find you.
-          </DialogDescription>
-        </DialogHeader>
+          </BottomSheetDescription>
+        </BottomSheetHeader>
 
-        <FieldSet>
-          <Input
-            value={username}
-            onChangeText={setUsername}
-            placeholder='Enter new username'
-          />
-          <Input
-            value={username}
-            onChangeText={setUsername}
-            placeholder='Enter new username'
-          />
-          <Input
-            value={username}
-            onChangeText={setUsername}
-            placeholder='Enter new username'
-          />
+        <FieldSet className='p-4'>
           <Input
             value={username}
             onChangeText={setUsername}
@@ -83,17 +68,17 @@ export const Username: React.FC = () => {
           />
         </FieldSet>
 
-        <DialogFooter>
-          <DialogClose>Close</DialogClose>
-
+        <BottomSheetFooter>
           <Button
             disabled={updateMutation.isPending}
             onPress={() => updateMutation.mutate({ username })}
           >
             {updateMutation.isPending ? t('saving') : t('save_changes')}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+
+          <BottomSheetClose>Close</BottomSheetClose>
+        </BottomSheetFooter>
+      </BottomSheetContent>
+    </BottomSheet>
   )
 }

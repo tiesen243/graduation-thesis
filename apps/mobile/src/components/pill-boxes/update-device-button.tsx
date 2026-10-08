@@ -1,17 +1,22 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateDeviceDto } from '@rozumari/contract/device/dto/update-device.dto'
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+  BottomSheetTrigger,
+} from '@rozumari/ui/components/bottom-sheet'
 import { Button } from '@rozumari/ui/components/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@rozumari/ui/components/dialog'
-import { Field, FieldError, FieldLabel } from '@rozumari/ui/components/field'
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldSet,
+} from '@rozumari/ui/components/field'
 import { PencilIcon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
@@ -79,7 +84,7 @@ export function UpdateDeviceButton({
     ...api.device.unlink.mutationOptions(),
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: api.device.me.getQueryKey(),
+        queryKey: api.device.list.getQueryKey(),
       })
 
       toast.success(t('details.device.unlink.messages.success'))
@@ -94,54 +99,58 @@ export function UpdateDeviceButton({
   })
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger size='sm' variant='ghost'>
+    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+      <BottomSheetTrigger size='sm' variant='ghost'>
         <PencilIcon className='size-4 text-muted-foreground' />
-      </DialogTrigger>
+      </BottomSheetTrigger>
 
       <updateDeviceForm.Provider defaultValues={device}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('details.device.update.title')}</DialogTitle>
-            <DialogDescription>
+        <BottomSheetContent>
+          <BottomSheetHeader>
+            <BottomSheetTitle>
+              {t('details.device.update.title')}
+            </BottomSheetTitle>
+            <BottomSheetDescription>
               {t('details.device.update.description')}
-            </DialogDescription>
-          </DialogHeader>
+            </BottomSheetDescription>
+          </BottomSheetHeader>
 
-          <updateDeviceForm.Field
-            name='name'
-            render={({ field, meta, helpers: { handleChange } }) => (
-              <Field>
-                <FieldLabel>{t('details.device.name')}</FieldLabel>
-                <Input
-                  {...field}
-                  value={field.value ?? ''}
-                  placeholder={t('details.device.name_placeholder')}
-                  onChangeText={handleChange}
-                />
-                <FieldError errors={meta.errors} />
-              </Field>
-            )}
-          />
+          <FieldSet className='p-4'>
+            <updateDeviceForm.Field
+              name='name'
+              render={({ field, meta, helpers: { handleChange } }) => (
+                <Field>
+                  <FieldLabel>{t('details.device.name')}</FieldLabel>
+                  <Input
+                    {...field}
+                    value={field.value ?? ''}
+                    placeholder={t('details.device.name_placeholder')}
+                    onChangeText={handleChange}
+                  />
+                  <FieldError errors={meta.errors} />
+                </Field>
+              )}
+            />
 
-          <updateDeviceForm.Field
-            name='position'
-            render={({ field, meta, helpers: { handleChange } }) => (
-              <Field>
-                <FieldLabel>{t('details.device.position')}</FieldLabel>
-                <Input
-                  {...field}
-                  value={field.value ?? ''}
-                  placeholder={t('details.device.position_placeholder')}
-                  onChangeText={handleChange}
-                />
+            <updateDeviceForm.Field
+              name='position'
+              render={({ field, meta, helpers: { handleChange } }) => (
+                <Field>
+                  <FieldLabel>{t('details.device.position')}</FieldLabel>
+                  <Input
+                    {...field}
+                    value={field.value ?? ''}
+                    placeholder={t('details.device.position_placeholder')}
+                    onChangeText={handleChange}
+                  />
 
-                <FieldError errors={meta.errors} />
-              </Field>
-            )}
-          />
+                  <FieldError errors={meta.errors} />
+                </Field>
+              )}
+            />
+          </FieldSet>
 
-          <DialogFooter>
+          <BottomSheetFooter>
             <Field className='flex-row justify-end'>
               <Button
                 variant='destructive'
@@ -155,9 +164,9 @@ export function UpdateDeviceButton({
 
               <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
             </Field>
-          </DialogFooter>
-        </DialogContent>
+          </BottomSheetFooter>
+        </BottomSheetContent>
       </updateDeviceForm.Provider>
-    </Dialog>
+    </BottomSheet>
   )
 }

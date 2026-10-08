@@ -5,6 +5,7 @@ import {
   FieldError,
   FieldLabel,
 } from '@rozumari/ui/components/field'
+import { Typography } from '@rozumari/ui/components/typography'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
@@ -41,9 +42,10 @@ export const DaysOfWeekSelector = () => {
                   <Checkbox
                     key={day.value}
                     checked={selected}
-                    label={t(day.label)}
                     onCheckedChange={() => toggle(day.value)}
-                  />
+                  >
+                    <Typography>{t(day.label)}</Typography>
+                  </Checkbox>
                 )
               })}
             </View>
