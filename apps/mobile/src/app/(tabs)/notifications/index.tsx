@@ -55,7 +55,9 @@ export default function TabsNotificationsIndexScreen() {
     const rawNotifications =
       data?.pages.flatMap((page) => page.data.notifications) ?? []
 
-    const notifications = [...new Map(rawNotifications.map((item) => [item.id, item])).values()]
+    const notifications = [
+      ...new Map(rawNotifications.map((item) => [item.id, item])).values(),
+    ]
 
     const groups: Record<string, NotificationItem[]> = {}
 
