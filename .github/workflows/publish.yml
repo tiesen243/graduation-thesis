@@ -34,10 +34,10 @@ jobs:
           packages: platform-tools
 
       - name: Setup EAS CLI
-        uses: expo/expo-github-action@v8
+        uses: expo/expo-github-action@v9
         with:
           token: ${{ secrets.EXPO_TOKEN }}
-          eas-version: 24.11.0
+          eas-version: latest
           packager: bun
 
       - name: Extract Tag Name and Version
