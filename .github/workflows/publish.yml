@@ -5,13 +5,6 @@ on:
     tags:
       - '@rozumari/*@*.*.*'
 
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Mobile release tag'
-        required: true
-        type: string
-
 # You can leverage Vercel Remote Caching with Turbo to speed up your builds
 # @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
 env:
@@ -50,12 +43,7 @@ jobs:
       - name: Extract Tag Name and Version
         id: get_tag
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAG_NAME="${{ inputs.tag }}"
-          else
-            TAG_NAME="${GITHUB_REF_NAME}"
-          fi
-
+          TAG_NAME="${GITHUB_REF_NAME}"
           VERSION="${TAG_NAME##*@}"
 
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
@@ -66,6 +54,7 @@ jobs:
         env:
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
           EXPO_PUBLIC_WEB_URL: ${{ secrets.EXPO_PUBLIC_WEB_URL }}
+          EXPO_PUBLIC_TURNSTILE_KEY: ${{ secrets.EXPO_PUBLIC_TURNSTILE_KEY }}
         run: |
           mkdir -p ./build
 
