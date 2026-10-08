@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.1.20
+
+### Bug Fixes
+
+- Missing declaration for `EXPO_PUBLIC_TURNSTILE_KEY` in the published workflow.
+
 ## @rozumari/mobile@0.1.19
 
 ### Patch Changes
