@@ -1,3 +1,10 @@
+## @rozumari/ui@0.1.5
+
+### Patch Changes
+
+- Fix bottom-sheet dont have safe area inset
+- Change message payload format
+
 ## @rozumari/ui@0.1.4
 
 ### Patch Changes

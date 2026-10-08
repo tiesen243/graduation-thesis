@@ -1,3 +1,10 @@
+## @rozumari/firmware@0.1.12
+
+### Patch Changes
+
+- Fix bottom-sheet dont have safe area inset
+- Change message payload format
+
 ## @rozumari/firmware@0.1.11
 
 ### Patch Changes
