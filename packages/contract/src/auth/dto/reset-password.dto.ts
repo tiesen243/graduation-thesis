@@ -16,6 +16,7 @@ export namespace ResetPasswordDto {
 
   export const Input = Schema.Struct({
     password: Password,
+    challengeToken: Schema.String,
   })
   export type Input = typeof Input.Type
 

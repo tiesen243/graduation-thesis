@@ -12,27 +12,41 @@ import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { Link, useNavigate } from 'react-router'
 
+import { TurnstileChallenge } from '@/components/turnstile-challegen'
 import { api } from '@/lib/runtime'
 
-const forgotPasswordForm = FormBuilder.empty
+const resetPasswordForm = FormBuilder.empty
   .add('password', ResetPasswordDto.Input.fields.password)
   .add('confirmPassword', ResetPasswordDto.Input.fields.password)
+  .add('challengeToken', ResetPasswordDto.Input.fields.challengeToken)
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
     issue: 'Passwords do not match',
   })
   .make()
 
+function ResetPasswordFormChallenge() {
+  const set = resetPasswordForm.useSet()
+
+  return (
+    <TurnstileChallenge
+      setToken={(challengeToken) =>
+        set((prev) => ({ ...prev, values: { ...prev.values, challengeToken } }))
+      }
+    />
+  )
+}
+
 function ResetPasswordFormSubmit({
   token,
   children,
 }: Readonly<{ token: string; children: React.ReactNode }>) {
-  const formId = forgotPasswordForm.useValue((s) => s.formId)
-  const isPending = forgotPasswordForm.useValue((s) => s.isPending)
+  const formId = resetPasswordForm.useValue((s) => s.formId)
+  const isPending = resetPasswordForm.useValue((s) => s.isPending)
 
   const navigate = useNavigate()
 
-  const handleSubmit = forgotPasswordForm.useSubmit(
+  const handleSubmit = resetPasswordForm.useSubmit(
     (payload) =>
       api.auth['reset-password'].mutate({
         headers: { Authorization: `Bearer ${token}` },
@@ -57,13 +71,13 @@ function ResetPasswordFormSubmit({
 }
 
 export const ResetPasswordForm: React.FC<{ token: string }> = ({ token }) => (
-  <forgotPasswordForm.Provider
-    defaultValues={{ password: '', confirmPassword: '' }}
+  <resetPasswordForm.Provider
+    defaultValues={{ password: '', confirmPassword: '', challengeToken: '' }}
   >
     <ResetPasswordFormSubmit token={token}>
-      <legend className='sr-only'>Forgot Password</legend>
+      <legend className='sr-only'>Reset Password</legend>
 
-      <forgotPasswordForm.Field
+      <resetPasswordForm.Field
         name='password'
         render={({ field, meta, helpers: { handleChange } }) => (
           <Field data-invalid={meta.errors.length > 0}>
@@ -78,7 +92,7 @@ export const ResetPasswordForm: React.FC<{ token: string }> = ({ token }) => (
         )}
       />
 
-      <forgotPasswordForm.Field
+      <resetPasswordForm.Field
         name='confirmPassword'
         render={({ field, meta, helpers: { handleChange } }) => (
           <Field data-invalid={meta.errors.length > 0}>
@@ -93,13 +107,15 @@ export const ResetPasswordForm: React.FC<{ token: string }> = ({ token }) => (
         )}
       />
 
+      <ResetPasswordFormChallenge />
+
       <Field>
-        <Button type='submit'>Send Reset Link</Button>
+        <Button type='submit'>Reset Password</Button>
 
         <FieldDescription>
           Remembered your password? <Link to='/login'>Login</Link>
         </FieldDescription>
       </Field>
     </ResetPasswordFormSubmit>
-  </forgotPasswordForm.Provider>
+  </resetPasswordForm.Provider>
 )

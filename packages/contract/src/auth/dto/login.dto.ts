@@ -15,6 +15,7 @@ export namespace LoginDto {
   export const Input = Schema.Struct({
     email: Email,
     password: Password,
+    challengeToken: Schema.String,
   })
   export type Input = typeof Input.Type
 

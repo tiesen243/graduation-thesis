@@ -12,18 +12,33 @@ import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { Link, useNavigate } from 'react-router'
 
+import { TurnstileChallenge } from '@/components/turnstile-challegen'
 import { api } from '@/lib/runtime'
+import { OAuthButtons } from '@/routes/auth/_components/oauth-buttonts'
 
 const registerForm = FormBuilder.empty
   .add('username', RegisterDto.Input.fields.username)
   .add('email', RegisterDto.Input.fields.email)
   .add('password', RegisterDto.Input.fields.password)
   .add('confirmPassword', RegisterDto.Input.fields.password)
+  .add('challengeToken', RegisterDto.Input.fields.challengeToken)
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
     issue: 'Passwords do not match',
   })
   .make()
+
+function RegisterFormChallenge() {
+  const set = registerForm.useSet()
+
+  return (
+    <TurnstileChallenge
+      setToken={(challengeToken) =>
+        set((prev) => ({ ...prev, values: { ...prev.values, challengeToken } }))
+      }
+    />
+  )
+}
 
 function RegisterFormSubmit({
   children,
@@ -59,6 +74,7 @@ export const RegisterForm: React.FC = () => (
       username: '',
       password: '',
       confirmPassword: '',
+      challengeToken: '',
     }}
   >
     <RegisterFormSubmit>
@@ -127,6 +143,8 @@ export const RegisterForm: React.FC = () => (
         )}
       />
 
+      <RegisterFormChallenge />
+
       <Field>
         <Button type='submit'>Register</Button>
 
@@ -134,6 +152,8 @@ export const RegisterForm: React.FC = () => (
           Already have an account? <Link to='/login'>Login</Link>
         </FieldDescription>
       </Field>
+
+      <OAuthButtons />
     </RegisterFormSubmit>
   </registerForm.Provider>
 )
