@@ -3,7 +3,6 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import {
   BottomSheet,
-  BottomSheetClose,
   BottomSheetContent,
   BottomSheetDescription,
   BottomSheetFooter,
@@ -70,14 +69,16 @@ export const DropButton: React.FC<{
   }
 
   const handleClose = () => {
-    toast.success(t('pill-box:details.drop.messages.success'))
     setSelectedItems({})
     setIsOpen(false)
   }
 
   const dropMutation = useMutation({
     ...api.device.emit.mutationOptions({ params: { id } }),
-    onSuccess: handleClose,
+    onSuccess: () => {
+      toast.success(t('pill-box:details.drop.messages.success'))
+      handleClose()
+    },
     onError: (error) =>
       toast.error(t('pill-box:details.drop.messages.error'), error.message),
   })
@@ -187,13 +188,6 @@ export const DropButton: React.FC<{
               ? t('pill-box:details.drop.actions.submitting')
               : t('pill-box:details.drop.actions.submit')}
           </Button>
-
-          <BottomSheetClose
-            onPress={handleClose}
-            disabled={dropMutation.isPending}
-          >
-            {t('pill-box:details.drop.actions.cancel')}
-          </BottomSheetClose>
         </BottomSheetFooter>
       </BottomSheetContent>
     </BottomSheet>
