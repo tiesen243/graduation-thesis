@@ -79,6 +79,7 @@ function DeleteCompartmentFormSubmit({
   setIsOpen,
 }: Readonly<{ position: string; setIsOpen: (isOpen: boolean) => void }>) {
   const { id } = useLocalSearchParams<{ id: DeviceId }>()
+
   const isPending = updateCompartmentForm.useValue((s) => s.isPending)
   const { t } = useTranslation(['common', 'pill-box'])
 
@@ -133,7 +134,7 @@ export function UpdateCompartmentButton({
   const { t } = useTranslation(['common', 'pill-box'])
 
   return (
-    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+    <BottomSheet snapPoints={[0.67, 1]} open={isOpen} onOpenChange={setIsOpen}>
       {children}
 
       <BottomSheetContent>

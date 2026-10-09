@@ -41,7 +41,7 @@ export const Username: React.FC = () => {
   if (status !== 'authenticated') return null
 
   return (
-    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+    <BottomSheet snapPoints={[0.67, 1]} open={isOpen} onOpenChange={setIsOpen}>
       <CardContent className='flex-row items-center justify-center gap-2'>
         <CardTitle>{user.username}</CardTitle>
 
