@@ -3,7 +3,6 @@ import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import {
   BottomSheet,
-  BottomSheetClose,
   BottomSheetContent,
   BottomSheetDescription,
   BottomSheetFooter,
@@ -189,13 +188,6 @@ export const DropButton: React.FC<{
               ? t('pill-box:details.drop.actions.submitting')
               : t('pill-box:details.drop.actions.submit')}
           </Button>
-
-          <BottomSheetClose
-            onPress={handleClose}
-            disabled={dropMutation.isPending}
-          >
-            {t('pill-box:details.drop.actions.cancel')}
-          </BottomSheetClose>
         </BottomSheetFooter>
       </BottomSheetContent>
     </BottomSheet>

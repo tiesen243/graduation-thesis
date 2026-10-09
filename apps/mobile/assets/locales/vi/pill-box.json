@@ -80,8 +80,7 @@
       "empty": "Không có thuốc nào để thả.",
       "actions": {
         "submit": "Xác nhận thả",
-        "submitting": "Đang thả...",
-        "cancel": "Hủy"
+        "submitting": "Đang thả..."
       },
       "messages": {
         "success": "Đã gửi yêu cầu thả thuốc",
