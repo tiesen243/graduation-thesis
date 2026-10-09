@@ -1,3 +1,10 @@
+## @rozumari/contract@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/contract@0.1.4
 
 ### Patch Changes

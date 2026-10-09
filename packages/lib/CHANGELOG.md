@@ -1,3 +1,10 @@
+## @rozumari/lib@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/lib@0.1.0
 
 ### Minor Changes

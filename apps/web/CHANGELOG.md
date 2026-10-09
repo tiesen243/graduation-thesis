@@ -1,3 +1,10 @@
+## @rozumari/web@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/web@0.1.8
 
 ### Patch Changes

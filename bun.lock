@@ -13,7 +13,7 @@
     },
     "apps/api": {
       "name": "@rozumari/api",
-      "version": "0.1.7",
+      "version": "0.2.0",
       "bin": "./dist/cli.mjs",
       "dependencies": {
         "@effect/ai-openrouter": "catalog:effect",
@@ -35,7 +35,7 @@
     },
     "apps/mobile": {
       "name": "@rozumari/mobile",
-      "version": "0.1.29",
+      "version": "0.2.0",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@expo-google-fonts/geist": "~0.4.2",
@@ -81,7 +81,7 @@
     },
     "apps/web": {
       "name": "@rozumari/web",
-      "version": "0.1.9",
+      "version": "0.2.0",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@react-router/dev": "^8.4.0",
@@ -112,7 +112,7 @@
     },
     "packages/contract": {
       "name": "@rozumari/contract",
-      "version": "0.1.4",
+      "version": "0.2.0",
       "devDependencies": {
         "@rozumari/oxlint": "workspace:*",
         "@rozumari/tsconfig": "workspace:*",
@@ -126,15 +126,15 @@
     },
     "packages/eda": {
       "name": "@rozumari/eda",
-      "version": "0.1.7",
+      "version": "0.2.0",
     },
     "packages/firmware": {
       "name": "@rozumari/firmware",
-      "version": "0.1.12",
+      "version": "0.2.0",
     },
     "packages/lib": {
       "name": "@rozumari/lib",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "devDependencies": {
         "@rozumari/oxlint": "workspace:*",
         "@rozumari/tsconfig": "workspace:*",
@@ -148,7 +148,7 @@
     },
     "packages/ui": {
       "name": "@rozumari/ui",
-      "version": "0.1.5",
+      "version": "0.2.0",
       "dependencies": {
         "@base-ui/react": "^1.8.0",
         "@rozumari/lib": "workspace:*",
@@ -180,15 +180,15 @@
     },
     "tools/github": {
       "name": "@rozumari/github",
-      "version": "0.1.0",
+      "version": "0.2.0",
     },
     "tools/oxlint": {
       "name": "@rozumari/oxlint",
-      "version": "0.1.1",
+      "version": "0.2.0",
     },
     "tools/typescript": {
       "name": "@rozumari/tsconfig",
-      "version": "0.1.0",
+      "version": "0.2.0",
     },
   },
   "patchedDependencies": {
