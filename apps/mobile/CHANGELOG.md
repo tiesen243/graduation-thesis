@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.2.1
+
+### Bug Fixes
+
+- Fix missing environment variables in production APK builds by mapping `EXPO_PUBLIC_*` static keys in `runtimeEnv`.
+
 ## @rozumari/mobile@0.2.0
 
 ### Minor Changes
