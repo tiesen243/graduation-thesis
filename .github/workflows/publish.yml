@@ -5,13 +5,6 @@ on:
     tags:
       - '@rozumari/*@*.*.*'
 
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Mobile release tag'
-        required: true
-        type: string
-
 # You can leverage Vercel Remote Caching with Turbo to speed up your builds
 # @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
 env:
@@ -40,31 +33,30 @@ jobs:
         with:
           packages: platform-tools
 
-      - name: Setup EAS CLI
-        uses: expo/expo-github-action@v8
-        with:
-          eas-version: latest
-          packager: bun
-          token: ${{ secrets.EXPO_TOKEN }}
-
       - name: Extract Tag Name and Version
         id: get_tag
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            TAG_NAME="${{ inputs.tag }}"
-          else
-            TAG_NAME="${GITHUB_REF_NAME}"
-          fi
-
+          TAG_NAME="${GITHUB_REF_NAME}"
           VERSION="${TAG_NAME##*@}"
 
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
           echo "APP_VERSION=${VERSION}" >> $GITHUB_ENV
 
+      - name: Setup EAS CLI
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          bun install -g eas-cli
+
+          eas whoami
+
       - name: Build APK
         working-directory: ./apps/mobile
         env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_API_URL: ${{ secrets.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_WEB_URL: ${{ secrets.EXPO_PUBLIC_WEB_URL }}
+          EXPO_PUBLIC_TURNSTILE_KEY: ${{ secrets.EXPO_PUBLIC_TURNSTILE_KEY }}
         run: |
           mkdir -p ./build
 

@@ -25,6 +25,8 @@ import { useRef, useState } from 'react'
 
 import { useSession } from '@/hooks/use-session'
 import { createMetadata } from '@/lib/metadata'
+import { AccountList } from '@/routes/dashboard/account/_components/account-list'
+import { Username } from '@/routes/dashboard/account/_components/username'
 
 import type { Route } from './+types/_index'
 
@@ -63,7 +65,7 @@ export default function AccountPage() {
         View your account details and manage your profile picture.
       </Typography>
 
-      <div className='mt-4 grid gap-4 md:grid-cols-2'>
+      <div className='my-4 grid gap-4 md:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle>Profile picture</CardTitle>
@@ -118,24 +120,22 @@ export default function AccountPage() {
           <CardContent className='grid gap-4'>
             <div className='grid gap-2'>
               <Typography variant='small' className='text-muted-foreground'>
-                <UserIcon className='mr-1 inline size-3.5' />
-                Username
+                <UserIcon className='mr-1 inline size-3.5' /> Username
               </Typography>
-              <Input value={user.username} readOnly />
+
+              <Username />
             </div>
 
             <div className='grid gap-2'>
               <Typography variant='small' className='text-muted-foreground'>
-                <MailIcon className='mr-1 inline size-3.5' />
-                Email
+                <MailIcon className='mr-1 inline size-3.5' /> Email
               </Typography>
               <Input value={user.email} readOnly />
             </div>
 
             <div className='grid gap-2'>
               <Typography variant='small' className='text-muted-foreground'>
-                <ShieldCheckIcon className='mr-1 inline size-3.5' />
-                Role
+                <ShieldCheckIcon className='mr-1 inline size-3.5' /> Role
               </Typography>
               <Badge
                 variant={user.role === 'admin' ? 'default' : 'secondary'}
@@ -147,6 +147,8 @@ export default function AccountPage() {
           </CardContent>
         </Card>
       </div>
+
+      <AccountList />
     </>
   )
 }

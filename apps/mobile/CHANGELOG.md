@@ -1,3 +1,111 @@
+## @rozumari/mobile@0.1.27
+
+### Patch Changes
+
+- Fix bottom-sheet dont have safe area inset
+- Change message payload format
+
+## @rozumari/mobile@0.1.26
+
+### Bug Fixes
+
+- Build
+
+## @rozumari/mobile@0.1.25
+
+### Bug Fixes
+
+- Build
+
+## @rozumari/mobile@0.1.24
+
+### Bug Fixes
+
+- Build
+
+## @rozumari/mobile@0.1.23
+
+### Bug Fixes
+
+- Build error
+
+## @rozumari/mobile@0.1.22
+
+### Bug Fixes
+
+- Build
+
+## @rozumari/mobile@0.1.21
+
+### Bug Fixes
+
+- Build error
+
+## @rozumari/mobile@0.1.20
+
+### Bug Fixes
+
+- Missing declaration for `EXPO_PUBLIC_TURNSTILE_KEY` in the published workflow.
+
+## @rozumari/mobile@0.1.19
+
+### Patch Changes
+
+- Add Cloudflare Turnstile challenge verification
+- Add server-side Turnstile token verification for auth endpoints
+- Add Turnstile widget to web public form
+- Add Turnstile WebView integration to mobile auth screens
+
+### Patch Changes
+
+- Merged /devices and /devices/me api
+- Added success and error messages for stream
+- Update native components
+
+### Bug Fixes
+
+- Fixed some typing issues in the API
+- Fixed bottom-sheet layout issues when keyboard is open
+
+## @rozumari/mobile@0.1.18
+
+### Bug Fixes
+
+- missing refetch accounts
+
+### Bug Fixes
+
+- Missing i18n
+
+## @rozumari/mobile@0.1.17
+
+### Patch Changes
+
+- add missing icon
+
+## @rozumari/mobile@0.1.16
+
+### Bug Fixes
+
+- missing `react-native-svg-transformer` deps
+
+## @rozumari/mobile@0.1.15
+
+### Patch Changes
+
+- Bump effect to v4
+- Added list linked social accounts
+
+### Patch Changes
+
+- migrate all Modal to new Dialog
+
+## @rozumari/mobile@0.1.14
+
+### Patch Changes
+
+- added oauth with Twitter and Github
+
 ## @rozumari/mobile@0.1.13
 
 ### Patch Changes

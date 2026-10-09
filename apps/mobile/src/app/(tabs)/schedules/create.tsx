@@ -79,7 +79,7 @@ export default function TabsSchedulesCreateScreen() {
   const { api } = useRuntime()
 
   const { t } = useTranslation('schedule')
-  const { data } = useQuery(api.device.me.queryOptions({ query: {} }))
+  const { data } = useQuery(api.device.list.queryOptions({ query: {} }))
   if (!data?.data) return null
 
   return (
@@ -95,14 +95,14 @@ export default function TabsSchedulesCreateScreen() {
                 <Select
                   value={field.value}
                   onValueChange={handleChange as never}
+                  items={data.data.devices.map((device) => ({
+                    value: device.id,
+                    label: device.name ?? device.factoryModel,
+                  }))}
                 >
                   <SelectTrigger>
                     <SelectValue
                       placeholder={t('create.fields.device.placeholder')}
-                      items={data.data.devices.map((device) => ({
-                        value: device.id,
-                        label: device.name ?? device.factoryModel,
-                      }))}
                     />
                   </SelectTrigger>
 

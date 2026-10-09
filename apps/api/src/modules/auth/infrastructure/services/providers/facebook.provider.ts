@@ -1,5 +1,3 @@
-import type { Crypto } from 'effect/Crypto'
-
 import { AccountProviderId } from '@rozumari/contract/auth/schemas/account.schema'
 import * as Effect from 'effect/Effect'
 import * as HttpClient from 'effect/http/HttpClient'
@@ -27,7 +25,7 @@ export class FacebookProvider extends BaseProvider {
   public override createAuthorizationUrl = (
     state: string,
     _codeVerifier: string
-  ): Effect.Effect<URL, never, Crypto> =>
+  ) =>
     this.createAuthorizationUrlWithoutPKCE(this.authorizationEndpoint, state, [
       'email',
       'public_profile',
@@ -45,7 +43,10 @@ export class FacebookProvider extends BaseProvider {
 
       const urlParams = new URLSearchParams()
       urlParams.set('access_token', token.access_token)
-      urlParams.set('fields', ['id', 'name', 'picture', 'email'].join(','))
+      urlParams.set(
+        'fields',
+        ['id', 'name', 'picture.width(512).height(512)', 'email'].join(',')
+      )
 
       const response = yield* httpClient
         .get(this.apiEndpoint, { urlParams })

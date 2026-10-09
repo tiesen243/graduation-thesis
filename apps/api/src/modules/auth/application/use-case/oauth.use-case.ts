@@ -1,15 +1,19 @@
 import type { AccountProvider } from '@rozumari/contract/auth/schemas/account.schema'
-import type { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
+import type {
+  Unauthorized,
+  ProviderError,
+} from '@rozumari/contract/auth/schemas/auth.error'
 import type { Token } from '@rozumari/contract/auth/schemas/token.schema'
+import type { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
 import type {
   UserId,
   UserRole,
 } from '@rozumari/contract/user/schemas/user.schema'
-import type { Crypto } from 'effect/Crypto'
 import type { HttpClient } from 'effect/http/HttpClient'
 
-import { ProviderError } from '@rozumari/contract/auth/schemas/auth.error'
+import { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
 import * as Context from 'effect/Context'
+import { Crypto } from 'effect/Crypto'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -34,7 +38,11 @@ export class OAuthUseCase extends Context.Service<
       provider: AccountProvider,
       code: string,
       storedCode: string
-    ) => Effect.Effect<Token, ProviderError, OAuthService | Crypto | HttpClient>
+    ) => Effect.Effect<
+      Token,
+      ProviderError | UserNotFound | UserAlreadyDeleted,
+      OAuthService | Crypto | HttpClient
+    >
 
     exchange: (
       token: Token['refreshToken']
@@ -55,24 +63,26 @@ export class OAuthUseCase extends Context.Service<
       }),
 
       callback: Effect.fn(function* callback(_provider, code, storedCode) {
+        const crypto = yield* Crypto
+
         const provider = yield* OAuthService.forProvider(_provider)
 
-        const { id, email } = yield* provider
+        const { id, email, image } = yield* provider
           .fetchUserData(code, storedCode)
           .pipe(Effect.orDie)
 
-        const { isNewUser, ...result } = yield* Effect.gen(function* tx() {
-          const [[account], user] = yield* Effect.all([
-            accountRepository.findMany({
-              where: {
-                provider: { eq: _provider },
-                providerId: { eq: id },
-              },
-              limit: 1,
-            }),
-            userService.findByIdentifier({ email }),
-          ])
+        const [[account], user] = yield* Effect.all([
+          accountRepository.findMany({
+            where: {
+              provider: { eq: _provider },
+              providerId: { eq: id },
+            },
+            limit: 1,
+          }),
+          userService.findByIdentifier({ email }),
+        ])
 
+        const { isNewUser, ...result } = yield* Effect.gen(function* tx() {
           let _isNewUser = false,
             userId: UserId,
             userRole: UserRole
@@ -80,26 +90,37 @@ export class OAuthUseCase extends Context.Service<
           if (account && user) {
             if (!user.isActive)
               return yield* Effect.fail(
-                new ProviderError({ message: 'User account is deleted' })
+                new UserAlreadyDeleted({ error: { id: user.id } })
               )
 
             ;({ userId } = account)
             userRole = user?.role ?? 'user'
+
+            if ((!user.image || user.image.includes('gravatar.com')) && image)
+              yield* userService.update(user.id, { image })
           } else {
             if (user) {
-              yield* Effect.log(`User found: ${user}`)
               if (!user.isActive)
                 return yield* Effect.fail(
-                  new ProviderError({ message: 'User account is deleted' })
+                  new UserAlreadyDeleted({ error: { id: user.id } })
                 )
 
               userId = user.id
               userRole = user.role
+
+              if ((!user.image || user.image.includes('gravatar.com')) && image)
+                yield* userService.update(user.id, { image })
             } else {
+              const [username = ''] = (yield* crypto.randomUUIDv7.pipe(
+                Effect.orDie
+              )).split('-')
+
               const newUser = yield* userService.create({
-                username: crypto.randomUUID().slice(0, 8),
+                username: username ?? '',
                 email,
+                image,
               })
+
               userId = newUser.id
               userRole = newUser.role
               _isNewUser = true

@@ -1,3 +1,46 @@
+## @rozumari/web@0.1.8
+
+### Patch Changes
+
+- Add Cloudflare Turnstile challenge verification
+- Add server-side Turnstile token verification for auth endpoints
+- Add Turnstile widget to web public form
+- Add Turnstile WebView integration to mobile auth screens
+
+### Patch Changes
+
+- Merged /devices and /devices/me api
+- Added success and error messages for stream
+- Update native components
+
+### Bug Fixes
+
+- Fixed some typing issues in the API
+- Fixed bottom-sheet layout issues when keyboard is open
+
+## @rozumari/web@0.1.7
+
+### Patch Changes
+
+- add missing icon
+
+## @rozumari/web@0.1.6
+
+### Patch Changes
+
+- Bump effect to v4
+- Added list linked social accounts
+
+### Patch Changes
+
+- migrate all Modal to new Dialog
+
+## @rozumari/web@0.1.5
+
+### Patch Changes
+
+- added oauth with Twitter and Github
+
 ## @rozumari/web@0.1.3
 
 ### Patch Changes

@@ -67,10 +67,25 @@ class Streaming:
 
         elif action == "sync_schedule":
             print(t("stream.sync_schedule"))
+            await self._api.post(
+                "/api/devices/emit",
+                data={
+                    "action": "message",
+                    "payload": t("stream.sync_schedule_received"),
+                },
+            )
+
             await self._sync_schedule.execute()
 
         elif action == "drop":
             print(t("stream.drop"))
+            await self._api.post(
+                "/api/devices/emit",
+                data={
+                    "action": "message",
+                    "payload": t("stream.drop_received"),
+                },
+            )
 
             if isinstance(payload, dict):
                 items = payload.get("items") or []

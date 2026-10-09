@@ -1,6 +1,8 @@
 import type { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
+import type { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
 import type { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
-import type { Crypto } from 'effect/Crypto'
+import type * as Crypto from 'effect/Crypto'
+import type * as HttpClient from 'effect/http/HttpClient'
 
 import {
   AccountProvider,
@@ -15,6 +17,7 @@ import { AccountRepository } from '@/modules/auth/application/ports/account.repo
 import { AuthService } from '@/modules/auth/application/ports/auth.service'
 import { PasswordService } from '@/modules/auth/application/ports/password.service'
 import { UserService } from '@/modules/user/application/ports/user.service'
+import { verifyTurnstileToken } from '@/shared/turnstile'
 
 export class LoginUseCase extends Context.Service<
   LoginUseCase,
@@ -23,8 +26,8 @@ export class LoginUseCase extends Context.Service<
       input: LoginDto.Input
     ) => Effect.Effect<
       LoginDto.Output,
-      InvalidCredentials | UserNotFound,
-      Crypto
+      InvalidCredentials | UserNotFound | Forbidden,
+      Crypto.Crypto | HttpClient.HttpClient
     >
   }
 >()('auth/application/LoginUseCase', {
@@ -37,7 +40,9 @@ export class LoginUseCase extends Context.Service<
 
     return {
       execute: Effect.fn(function* execute(input) {
-        const { email, password: plainPassword } = input
+        const { email, password: plainPassword, challengeToken } = input
+
+        yield* verifyTurnstileToken(challengeToken)
 
         const user = yield* userService.findByIdentifier({ email })
         if (!user?.isActive) return yield* Effect.fail(new InvalidCredentials())

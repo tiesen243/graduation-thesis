@@ -9,14 +9,14 @@ export class UpdateUserDto extends Schema.TaggedClass<UpdateUserDto>()(
     message: 'Update user successfully',
     dataSchema: Schema.Struct({
       id: UserSchema.fields.id,
-      role: UserSchema.fields.role,
     }),
   })
 ) {}
 
 export namespace UpdateUserDto {
   export const Input = Schema.Struct({
-    role: UserSchema.fields.role,
+    role: Schema.optional(UserSchema.fields.role),
+    username: Schema.optional(UserSchema.fields.username),
   })
   export type Input = typeof Input.Type
 

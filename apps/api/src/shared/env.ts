@@ -45,10 +45,16 @@ export const env = effectEnv({
     AUTH_SECRET: Schema.String,
     AUTH_FACEBOOK_ID: Schema.String,
     AUTH_FACEBOOK_SECRET: Schema.String,
+    AUTH_GITHUB_ID: Schema.String,
+    AUTH_GITHUB_SECRET: Schema.String,
     AUTH_GOOGLE_ID: Schema.String,
     AUTH_GOOGLE_SECRET: Schema.String,
+    AUTH_TWITTER_ID: Schema.String,
+    AUTH_TWITTER_SECRET: Schema.String,
 
     RESEND_API_KEY: Schema.String,
+    OPENROUTER_API_KEY: Schema.String,
+    TURNSTILE_KEY: Schema.String,
 
     TIMEZONE: Schema.TimeZoneFromString.pipe(
       Schema.withDecodingDefault(Effect.succeed('Asia/Ho_Chi_Minh'))

@@ -1,3 +1,7 @@
+import type {
+  UserAlreadyDeleted,
+  UserNotFound,
+} from '@rozumari/contract/user/schemas/user.error'
 import type * as Effect from 'effect/Effect'
 
 import * as Context from 'effect/Context'
@@ -12,7 +16,12 @@ export class UserService extends Context.Service<
     ) => Effect.Effect<User | null>
 
     readonly create: (
-      data: Pick<User, 'username' | 'email'>
+      data: Pick<User, 'username' | 'email' | 'image'>
     ) => Effect.Effect<User>
+
+    readonly update: (
+      id: User['id'],
+      data: Partial<Pick<User, 'image'>>
+    ) => Effect.Effect<void, UserNotFound | UserAlreadyDeleted>
   }
 >()('user/application/UserService') {}

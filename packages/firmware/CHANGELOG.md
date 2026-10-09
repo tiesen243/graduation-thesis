@@ -1,3 +1,23 @@
+## @rozumari/firmware@0.1.12
+
+### Patch Changes
+
+- Fix bottom-sheet dont have safe area inset
+- Change message payload format
+
+## @rozumari/firmware@0.1.11
+
+### Patch Changes
+
+- Merged /devices and /devices/me api
+- Added success and error messages for stream
+- Update native components
+
+### Bug Fixes
+
+- Fixed some typing issues in the API
+- Fixed bottom-sheet layout issues when keyboard is open
+
 ## @rozumari/firmware@0.1.10
 
 ### Bug Fixes

@@ -1,7 +1,9 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
+import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery } from '@tanstack/react-query'
+import { useSubscription } from '@tiesen/effect-tanstack-query/react'
 import { useLocalSearchParams } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { FlatList, View } from 'react-native'
@@ -10,6 +12,7 @@ import { RefreshControl } from '@/components/native'
 import { CompartmentCard } from '@/components/pill-boxes/compartment-card'
 import { DropButton } from '@/components/pill-boxes/drop-button'
 import { PillBoxDetailsHeader } from '@/components/pill-boxes/header'
+import { SyncButton } from '@/components/pill-boxes/sync-button'
 import { useRuntime } from '@/hooks/use-runtime'
 
 export default function TabsPillBoxesDetailsScreen() {
@@ -19,6 +22,20 @@ export default function TabsPillBoxesDetailsScreen() {
 
   const { data, isLoading, refetch, isRefetching } = useQuery(
     api.device.show.queryOptions({ params: { id } })
+  )
+
+  useSubscription(
+    api.device.subscribe.subscriptionOptions(
+      { params: { id } },
+      {
+        autoReconnect: '3 seconds',
+        keepAlive: { timeout: '35 seconds' },
+        onData: ({ action, payload }) => {
+          if (action === 'message') toast.show(payload as string)
+        },
+        onError: (error) => toast.error(error.message),
+      }
+    )
   )
 
   const device = data?.data
@@ -45,12 +62,14 @@ export default function TabsPillBoxesDetailsScreen() {
         <>
           <PillBoxDetailsHeader device={device} />
 
-          <View className='flex-row items-center justify-between pt-4'>
-            <Typography className='font-semibold'>
+          <View className='flex-row items-center gap-2 pt-4'>
+            <Typography className='flex-1 font-semibold'>
               {t('details.compartment_list', {
                 count: device.compartments.length,
               })}
             </Typography>
+
+            <SyncButton id={id} />
 
             <DropButton id={id} compartments={device.compartments ?? []} />
           </View>

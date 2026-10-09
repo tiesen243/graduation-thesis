@@ -1,4 +1,5 @@
 import { Api } from '@rozumari/contract'
+import { AccountsDto } from '@rozumari/contract/auth/dto/accounts.dto'
 import { ChangePasswordDto } from '@rozumari/contract/auth/dto/change-password.dto'
 import { ForgotPasswordDto } from '@rozumari/contract/auth/dto/forgot-password.dto'
 import { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
@@ -6,11 +7,13 @@ import { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
 import { ResetPasswordDto } from '@rozumari/contract/auth/dto/reset-password.dto'
+import { UnlinkDto } from '@rozumari/contract/auth/dto/unlink.dto'
 import { WhoAmIDto } from '@rozumari/contract/auth/dto/whoami.dto'
 import * as Effect from 'effect/Effect'
 import * as HttpApiBuilder from 'effect/http-api/HttpApiBuilder'
 import * as HttpServerResponse from 'effect/http/HttpServerResponse'
 
+import { AccountsUseCase } from '@/modules/auth/application/use-case/accounts.use-case'
 import { ChangePasswordUseCase } from '@/modules/auth/application/use-case/change-password.use-case'
 import { ForgotPasswordUseCase } from '@/modules/auth/application/use-case/forgot-password.use-case'
 import { LoginUseCase } from '@/modules/auth/application/use-case/login.use-case'
@@ -18,6 +21,7 @@ import { LogoutUseCase } from '@/modules/auth/application/use-case/logout.use-ca
 import { RefreshTokenUseCase } from '@/modules/auth/application/use-case/refresh-token.use-case'
 import { RegisterUseCase } from '@/modules/auth/application/use-case/register.use-case'
 import { ResetPasswordUseCase } from '@/modules/auth/application/use-case/reset-password'
+import { UnlinkUseCase } from '@/modules/auth/application/use-case/unlink.use-case'
 import { WhoAmIUseCase } from '@/modules/auth/application/use-case/whoami.use-case'
 import { COOKIE_KEYS, COOKIE_OPTIONS } from '@/modules/auth/domain/constants'
 
@@ -81,6 +85,18 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
     .handle('whoami', () =>
       WhoAmIUseCase.use((s) => s.execute()).pipe(
         Effect.map((data) => new WhoAmIDto({ data }))
+      )
+    )
+
+    .handle('accounts', () =>
+      AccountsUseCase.use((s) => s.execute()).pipe(
+        Effect.map((data) => new AccountsDto({ data }))
+      )
+    )
+
+    .handle('unlink', ({ payload }) =>
+      UnlinkUseCase.use((s) => s.execute(payload)).pipe(
+        Effect.map(() => new UnlinkDto())
       )
     )
 

@@ -46,10 +46,10 @@ interface DeviceInfo {
   timeouts: { drop: number; open: number; close: number }
 }
 
-interface BLEContextType {
+interface BLEContextValue {
   discoveredDevices: Peripheral[]
-  selectedDevice: string
-  setSelectedDevice: (id: string) => void
+  selectedDevice: string | null
+  setSelectedDevice: (id: string | null) => void
   isConnected: boolean
   isConnecting: boolean
   deviceInfo: DeviceInfo | null
@@ -102,7 +102,7 @@ const parseDeviceInfo = (rawBytes: number[]): DeviceInfo => {
   }
 }
 
-const BLEContext = React.createContext<BLEContextType | null>(null)
+const BLEContext = React.createContext<BLEContextValue | null>(null)
 
 const stringToBytes = (str: string): number[] =>
   [...str].map((char) => char.codePointAt(0) ?? 0)
@@ -120,7 +120,9 @@ export function BLEProvider({ children }: { children: React.ReactNode }) {
   const [discoveredDevices, setDiscoveredDevices] = React.useState<
     Peripheral[]
   >([])
-  const [selectedDevice, setSelectedDevice] = React.useState<string>('')
+  const [selectedDevice, setSelectedDevice] = React.useState<string | null>(
+    null
+  )
   const [isConnected, setIsConnected] = React.useState<boolean>(false)
   const [isConnecting, setIsConnecting] = React.useState<boolean>(false)
   const [deviceInfo, setDeviceInfo] = React.useState<DeviceInfo | null>(null)

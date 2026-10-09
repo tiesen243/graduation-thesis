@@ -36,7 +36,6 @@ export const DropPillButton: React.FC<{
 
   const handleCloseModal = () => {
     setIsOpen(false)
-    // Đợi Dialog đóng xong rồi mới reset state để tránh giật UI
     setTimeout(() => setSelectedItems({}), 150)
   }
 

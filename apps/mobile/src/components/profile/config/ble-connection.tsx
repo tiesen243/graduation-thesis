@@ -27,17 +27,20 @@ export function BLEConnection() {
 
   return (
     <View className='gap-3'>
-      <Select value={selectedDevice} onValueChange={setSelectedDevice}>
+      <Select
+        value={selectedDevice}
+        onValueChange={setSelectedDevice}
+        items={discoveredDevices.map((device) => ({
+          value: device.id,
+          label: device.name || t('pill-box:details.device.unnamed_device'),
+        }))}
+      >
         <SelectTrigger
           disabled={isConnected || isConnecting}
           className={isConnected || isConnecting ? 'opacity-50' : ''}
         >
           <SelectValue
             placeholder={t('profile:config.device.selector.placeholder')}
-            items={discoveredDevices.map((device) => ({
-              value: device.id,
-              label: device.name || t('pill-box:details.device.unnamed_device'),
-            }))}
           />
         </SelectTrigger>
         <SelectContent title={t('profile:config.device.selector.title')}>

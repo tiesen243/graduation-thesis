@@ -1,17 +1,28 @@
 import type { DeviceId } from '@rozumari/contract/device/schemas/device.schema'
 
 import { UpdateCompartmentDto } from '@rozumari/contract/device/dto/update-compartment.dto'
+import {
+  BottomSheet,
+  BottomSheetContent,
+  BottomSheetDescription,
+  BottomSheetFooter,
+  BottomSheetHeader,
+  BottomSheetTitle,
+} from '@rozumari/ui/components/bottom-sheet'
 import { Button } from '@rozumari/ui/components/button'
-import { Field, FieldError, FieldLabel } from '@rozumari/ui/components/field'
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldSet,
+} from '@rozumari/ui/components/field'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
-import { Typography } from '@rozumari/ui/components/typography'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Pressable, TouchableWithoutFeedback, View } from 'react-native'
 
 import type { Compartment } from '@/components/pill-boxes/compartment-card'
 
@@ -116,119 +127,113 @@ export function UpdateCompartmentButton({
 }: Readonly<{
   compartment: Compartment
   hideDelete?: boolean
-  children: (setIsOpen: (isOpen: boolean) => void) => React.ReactNode
+  children: React.ReactNode
 }>) {
   const [isOpen, setIsOpen] = React.useState(false)
   const { t } = useTranslation(['common', 'pill-box'])
 
   return (
-    <>
-      {children(setIsOpen)}
+    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+      {children}
 
-      <Modal
-        visible={isOpen}
-        animationType='fade'
-        onRequestClose={() => setIsOpen(false)}
-        transparent
-      >
-        <TouchableWithoutFeedback onPress={() => setIsOpen(false)}>
-          <View className='flex-1 justify-center bg-black/50 p-4'>
-            <updateCompartmentForm.Provider
-              defaultValues={{
-                ...compartment,
-                medicine: compartment.medicine ?? '',
-              }}
-            >
-              <Pressable className='gap-4 rounded-lg border border-border bg-popover p-4'>
-                <Typography className='text-lg font-semibold'>
-                  {t('pill-box:details.compartment.update.title')}{' '}
-                  {compartment.position}
-                </Typography>
-                <Typography className='-mt-4 text-sm text-muted-foreground'>
-                  {t('pill-box:details.compartment.update.description')}
-                </Typography>
+      <BottomSheetContent>
+        <BottomSheetHeader>
+          <BottomSheetTitle>
+            {t('pill-box:details.compartment.update.title')}{' '}
+            {compartment.position}
+          </BottomSheetTitle>
+          <BottomSheetDescription>
+            {t('pill-box:details.compartment.update.description')}
+          </BottomSheetDescription>
+        </BottomSheetHeader>
 
-                <updateCompartmentForm.Field
-                  name='medicine'
-                  render={({ field, meta, helpers: { handleChange } }) => (
-                    <Field>
-                      <FieldLabel>
-                        {t('pill-box:details.compartment.medicine')}
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        placeholder={t(
-                          'pill-box:details.compartment.medicine_placeholder'
-                        )}
-                        onChangeText={handleChange}
-                      />
-                      <FieldError errors={meta.errors} />
-                    </Field>
-                  )}
-                />
-
-                <updateCompartmentForm.Field
-                  name='dosage'
-                  render={({ field, meta, helpers: { handleChange } }) => (
-                    <Field>
-                      <FieldLabel>{t('common:dosage')}</FieldLabel>
-                      <Input
-                        {...field}
-                        placeholder={t(
-                          'pill-box:details.compartment.dosage_placeholder'
-                        )}
-                        keyboardType='numeric'
-                        value={field.value.toString()}
-                        onChangeText={(text) =>
-                          handleChange(Math.trunc(Number(text)))
-                        }
-                      />
-
-                      <FieldError errors={meta.errors} />
-                    </Field>
-                  )}
-                />
-
-                <updateCompartmentForm.Field
-                  name='capacity'
-                  render={({ field, meta, helpers: { handleChange } }) => (
-                    <Field>
-                      <FieldLabel>
-                        {t('pill-box:details.compartment.capacity')}
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        placeholder={t(
-                          'pill-box:details.compartment.capacity_placeholder'
-                        )}
-                        keyboardType='numeric'
-                        value={field.value.toString()}
-                        onChangeText={(text) =>
-                          handleChange(Math.trunc(Number(text)))
-                        }
-                      />
-                      <FieldError errors={meta.errors} />
-                    </Field>
-                  )}
-                />
-
-                <Field orientation='horizontal' className='justify-end'>
-                  {!hideDelete && (
-                    <DeleteCompartmentFormSubmit
-                      position={compartment.position}
-                      setIsOpen={setIsOpen}
-                    />
-                  )}
-                  <SaveCompartmentFormSubmit
-                    position={compartment.position}
-                    setIsOpen={setIsOpen}
+        <updateCompartmentForm.Provider
+          defaultValues={{
+            ...compartment,
+            medicine: compartment.medicine ?? '',
+          }}
+        >
+          <FieldSet className='p-4'>
+            <updateCompartmentForm.Field
+              name='medicine'
+              render={({ field, meta, helpers: { handleChange } }) => (
+                <Field>
+                  <FieldLabel>
+                    {t('pill-box:details.compartment.medicine')}
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    placeholder={t(
+                      'pill-box:details.compartment.medicine_placeholder'
+                    )}
+                    onChangeText={handleChange}
                   />
+                  <FieldError errors={meta.errors} />
                 </Field>
-              </Pressable>
-            </updateCompartmentForm.Provider>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-    </>
+              )}
+            />
+
+            <updateCompartmentForm.Field
+              name='dosage'
+              render={({ field, meta, helpers: { handleChange } }) => (
+                <Field>
+                  <FieldLabel>{t('common:dosage')}</FieldLabel>
+                  <Input
+                    {...field}
+                    placeholder={t(
+                      'pill-box:details.compartment.dosage_placeholder'
+                    )}
+                    keyboardType='numeric'
+                    value={field.value.toString()}
+                    onChangeText={(text) =>
+                      handleChange(Math.trunc(Number(text)))
+                    }
+                  />
+
+                  <FieldError errors={meta.errors} />
+                </Field>
+              )}
+            />
+
+            <updateCompartmentForm.Field
+              name='capacity'
+              render={({ field, meta, helpers: { handleChange } }) => (
+                <Field>
+                  <FieldLabel>
+                    {t('pill-box:details.compartment.capacity')}
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    placeholder={t(
+                      'pill-box:details.compartment.capacity_placeholder'
+                    )}
+                    keyboardType='numeric'
+                    value={field.value.toString()}
+                    onChangeText={(text) =>
+                      handleChange(Math.trunc(Number(text)))
+                    }
+                  />
+                  <FieldError errors={meta.errors} />
+                </Field>
+              )}
+            />
+          </FieldSet>
+
+          <BottomSheetFooter>
+            <SaveCompartmentFormSubmit
+              position={compartment.position}
+              setIsOpen={setIsOpen}
+            />
+
+            {!hideDelete && (
+              <DeleteCompartmentFormSubmit
+                position={compartment.position}
+                setIsOpen={setIsOpen}
+              />
+            )}
+          </BottomSheetFooter>
+        </updateCompartmentForm.Provider>
+      </BottomSheetContent>
+    </BottomSheet>
   )
 }

@@ -16,7 +16,8 @@ import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { View } from 'react-native'
 
-import { OAuthButtons } from '@/components/auth/oauth-buttons'
+import { OAuthButtons } from '@/components/oauth-buttons'
+import { TurnstileChallenge } from '@/components/turnstile-challegen'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const registerForm = FormBuilder.empty
@@ -24,11 +25,27 @@ const registerForm = FormBuilder.empty
   .add('email', RegisterDto.Input.fields.email)
   .add('password', RegisterDto.Input.fields.password)
   .add('confirmPassword', RegisterDto.Input.fields.password)
+  .add('challengeToken', RegisterDto.Input.fields.challengeToken)
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
     issue: 'Passwords do not match',
   })
   .make()
+
+function RegisterFormChallenge() {
+  const set = registerForm.useSet()
+
+  return (
+    <TurnstileChallenge
+      setToken={(challengeToken) =>
+        set((prev) => ({
+          ...prev,
+          values: { ...prev.values, challengeToken },
+        }))
+      }
+    />
+  )
+}
 
 function RegisterFormSubmit() {
   const isPending = registerForm.useValue((s) => s.isPending)
@@ -67,6 +84,7 @@ export default function RegisterScreen() {
         email: '',
         password: '',
         confirmPassword: '',
+        challengeToken: '',
       }}
     >
       <FieldSet containerClassName='p-4' className='justify-center'>
@@ -145,17 +163,21 @@ export default function RegisterScreen() {
             )}
           />
 
-          <RegisterFormSubmit />
+          <RegisterFormChallenge />
 
-          <View className='flex flex-row items-center'>
-            <FieldDescription>{t('register.login.prompt')}</FieldDescription>
-            <Button
-              variant='link'
-              onPress={() => router.navigate('/(auth)/login')}
-            >
-              {t('register.login.link')}
-            </Button>
-          </View>
+          <Field>
+            <RegisterFormSubmit />
+
+            <View className='flex flex-row items-center'>
+              <FieldDescription>{t('register.login.prompt')}</FieldDescription>
+              <Button
+                variant='link'
+                onPress={() => router.navigate('/(auth)/login')}
+              >
+                {t('register.login.link')}
+              </Button>
+            </View>
+          </Field>
 
           <OAuthButtons />
         </FieldGroup>

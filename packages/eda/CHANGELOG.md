@@ -1,3 +1,9 @@
+## @rozumari/eda@0.1.7
+
+### Bug Fixes
+
+- Missing declaration for `EXPO_PUBLIC_TURNSTILE_KEY` in the published workflow.
+
 ## @rozumari/eda@0.1.6
 
 ### Patch Changes

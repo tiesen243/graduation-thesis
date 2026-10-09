@@ -40,9 +40,7 @@ export default function TabsPillBoxesIndexScreen() {
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const { data, refetch, isRefetching, isLoading } = useQuery({
-    ...(user?.role === 'admin'
-      ? api.device.list.queryOptions({ query: queryParams })
-      : api.device.me.queryOptions({ query: queryParams })),
+    ...api.device.list.queryOptions({ query: queryParams }),
     placeholderData: keepPreviousData,
     enabled: !!user,
   })

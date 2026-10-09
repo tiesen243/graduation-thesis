@@ -1,3 +1,29 @@
+## @rozumari/ui@0.1.5
+
+### Patch Changes
+
+- Fix bottom-sheet dont have safe area inset
+- Change message payload format
+
+## @rozumari/ui@0.1.4
+
+### Patch Changes
+
+- Merged /devices and /devices/me api
+- Added success and error messages for stream
+- Update native components
+
+### Bug Fixes
+
+- Fixed some typing issues in the API
+- Fixed bottom-sheet layout issues when keyboard is open
+
+## @rozumari/ui@0.1.3
+
+### Patch Changes
+
+- added oauth with Twitter and Github
+
 ## @rozumari/ui@0.1.2
 
 ### Bug Fixes

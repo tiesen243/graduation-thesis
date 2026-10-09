@@ -15,16 +15,33 @@ import { FormBuilder } from '@rozumari/ui/lib/form-builder'
 import { useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
+import { Linking, View } from 'react-native'
 
-import { OAuthButtons } from '@/components/auth/oauth-buttons'
+import { OAuthButtons } from '@/components/oauth-buttons'
+import { TurnstileChallenge } from '@/components/turnstile-challegen'
 import { useRuntime } from '@/hooks/use-runtime'
 import { setTokens } from '@/lib/secure-store'
 
 const loginForm = FormBuilder.empty
   .add('email', LoginDto.Input.fields.email)
   .add('password', LoginDto.Input.fields.password)
+  .add('challengeToken', LoginDto.Input.fields.challengeToken)
   .make()
+
+function LoginFormChallenge() {
+  const set = loginForm.useSet()
+
+  return (
+    <TurnstileChallenge
+      setToken={(challengeToken) =>
+        set((prev) => ({
+          ...prev,
+          values: { ...prev.values, challengeToken },
+        }))
+      }
+    />
+  )
+}
 
 function LoginFormSubmit() {
   const isPending = loginForm.useValue((s) => s.isPending)
@@ -62,7 +79,9 @@ export default function LoginScreen() {
   const router = useRouter()
 
   return (
-    <loginForm.Provider defaultValues={{ email: '', password: '' }}>
+    <loginForm.Provider
+      defaultValues={{ email: '', password: '', challengeToken: '' }}
+    >
       <FieldSet containerClassName='p-4' className='justify-center'>
         <FieldLegend>{t('login.title')}</FieldLegend>
         <FieldDescription>{t('login.description')}</FieldDescription>
@@ -96,6 +115,11 @@ export default function LoginScreen() {
                     size='sm'
                     focusable={false}
                     accessible={false}
+                    onPress={() =>
+                      Linking.openURL(
+                        `${process.env.EXPO_PUBLIC_WEB_URL}/forgot-password`
+                      )
+                    }
                   >
                     {t('login.actions.forgot_password')}
                   </Button>
@@ -112,17 +136,21 @@ export default function LoginScreen() {
             )}
           />
 
-          <LoginFormSubmit />
+          <LoginFormChallenge />
 
-          <View className='flex-row items-center'>
-            <FieldDescription>{t('login.register.prompt')}</FieldDescription>
-            <Button
-              variant='link'
-              onPress={() => router.navigate('/(auth)/register')}
-            >
-              {t('login.register.link')}
-            </Button>
-          </View>
+          <Field>
+            <LoginFormSubmit />
+
+            <View className='flex-row items-center'>
+              <FieldDescription>{t('login.register.prompt')}</FieldDescription>
+              <Button
+                variant='link'
+                onPress={() => router.navigate('/(auth)/register')}
+              >
+                {t('login.register.link')}
+              </Button>
+            </View>
+          </Field>
 
           <OAuthButtons />
         </FieldGroup>

@@ -1,5 +1,3 @@
-import type { Crypto } from 'effect/Crypto'
-
 import { AccountProviderId } from '@rozumari/contract/auth/schemas/account.schema'
 import * as Effect from 'effect/Effect'
 import * as HttpClient from 'effect/http/HttpClient'
@@ -27,7 +25,7 @@ export class GoogleProvider extends BaseProvider {
   public override createAuthorizationUrl = (
     state: string,
     codeVerifier: string
-  ): Effect.Effect<URL, never, Crypto> =>
+  ) =>
     this.createAuthorizationUrlWithPKCE(
       this.authorizationEndpoint,
       state,
@@ -60,7 +58,7 @@ export class GoogleProvider extends BaseProvider {
         id: response.sub,
         name: response.name,
         email: response.email,
-        image: response.picture,
+        image: response.picture ? response.picture.replace('=s96-c', '') : null,
       }
     }
   )

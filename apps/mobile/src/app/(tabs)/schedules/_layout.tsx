@@ -2,9 +2,7 @@ import { Button } from '@rozumari/ui/components/button'
 import { PencilIcon, PlusIcon } from '@rozumari/ui/components/icons'
 import { Stack, useGlobalSearchParams, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { View } from 'react-native'
 
-import { SyncScheduleButton } from '@/components/schedule/sync-schedule-button'
 import { useOptions } from '@/hooks/use-options'
 
 export default function TabsSchedulesLayout() {
@@ -20,17 +18,13 @@ export default function TabsSchedulesLayout() {
         options={{
           title: t('index.title'),
           headerRight: () => (
-            <View className='flex-row items-center gap-2'>
-              <SyncScheduleButton />
-
-              <Button
-                variant='ghost'
-                size='icon'
-                onPress={() => router.push('/(tabs)/schedules/create')}
-              >
-                <PlusIcon className='size-5 shrink-0 text-foreground' />
-              </Button>
-            </View>
+            <Button
+              variant='ghost'
+              size='icon'
+              onPress={() => router.push('/(tabs)/schedules/create')}
+            >
+              <PlusIcon className='size-5 shrink-0 text-foreground' />
+            </Button>
           ),
         }}
       />

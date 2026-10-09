@@ -31,6 +31,8 @@ export const env = effectEnv({
       Schema.withDecodingDefault(Effect.succeed('http://localhost:3000'))
     ),
 
+    VITE_TURNSTILE_KEY: Schema.String,
+
     VITE_BYPASS_TOKEN: Schema.optional(Schema.String),
   },
 
@@ -39,6 +41,7 @@ export const env = effectEnv({
 
     VITE_APP_NAME: import.meta.env.VITE_APP_NAME,
     VITE_API_URL: import.meta.env.VITE_API_URL,
+    VITE_TURNSTILE_KEY: import.meta.env.VITE_TURNSTILE_KEY,
     VITE_BYPASS_TOKEN: import.meta.env.VITE_BYPASS_TOKEN,
   },
 

@@ -23,13 +23,6 @@ export class DeviceGroup extends HttpApiGroup.make('device')
     HttpApiEndpoint.get('list', '/', {
       query: ListDevicesDto.Input,
       success: ListDevicesDto,
-    }).middleware(AdminMiddleware)
-  )
-
-  .add(
-    HttpApiEndpoint.get('me', '/me', {
-      query: ListDevicesDto.Input,
-      success: ListDevicesDto,
     })
   )
 

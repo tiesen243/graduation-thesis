@@ -46,12 +46,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         data: [
           {
             scheme: 'https',
-            host: `${appName}.vercel.app`,
+            host: process.env.EXPO_PUBLIC_WEB_URL,
             pathPrefix: '/',
           },
           {
             scheme: 'http',
-            host: `${appName}.vercel.app`,
+            host: process.env.EXPO_PUBLIC_WEB_URL,
             pathPrefix: '/',
           },
         ],
@@ -62,7 +62,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 
   ios: {
     bundleIdentifier: `com.${appName}.mobile`,
-    associatedDomains: [`applinks:${appName}.vercel.app`],
+    associatedDomains: [
+      `applinks:${process.env.EXPO_PUBLIC_WEB_URL?.replaceAll(/^https?:\/\//gu, '')}`,
+    ],
     supportsTablet: true,
     icon: {
       light: './assets/icon-light.png',
