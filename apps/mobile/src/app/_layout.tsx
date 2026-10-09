@@ -6,14 +6,14 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Camera } from 'expo-camera'
 import { DefaultTheme, Slot, ThemeProvider } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { StatusBar } from 'react-native'
 import { Uniwind, useCSSVariable, useUniwind } from 'uniwind'
 
 import { useGeistFonts } from '@/hooks/use-geist-fonts'
 import { RuntimeProvider } from '@/hooks/use-runtime'
-import { SessionProvider, useSession } from '@/hooks/use-session'
+import { SessionProvider } from '@/hooks/use-session'
 import { requestBLEPermissions } from '@/lib/ble'
 import { i18n } from '@/lib/i18n'
 import { getTheme } from '@/lib/secure-store'
@@ -23,12 +23,11 @@ const queryClient = createQueryClient()
 
 function RootLayoutInner() {
   const [fontLoaded, fontError] = useGeistFonts()
-  const { status } = useSession()
+  const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
     void (async () => {
       if (!fontLoaded && fontError) return
-      if (status === 'loading') return
 
       const theme = await getTheme()
       Uniwind.setTheme(theme)
@@ -37,10 +36,11 @@ function RootLayoutInner() {
       await requestBLEPermissions()
       await Camera.requestCameraPermissionsAsync()
 
-      await SplashScreen.hideAsync()
+      setIsReady(true)
     })()
-  }, [fontLoaded, fontError, status])
+  }, [fontLoaded, fontError])
 
+  if (!isReady) return null
   return <Slot />
 }
 

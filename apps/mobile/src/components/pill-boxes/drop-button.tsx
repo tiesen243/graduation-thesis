@@ -70,14 +70,16 @@ export const DropButton: React.FC<{
   }
 
   const handleClose = () => {
-    toast.success(t('pill-box:details.drop.messages.success'))
     setSelectedItems({})
     setIsOpen(false)
   }
 
   const dropMutation = useMutation({
     ...api.device.emit.mutationOptions({ params: { id } }),
-    onSuccess: handleClose,
+    onSuccess: () => {
+      toast.success(t('pill-box:details.drop.messages.success'))
+      handleClose()
+    },
     onError: (error) =>
       toast.error(t('pill-box:details.drop.messages.error'), error.message),
   })

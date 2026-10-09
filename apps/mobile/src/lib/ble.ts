@@ -1,3 +1,4 @@
+import Constants from 'expo-constants'
 import * as ExpoDevice from 'expo-device'
 import * as Linking from 'expo-linking'
 import { Alert, PermissionsAndroid, Platform } from 'react-native'
@@ -42,6 +43,8 @@ const requestAndroid31Permissions = async (): Promise<boolean> => {
 }
 
 export const requestBLEPermissions = async (): Promise<boolean> => {
+  if (Constants.expoGoConfig || Constants.manifest2?.extra?.expoGo) return true
+
   if (Platform.OS === 'android') {
     if ((ExpoDevice.platformApiLevel ?? -1) < 31) {
       const granted = await PermissionsAndroid.request(

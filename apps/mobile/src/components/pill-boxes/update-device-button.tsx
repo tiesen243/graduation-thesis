@@ -151,19 +151,17 @@ export function UpdateDeviceButton({
           </FieldSet>
 
           <BottomSheetFooter>
-            <Field className='flex-row justify-end'>
-              <Button
-                variant='destructive'
-                onPress={() => unlinkMutation.mutate({ id: device.id })}
-                disabled={unlinkMutation.isPending}
-              >
-                {unlinkMutation.isPending
-                  ? t('details.device.unlink.actions.submitting')
-                  : t('details.device.unlink.actions.submit')}
-              </Button>
+            <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
 
-              <SaveDeviceFormSubmit setIsOpen={setIsOpen} />
-            </Field>
+            <Button
+              variant='destructive'
+              onPress={() => unlinkMutation.mutate({ id: device.id })}
+              disabled={unlinkMutation.isPending}
+            >
+              {unlinkMutation.isPending
+                ? t('details.device.unlink.actions.submitting')
+                : t('details.device.unlink.actions.submit')}
+            </Button>
           </BottomSheetFooter>
         </BottomSheetContent>
       </updateDeviceForm.Provider>
