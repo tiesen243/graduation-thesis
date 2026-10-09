@@ -83,8 +83,7 @@
       "empty": "No medicine available to drop.",
       "actions": {
         "submit": "Confirm Drop",
-        "submitting": "Dropping...",
-        "cancel": "Cancel"
+        "submitting": "Dropping..."
       },
       "messages": {
         "success": "Dispense request sent",

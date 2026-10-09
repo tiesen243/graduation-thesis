@@ -1,6 +1,5 @@
 import {
   BottomSheet,
-  BottomSheetClose,
   BottomSheetContent,
   BottomSheetDescription,
   BottomSheetFooter,
@@ -75,8 +74,6 @@ export const Username: React.FC = () => {
           >
             {updateMutation.isPending ? t('saving') : t('save_changes')}
           </Button>
-
-          <BottomSheetClose>Close</BottomSheetClose>
         </BottomSheetFooter>
       </BottomSheetContent>
     </BottomSheet>
