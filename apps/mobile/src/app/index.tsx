@@ -1,8 +1,8 @@
 import { useRouter, useSegments } from 'expo-router'
+import * as SplashScreen from 'expo-splash-screen'
 import { useEffect } from 'react'
 import { View } from 'react-native'
 
-import { ActivityIndicator } from '@/components/native'
 import { useSession } from '@/hooks/use-session'
 
 export default function IndexScreen() {
@@ -12,13 +12,14 @@ export default function IndexScreen() {
 
   useEffect(() => {
     if (status === 'loading') return
-    if (status === 'unauthenticated') router.replace('/(auth)/login')
-    else if (status === 'authenticated') router.replace('/(tabs)/home')
+
+    void (async () => {
+      if (status === 'unauthenticated') router.replace('/(auth)/login')
+      else if (status === 'authenticated') router.replace('/(tabs)/home')
+
+      await SplashScreen.hideAsync()
+    })()
   }, [status, segments, router])
 
-  return (
-    <View className='flex-1 items-center justify-center bg-background'>
-      <ActivityIndicator size='large' />
-    </View>
-  )
+  return <View className='flex-1 items-center justify-center bg-chart-1' />
 }

@@ -3,11 +3,13 @@ import type { WebViewMessageEvent } from 'react-native-webview'
 import { useRef } from 'react'
 import { View } from 'react-native'
 import { WebView } from 'react-native-webview'
+import { useUniwind } from 'uniwind'
 
 export function TurnstileChallenge({
   setToken,
 }: Readonly<{ setToken: (challengeToken: string) => void }>) {
   const webViewRef = useRef<WebView<unknown>>(null)
+  const { theme } = useUniwind()
 
   const htmlContent = /* HTML */ `
     <!DOCTYPE html>
@@ -24,11 +26,6 @@ export function TurnstileChallenge({
           html {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            height: 100%;
-            background-color: transparent;
           }
         </style>
       </head>
@@ -36,6 +33,7 @@ export function TurnstileChallenge({
         <div
           class="cf-turnstile"
           data-sitekey="${process.env.EXPO_PUBLIC_TURNSTILE_KEY}"
+          data-theme="${theme}"
           data-callback="onSuccess"
           data-error-callback="onError"
           data-expired-callback="onExpire"
