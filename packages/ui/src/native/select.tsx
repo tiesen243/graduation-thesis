@@ -150,7 +150,7 @@ function SelectContent({
   return (
     <BottomSheetContent data-slot='select-content' {...props}>
       <BottomSheetHeader>
-        <View className='flex-row items-center gap-2'>
+        <View className='flex-row items-center gap-0.5'>
           <BottomSheetTitle className='flex-1'>{title}</BottomSheetTitle>
 
           {isMultiple && (
