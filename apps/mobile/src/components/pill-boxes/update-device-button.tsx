@@ -99,7 +99,7 @@ export function UpdateDeviceButton({
   })
 
   return (
-    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+    <BottomSheet snapPoints={[0.67, 1]} open={isOpen} onOpenChange={setIsOpen}>
       <BottomSheetTrigger size='sm' variant='ghost'>
         <PencilIcon className='size-4 text-muted-foreground' />
       </BottomSheetTrigger>

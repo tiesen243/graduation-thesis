@@ -20,7 +20,14 @@ export const env = effectEnv({
     EXPO_PUBLIC_TURNSTILE_KEY: Schema.String,
   },
 
-  runtimeEnv: process.env,
+  runtimeEnv: {
+    ...process.env,
+
+    EXPO_PUBLIC_APP_NAME: process.env.EXPO_PUBLIC_APP_NAME,
+    EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL,
+    EXPO_PUBLIC_WEB_URL: process.env.EXPO_PUBLIC_WEB_URL,
+    EXPO_PUBLIC_TURNSTILE_KEY: process.env.EXPO_PUBLIC_TURNSTILE_KEY,
+  },
 
   skipValidation:
     !!process.env.SKIP_ENV_VALIDATION ||
