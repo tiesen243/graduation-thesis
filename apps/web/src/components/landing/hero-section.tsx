@@ -8,6 +8,8 @@ import {
 import { Typography } from '@rozumari/ui/components/typography'
 import { Link } from 'react-router'
 
+import { env } from '@/lib/env'
+
 export function HeroSectoon() {
   return (
     <section
@@ -32,9 +34,9 @@ export function HeroSectoon() {
         </Typography>
 
         <Typography className='text-muted-foreground'>
-          Rozumari is the beautifully simple smart pill box that helps people
-          take medication on time — and helps the people who care about them
-          breathe easier.
+          {env.VITE_APP_NAME} is the beautifully simple smart pill box that
+          helps people take medication on time — and helps the people who care
+          about them breathe easier.
         </Typography>
 
         <div className='flex flex-col gap-4 sm:flex-row'>
@@ -67,7 +69,7 @@ export function HeroSectoon() {
 
         <img
           src='https://images.unsplash.com/photo-1677167643883-b4c703a5da35?q=80&w=1160&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-          alt='Rozumari smart pill box beside a glass of water'
+          alt={`${env.VITE_APP_NAME} smart pill box beside a glass of water`}
           className='aspect-4/3 w-full object-cover'
           width={1200}
           height={900}
