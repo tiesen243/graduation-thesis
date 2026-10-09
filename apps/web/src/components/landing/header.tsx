@@ -2,6 +2,7 @@ import { Button } from '@rozumari/ui/components/button'
 import { Link } from 'react-router'
 
 import Logo from '@/assets/favicon.svg'
+import { env } from '@/lib/env'
 
 export function LandingHeader() {
   return (
@@ -13,13 +14,17 @@ export function LandingHeader() {
         <Link
           to='#top'
           className='flex items-center gap-3'
-          aria-label='Rozumari home'
+          aria-label={`${env.VITE_APP_NAME} home`}
         >
           <span className='flex size-9 items-center justify-center rounded-md bg-chart-1'>
-            <img src={Logo} alt='Rozumari logo' className='size-5' />
+            <img
+              src={Logo}
+              alt={`${env.VITE_APP_NAME} logo`}
+              className='size-5'
+            />
           </span>
           <span className='font-serif text-xl font-semibold tracking-tight'>
-            Rozumari
+            {env.VITE_APP_NAME}
           </span>
         </Link>
         <div className='hidden items-center gap-8 text-sm text-muted-foreground md:flex'>

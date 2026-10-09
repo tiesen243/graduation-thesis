@@ -62,9 +62,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 
   ios: {
     bundleIdentifier: `com.${appName}.mobile`,
-    associatedDomains: [
-      `applinks:${process.env.EXPO_PUBLIC_WEB_URL?.replaceAll(/^https?:\/\//gu, '')}`,
-    ],
+    associatedDomains: [`applinks:${process.env.EXPO_PUBLIC_WEB_URL}`],
     supportsTablet: true,
     icon: {
       light: './assets/icon-light.png',
