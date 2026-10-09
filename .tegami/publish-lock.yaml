@@ -1,44 +1,64 @@
 core:changelogs:
-  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: patch\n---\n\n## Patch Changes\n\n- Fix UI\n"
-    filename: 2026-10-09-mv0b2y0n.md
+  - content: "---\npackages:\n  npm:@rozumari/mobile:\n    type: minor\n  npm:@rozumari/web:\n    type: minor\n  npm:@rozumari/contract:\n    type: minor\n  npm:@rozumari/api:\n    type: minor\n  npm:@rozumari/eda:\n    type: minor\n  npm:@rozumari/tsconfig:\n    type: minor\n  npm:@rozumari/ui:\n    type: minor\n  npm:@rozumari/oxlint:\n    type: minor\n  npm:@rozumari/lib:\n    type: minor\n  npm:@rozumari/github:\n    type: minor\n  npm:@rozumari/firmware:\n    type: minor\n---\n\n## Minor Changes\n\n- Fix app linking\n- Fix dynamic app name\n"
+    filename: 2026-10-09-mv0m7txz.md
     v: 0.0.0
 core:packages:
   - id: npm:rozumari
     updated: false
-  - id: npm:@rozumari/github
-    updated: false
-  - id: npm:@rozumari/oxlint
-    updated: false
-  - id: npm:@rozumari/api
-    updated: false
   - changelogIds:
-      - 2026-10-09-mv0b2y0n.md
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/github
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/oxlint
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/tsconfig
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
     id: npm:@rozumari/mobile
     updated: true
-  - id: npm:@rozumari/lib
-    updated: false
-  - id: npm:@rozumari/eda
-    updated: false
-  - id: npm:@rozumari/web
-    updated: false
-  - id: npm:@rozumari/ui
-    updated: false
-  - id: npm:@rozumari/tsconfig
-    updated: false
-  - id: npm:@rozumari/firmware
-    updated: false
-  - id: npm:@rozumari/contract
-    updated: false
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/web
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/api
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/ui
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/lib
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/eda
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/contract
+    updated: true
+  - changelogIds:
+      - 2026-10-09-mv0m7txz.md
+    id: npm:@rozumari/firmware
+    updated: true
 npm:packages:
   - id: npm:rozumari
   - id: npm:@rozumari/github
   - id: npm:@rozumari/oxlint
-  - id: npm:@rozumari/api
+  - id: npm:@rozumari/tsconfig
   - id: npm:@rozumari/mobile
+  - id: npm:@rozumari/web
+  - id: npm:@rozumari/api
+  - id: npm:@rozumari/ui
   - id: npm:@rozumari/lib
   - id: npm:@rozumari/eda
-  - id: npm:@rozumari/web
-  - id: npm:@rozumari/ui
-  - id: npm:@rozumari/tsconfig
-  - id: npm:@rozumari/firmware
   - id: npm:@rozumari/contract
+  - id: npm:@rozumari/firmware
