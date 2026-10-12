@@ -52,7 +52,8 @@ const { handler } = HttpRouter.toWebHandler(
     BunHttpPlatform.layer,
     BunServices.layer,
     Etag.layer,
-  ])
+  ]),
+  { disableLogger: env.NODE_ENV === 'production' }
 )
 
 export default {
