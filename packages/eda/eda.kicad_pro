@@ -178,6 +178,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -189,6 +190,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -200,6 +202,7 @@
         {
           "td_allow_use_two_tracks": true,
           "td_curve_segcount": 0,
+          "td_enabled": false,
           "td_height_ratio": 1.0,
           "td_length_ratio": 0.5,
           "td_maxheight": 2.0,
@@ -499,6 +502,7 @@
       "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "same_local_global_label": "warning",
+      "same_local_global_power": "warning",
       "similar_label_and_power": "warning",
       "similar_labels": "warning",
       "similar_power": "warning",
@@ -546,8 +550,8 @@
     "meta": {
       "version": 5
     },
-    "net_colors": null,
-    "netclass_assignments": null,
+    "net_colors": {},
+    "netclass_assignments": {},
     "netclass_patterns": []
   },
   "pcbnew": {
@@ -641,12 +645,36 @@
           "label": "Datasheet",
           "name": "Datasheet",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "Description",
+          "name": "Description",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Pins",
+          "name": "Sim.Pins",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "#",
+          "name": "${ITEM_NUMBER}",
+          "show": false
+        },
+        {
+          "group_by": false,
+          "label": "Sim.Device",
+          "name": "Sim.Device",
+          "show": false
         }
       ],
       "filter_string": "",
       "group_symbols": true,
       "include_excluded_from_bom": true,
-      "name": "Default Editing",
+      "name": "",
       "sort_asc": true,
       "sort_field": "Reference"
     },
@@ -691,7 +719,7 @@
         "uuid": "42a0047f-f4da-41b6-a5bf-510bae675ffb"
       }
     ],
-    "used_designators": "SwitchPower1-2,Fan2,LCD1,SensorCheck1,StepperDrawer1,D1-2,U1-3,StepperDrawerPower1,StepperDiscardPower1,SWITCH1,PowerPer1,MotorDrawer1-2,SW1,PowerMCU1,R1-20,StepperDiscard1,J1-6,SensorDrop1,MotorDiscard1-2,Buzzer1,SwitchConfig1",
+    "used_designators": "Buzzer1,D1-2,Fan2,J1-6,LCD1,MotorDiscard1-2,MotorDrawer1-2,PowerMCU1,PowerPer1,R1-20,SW1,SWITCH1,SensorCheck1,SensorDrop1,StepperDiscard1,StepperDiscardPower1,StepperDrawer1,StepperDrawerPower1,SwitchConfig1,SwitchPower1-2,U1-3",
     "variants": []
   },
   "sheets": [
