@@ -51,7 +51,6 @@
       "react-i18next": "^17.0.16"
     },
     "effect": {
-      "@effect/ai-openrouter": "^4.0.3",
       "@effect/platform-bun": "^4.0.3",
       "@effect/sql-pg": "^4.0.3",
       "@effect/atom-react": "^4.0.3",
