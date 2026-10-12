@@ -1,3 +1,9 @@
+## @rozumari/ui@0.2.1
+
+### Patch Chanages
+
+- Bump deps
+
 ## @rozumari/ui@0.2.0
 
 ### Minor Changes
