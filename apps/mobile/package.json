@@ -10,7 +10,7 @@
     "dev": "expo start",
     "eas-build-post-install": "cd ../.. && bun run build --filter './packages/*'",
     "ios": "expo run:ios",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:effect",

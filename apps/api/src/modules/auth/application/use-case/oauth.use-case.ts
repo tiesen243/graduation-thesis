@@ -13,7 +13,7 @@ import type { HttpClient } from 'effect/http/HttpClient'
 
 import { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
 import * as Context from 'effect/Context'
-import { Crypto } from 'effect/Crypto'
+import * as Crypto from 'effect/Crypto'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -32,7 +32,7 @@ export class OAuthUseCase extends Context.Service<
       provider: AccountProvider,
       state: string,
       code: string
-    ) => Effect.Effect<URL, ProviderError, OAuthService | Crypto>
+    ) => Effect.Effect<URL, ProviderError, OAuthService | Crypto.Crypto>
 
     callback: (
       provider: AccountProvider,
@@ -41,12 +41,12 @@ export class OAuthUseCase extends Context.Service<
     ) => Effect.Effect<
       Token,
       ProviderError | UserNotFound | UserAlreadyDeleted,
-      OAuthService | Crypto | HttpClient
+      OAuthService | Crypto.Crypto | HttpClient
     >
 
     exchange: (
       token: Token['refreshToken']
-    ) => Effect.Effect<Token, Unauthorized, Crypto>
+    ) => Effect.Effect<Token, Unauthorized, Crypto.Crypto>
   }
 >()('auth/application/OAuthUseCase', {
   make: Effect.gen(function* make() {
@@ -63,7 +63,7 @@ export class OAuthUseCase extends Context.Service<
       }),
 
       callback: Effect.fn(function* callback(_provider, code, storedCode) {
-        const crypto = yield* Crypto
+        const crypto = yield* Crypto.Crypto
 
         const provider = yield* OAuthService.forProvider(_provider)
 
@@ -111,9 +111,9 @@ export class OAuthUseCase extends Context.Service<
               if ((!user.image || user.image.includes('gravatar.com')) && image)
                 yield* userService.update(user.id, { image })
             } else {
-              const [username = ''] = (yield* crypto.randomUUIDv7.pipe(
-                Effect.orDie
-              )).split('-')
+              const [username = ''] = (yield* crypto
+                .randomUUIDv7()
+                .pipe(Effect.orDie)).split('-')
 
               const newUser = yield* userService.create({
                 username: username ?? '',

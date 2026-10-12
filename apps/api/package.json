@@ -11,10 +11,9 @@
     "dev": "bun run --hot src/bootstrap.ts",
     "drizzle": "bun --bun drizzle-kit --config ./src/shared/infrastructure/persistence/drizzle/drizzle.config.ts",
     "start": "bun run dist/bootstrap.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "dependencies": {
-    "@effect/ai-openrouter": "catalog:effect",
     "@effect/platform-bun": "catalog:effect",
     "@effect/sql-pg": "catalog:effect",
     "@rozumari/contract": "workspace:*",

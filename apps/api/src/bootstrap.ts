@@ -1,8 +1,6 @@
-import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
-import * as BunServices from '@effect/platform-bun/BunServices'
 import * as DateTime from 'effect/DateTime'
-import * as Etag from 'effect/http/Etag'
 import * as HttpRouter from 'effect/http/HttpRouter'
+import * as HttpServer from 'effect/http/HttpServer'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
 
@@ -11,6 +9,7 @@ import { FacebookProvider } from '@/modules/auth/infrastructure/services/provide
 import { GithubProvider } from '@/modules/auth/infrastructure/services/providers/github.provider'
 import { GoogleProvider } from '@/modules/auth/infrastructure/services/providers/google.provider'
 import { TwitterProvider } from '@/modules/auth/infrastructure/services/providers/twitter.provider'
+import * as Crypto from '@/shared/crypto'
 import { env } from '@/shared/env'
 
 const routes = AppModule.createHttp({
@@ -44,18 +43,42 @@ const { handler } = HttpRouter.toWebHandler(
     }),
 
     Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
-    Layer.succeed(
-      References.MinimumLogLevel,
-      env.NODE_ENV === 'development' ? 'Debug' : 'Info'
-    ),
+    Layer.succeed(References.TracerEnabled, false),
 
-    BunHttpPlatform.layer,
-    BunServices.layer,
-    Etag.layer,
+    HttpServer.layerServices,
+    Crypto.layer,
   ]),
-  { disableLogger: env.NODE_ENV === 'production' }
+  { disableLogger: true }
 )
 
 export default {
-  fetch: handler,
-}
+  fetch: (request, server) => {
+    const url = new URL(request.url)
+    if (url.pathname === '/ws') {
+      const topic = url.searchParams.get('topic') ?? 'default'
+      const success = server.upgrade(request, {
+        data: { topic },
+      })
+
+      if (!success)
+        return new Response('WebSocket upgrade failed', { status: 400 })
+    }
+
+    return handler(request, {} as never)
+  },
+
+  websocket: {
+    open: (ws) => {
+      const { topic } = ws.data
+      ws.subscribe(topic)
+    },
+    message: (ws, message) => {
+      const { topic } = ws.data
+      ws.publish(topic, message)
+    },
+    close: (ws, _code, _reason) => {
+      const { topic } = ws.data
+      ws.unsubscribe(topic)
+    },
+  },
+} satisfies Bun.Serve.Options<{ topic: string }>
