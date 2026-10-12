@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
