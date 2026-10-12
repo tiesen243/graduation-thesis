@@ -51,7 +51,7 @@ const { handler } = HttpRouter.toWebHandler(
   { disableLogger: true }
 )
 
-export default {
+Bun.serve<{ topic: string }>({
   fetch: (request, server) => {
     const url = new URL(request.url)
     if (url.pathname === '/ws') {
@@ -81,4 +81,4 @@ export default {
       ws.unsubscribe(topic)
     },
   },
-} satisfies Bun.Serve.Options<{ topic: string }>
+})
