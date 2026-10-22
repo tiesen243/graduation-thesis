@@ -5,10 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@rozumari/ui/components/card'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
@@ -137,7 +134,7 @@ export default function TabsPillBoxesIndexScreen() {
           disabled={meta.page <= 1}
           onPress={() => handlePageChange(meta.page - 1)}
         >
-          <ChevronLeftIcon className='size-4 shrink-0 text-foreground' />
+          <Icon name='ChevronLeft' />
         </Button>
 
         <Typography className='text-sm text-muted-foreground'>
@@ -150,7 +147,7 @@ export default function TabsPillBoxesIndexScreen() {
           disabled={meta.page >= meta.totalPages}
           onPress={() => handlePageChange(meta.page + 1)}
         >
-          <ChevronRightIcon className='size-4 shrink-0 text-foreground' />
+          <Icon name='ChevronRight' />
         </Button>
       </View>
     </View>

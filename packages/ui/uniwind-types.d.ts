@@ -6,3 +6,6 @@ declare module 'uniwind' {
     themes: readonly ['light', 'dark']
   }
 }
+
+// oxlint-disable-next-line unicorn/require-module-specifiers
+export {}

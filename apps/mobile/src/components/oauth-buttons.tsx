@@ -4,6 +4,7 @@ import {
   FieldLabel,
   FieldSeparator,
 } from '@rozumari/ui/components/field'
+import { Icon } from '@rozumari/ui/components/icons'
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { useQueryClient } from '@tanstack/react-query'
@@ -11,7 +12,6 @@ import * as Linking from 'expo-linking'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 import { useTranslation } from 'react-i18next'
-import { useCSSVariable } from 'uniwind'
 
 import { useRuntime } from '@/hooks/use-runtime'
 import { SUPPORTED_PROVIDERS } from '@/lib/constants'
@@ -28,7 +28,6 @@ export function OAuthButton({
   children?: React.ReactNode
   provider: (typeof SUPPORTED_PROVIDERS)[number]
 }) {
-  const foregroundColor = useCSSVariable('--color-foreground') as string
   const { t } = useTranslation('auth')
   const queryClient = useQueryClient()
   const { api } = useRuntime()
@@ -73,7 +72,7 @@ export function OAuthButton({
     <Button onPress={handleLogin} variant='outline' {...props}>
       {children ?? (
         <>
-          <provider.Icon width={16} height={16} fill={foregroundColor} />
+          <Icon name={provider.name} />
           <Typography>
             {t('oauth.continue_with', { provider: provider.name })}
           </Typography>

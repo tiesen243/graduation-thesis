@@ -11,13 +11,7 @@ import {
   CardDescription,
   CardTitle,
 } from '@rozumari/ui/components/card'
-import {
-  Calendar1Icon,
-  LogOutIcon,
-  MailIcon,
-  ShieldIcon,
-  UserIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Separator } from '@rozumari/ui/components/separator'
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
@@ -42,16 +36,16 @@ export default function TabsProfileIndexScreen() {
   if (status !== 'authenticated') return null
 
   const informations = [
-    { icon: UserIcon, title: 'User ID', description: user.id },
-    { icon: MailIcon, title: 'Email', description: user.email },
+    { icon: 'User', title: 'User ID', description: user.id },
+    { icon: 'Mail', title: 'Email', description: user.email },
     {
-      icon: Calendar1Icon,
+      icon: 'Calendar1',
       title: t('index.joined'),
       description: formatDate(user.createdAt, {
         locale: i18n.resolvedLanguage,
       }),
     },
-  ]
+  ] as const
 
   const handleRefresh = () =>
     Promise.all([
@@ -78,9 +72,9 @@ export default function TabsProfileIndexScreen() {
 
           <Badge className='absolute -right-1/4 -bottom-1'>
             {user.role === 'admin' ? (
-              <ShieldIcon className='size-3 text-primary-foreground' />
+              <Icon name='Shield' className='size-3 text-primary-foreground' />
             ) : (
-              <UserIcon className='size-3 text-primary-foreground' />
+              <Icon name='User' className='size-3 text-primary-foreground' />
             )}
             <Typography className='pr-px uppercase'>{user.role}</Typography>
           </Badge>
@@ -98,7 +92,7 @@ export default function TabsProfileIndexScreen() {
           {informations.map((info, index) => (
             <Fragment key={info.title}>
               <CardContent className='flex-row gap-2'>
-                <info.icon className='size-4 text-muted-foreground' />
+                <Icon name={info.icon} className='text-muted-foreground' />
                 <View className='gap-1'>
                   <CardTitle>{info.title}</CardTitle>
                   <CardDescription>{info.description}</CardDescription>
@@ -121,7 +115,7 @@ export default function TabsProfileIndexScreen() {
       <View className='flex-1' />
 
       <Button variant='destructive' size='lg' onPress={logout}>
-        <LogOutIcon className='size-4 text-destructive' />
+        <Icon name='LogOut' className='text-destructive' />
         <Typography>{t('index.logout')}</Typography>
       </Button>
     </ScrollView>

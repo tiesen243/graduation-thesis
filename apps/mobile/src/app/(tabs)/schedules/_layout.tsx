@@ -1,5 +1,5 @@
 import { Button } from '@rozumari/ui/components/button'
-import { PencilIcon, PlusIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Stack, useGlobalSearchParams, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +23,7 @@ export default function TabsSchedulesLayout() {
               size='icon'
               onPress={() => router.push('/(tabs)/schedules/create')}
             >
-              <PlusIcon className='size-5 shrink-0 text-foreground' />
+              <Icon name='Plus' className='size-5' />
             </Button>
           ),
         }}
@@ -41,7 +41,7 @@ export default function TabsSchedulesLayout() {
               size='icon'
               onPress={() => router.push(`/(tabs)/schedules/${id}/edit`)}
             >
-              <PencilIcon className='size-5 shrink-0 text-foreground' />
+              <Icon name='Pencil' className='size-5' />
             </Button>
           ),
         }}

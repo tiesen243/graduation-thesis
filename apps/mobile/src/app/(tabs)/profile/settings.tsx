@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import * as Constants from 'expo-constants'
 import { useRouter } from 'expo-router'
@@ -24,7 +24,7 @@ export default function TabsProfileSettingsScreen() {
         className='flex-row items-center justify-between'
       >
         <Typography variant='h3'>{t('config.title')}</Typography>
-        <ChevronRightIcon className='size-5 text-foreground' />
+        <Icon name='ChevronRight' className='size-5' />
       </Pressable>
 
       <View className='gap-2'>

@@ -1,5 +1,6 @@
 import { Button } from '@rozumari/ui/components/button'
 import { Card } from '@rozumari/ui/components/card'
+import { Icon } from '@rozumari/ui/components/icons'
 import {
   Item,
   ItemActions,
@@ -17,7 +18,6 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Alert } from 'react-native'
-import { useCSSVariable } from 'uniwind'
 
 import { OAuthButton } from '@/components/oauth-buttons'
 import { useRuntime } from '@/hooks/use-runtime'
@@ -42,7 +42,6 @@ const AccountItem: React.FC<AccountItemProps> = ({
 }) => {
   const { t } = useTranslation('profile')
   const isConnected = Boolean(linkedAccount)
-  const foregroundColor = useCSSVariable('--color-foreground') as string
 
   const { api } = useRuntime()
   const disconnectMutation = useMutation({
@@ -60,7 +59,7 @@ const AccountItem: React.FC<AccountItemProps> = ({
       className={cn('px-4', isFirst && 'pt-0', isLast && 'pb-0')}
     >
       <ItemMedia variant='image' className='border border-border'>
-        <provider.Icon width={24} height={24} fill={foregroundColor} />
+        <Icon name={provider.name} className='size-6' />
       </ItemMedia>
 
       <ItemContent>
@@ -89,7 +88,9 @@ const AccountItem: React.FC<AccountItemProps> = ({
                     text: t('index.accounts.disconnect'),
                     style: 'destructive',
                     onPress: () =>
-                      disconnectMutation.mutate({ provider: provider.id }),
+                      disconnectMutation.mutate({
+                        provider: provider.id,
+                      } as never),
                   },
                 ]
               )

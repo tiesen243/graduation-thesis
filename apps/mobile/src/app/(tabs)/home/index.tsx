@@ -5,11 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@rozumari/ui/components/card'
-import {
-  AlertCircleIcon,
-  AlertTriangleIcon,
-  InfoIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'expo-router'
@@ -20,9 +16,18 @@ import { ActivityIndicator, RefreshControl } from '@/components/native'
 import { useRuntime } from '@/hooks/use-runtime'
 
 const LEVEL_MAPPING = {
-  error: <AlertCircleIcon className='size-4 shrink-0 text-destructive' />,
-  info: <InfoIcon className='size-4 shrink-0 text-info' />,
-  warning: <AlertTriangleIcon className='size-4 shrink-0 text-warning' />,
+  error: {
+    icon: 'CircleAlert',
+    color: 'text-destructive',
+  },
+  info: {
+    icon: 'Info',
+    color: 'text-info',
+  },
+  warning: {
+    icon: 'TriangleAlert',
+    color: 'text-warning',
+  },
 } as const
 
 export default function TabsHomeIndexScreen() {
@@ -102,30 +107,31 @@ export default function TabsHomeIndexScreen() {
 
         {recentNotifications.length !== 0 && (
           <CardContent className='gap-3'>
-            {recentNotifications.map((notification) => (
-              <Card key={notification.id}>
-                <Link href={`/(tabs)/notifications/${notification.id}`}>
-                  <CardHeader className='w-full flex-row items-start gap-2'>
-                    {
-                      LEVEL_MAPPING[
-                        notification.level as keyof typeof LEVEL_MAPPING
-                      ]
-                    }
-                    <View className='flex-1 gap-1'>
-                      <CardTitle>{notification.title}</CardTitle>
-                      <CardDescription>{notification.body}</CardDescription>
-                    </View>
+            {recentNotifications.map((notification) => {
+              const icon = LEVEL_MAPPING[notification.level]
 
-                    <CardDescription>
-                      {formatDate(notification.createdAt, {
-                        mode: 'custom',
-                        custom: 'HH:mm',
-                      })}
-                    </CardDescription>
-                  </CardHeader>
-                </Link>
-              </Card>
-            ))}
+              return (
+                <Card key={notification.id}>
+                  <Link href={`/(tabs)/notifications/${notification.id}`}>
+                    <CardHeader className='w-full flex-row items-start gap-2'>
+                      <Icon name={icon.icon} className={icon.color} />
+
+                      <View className='flex-1 gap-1'>
+                        <CardTitle>{notification.title}</CardTitle>
+                        <CardDescription>{notification.body}</CardDescription>
+                      </View>
+
+                      <CardDescription>
+                        {formatDate(notification.createdAt, {
+                          mode: 'custom',
+                          custom: 'HH:mm',
+                        })}
+                      </CardDescription>
+                    </CardHeader>
+                  </Link>
+                </Card>
+              )
+            })}
           </CardContent>
         )}
       </Card>
