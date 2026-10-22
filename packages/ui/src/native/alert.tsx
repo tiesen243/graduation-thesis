@@ -1,5 +1,5 @@
 import type { VariantProps } from 'class-variance-authority'
-import type { LucideProps } from 'lucide-uniwind'
+import type { LucideProps } from 'lucide-react-native'
 
 import { cva } from 'class-variance-authority'
 import * as React from 'react'
