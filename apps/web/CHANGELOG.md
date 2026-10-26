@@ -1,3 +1,10 @@
+## @rozumari/web@0.2.3
+
+### Patch Changes
+
+- Build error
+- Change password form padding
+
 ## @rozumari/web@0.2.2
 
 ### Patch Changes
