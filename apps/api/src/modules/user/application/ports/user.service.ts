@@ -16,12 +16,12 @@ export class UserService extends Context.Service<
     ) => Effect.Effect<User | null>
 
     readonly create: (
-      data: Pick<User, 'username' | 'email' | 'image'>
+      data: Pick<User, 'username' | 'email' | 'emailVerifiedAt' | 'image'>
     ) => Effect.Effect<User>
 
     readonly update: (
       id: User['id'],
-      data: Partial<Pick<User, 'image'>>
+      data: Partial<Pick<User, 'emailVerifiedAt' | 'image'>>
     ) => Effect.Effect<void, UserNotFound | UserAlreadyDeleted>
   }
 >()('user/application/UserService') {}

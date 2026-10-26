@@ -52,9 +52,9 @@ function RegisterFormSubmit({
     {
       onSuccess: () => {
         navigate('/login', { replace: true })
-        toast.success(
-          'Registration successful. You can now log in with your new account.'
-        )
+        toast.success('Registration successful.', {
+          description: 'Please check your email to verify your account.',
+        })
       },
       onError: (error) => toast.error(error.message),
     }

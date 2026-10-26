@@ -17,6 +17,10 @@ export const UserSchema = Schema.Struct({
 
   email: Email,
 
+  emailVerifiedAt: Schema.NullOr(Schema.Date).pipe(
+    Schema.withConstructorDefault(Effect.succeed(null))
+  ),
+
   role: UserRole.pipe(Schema.withConstructorDefault(Effect.succeed('user'))),
 
   image: Schema.NullOr(Url()).pipe(

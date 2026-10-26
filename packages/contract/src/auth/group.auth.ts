@@ -18,7 +18,11 @@ import {
   ProviderError,
   Unauthorized,
 } from '@/auth/schemas/auth.error'
-import { UserAlreadyExists, UserNotFound } from '@/user/schemas/user.error'
+import {
+  UserAlreadyDeleted,
+  UserAlreadyExists,
+  UserUnverified,
+} from '@/user/schemas/user.error'
 
 export class AuthGroup extends HttpApiGroup.make('auth')
 
@@ -31,10 +35,17 @@ export class AuthGroup extends HttpApiGroup.make('auth')
   )
 
   .add(
+    HttpApiEndpoint.get('verify', '/verify-email', {
+      query: RegisterDto.Verify,
+      error: [Forbidden],
+    })
+  )
+
+  .add(
     HttpApiEndpoint.post('login', '/login', {
       payload: LoginDto.Input,
       success: LoginDto,
-      error: [InvalidCredentials, UserNotFound, Forbidden],
+      error: [InvalidCredentials, UserAlreadyDeleted, UserUnverified],
     })
   )
 

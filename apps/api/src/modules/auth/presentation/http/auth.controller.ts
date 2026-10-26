@@ -34,6 +34,10 @@ export const authController = HttpApiBuilder.group(Api, 'auth', (handlers) =>
       )
     )
 
+    .handle('verify', ({ query }) =>
+      RegisterUseCase.use((s) => s.verify(query))
+    )
+
     .handle('login', ({ payload }) =>
       LoginUseCase.use((s) => s.execute(payload)).pipe(
         Effect.flatMap((data) =>

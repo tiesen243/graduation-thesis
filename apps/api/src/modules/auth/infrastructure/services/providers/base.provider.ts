@@ -7,7 +7,7 @@ import * as HttpClientResponse from 'effect/http/HttpClientResponse'
 
 import { OAuth } from '@/modules/auth/application/types'
 import { generateCodeChallenge } from '@/modules/auth/domain/utils/crypto'
-import { env } from '@/shared/env'
+import { getBaseUrl } from '@/shared/utils'
 
 export abstract class BaseProvider {
   protected constructor(
@@ -16,7 +16,7 @@ export abstract class BaseProvider {
     protected readonly clientSecret: string,
     protected readonly redirectUri: string
   ) {
-    if (!this.redirectUri) this.redirectUri = this.createCallbackUrl()
+    if (!this.redirectUri) this.redirectUri = this.callbackUrl
   }
 
   public abstract createAuthorizationUrl(
@@ -29,13 +29,8 @@ export abstract class BaseProvider {
     codeVerifier: string
   ): Effect.Effect<OAuth.Account, HttpClientError, HttpClient.HttpClient>
 
-  protected createCallbackUrl() {
-    let baseUrl = `http://localhost:${env.PORT}`
-    if (env.VERCEL_PROJECT_PRODUCTION_URL)
-      baseUrl = `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
-    else if (env.VERCEL_URL) baseUrl = `https://${env.VERCEL_URL}`
-
-    return `${baseUrl}/api/auth/${this.providerName}/callback`
+  protected get callbackUrl() {
+    return `${getBaseUrl()}/api/auth/${this.providerName}/callback`
   }
 
   protected createAuthorizationUrlWithoutPKCE = Effect.fn(

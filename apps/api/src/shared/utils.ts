@@ -2,6 +2,7 @@ import * as Crypto from 'effect/Crypto'
 import * as Effect from 'effect/Effect'
 import * as Hex from 'effect/encoding/Hex'
 
+import { env } from '@/shared/env'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
 export const withTransaction = <A, E, R>(
@@ -44,6 +45,13 @@ export const toDateString = (d: Date) => {
   const month = String(d.getMonth() + 1).padStart(2, '0')
   const day = String(d.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}`
+}
+
+export const getBaseUrl = () => {
+  if (env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
+  else if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
+  return `http://localhost:${env.PORT}`
 }
 
 export const getGravatarUrl = Effect.fn(function* getGravatarUrl(
