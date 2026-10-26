@@ -1,6 +1,8 @@
 import type { LoginDto } from '@rozumari/contract/auth/dto/login.dto'
-import type { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
-import type { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
+import type {
+  UserAlreadyDeleted,
+  UserUnverified,
+} from '@rozumari/contract/user/schemas/user.error'
 import type * as Crypto from 'effect/Crypto'
 import type * as HttpClient from 'effect/http/HttpClient'
 
@@ -26,7 +28,7 @@ export class LoginUseCase extends Context.Service<
       input: LoginDto.Input
     ) => Effect.Effect<
       LoginDto.Output,
-      InvalidCredentials | UserNotFound | Forbidden,
+      InvalidCredentials | UserAlreadyDeleted | UserUnverified,
       Crypto.Crypto | HttpClient.HttpClient
     >
   }
@@ -42,10 +44,14 @@ export class LoginUseCase extends Context.Service<
       execute: Effect.fn(function* execute(input) {
         const { email, password: plainPassword, challengeToken } = input
 
-        yield* verifyTurnstileToken(challengeToken)
+        yield* verifyTurnstileToken(challengeToken).pipe(
+          Effect.catch(() => Effect.fail(new InvalidCredentials()))
+        )
 
         const user = yield* userService.findByIdentifier({ email })
-        if (!user?.isActive) return yield* Effect.fail(new InvalidCredentials())
+        if (!user) return yield* Effect.fail(new InvalidCredentials())
+
+        yield* user.isActive()
 
         const [account] = yield* accountRepository.findMany({
           where: {

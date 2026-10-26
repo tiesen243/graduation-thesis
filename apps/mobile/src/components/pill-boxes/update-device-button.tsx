@@ -17,7 +17,7 @@ import {
   FieldLabel,
   FieldSet,
 } from '@rozumari/ui/components/field'
-import { PencilIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { FormBuilder } from '@rozumari/ui/lib/form-builder'
@@ -101,7 +101,7 @@ export function UpdateDeviceButton({
   return (
     <BottomSheet snapPoints={[0.67, 1]} open={isOpen} onOpenChange={setIsOpen}>
       <BottomSheetTrigger size='sm' variant='ghost'>
-        <PencilIcon className='size-4 text-muted-foreground' />
+        <Icon name='Pencil' className='text-muted-foreground' />
       </BottomSheetTrigger>
 
       <updateDeviceForm.Provider defaultValues={device}>

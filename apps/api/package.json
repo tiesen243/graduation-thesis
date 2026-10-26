@@ -18,14 +18,14 @@
     "@effect/sql-pg": "catalog:effect",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
-    "drizzle-orm": "^1.0.0-rc.5-5935859",
+    "drizzle-orm": "^1.0.0-rc.5",
     "effect": "catalog:effect"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "drizzle-kit": "^1.0.0-rc.5-5935859",
+    "drizzle-kit": "^1.0.0-rc.5",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   }

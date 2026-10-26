@@ -1,4 +1,3 @@
-import { CheckIcon, ChevronDownIcon } from 'lucide-uniwind'
 import * as React from 'react'
 import { ScrollView, View } from 'react-native'
 
@@ -11,6 +10,7 @@ import {
   BottomSheetTitle,
 } from '@/native/bottom-sheet'
 import { Button } from '@/native/button'
+import { Icon } from '@/native/icons'
 import { Typography } from '@/native/typography'
 
 interface SelectContextValue<TValue, TMultiple extends boolean = false> {
@@ -93,7 +93,7 @@ function SelectTrigger({
     >
       {children as React.ReactNode}
 
-      <ChevronDownIcon className='size-4 shrink-0 text-muted-foreground' />
+      <Icon name='ChevronDown' className='text-muted-foreground' />
     </BottomSheetTrigger>
   )
 }
@@ -104,7 +104,7 @@ function SelectValue<TValue, TMultiple extends boolean = false>({
   children,
   ...props
 }: React.ComponentProps<typeof Typography> & { placeholder?: string }) {
-  const { value, items } = useSelectContext<TValue, TMultiple>()
+  const { value, items = [] } = useSelectContext<TValue, TMultiple>()
 
   const isEmpty =
     value === null ||
@@ -117,11 +117,11 @@ function SelectValue<TValue, TMultiple extends boolean = false>({
 
     if (Array.isArray(value))
       return value
-        .map((val) => items?.find((item) => item.value === val)?.label ?? val)
+        .map((val) => items.find((item) => item.value === val)?.label ?? val)
         .join(', ')
 
     if (typeof value === 'string')
-      return items?.find((item) => item.value === value)?.label ?? value
+      return items.find((item) => item.value === value)?.label ?? value
 
     return children
   }, [isEmpty, placeholder, value, items, children])
@@ -228,9 +228,7 @@ function SelectItem<TValue>({
         {children as React.ReactNode}
       </Typography>
 
-      {isSelected && (
-        <CheckIcon className='size-4 shrink-0 text-accent-foreground' />
-      )}
+      {isSelected && <Icon name='Check' className='text-accent-foreground' />}
     </Button>
   )
 }

@@ -14,6 +14,7 @@ export const users = snakeCase.table(
     id: t.varchar({ length: 24 }).primaryKey().$type<UserId>(),
     username: t.varchar({ length: 20 }).notNull(),
     email: t.varchar({ length: 255 }).notNull(),
+    emailVerifiedAt: t.timestamp({ mode: 'date' }),
     role: userRole().notNull().$type<UserRole>(),
     image: t.varchar({ length: 255 }),
 

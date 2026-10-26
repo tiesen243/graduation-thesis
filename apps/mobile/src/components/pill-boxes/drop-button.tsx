@@ -11,7 +11,7 @@ import {
 } from '@rozumari/ui/components/bottom-sheet'
 import { Button } from '@rozumari/ui/components/button'
 import { CardDescription, CardTitle } from '@rozumari/ui/components/card'
-import { MinusIcon, PlusIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { toast } from '@rozumari/ui/components/toast'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
@@ -152,7 +152,7 @@ export const DropButton: React.FC<{
                           updateQuantity(item.position, -1, item.capacity)
                         }
                       >
-                        <MinusIcon className='size-4 shrink-0 text-foreground' />
+                        <Icon name='Minus' />
                       </Button>
 
                       <Typography className='w-6 text-center text-sm font-medium'>
@@ -167,7 +167,7 @@ export const DropButton: React.FC<{
                           updateQuantity(item.position, 1, item.capacity)
                         }
                       >
-                        <PlusIcon className='size-4 shrink-0 text-foreground' />
+                        <Icon name='Plus' />
                       </Button>
                     </View>
                   )}

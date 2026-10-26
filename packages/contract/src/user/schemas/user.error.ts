@@ -36,6 +36,16 @@ export class UserAlreadyExists extends Schema.TaggedError<UserAlreadyExists>()(
   { httpApiStatus: 409 }
 ) {}
 
+export class UserUnverified extends Schema.TaggedError<UserUnverified>()(
+  'user/domain/UserUnverified',
+  ApiResponse({
+    status: 403,
+    message: 'User is unverified',
+    errorSchema: Schema.Struct({ id: UserId }),
+  }),
+  { httpApiStatus: 403 }
+) {}
+
 export class UserAlreadyDeleted extends Schema.TaggedError<UserAlreadyDeleted>()(
   'UserAlreadyDeleted',
   ApiResponse({
@@ -64,6 +74,7 @@ export class UserError extends Schema.TaggedError<UserError>()(
       UserNotFound,
       UserAlreadyExists,
       UserAlreadyDeleted,
+      UserUnverified,
       UserCannotChangeOwnRole,
     ]),
   }

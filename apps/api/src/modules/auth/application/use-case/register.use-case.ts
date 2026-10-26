@@ -1,24 +1,29 @@
 import type { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
-import type { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
 import type * as Crypto from 'effect/Crypto'
 import type * as HttpClient from 'effect/http/HttpClient'
 
+import { RegisterEmail } from '@emails/register'
+import { WelcomeEmail } from '@emails/welcome'
 import {
   AccountProvider,
   AccountProviderId,
 } from '@rozumari/contract/auth/schemas/account.schema'
+import { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
 import { UserAlreadyExists } from '@rozumari/contract/user/schemas/user.error'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
+import * as HttpServerResponse from 'effect/http/HttpServerResponse'
 import * as Layer from 'effect/Layer'
 
 import { AccountRepository } from '@/modules/auth/application/ports/account.repository'
 import { PasswordService } from '@/modules/auth/application/ports/password.service'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { UserService } from '@/modules/user/application/ports/user.service'
+import { Jwt } from '@/shared/application/services/jwt.service'
 import { ResendService } from '@/shared/application/services/resend.service'
+import { env } from '@/shared/env'
 import { verifyTurnstileToken } from '@/shared/turnstile'
-import { getGravatarUrl, withTransaction } from '@/shared/utils'
+import { getBaseUrl, getGravatarUrl, withTransaction } from '@/shared/utils'
 
 export class RegisterUseCase extends Context.Service<
   RegisterUseCase,
@@ -30,6 +35,14 @@ export class RegisterUseCase extends Context.Service<
       UserAlreadyExists | Forbidden,
       Crypto.Crypto | HttpClient.HttpClient
     >
+
+    verify: (
+      input: RegisterDto.Verify
+    ) => Effect.Effect<
+      HttpServerResponse.HttpServerResponse,
+      Forbidden,
+      Crypto.Crypto
+    >
   }
 >()('auth/application/RegisterUseCase', {
   make: Effect.gen(function* make() {
@@ -37,6 +50,7 @@ export class RegisterUseCase extends Context.Service<
 
     const passwordService = yield* PasswordService
     const userService = yield* UserService
+    const jwtService = yield* Jwt
     const resendService = yield* Effect.option(ResendService)
 
     return {
@@ -60,7 +74,12 @@ export class RegisterUseCase extends Context.Service<
         const image = yield* getGravatarUrl(email)
 
         yield* Effect.gen(function* executeTx() {
-          const user = yield* userService.create({ username, email, image })
+          const user = yield* userService.create({
+            username,
+            email,
+            emailVerifiedAt: null,
+            image,
+          })
 
           const account = Account.make({
             provider: AccountProvider.make('credentials'),
@@ -71,14 +90,87 @@ export class RegisterUseCase extends Context.Service<
           yield* accountRepository.save(account)
         }).pipe(withTransaction)
 
+        if (resendService._tag === 'Some') {
+          const token = yield* jwtService.sign(
+            { email },
+            { expiresIn: 15 * 60 }
+          )
+
+          yield* resendService.value.sendEmail({
+            to: [email],
+            subject: 'Verify your email address',
+            html: RegisterEmail({
+              username,
+              verificationLink: `${getBaseUrl()}/api/auth/verify-email?token=${token}`,
+            }),
+          })
+        }
+
+        return null
+      }),
+
+      verify: Effect.fn(function* verify(input) {
+        const { token } = input
+
+        const payload = yield* jwtService
+          .verify(token)
+          .pipe(
+            Effect.catchTag('shared/application/services/JwtError', () =>
+              Effect.fail(
+                new Forbidden({ message: 'Invalid token or expired' })
+              )
+            )
+          )
+        const email = payload.email as string
+
+        const user = yield* userService.findByIdentifier({ email })
+        if (!user)
+          return yield* Effect.fail(
+            new Forbidden({ message: 'User not found' })
+          )
+
+        if (user.emailVerifiedAt)
+          return yield* Effect.fail(
+            new Forbidden({ message: 'Email already verified' })
+          )
+
+        yield* userService
+          .update(user.id, { emailVerifiedAt: new Date() })
+          .pipe(Effect.orDie)
+
         if (resendService._tag === 'Some')
           yield* resendService.value.sendEmail({
             to: [email],
             subject: 'Welcome to Rozumari!',
-            html: `<h1>Welcome to Rozumari!</h1><p>Hi ${username}, thank you for registering at Rozumari. We're excited to have you on board!</p>`,
+            html: WelcomeEmail({
+              username: user.username,
+              appLink: `${env.CORS_ORIGIN[0]}/login`,
+            }),
           })
 
-        return null
+        return HttpServerResponse.html(/* HTML */ `
+          <html>
+            <head>
+              <title>Email Verified</title>
+            </head>
+            <body
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                font-family: Arial, sans-serif;
+              "
+            >
+              <h1>Email Verified</h1>
+              <p>
+                Your email has been successfully verified. You can now log in to
+                your account.
+              </p>
+            </body>
+          </html>
+        `)
       }),
     }
   }),

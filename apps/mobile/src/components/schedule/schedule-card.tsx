@@ -2,12 +2,7 @@ import type { ListSchedulesDto } from '@rozumari/contract/schedule/dto/list-sche
 
 import { Badge } from '@rozumari/ui/components/badge'
 import { Card, CardHeader } from '@rozumari/ui/components/card'
-import {
-  AsteriskIcon,
-  ClockIcon,
-  HardDriveIcon,
-  PillIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import { useRouter } from 'expo-router'
@@ -45,7 +40,7 @@ export const ScheduleCard: React.FC<{
     >
       <CardHeader className='flex-row flex-wrap items-center gap-3'>
         <View className='flex-row items-center gap-1.5'>
-          <ClockIcon className='size-4 text-muted-foreground' />
+          <Icon name='Clock' className='text-muted-foreground' />
           <Typography className='text-base font-bold'>
             {schedule.time}
           </Typography>
@@ -53,7 +48,10 @@ export const ScheduleCard: React.FC<{
 
         {schedule.device && (
           <Badge variant='secondary'>
-            <HardDriveIcon className='size-3 text-secondary-foreground' />
+            <Icon
+              name='HardDrive'
+              className='size-3 text-secondary-foreground'
+            />
             <Typography>
               {schedule.device.name}
               {schedule.device.position && ` (${schedule.device.position})`}
@@ -72,7 +70,7 @@ export const ScheduleCard: React.FC<{
             className='flex-row flex-wrap items-center justify-between gap-4 bg-muted/40 p-2 text-sm'
           >
             <View className='flex-row items-center gap-1'>
-              <PillIcon className='mr-1 size-3.5 shrink-0 text-primary' />
+              <Icon name='Pill' className='mr-1 size-3.5 text-primary' />
               <Typography className='font-medium'>{item.medicine}</Typography>
               {item.dosage ? (
                 <Typography className='text-xs text-muted-foreground'>
@@ -80,7 +78,10 @@ export const ScheduleCard: React.FC<{
                 </Typography>
               ) : null}
               {item.isRequired && (
-                <AsteriskIcon className='-mt-1 size-3 shrink-0 text-destructive' />
+                <Icon
+                  name='Asterisk'
+                  className='-mt-1 size-3 text-destructive'
+                />
               )}
             </View>
 

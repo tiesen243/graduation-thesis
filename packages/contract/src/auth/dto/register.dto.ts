@@ -20,4 +20,9 @@ export namespace RegisterDto {
 
   export const Output = RegisterDto.fields.data
   export type Output = typeof Output.Type
+
+  export const Verify = Schema.Struct({
+    token: Schema.String,
+  })
+  export type Verify = typeof Verify.Type
 }

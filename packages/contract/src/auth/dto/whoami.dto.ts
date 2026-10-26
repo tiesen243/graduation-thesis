@@ -7,7 +7,13 @@ export class WhoAmIDto extends Schema.TaggedClass<WhoAmIDto>()(
   'auth/application/WhoAmIDto',
   ApiResponse({
     message: 'Get current user successfully',
-    dataSchema: UserSchema,
+    dataSchema: Schema.Struct({
+      id: UserSchema.fields.id,
+      username: UserSchema.fields.username,
+      email: UserSchema.fields.email,
+      role: UserSchema.fields.role,
+      image: UserSchema.fields.image,
+    }),
   })
 ) {}
 

@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "clean": "turbo run clean && git clean -xdf .turbo .venv node_modules",
+    "clean": "turbo run clean && git clean -xdf .venv node_modules",
     "dev:mobile": "turbo run dev --filter=@rozumari/mobile --filter=@rozumari/api --continue",
     "dev:web": "turbo run dev --filter=@rozumari/web --filter=@rozumari/api --continue",
     "format": "oxfmt --check",
@@ -19,54 +19,54 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "oxfmt": "^0.72.0",
-    "oxlint": "^1.87.0",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
     "tegami": "^1.5.0",
-    "turbo": "^2.11.7"
+    "turbo": "^2.11.10"
   },
   "devEngines": {
     "packageManager": {
       "name": "bun",
-      "version": "1.4.3",
+      "version": "1.4.4",
       "onFail": "ignore"
     }
   },
   "engines": {
     "bun": ">=1.4.0",
-    "node": ">=24.20.0"
+    "node": ">=24.22.0"
   },
   "catalogs": {
     "dev": {
-      "@types/bun": "^1.4.3",
-      "tsdown": "^0.23.1",
-      "typescript": "^7.0.2"
+      "@types/bun": "^1.4.4",
+      "tsdown": "^0.23.2",
+      "typescript": "^7.1.0-beta"
     },
     "prod": {
-      "@tanstack/react-query": "^5.104.2",
+      "@tanstack/react-query": "^5.105.0",
       "@tiesen/effect-tanstack-query": "^0.0.26",
-      "react-native-safe-area-context": "~5.9.1"
+      "react-native-safe-area-context": "~5.10.1"
     },
     "i18n": {
-      "i18next": "^26.4.4",
-      "react-i18next": "^17.0.16"
+      "i18next": "^26.5.11",
+      "react-i18next": "^17.1.9"
     },
     "effect": {
-      "@effect/platform-bun": "^4.0.3",
-      "@effect/sql-pg": "^4.0.3",
-      "@effect/atom-react": "^4.0.3",
-      "effect": "^4.0.3"
+      "@effect/platform-bun": "^4.0.6",
+      "@effect/sql-pg": "^4.0.6",
+      "@effect/atom-react": "^4.0.6",
+      "effect": "^4.0.6"
     },
     "react": {
       "@types/react": "^19.3.0",
       "@types/react-dom": "^19.3.0",
-      "react": "^19.3.0",
-      "react-dom": "^19.3.0",
-      "react-native": "0.88.0-rc.4"
+      "react": "19.3.0",
+      "react-dom": "19.3.0",
+      "react-native": "0.88.0"
     },
     "tailwind": {
       "@tailwindcss/vite": "^4.3.3",
       "tailwindcss": "^4.3.3",
-      "uniwind": "^1.12.2"
+      "uniwind": "^1.13.0"
     }
   },
   "patchedDependencies": {
