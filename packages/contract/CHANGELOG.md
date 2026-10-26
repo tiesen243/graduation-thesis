@@ -1,3 +1,11 @@
+## @rozumari/contract@0.2.1
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
 ## @rozumari/contract@0.2.0
 
 ### Minor Changes

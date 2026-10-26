@@ -1,3 +1,11 @@
+## @rozumari/api@0.2.2
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
 ## @rozumari/api@0.2.1
 
 ### Patch Chanages

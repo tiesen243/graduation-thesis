@@ -1,3 +1,11 @@
+## @rozumari/mobile@0.2.3
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
 ## @rozumari/mobile@0.2.2
 
 ### Patch Chanages
