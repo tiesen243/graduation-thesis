@@ -34,7 +34,7 @@
     },
     "apps/mobile": {
       "name": "@rozumari/mobile",
-      "version": "0.2.3",
+      "version": "0.2.4",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@expo-google-fonts/geist": "~0.4.2",
@@ -79,7 +79,7 @@
     },
     "apps/web": {
       "name": "@rozumari/web",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "dependencies": {
         "@effect/atom-react": "catalog:effect",
         "@react-router/dev": "^8.5.0",
