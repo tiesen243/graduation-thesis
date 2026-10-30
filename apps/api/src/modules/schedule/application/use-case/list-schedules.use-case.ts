@@ -15,7 +15,7 @@ export class ListSchedulesUseCase extends Context.Service<
   {
     readonly execute: (
       input: ListSchedulesDto.Input & { userId?: UserId; userRole?: UserRole }
-    ) => Effect.Effect<ListSchedulesDto.Output, never>
+    ) => Effect.Effect<ListSchedulesDto.Output>
   }
 >()('schedule/application/ListSchedulesUseCase', {
   make: Effect.gen(function* make() {

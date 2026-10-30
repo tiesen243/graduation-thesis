@@ -21,6 +21,7 @@
   "devDependencies": {
     "oxfmt": "^0.75.0",
     "oxlint": "^1.90.0",
+    "oxlint-tsgolint": "^7.0.2005",
     "tegami": "^1.5.0",
     "turbo": "^2.11.10"
   },

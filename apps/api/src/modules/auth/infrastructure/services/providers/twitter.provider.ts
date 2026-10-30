@@ -20,9 +20,9 @@ export class TwitterProvider extends BaseProvider {
     super('twitter', clientId, clientSecret, redirectUri)
   }
 
-  private authorizationEndpoint = 'https://x.com/i/oauth2/authorize'
-  private tokenEndpoint = 'https://api.x.com/2/oauth2/token'
-  private apiEndpoint = 'https://api.x.com/2/users/me'
+  private readonly authorizationEndpoint = 'https://x.com/i/oauth2/authorize'
+  private readonly tokenEndpoint = 'https://api.x.com/2/oauth2/token'
+  private readonly apiEndpoint = 'https://api.x.com/2/users/me'
 
   public override createAuthorizationUrl = (
     state: string,

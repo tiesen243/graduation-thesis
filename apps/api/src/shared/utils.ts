@@ -1,4 +1,4 @@
-import * as Crypto from 'effect/Crypto'
+import * as Digest from 'effect/crypto/Digest'
 import * as Effect from 'effect/Effect'
 import * as Hex from 'effect/encoding/Hex'
 
@@ -57,12 +57,14 @@ export const getBaseUrl = () => {
 export const getGravatarUrl = Effect.fn(function* getGravatarUrl(
   email: string
 ) {
-  const crypto = yield* Crypto.Crypto
+  const digest = yield* Digest.Digest
 
   const cleanedEmail = email.trim().toLowerCase()
   const encodedEmail = new TextEncoder().encode(cleanedEmail)
 
-  const hash = yield* crypto.digest('SHA-256', encodedEmail).pipe(Effect.orDie)
+  const hash = yield* digest
+    .digest(Digest.sha256, encodedEmail)
+    .pipe(Effect.orDie)
   const hexHash = Hex.encode(hash)
 
   return `https://www.gravatar.com/avatar/${hexHash}?s=512&d=identicon`

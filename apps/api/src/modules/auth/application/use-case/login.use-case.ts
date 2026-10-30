@@ -3,7 +3,8 @@ import type {
   UserAlreadyDeleted,
   UserUnverified,
 } from '@rozumari/contract/user/schemas/user.error'
-import type * as Crypto from 'effect/Crypto'
+import type { Digest } from 'effect/crypto/Digest'
+import type { SecureRandom } from 'effect/crypto/SecureRandom'
 import type * as HttpClient from 'effect/http/HttpClient'
 
 import {
@@ -29,7 +30,7 @@ export class LoginUseCase extends Context.Service<
     ) => Effect.Effect<
       LoginDto.Output,
       InvalidCredentials | UserAlreadyDeleted | UserUnverified,
-      Crypto.Crypto | HttpClient.HttpClient
+      Digest | SecureRandom | HttpClient.HttpClient
     >
   }
 >()('auth/application/LoginUseCase', {

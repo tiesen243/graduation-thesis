@@ -1,4 +1,4 @@
-import type { Crypto } from 'effect/Crypto'
+import type { Digest } from 'effect/crypto/Digest'
 
 import { RefreshTokenDto } from '@rozumari/contract/auth/dto/refresh-token.dto'
 import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
@@ -20,7 +20,7 @@ export class RefreshTokenUseCase extends Context.Service<
     ) => Effect.Effect<
       RefreshTokenDto.Output,
       Unauthorized,
-      Crypto | HttpServerRequest.HttpServerRequest
+      Digest | HttpServerRequest.HttpServerRequest
     >
   }
 >()('auth/application/RefreshTokenUseCase', {

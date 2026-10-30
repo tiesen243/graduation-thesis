@@ -1,6 +1,7 @@
 // oxlint-disable eslint/no-bitwise
 
-import * as Crypto from 'effect/Crypto'
+import * as Digest from 'effect/crypto/Digest'
+import * as SecureRandom from 'effect/crypto/SecureRandom'
 import * as Effect from 'effect/Effect'
 import * as Base64Url from 'effect/encoding/Base64Url'
 
@@ -13,17 +14,17 @@ export function constantTimeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 export const hashSecret = Effect.fn(function* hashSecret(secret: string) {
-  const crypto = yield* Crypto.Crypto
+  const crypto = yield* Digest.Digest
 
   const secretBytes = new TextEncoder().encode(secret)
-  return yield* crypto.digest('SHA-256', secretBytes).pipe(Effect.orDie)
+  return yield* crypto.digest(Digest.sha256, secretBytes).pipe(Effect.orDie)
 })
 
 const ALPHABET = 'abcdefghijklmnpqrstuvwxyz23456789'
 
 export const generateSecureString = Effect.gen(
   function* generateSecureString() {
-    const crypto = yield* Crypto.Crypto
+    const crypto = yield* SecureRandom.SecureRandom
 
     const bytes = yield* crypto.randomBytes(24).pipe(Effect.orDie)
 
@@ -35,7 +36,7 @@ export const generateSecureString = Effect.gen(
 )
 
 export const generateStateOrCode = Effect.gen(function* generateStateOrCode() {
-  const crypto = yield* Crypto.Crypto
+  const crypto = yield* SecureRandom.SecureRandom
 
   const randomValues = yield* crypto.randomBytes(32).pipe(Effect.orDie)
 
@@ -45,11 +46,11 @@ export const generateStateOrCode = Effect.gen(function* generateStateOrCode() {
 export const generateCodeChallenge = Effect.fn(function* generateCodeChallenge(
   codeVerifier: string
 ) {
-  const crypto = yield* Crypto.Crypto
+  const crypto = yield* Digest.Digest
 
   const encodedVerifier = new TextEncoder().encode(codeVerifier)
   const digest = yield* crypto
-    .digest('SHA-256', encodedVerifier)
+    .digest(Digest.sha256, encodedVerifier)
     .pipe(Effect.orDie)
 
   return Base64Url.encode(digest)

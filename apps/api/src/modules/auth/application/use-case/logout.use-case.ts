@@ -1,5 +1,5 @@
 import type { LogoutDto } from '@rozumari/contract/auth/dto/logout.dto'
-import type { Crypto } from 'effect/Crypto'
+import type { Digest } from 'effect/crypto/Digest'
 
 import { Unauthorized } from '@rozumari/contract/auth/schemas/auth.error'
 import { RefreshToken } from '@rozumari/contract/auth/schemas/token.schema'
@@ -21,7 +21,7 @@ export class LogoutUseCase extends Context.Service<
     ) => Effect.Effect<
       LogoutDto.Output,
       Unauthorized,
-      Crypto | HttpServerRequest.HttpServerRequest
+      Digest | HttpServerRequest.HttpServerRequest
     >
   }
 >()('auth/application/LogoutUseCase', {

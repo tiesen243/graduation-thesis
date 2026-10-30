@@ -1,3 +1,4 @@
+import * as BunCrypto from '@effect/platform-bun/BunCrypto'
 import * as DateTime from 'effect/DateTime'
 import * as HttpRouter from 'effect/http/HttpRouter'
 import * as HttpServer from 'effect/http/HttpServer'
@@ -9,7 +10,6 @@ import { FacebookProvider } from '@/modules/auth/infrastructure/services/provide
 import { GithubProvider } from '@/modules/auth/infrastructure/services/providers/github.provider'
 import { GoogleProvider } from '@/modules/auth/infrastructure/services/providers/google.provider'
 import { TwitterProvider } from '@/modules/auth/infrastructure/services/providers/twitter.provider'
-import * as Crypto from '@/shared/crypto'
 import { env } from '@/shared/env'
 
 const routes = AppModule.createHttp({
@@ -46,12 +46,13 @@ const { handler } = HttpRouter.toWebHandler(
     Layer.succeed(References.TracerEnabled, false),
 
     HttpServer.layerServices,
-    Crypto.layer,
+    BunCrypto.layer,
   ]),
   { disableLogger: true }
 )
 
 Bun.serve<{ topic: string }>({
+  // oxlint-disable-next-line typescript/promise-function-async
   fetch: (request, server) => {
     const url = new URL(request.url)
     if (url.pathname === '/ws') {
