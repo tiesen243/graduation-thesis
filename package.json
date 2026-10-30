@@ -19,8 +19,8 @@
     "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
-    "oxfmt": "^0.74.0",
-    "oxlint": "^1.89.0",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
     "tegami": "^1.5.0",
     "turbo": "^2.11.10"
   },
@@ -38,8 +38,8 @@
   "catalogs": {
     "dev": {
       "@types/bun": "^1.4.4",
-      "tsdown": "^0.23.2",
-      "typescript": "^7.1.0-beta"
+      "tsdown": "^0.23.4",
+      "typescript": "^7.0.2"
     },
     "prod": {
       "@tanstack/react-query": "^5.105.0",
@@ -51,22 +51,22 @@
       "react-i18next": "^17.1.9"
     },
     "effect": {
-      "@effect/platform-bun": "^4.0.6",
-      "@effect/sql-pg": "^4.0.6",
-      "@effect/atom-react": "^4.0.6",
-      "effect": "^4.0.6"
+      "@effect/platform-bun": "^4.1.0",
+      "@effect/sql-pg": "^4.1.0",
+      "@effect/atom-react": "^4.1.0",
+      "effect": "^4.1.0"
     },
     "react": {
       "@types/react": "^19.3.0",
       "@types/react-dom": "^19.3.0",
       "react": "19.3.0",
       "react-dom": "19.3.0",
-      "react-native": "0.88.0"
+      "react-native": "0.88.1"
     },
     "tailwind": {
       "@tailwindcss/vite": "^4.3.3",
       "tailwindcss": "^4.3.3",
-      "uniwind": "^1.13.0"
+      "uniwind": "^1.13.1"
     }
   },
   "patchedDependencies": {

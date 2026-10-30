@@ -45,10 +45,6 @@ class Drop:
         self._open_timeout = timeouts.get("open", 5)
         self._close_timeout = timeouts.get("close", 5)
 
-    def _sensor_check_irq_handler(self, _pin: Pin) -> None:
-        """Interrupt service routine triggered when an item is detected falling into the discard bin."""
-        self._sensor_check_detected = True
-
     async def _deduct_medicine_capacity(self, dispensed_items: list[dict]) -> None:
         """Deducts medicine capacity for slots where items were physically dispensed."""
         slots_payload = [
@@ -83,7 +79,8 @@ class Drop:
         # Attach interrupt to monitor discard bin before opening flap
         self._sensor_check_detected = False
         _ = self._sensor_pin.irq(
-            trigger=Pin.IRQ_FALLING, handler=self._sensor_check_irq_handler
+            trigger=Pin.IRQ_FALLING,
+            handler=lambda pin: setattr(self, "_sensor_check_detected", True),
         )
 
         print(t("drop.opening_discard"))
