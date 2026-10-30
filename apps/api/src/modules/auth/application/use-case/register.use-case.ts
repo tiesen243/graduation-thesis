@@ -1,5 +1,5 @@
 import type { RegisterDto } from '@rozumari/contract/auth/dto/register.dto'
-import type * as Crypto from 'effect/Crypto'
+import type { Digest } from 'effect/crypto/Digest'
 import type * as HttpClient from 'effect/http/HttpClient'
 
 import { RegisterEmail } from '@emails/register'
@@ -33,16 +33,12 @@ export class RegisterUseCase extends Context.Service<
     ) => Effect.Effect<
       RegisterDto.Output,
       UserAlreadyExists | Forbidden,
-      Crypto.Crypto | HttpClient.HttpClient
+      Digest | HttpClient.HttpClient
     >
 
     verify: (
       input: RegisterDto.Verify
-    ) => Effect.Effect<
-      HttpServerResponse.HttpServerResponse,
-      Forbidden,
-      Crypto.Crypto
-    >
+    ) => Effect.Effect<HttpServerResponse.HttpServerResponse, Forbidden>
   }
 >()('auth/application/RegisterUseCase', {
   make: Effect.gen(function* make() {

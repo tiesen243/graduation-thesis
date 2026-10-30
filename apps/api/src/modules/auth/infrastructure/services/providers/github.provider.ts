@@ -24,9 +24,10 @@ export class GithubProvider extends BaseProvider {
     super('github', clientId, clientSecret, redirectUri)
   }
 
-  private authorizationEndpoint = 'https://github.com/login/oauth/authorize'
-  private tokenEndpoint = 'https://github.com/login/oauth/access_token'
-  private apiEndpoint = 'https://api.github.com/user'
+  private readonly authorizationEndpoint =
+    'https://github.com/login/oauth/authorize'
+  private readonly tokenEndpoint = 'https://github.com/login/oauth/access_token'
+  private readonly apiEndpoint = 'https://api.github.com/user'
 
   public override createAuthorizationUrl = (
     state: string,

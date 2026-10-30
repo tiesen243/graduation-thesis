@@ -8,12 +8,12 @@ export class Compartment extends Schema.TaggedClass<Compartment>()(
   'device/domain/Compartment',
   CompartmentSchema
 ) {
-  private static SIZE_MAP = {
+  private static readonly SIZE_MAP = {
     sm: 4,
     md: 8,
     lg: 12,
   } as const
-  private static COLS = 2
+  private static readonly COLS = 2
 
   /**
    * Generates an array of compartment instances for a device based on a specified preset size.

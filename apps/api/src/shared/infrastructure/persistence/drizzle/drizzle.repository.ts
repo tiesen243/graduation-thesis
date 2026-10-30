@@ -1,3 +1,5 @@
+// oxlint-disable typescript/no-unsafe-member-access
+
 import type { IndexColumn, AnyPgTable } from 'drizzle-orm/pg-core'
 
 import { and, eq, or } from 'drizzle-orm'
@@ -10,8 +12,10 @@ export interface DrizzleMapper<TEntity, TInput> {
   toRow: (entity: TEntity) => TInput
 }
 
-const toCamel = (str: string) =>
-  str.replaceAll(/_(?<key>[a-z])/gu, (_, letter) => letter.toUpperCase())
+const toCamel = (str: string): string =>
+  str.replaceAll(/_(?<key>[a-z])/gu, (_, letter: string) =>
+    letter.toUpperCase()
+  )
 
 export const makeDrizzleRepository = Effect.fn(function* makeDrizzleRepository<
   TEntity,

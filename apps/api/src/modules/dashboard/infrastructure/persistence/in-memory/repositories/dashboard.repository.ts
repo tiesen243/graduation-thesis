@@ -28,10 +28,8 @@ export const InMemoryDashboardRepository = Layer.effect(
             if (device.status === 'linked') linkedDevices += 1
 
           const schedules = { completed: 0, pending: 0, failed: 0 }
-          for (const schedule of schedulesMap.values()) {
-            if (schedule.status in schedules)
-              schedules[schedule.status as keyof typeof schedules] += 1
-          }
+          for (const schedule of schedulesMap.values())
+            if (schedule.status in schedules) schedules[schedule.status] += 1
 
           const recentAlerts = [...notificationsMap.values()]
             .toSorted((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
@@ -81,14 +79,14 @@ export const InMemoryDashboardRepository = Layer.effect(
             // @ts-expect-error - schedule.date can be a Date or a string, we need to handle both cases
             schedule.date instanceof Date
               ? schedule.date.toISOString().split('T')[0]
-              : String(schedule.date).split('T')[0]
+              : schedule.date.split('T')[0]
 
           if (
             schedule.userId === userId &&
             scheduleDateStr === todayStr &&
             schedule.status in todaySchedules
           )
-            todaySchedules[schedule.status as keyof typeof todaySchedules] += 1
+            todaySchedules[schedule.status] += 1
         }
 
         const recentNotifications = [...notificationsMap.values()]

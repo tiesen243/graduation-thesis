@@ -86,9 +86,7 @@ export namespace IBaseRepository {
           OR?:
             | Criteria<TEntity, Levels[Depth]>
             | Criteria<TEntity, Levels[Depth]>[]
-          NOT?:
-            | Criteria<TEntity, Levels[Depth]>[]
-            | Criteria<TEntity, Levels[Depth]>[]
+          NOT?: Criteria<TEntity, Levels[Depth]>[]
         })
 
   export type OrderBy<TEntity> = Omit<

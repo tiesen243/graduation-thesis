@@ -12,11 +12,12 @@ import type {
   UserId,
   UserRole,
 } from '@rozumari/contract/user/schemas/user.schema'
+import type { Digest } from 'effect/crypto/Digest'
 import type { HttpClient } from 'effect/http/HttpClient'
 
 import { WelcomeEmail } from '@emails/welcome'
 import * as Context from 'effect/Context'
-import * as Crypto from 'effect/Crypto'
+import * as SecureRandom from 'effect/crypto/SecureRandom'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -36,7 +37,7 @@ export class OAuthUseCase extends Context.Service<
       provider: AccountProvider,
       state: string,
       code: string
-    ) => Effect.Effect<URL, ProviderError, OAuthService | Crypto.Crypto>
+    ) => Effect.Effect<URL, ProviderError, OAuthService | Digest>
 
     callback: (
       provider: AccountProvider,
@@ -45,12 +46,12 @@ export class OAuthUseCase extends Context.Service<
     ) => Effect.Effect<
       Token,
       ProviderError | UserAlreadyDeleted | UserUnverified,
-      OAuthService | Crypto.Crypto | HttpClient
+      OAuthService | Digest | SecureRandom.SecureRandom | HttpClient
     >
 
     exchange: (
       token: Token['refreshToken']
-    ) => Effect.Effect<Token, Unauthorized, Crypto.Crypto>
+    ) => Effect.Effect<Token, Unauthorized, Digest>
   }
 >()('auth/application/OAuthUseCase', {
   make: Effect.gen(function* make() {
@@ -67,7 +68,7 @@ export class OAuthUseCase extends Context.Service<
       }),
 
       callback: Effect.fn(function* callback(_provider, code, storedCode) {
-        const crypto = yield* Crypto.Crypto
+        const crypto = yield* SecureRandom.SecureRandom
 
         const provider = yield* OAuthService.forProvider(_provider)
 
@@ -119,7 +120,7 @@ export class OAuthUseCase extends Context.Service<
                     .pipe(Effect.orDie)
               } else {
                 ;[_username = ''] = (yield* crypto
-                  .randomUUIDv7()
+                  .uuidV7()
                   .pipe(Effect.orDie)).split('-')
 
                 const newUser = yield* userService.create({

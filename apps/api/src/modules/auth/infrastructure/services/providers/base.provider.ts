@@ -1,4 +1,4 @@
-import type { Crypto } from 'effect/Crypto'
+import type { Digest } from 'effect/crypto/Digest'
 import type { HttpClientError } from 'effect/http/HttpClientError'
 
 import * as Effect from 'effect/Effect'
@@ -22,7 +22,7 @@ export abstract class BaseProvider {
   public abstract createAuthorizationUrl(
     state: string,
     codeVerifier: string
-  ): Effect.Effect<URL, never, Crypto>
+  ): Effect.Effect<URL, never, Digest>
 
   public abstract fetchUserData(
     code: string,

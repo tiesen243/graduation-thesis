@@ -1,3 +1,5 @@
+// oxlint-disable typescript/no-unsafe-member-access typescript/no-unsafe-call typescript/no-unsafe-argument
+
 import * as Effect from 'effect/Effect'
 import * as Base64Url from 'effect/encoding/Base64Url'
 import * as Layer from 'effect/Layer'
@@ -23,17 +25,20 @@ const signData = Effect.fn(function* signData(
     HS512: { name: 'SHA-512' },
   } as const
 
-  const key = yield* Effect.promise(() =>
-    crypto.subtle.importKey(
-      'raw',
-      textEncoder.encode(env.AUTH_SECRET),
-      { name: 'HMAC', hash: algMap[alg] },
-      false,
-      ['sign']
-    )
+  const key = yield* Effect.promise(
+    async () =>
+      await crypto.subtle.importKey(
+        'raw',
+        textEncoder.encode(env.AUTH_SECRET),
+        { name: 'HMAC', hash: algMap[alg] },
+        false,
+        ['sign']
+      )
   )
 
-  return yield* Effect.promise(() => crypto.subtle.sign('HMAC', key, data))
+  return yield* Effect.promise(
+    async () => await crypto.subtle.sign('HMAC', key, data)
+  )
 })
 
 export const jwtLayer = (alg: Jwt.Algorithm = 'HS256') =>
@@ -42,9 +47,8 @@ export const jwtLayer = (alg: Jwt.Algorithm = 'HS256') =>
       const header = { alg, typ: 'JWT', ...options.headers }
 
       const payload = { ...payloadClaims }
-      if (!payload.exp)
-        payload.exp =
-          Math.floor(Date.now() / 1000) + (options.expiresIn ?? 3600)
+      payload.exp ??=
+        Math.floor(Date.now() / 1000) + (options.expiresIn ?? 3600)
       if (options.audiences) payload.aud = options.audiences
       if (options.subject) payload.sub = options.subject
       if (options.audiences) payload.aud = options.audiences
