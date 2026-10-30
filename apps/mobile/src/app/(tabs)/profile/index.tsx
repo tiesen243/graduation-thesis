@@ -14,7 +14,6 @@ import {
 import { Icon } from '@rozumari/ui/components/icons'
 import { Separator } from '@rozumari/ui/components/separator'
 import { Typography } from '@rozumari/ui/components/typography'
-import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQueryClient } from '@tanstack/react-query'
 import { Fragment } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -28,7 +27,7 @@ import { useSession } from '@/hooks/use-session'
 
 export default function TabsProfileIndexScreen() {
   const { status, user, refetch, isRefetching, logout } = useSession()
-  const { t, i18n } = useTranslation(['profile'])
+  const { t } = useTranslation(['profile'])
 
   const queryClient = useQueryClient()
   const { api } = useRuntime()
@@ -38,13 +37,6 @@ export default function TabsProfileIndexScreen() {
   const informations = [
     { icon: 'User', title: 'User ID', description: user.id },
     { icon: 'Mail', title: 'Email', description: user.email },
-    {
-      icon: 'Calendar1',
-      title: t('index.joined'),
-      description: formatDate(user.createdAt, {
-        locale: i18n.resolvedLanguage,
-      }),
-    },
   ] as const
 
   const handleRefresh = () =>
