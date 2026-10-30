@@ -1,3 +1,9 @@
+## @rozumari/firmware@0.2.1
+
+### Patch Changes
+
+- Bump deps
+
 ## @rozumari/firmware@0.2.0
 
 ### Minor Changes

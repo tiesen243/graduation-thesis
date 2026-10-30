@@ -1,3 +1,9 @@
+## @rozumari/mobile@0.2.5
+
+### Patch Changes
+
+- Bump deps
+
 ## @rozumari/mobile@0.2.4
 
 ### Patch Changes
