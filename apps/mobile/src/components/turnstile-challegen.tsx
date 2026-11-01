@@ -64,12 +64,15 @@ export function TurnstileChallenge({
 
   const handleMessage = (event: WebViewMessageEvent) => {
     try {
-      const data = JSON.parse(event.nativeEvent.data)
-      if (data.type === 'SUCCESS') setToken(data.token)
+      const data = JSON.parse(event.nativeEvent.data) as {
+        type: 'SUCCESS' | 'ERROR' | 'EXPIRE'
+        token?: string
+      }
+      if (data.type === 'SUCCESS') setToken(data.token ?? '')
       else if (data.type === 'ERROR') setToken('')
       else if (data.type === 'EXPIRE') setToken('')
-    } catch (error) {
-      console.error('Error parsing Turnstile message:', error)
+    } catch {
+      // noop
     }
   }
 
