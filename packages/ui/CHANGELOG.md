@@ -1,3 +1,10 @@
+## @rozumari/ui@0.2.4
+
+### Patch Changes
+
+- Fix Ble
+- Optimize Ble handler
+
 ## @rozumari/ui@0.2.3
 
 ### Patch Changes
