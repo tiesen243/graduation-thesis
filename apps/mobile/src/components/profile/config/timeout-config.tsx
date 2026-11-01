@@ -1,3 +1,5 @@
+// oxlint-disable react/set-state-in-effect typescript/no-confusing-void-expression
+
 import { Button } from '@rozumari/ui/components/button'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
@@ -14,8 +16,7 @@ import {
 
 export function TimeoutConfig() {
   const { t } = useTranslation('profile')
-  const { deviceInfo, isConnected, sendBleCommand, registerByteHandler } =
-    useBLE()
+  const { deviceInfo, status, lastResponse, sendCommand } = useBLE()
 
   const [dropTimeout, setDropTimeout] = React.useState<number>(
     deviceInfo?.timeouts.drop ?? 0
@@ -27,35 +28,43 @@ export function TimeoutConfig() {
     deviceInfo?.timeouts.close ?? 0
   )
 
-  React.useEffect(
-    () =>
-      registerByteHandler((action, status) => {
-        if (action === ACTION_CODES.SET_DROP_TIMEOUT_RES) {
-          if (status === STATUS_CODES.SUCCESS)
-            toast.success(t('config.timeout.drop.messages.success'))
-          else toast.error(t('config.timeout.drop.messages.failed'))
-        }
-        if (action === ACTION_CODES.SET_OPEN_TIMEOUT_RES) {
-          if (status === STATUS_CODES.SUCCESS)
-            toast.success(t('config.timeout.open.messages.success'))
-          else toast.error(t('config.timeout.open.messages.failed'))
-        }
-        if (action === ACTION_CODES.SET_CLOSE_TIMEOUT_RES) {
-          if (status === STATUS_CODES.SUCCESS)
-            toast.success(t('config.timeout.close.messages.success'))
-          else toast.error(t('config.timeout.close.messages.failed'))
-        }
-      }),
-    [registerByteHandler, t]
-  )
+  React.useEffect(() => {
+    if (!deviceInfo) return
+    setDropTimeout(deviceInfo.timeouts.drop)
+    setOpenTimeout(deviceInfo.timeouts.open)
+    setCloseTimeout(deviceInfo.timeouts.close)
+  }, [deviceInfo])
+
+  React.useEffect(() => {
+    if (!lastResponse) return
+    const { action, status: responseStatus } = lastResponse
+    const messages = {
+      [ACTION_CODES.SET_DROP_TIMEOUT_RES]: {
+        success: t('config.timeout.drop.messages.success'),
+        failed: t('config.timeout.drop.messages.failed'),
+      },
+      [ACTION_CODES.SET_OPEN_TIMEOUT_RES]: {
+        success: t('config.timeout.open.messages.success'),
+        failed: t('config.timeout.open.messages.failed'),
+      },
+      [ACTION_CODES.SET_CLOSE_TIMEOUT_RES]: {
+        success: t('config.timeout.close.messages.success'),
+        failed: t('config.timeout.close.messages.failed'),
+      },
+    } as const
+    const message = messages[action as keyof typeof messages]
+    if (!message) return
+    if (responseStatus === STATUS_CODES.SUCCESS) toast.success(message.success)
+    else toast.error(message.failed)
+  }, [lastResponse, t])
 
   const handleSaveTimeouts = async () => {
-    await sendBleCommand('set_drop_timeout', { timeout: dropTimeout })
-    await sendBleCommand('set_open_timeout', { timeout: openTimeout })
-    await sendBleCommand('set_close_timeout', { timeout: closeTimeout })
+    await sendCommand('set_drop_timeout', { timeout: dropTimeout })
+    await sendCommand('set_open_timeout', { timeout: openTimeout })
+    await sendCommand('set_close_timeout', { timeout: closeTimeout })
   }
 
-  if (!isConnected) return null
+  if (status !== 'connected') return null
 
   return (
     <View className='gap-3'>

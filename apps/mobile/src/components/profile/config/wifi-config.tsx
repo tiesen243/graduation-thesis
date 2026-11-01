@@ -1,3 +1,5 @@
+// oxlint-disable react/set-state-in-effect
+
 import { Button } from '@rozumari/ui/components/button'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
@@ -14,47 +16,40 @@ import {
 
 export function WifiConfig() {
   const { t } = useTranslation('profile')
-  const { isConnected, sendBleCommand, registerByteHandler } = useBLE()
+  const { status, lastResponse, sendCommand } = useBLE()
   const [ssid, setSsid] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isCheckingWifi, setIsCheckingWifi] = useState<boolean>(false)
   const [isWifiValid, setIsWifiValid] = useState<boolean>(false)
 
-  useEffect(
-    () =>
-      registerByteHandler((action, status) => {
-        if (action === ACTION_CODES.CHECK_WIFI_RES) {
-          setIsCheckingWifi(false)
-          if (status === STATUS_CODES.SUCCESS) {
-            setIsWifiValid(true)
-            toast.success('Wi-Fi credentials are valid!')
-          } else {
-            setIsWifiValid(false)
-            toast.error('Wi-Fi credentials are invalid!')
-          }
-        } else if (action === ACTION_CODES.SET_WIFI_RES) {
-          if (status === STATUS_CODES.SUCCESS) {
-            toast.success('Saved Wi-Fi to device!')
-          } else {
-            toast.error('Failed to save Wi-Fi!')
-          }
-        }
-      }),
-    [registerByteHandler]
-  )
+  useEffect(() => {
+    if (!lastResponse) return
 
-  if (!isConnected) return null
+    if (lastResponse.action === ACTION_CODES.CHECK_WIFI_RES) {
+      setIsCheckingWifi(false)
+      const valid = lastResponse.status === STATUS_CODES.SUCCESS
+      setIsWifiValid(valid)
+      if (valid) toast.success('Wi-Fi credentials are valid!')
+      else toast.error('Wi-Fi credentials are invalid!')
+    } else if (lastResponse.action === ACTION_CODES.SET_WIFI_RES) {
+      if (lastResponse.status === STATUS_CODES.SUCCESS)
+        toast.success('Saved Wi-Fi to device!')
+      else toast.error('Failed to save Wi-Fi!')
+    }
+  }, [lastResponse])
+
+  if (status !== 'connected') return null
 
   const handleCheckWifi = async () => {
     if (!ssid || !password) return
     setIsCheckingWifi(true)
     setIsWifiValid(false)
-    await sendBleCommand('check_wifi', { ssid, password })
+    await sendCommand('check_wifi', { ssid, password })
   }
 
   const handleSaveWifi = async () => {
     if (!ssid || !password) return
-    await sendBleCommand('set_wifi', { ssid, password })
+    await sendCommand('set_wifi', { ssid, password })
   }
 
   const getCheckWifiLabel = () => {

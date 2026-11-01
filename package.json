@@ -48,14 +48,14 @@
       "react-native-safe-area-context": "~5.10.1"
     },
     "i18n": {
-      "i18next": "^26.5.11",
+      "i18next": "^26.6.0",
       "react-i18next": "^17.1.9"
     },
     "effect": {
-      "@effect/platform-bun": "^4.1.0",
-      "@effect/sql-pg": "^4.1.0",
-      "@effect/atom-react": "^4.1.0",
-      "effect": "^4.1.0"
+      "@effect/platform-bun": "^4.1.1",
+      "@effect/sql-pg": "^4.1.1",
+      "@effect/atom-react": "^4.1.1",
+      "effect": "^4.1.1"
     },
     "react": {
       "@types/react": "^19.3.0",

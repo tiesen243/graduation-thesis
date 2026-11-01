@@ -15,28 +15,32 @@ import { useBLE } from '@/components/profile/config/_context'
 export function BLEConnection() {
   const { t } = useTranslation(['common', 'pill-box', 'profile'])
   const {
-    discoveredDevices,
+    status,
+    devices,
     selectedDevice,
     setSelectedDevice,
-    isConnected,
-    isConnecting,
-    handleConnect,
-    handleDisconnect,
-    sendBleCommand,
+    startScan,
+    connect,
+    disconnect,
+    sendCommand,
   } = useBLE()
+
+  const isConnected = status === 'connected'
+  const isConnecting = status === 'connecting'
+  const isScanning = status === 'scanning'
 
   return (
     <View className='gap-3'>
       <Select
         value={selectedDevice}
         onValueChange={setSelectedDevice}
-        items={discoveredDevices.map((device) => ({
+        items={devices.map((device) => ({
           value: device.id,
-          label: device.name || t('pill-box:details.device.unnamed_device'),
+          label: device.name ?? t('pill-box:details.device.unnamed_device'),
         }))}
       >
         <SelectTrigger
-          disabled={isConnected || isConnecting}
+          disabled={isConnected || isConnecting || devices.length === 0}
           className={isConnected || isConnecting ? 'opacity-50' : ''}
         >
           <SelectValue
@@ -44,7 +48,7 @@ export function BLEConnection() {
           />
         </SelectTrigger>
         <SelectContent title={t('profile:config.device.selector.title')}>
-          {discoveredDevices.map((device) => (
+          {devices.map((device) => (
             <SelectItem key={device.id} value={device.id}>
               <Typography>
                 {device.name ?? t('pill-box:details.device.unnamed_device')} (
@@ -60,28 +64,38 @@ export function BLEConnection() {
           <Button
             className='flex-1'
             variant='outline'
-            onPress={() => sendBleCommand('ping')}
+            onPress={() => sendCommand('ping')}
           >
             Ping
           </Button>
 
-          <Button
-            className='flex-1'
-            variant='destructive'
-            onPress={handleDisconnect}
-          >
+          <Button className='flex-1' variant='destructive' onPress={disconnect}>
             {t('profile:config.actions.disconnect')}
           </Button>
         </View>
       ) : (
-        <Button
-          onPress={handleConnect}
-          disabled={!selectedDevice || isConnecting}
-        >
-          {isConnecting
-            ? t('profile:config.actions.connecting')
-            : t('profile:config.actions.connect')}
-        </Button>
+        <View className='flex-row gap-2'>
+          <Button
+            className='flex-1'
+            variant='outline'
+            onPress={startScan}
+            disabled={isScanning}
+          >
+            {isScanning
+              ? t('profile:config.actions.scanning')
+              : t('profile:config.actions.scan')}
+          </Button>
+
+          <Button
+            className='flex-1'
+            onPress={connect}
+            disabled={!selectedDevice || isConnecting || isScanning}
+          >
+            {isConnecting
+              ? t('profile:config.actions.connecting')
+              : t('profile:config.actions.connect')}
+          </Button>
+        </View>
       )}
     </View>
   )

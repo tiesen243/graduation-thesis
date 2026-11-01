@@ -24,22 +24,17 @@ const LANGUAGES = [
 
 export function LanguageConfig() {
   const { t } = useTranslation('profile')
-  const { deviceInfo, isConnected, sendBleCommand, registerByteHandler } =
-    useBLE()
+  const { deviceInfo, status, lastResponse, sendCommand } = useBLE()
 
-  useEffect(
-    () =>
-      registerByteHandler((action, status) => {
-        if (action === ACTION_CODES.SET_LANGUAGE_RES) {
-          if (status === STATUS_CODES.SUCCESS)
-            toast.success(t('config.language.messages.success'))
-          else toast.error(t('config.language.messages.failed'))
-        }
-      }),
-    [registerByteHandler, t]
-  )
+  useEffect(() => {
+    if (!lastResponse || lastResponse.action !== ACTION_CODES.SET_LANGUAGE_RES)
+      return
+    if (lastResponse.status === STATUS_CODES.SUCCESS)
+      toast.success(t('config.language.messages.success'))
+    else toast.error(t('config.language.messages.failed'))
+  }, [lastResponse, t])
 
-  if (!isConnected) return null
+  if (status !== 'connected') return null
 
   return (
     <View className='gap-3'>
@@ -49,9 +44,6 @@ export function LanguageConfig() {
 
       <Select
         defaultValue={deviceInfo?.language}
-        onValueChange={(value) =>
-          sendBleCommand('set_language', { language: value })
-        }
         items={LANGUAGES.map((item) => ({
           value: item.value,
           label: t(item.key),
@@ -64,7 +56,13 @@ export function LanguageConfig() {
         </SelectTrigger>
         <SelectContent title={t('config.language.selector.title')}>
           {LANGUAGES.map((item) => (
-            <SelectItem key={item.key} value={item.value}>
+            <SelectItem
+              key={item.key}
+              value={item.value}
+              onPress={() => {
+                void sendCommand('set_language', { language: item.value })
+              }}
+            >
               {t(item.key)}
             </SelectItem>
           ))}
