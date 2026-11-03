@@ -129,6 +129,31 @@ class Display:
             duration_ms,
         )
 
+    def show_stream_status(
+        self,
+        status: str,
+        attempt: int = 0,
+        error: str = "",
+    ) -> None:
+        """Show persistent SSE connection status until it is cleared."""
+        self._dialog = {
+            "type": "stream",
+            "status": status,
+            "attempt": attempt,
+            "error": error,
+        }
+        self._dialog_until = 0
+        self._main_drawn = False
+        self._last_render = ""
+
+    def clear_stream_status(self) -> None:
+        """Clear the persistent SSE connection status dialog."""
+        if self._dialog is not None and self._dialog.get("type") == "stream":
+            self._dialog = None
+            self._dialog_until = 0
+            self._main_drawn = False
+            self._last_render = ""
+
     def is_link_qr_active(self) -> bool:
         """Return True while the temporary link QR screen is active."""
         return (
@@ -464,6 +489,10 @@ class Display:
             self._draw_schedule_dialog(remaining)
             return
 
+        if dialog_type == "stream":
+            self._draw_stream_dialog()
+            return
+
         box_x1, box_y1 = 20, 34
         box_x2, box_y2 = (
             width - 20,
@@ -528,6 +557,48 @@ class Display:
             countdown,
             self._lcd.WHITE,
         )
+
+    def _draw_stream_dialog(self) -> None:
+        if self._dialog is None:
+            return
+
+        width, height = self._lcd.size()
+        status = self._dialog.get("status", "reconnecting")
+        attempt = int(self._dialog.get("attempt", 0))
+
+        box_x1, box_y1 = 10, 24
+        box_x2, box_y2 = width - 10, height - 24
+
+        if status == "disconnected":
+            title = "Connection Lost"
+            body = "Reconnecting..."
+            accent = self._lcd.RED
+        else:
+            title = "Reconnecting"
+            body = "Please wait..."
+            accent = self._lcd.YELLOW
+
+        self._lcd.fill(self._lcd.BLACK)
+        self._lcd.rect(
+            (box_x1, box_y1),
+            (box_x2 - box_x1 + 1, box_y2 - box_y1 + 1),
+            accent,
+        )
+
+        title_x = max(box_x1 + 4, (width - len(title) * 6) // 2)
+        self._lcd.text((title_x, box_y1 + 12), title, accent)
+
+        body_x = max(box_x1 + 4, (width - len(body) * 6) // 2)
+        self._lcd.text((body_x, box_y1 + 32), body, self._lcd.WHITE)
+
+        attempt_text = f"Attempt: {attempt}"
+        attempt_x = max(box_x1 + 4, (width - len(attempt_text) * 6) // 2)
+        self._lcd.text((attempt_x, box_y1 + 51), attempt_text, self._lcd.GRAY)
+
+        error = str(self._dialog.get("error", ""))[:24]
+        if error:
+            error_x = max(box_x1 + 4, (width - len(error) * 6) // 2)
+            self._lcd.text((error_x, box_y2 - 14), error, self._lcd.GRAY)
 
     def _draw_schedule_dialog(
         self,
@@ -798,7 +869,16 @@ class Display:
 
                         self._update_main()
 
-                    # Dialog active.
+                    # Persistent stream connection dialog.
+                    elif (
+                        self._dialog is not None
+                        and self._dialog.get("type") == "stream"
+                    ):
+                        if self._last_render != "stream_dialog":
+                            self._draw_dialog()
+                            self._last_render = "stream_dialog"
+
+                    # Timed dialog active.
                     elif (
                         self._dialog is not None
                         and time.ticks_diff(

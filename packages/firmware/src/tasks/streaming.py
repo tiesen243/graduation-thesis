@@ -22,6 +22,7 @@ class Streaming:
     _sync_schedule: SyncSchedule
 
     _current_task: asyncio.Task | None
+    _connected: bool
 
     def __init__(self) -> None:
         self._api = Api.create()
@@ -30,6 +31,7 @@ class Streaming:
         self._sync_schedule = SyncSchedule.create()
 
         self._current_task = None
+        self._connected = False
 
         pins = Pins.create()
         self._led = pins.led
@@ -114,19 +116,29 @@ class Streaming:
             self._display.show_schedule_info(schedule)
             await self._drop.execute(items=items)
 
+    async def _on_stream_connected(self) -> None:
+        """Handle a successful SSE connection."""
+        self._connected = True
+        self._display.clear_stream_status()
+        print(t("stream.connected"))
+
     async def start(self) -> None:
         """Start continuous SSE streaming listener loop with backoff logic."""
         if self._current_task is not None:
             return
+
         self._current_task = asyncio.current_task()
 
         print(t("stream.started"))
 
         retry_delay = 2
         max_delay = 30
+        attempt = 0
 
         try:
             while True:
+                self._connected = False
+
                 try:
                     await asyncio.sleep(0.020)
 
@@ -134,15 +146,43 @@ class Streaming:
                         endpoint="/api/devices/subscribe",
                         callback=self._handle_payload,
                         timeout=35,
+                        on_connect=self._on_stream_connected,
                     )
+
+                except asyncio.CancelledError:
+                    raise
+
+                except Exception as error:
+                    print(
+                        t(
+                            "stream.error_retry",
+                            error=error,
+                            seconds=retry_delay,
+                        )
+                    )
+
+                # If the connection was established and then dropped,
+                # restart with the shortest retry delay.
+                if self._connected:
+                    attempt = 1
                     retry_delay = 2
-                except Exception as e:
-                    print(t("stream.error_retry", error=e, seconds=retry_delay))
+                    self._display.show_stream_status(
+                        status="disconnected",
+                        attempt=attempt,
+                    )
+                else:
+                    attempt += 1
+                    self._display.show_stream_status(
+                        status="reconnecting",
+                        attempt=attempt,
+                    )
 
                 await asyncio.sleep(retry_delay)
                 retry_delay = min(retry_delay * 2, max_delay)
 
         finally:
+            self._connected = False
+            self._display.clear_stream_status()
             self._current_task = None
 
     async def stop(self) -> None:

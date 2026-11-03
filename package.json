@@ -43,19 +43,19 @@
       "typescript": "^7.0.2"
     },
     "prod": {
-      "@tanstack/react-query": "^5.105.0",
+      "@tanstack/react-query": "^5.105.3",
       "@tiesen/effect-tanstack-query": "^0.0.26",
       "react-native-safe-area-context": "~5.10.1"
     },
     "i18n": {
-      "i18next": "^26.6.0",
-      "react-i18next": "^17.1.9"
+      "i18next": "^26.7.1",
+      "react-i18next": "^17.1.11"
     },
     "effect": {
-      "@effect/platform-bun": "^4.1.1",
-      "@effect/sql-pg": "^4.1.1",
-      "@effect/atom-react": "^4.1.1",
-      "effect": "^4.1.1"
+      "@effect/platform-bun": "^4.1.2",
+      "@effect/sql-pg": "^4.1.2",
+      "@effect/atom-react": "^4.1.2",
+      "effect": "^4.1.2"
     },
     "react": {
       "@types/react": "^19.3.0",
@@ -65,8 +65,8 @@
       "react-native": "0.88.1"
     },
     "tailwind": {
-      "@tailwindcss/vite": "^4.3.3",
-      "tailwindcss": "^4.3.3",
+      "@tailwindcss/vite": "^4.3.4",
+      "tailwindcss": "^4.3.4",
       "uniwind": "^1.13.1"
     }
   },
