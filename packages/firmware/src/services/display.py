@@ -30,6 +30,8 @@ class Display:
     _last_dialog_remaining: int
     _link_qr_until: int
 
+    _current_task: asyncio.Task | None
+
     def __init__(self) -> None:
         self._lcd = ST7735.create()
         self._lcd.init()
@@ -51,6 +53,8 @@ class Display:
         self._last_dialog_remaining = 0
 
         self._link_qr_until = 0
+
+        self._current_task = None
 
         self.show_boot_logo()
 
@@ -760,82 +764,107 @@ class Display:
         self._last_schedule_snapshot = ()
 
     async def start(self) -> None:
+        if self._current_task is not None:
+            return
+        self._current_task = asyncio.current_task()
+
         print(t("display.started"))
 
-        while True:
-            try:
-                now_ms = time.ticks_ms()
+        try:
+            while True:
+                try:
+                    now_ms = time.ticks_ms()
 
-                # Boot screen / QR screen.
-                if (
-                    time.ticks_diff(
-                        self._boot_until,
-                        now_ms,
-                    )
-                    > 0
-                    or time.ticks_diff(
-                        self._link_qr_until,
-                        now_ms,
-                    )
-                    > 0
-                ):
-                    pass
+                    # Boot screen / QR screen.
+                    if (
+                        time.ticks_diff(
+                            self._boot_until,
+                            now_ms,
+                        )
+                        > 0
+                        or time.ticks_diff(
+                            self._link_qr_until,
+                            now_ms,
+                        )
+                        > 0
+                    ):
+                        pass
 
-                # QR expired -> return normal UI.
-                elif self._link_qr_until:
-                    self._link_qr_until = 0
-                    self._dialog = None
-                    self._main_drawn = False
-
-                    self._update_main()
-
-                # Dialog active.
-                elif (
-                    self._dialog is not None
-                    and time.ticks_diff(
-                        self._dialog_until,
-                        now_ms,
-                    )
-                    > 0
-                ):
-                    remaining_ms = time.ticks_diff(
-                        self._dialog_until,
-                        now_ms,
-                    )
-
-                    remaining = max(
-                        1,
-                        (remaining_ms + 999) // 1000,
-                    )
-
-                    if self._last_render != "dialog":
-                        self._draw_dialog(remaining)
-
-                        self._last_dialog_remaining = remaining
-                        self._last_render = "dialog"
-
-                    elif remaining != self._last_dialog_remaining:
-                        self._update_dialog(remaining)
-
-                        self._last_dialog_remaining = remaining
-
-                # Normal UI.
-                else:
-                    if self._dialog is not None:
+                    # QR expired -> return normal UI.
+                    elif self._link_qr_until:
+                        self._link_qr_until = 0
                         self._dialog = None
                         self._main_drawn = False
 
-                    self._update_main()
+                        self._update_main()
 
-            except Exception as error:
-                print(
-                    t(
-                        "display.error",
-                        error=error,
+                    # Dialog active.
+                    elif (
+                        self._dialog is not None
+                        and time.ticks_diff(
+                            self._dialog_until,
+                            now_ms,
+                        )
+                        > 0
+                    ):
+                        remaining_ms = time.ticks_diff(
+                            self._dialog_until,
+                            now_ms,
+                        )
+
+                        remaining = max(
+                            1,
+                            (remaining_ms + 999) // 1000,
+                        )
+
+                        if self._last_render != "dialog":
+                            self._draw_dialog(remaining)
+
+                            self._last_dialog_remaining = remaining
+                            self._last_render = "dialog"
+
+                        elif remaining != self._last_dialog_remaining:
+                            self._update_dialog(remaining)
+
+                            self._last_dialog_remaining = remaining
+
+                    # Normal UI.
+                    else:
+                        if self._dialog is not None:
+                            self._dialog = None
+                            self._main_drawn = False
+
+                        self._update_main()
+
+                except Exception as error:
+                    print(
+                        t(
+                            "display.error",
+                            error=error,
+                        )
                     )
-                )
 
-            await asyncio.sleep(0.100)
+                await asyncio.sleep(0.100)
+
+        finally:
+            self._current_task = None
+
+    async def stop(self) -> None:
+        """Stop the display task if it is running."""
+
+        task = self._current_task
+        if task is None:
+            return
+
+        self._current_task = None
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
+        self._lcd.fill(self._lcd.BLACK)
+        self._lcd.deinit()
 
     @classmethod
     def create(cls) -> Display:

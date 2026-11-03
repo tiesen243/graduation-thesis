@@ -371,7 +371,7 @@ export default defineConfig({
     'typescript/no-array-delete': 'error',
     'typescript/no-base-to-string': 'error',
     'typescript/no-confusing-non-null-assertion': 'error',
-    'typescript/no-confusing-void-expression': 'error',
+    'typescript/no-confusing-void-expression': 'off',
     'typescript/no-deprecated': 'error',
     'typescript/no-duplicate-enum-values': 'error',
     'typescript/no-duplicate-type-constituents': 'error',

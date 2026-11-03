@@ -38,7 +38,9 @@ class Pins:
         for pin in pins.get("stepper-drawer", []):
             self.stepper_drawer.append(Pin(int(pin), Pin.OUT))
 
-        self.buzzer = Pin(int(pins.get("buzzer")), Pin.OUT)
+        self.buzzer = PWM(Pin(int(pins.get("buzzer"))))
+        self.buzzer.freq(2000)
+        self.buzzer.duty_u16(0)
 
         self.tft_spi = SPI(
             1,

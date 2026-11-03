@@ -14,12 +14,16 @@ class SyncSchedule:
     _schedule: Schedule
     _sync_time: str
 
+    _current_task: asyncio.Task | None
+
     def __init__(self) -> None:
         config = Config.create()
         self._sync_time = config.get("sync_time", "04:00:00")
 
         self._api = Api.create()
         self._schedule = Schedule.create()
+
+        self._current_task = None
 
     async def execute(self) -> bool:
         """
@@ -53,28 +57,57 @@ class SyncSchedule:
 
         :return: None
         """
+        if self._current_task is not None:
+            return
+        self._current_task = asyncio.current_task()
+
         print(t("sync_schedule.started", sync_time=self._sync_time))
         last_synced_date = None
 
         sync_hour, sync_minute = map(int, self._sync_time.split(":"))
 
-        while True:
-            try:
-                now = get_current_time()
-                today_str = f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}"
-                current_hour = now[3]
+        try:
+            while True:
+                try:
+                    now = get_current_time()
+                    today_str = f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}"
+                    current_hour = now[3]
 
-                if current_hour >= sync_hour and last_synced_date != today_str:
-                    print(
-                        t("sync_schedule.past_sync", hour=sync_hour, minute=sync_minute)
-                    )
-                    await self.execute()
-                    last_synced_date = today_str
+                    if current_hour >= sync_hour and last_synced_date != today_str:
+                        print(
+                            t(
+                                "sync_schedule.past_sync",
+                                hour=sync_hour,
+                                minute=sync_minute,
+                            )
+                        )
+                        await self.execute()
+                        last_synced_date = today_str
 
-            except Exception as e:
-                print(t("sync_schedule.error", error=e))
+                except Exception as e:
+                    print(t("sync_schedule.error", error=e))
 
-            await asyncio.sleep(1800)
+                await asyncio.sleep(1800)
+        finally:
+            self._current_task = None
+
+    async def stop(self) -> None:
+        """
+        Stop the continuous sync schedule monitoring.
+
+        :return: None
+        """
+
+        task = self._current_task
+        if task is None:
+            return
+
+        self._current_task = None
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
 
     @classmethod
     def create(cls):
