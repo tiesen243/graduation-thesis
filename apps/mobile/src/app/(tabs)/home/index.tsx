@@ -17,7 +17,7 @@ import { useRuntime } from '@/hooks/use-runtime'
 
 const LEVEL_MAPPING = {
   error: {
-    icon: 'CircleAlert',
+    icon: 'CircleExclamationPoint',
     color: 'text-destructive',
   },
   info: {
@@ -25,7 +25,7 @@ const LEVEL_MAPPING = {
     color: 'text-info',
   },
   warning: {
-    icon: 'TriangleAlert',
+    icon: 'TriangleExclamationPoint',
     color: 'text-warning',
   },
 } as const
