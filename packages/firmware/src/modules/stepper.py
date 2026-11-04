@@ -24,7 +24,7 @@ class StepperMotor:
         for p in self._pins:
             p.value(0)
 
-    async def move(self, deg: float, delay_ms: int = 3) -> None:
+    async def move(self, deg: float, delay_ms: int = 5) -> None:
         if deg == 0:
             return
 
@@ -54,10 +54,10 @@ class Stepper:
         self._discard.off()
         self._drawer.off()
 
-    async def move_discard(self, deg: float, delay_ms: int = 3) -> None:
+    async def move_discard(self, deg: float, delay_ms: int = 5) -> None:
         await self._discard.move(deg, delay_ms)
 
-    async def move_drawer(self, deg: float, delay_ms: int = 3) -> None:
+    async def move_drawer(self, deg: float, delay_ms: int = 5) -> None:
         await self._drawer.move(deg, delay_ms)
 
     @classmethod

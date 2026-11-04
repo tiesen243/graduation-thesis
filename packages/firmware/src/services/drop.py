@@ -83,14 +83,14 @@ class Drop:
     async def _handle_post_dispense_sequence(self) -> bool:
         """Executes drawer opening/closing sequence and monitors the discard bin for uncollected items."""
         print(t("drop.opening_drawer"))
-        await self._stepper.move_drawer(deg=90)
+        await self._stepper.move_drawer(deg=60)
         self._buzzer_enable = True
 
         print(t("drop.waiting_retrieve", seconds=self._open_timeout))
         await asyncio.sleep(self._open_timeout)
 
         print(t("drop.closing_drawer"))
-        await self._stepper.move_drawer(deg=-90)
+        await self._stepper.move_drawer(deg=-60)
         self._buzzer_enable = False
 
         # Attach interrupt to monitor discard bin before opening flap
@@ -101,13 +101,13 @@ class Drop:
         )
 
         print(t("drop.opening_discard"))
-        await self._stepper.move_discard(deg=90)
+        await self._stepper.move_discard(deg=25)
 
         print(t("drop.waiting_discard", seconds=self._close_timeout))
         await asyncio.sleep(self._close_timeout)
 
         print(t("drop.closing_discard"))
-        await self._stepper.move_discard(deg=-90)
+        await self._stepper.move_discard(deg=-25)
 
         # Disable sensor interrupt after check window completes
         _ = self._sensor_pin.irq(handler=None)
