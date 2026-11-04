@@ -1,3 +1,14 @@
+## @rozumari/firmware@0.2.2
+
+### Patch Changes
+
+- Bump deps
+- Update stepper rotate angel
+
+### Patch Changes
+
+- Update firmware
+
 ## @rozumari/firmware@0.2.1
 
 ### Patch Changes

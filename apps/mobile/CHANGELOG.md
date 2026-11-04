@@ -1,3 +1,10 @@
+## @rozumari/mobile@0.2.7
+
+### Patch Changes
+
+- Bump deps
+- Update stepper rotate angel
+
 ## @rozumari/mobile@0.2.6
 
 ### Patch Changes
