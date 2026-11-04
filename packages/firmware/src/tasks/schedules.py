@@ -15,60 +15,92 @@ class Schedules:
     _display: Display
     _schedule: Schedule
 
+    _current_task: asyncio.Task | None
+
     def __init__(self) -> None:
         self._drop = Drop.create()
         self._display = Display.create()
         self._schedule = Schedule.create()
 
+        self._current_task = None
+
     async def start(self, schedules_data: list | None = None) -> None:
         """Run the schedule polling loop and execute due schedules."""
+        if self._current_task is not None:
+            return
+        self._current_task = asyncio.current_task()
+
         print(t("schedule.started"))
         last_time = ""
 
-        while True:
-            try:
-                now = get_current_time()
-                cur_date = f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}"
-                cur_time = f"{now[3]:02d}:{now[4]:02d}"
+        try:
+            while True:
+                try:
+                    now = get_current_time()
+                    cur_date = f"{now[0]:04d}-{now[1]:02d}-{now[2]:02d}"
+                    cur_time = f"{now[3]:02d}:{now[4]:02d}"
 
-                if cur_time != last_time:
-                    last_time = cur_time
-                    schedules = (
-                        schedules_data
-                        if schedules_data is not None
-                        else self._schedule.get_schedules()
-                    )
+                    if cur_time != last_time:
+                        last_time = cur_time
+                        schedules = (
+                            schedules_data
+                            if schedules_data is not None
+                            else self._schedule.get_schedules()
+                        )
 
-                    sec = now[5] if len(now) > 5 else 0
-                    print(
-                        t("schedule.checking", date=cur_date, time=cur_time, second=sec)
-                    )
-                    print_table(schedules, keys=["id", "date", "time", "status"])
+                        sec = now[5] if len(now) > 5 else 0
+                        print(
+                            t(
+                                "schedule.checking",
+                                date=cur_date,
+                                time=cur_time,
+                                second=sec,
+                            )
+                        )
+                        print_table(schedules, keys=["id", "date", "time", "status"])
 
-                    for schedule_item in schedules:
-                        if schedule_item.get("status", "pending") != "pending":
-                            continue
+                        for schedule_item in schedules:
+                            if schedule_item.get("status", "pending") != "pending":
+                                continue
 
-                        schedule_time = (schedule_item.get("time") or "")[:5]
-                        schedule_date = schedule_item.get("date")
+                            schedule_time = (schedule_item.get("time") or "")[:5]
+                            schedule_date = schedule_item.get("date")
 
-                        if schedule_time != cur_time or (
-                            schedule_date and schedule_date != cur_date
-                        ):
-                            continue
+                            if schedule_time != cur_time or (
+                                schedule_date and schedule_date != cur_date
+                            ):
+                                continue
 
-                        schedule_id = schedule_item.get("id")
-                        items = schedule_item.get("items", [])
-                        print(t("schedule.executing", schedule_id=schedule_id))
-                        self._display.show_schedule_info(schedule_item)
-                        await self._drop.execute(items=items, schedule_id=schedule_id)
+                            schedule_id = schedule_item.get("id")
+                            items = schedule_item.get("items", [])
+                            print(t("schedule.executing", schedule_id=schedule_id))
+                            self._display.show_schedule_info(schedule_item)
+                            await self._drop.execute(
+                                items=items, schedule_id=schedule_id
+                            )
 
-            except Exception as error:
-                print(t("schedule.error", error=error))
+                except Exception as error:
+                    print(t("schedule.error", error=error))
 
-            now = time.time()
-            sleep_time = 60.0 - (now % 60)
-            await asyncio.sleep(sleep_time)
+                now = time.time()
+                sleep_time = 60.0 - (now % 60)
+                await asyncio.sleep(sleep_time)
+
+        finally:
+            self._current_task = None
+
+    async def stop(self) -> None:
+        """Stop the schedule polling loop."""
+        task = self._current_task
+        if task is None:
+            return
+
+        self._current_task = None
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
 
     @classmethod
     def create(cls) -> Schedules:

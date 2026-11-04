@@ -14,7 +14,7 @@ export function TurnstileChallenge({
   const { theme } = useUniwind()
 
   const htmlContent = /* HTML */ `
-    <!DOCTYPE html>
+    <!doctype html>
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -1,7 +1,7 @@
 const LOGO = 'https://rozumari.vercel.app/web-app-manifest-512x512.png'
 
 export const EmailLayout = (preview: string, children: string) => /* HTML */ `
-  <!DOCTYPE html>
+  <!doctype html>
   <html lang="en">
     <head>
       <meta charset="UTF-8" />

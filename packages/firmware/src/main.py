@@ -6,14 +6,13 @@ from machine import Pin
 from lib.config import Config
 from lib.i18n import t
 from lib.pins import Pins
-from lib.schedule import Schedule
 from modules.ble import BLE
 from modules.wifi import WiFi
 from services.display import Display
+from services.sync_info import SyncInfo
 from tasks.link import Link
 from tasks.schedules import Schedules
 from tasks.streaming import Streaming
-from tasks.sync_info import SyncInfo
 from tasks.sync_schedule import SyncSchedule
 
 CONFIG_MODE_VALUE = 0
@@ -21,15 +20,14 @@ CONFIG_MODE_VALUE = 0
 
 class Bootstrap:
     _ble: BLE | None = None
-    _wifi: WiFi | None = None
-    _schedule: Schedule | None = None
+    _wifi: WiFi
 
-    _streaming: Streaming | None = None
-    _schedules: Schedules | None = None
-    _sync_schedule: SyncSchedule | None = None
-    _sync_info: SyncInfo | None = None
-    _display: Display | None = None
-    _link: Link | None = None
+    _streaming: Streaming
+    _schedules: Schedules
+    _sync_schedule: SyncSchedule
+    _sync_info: SyncInfo
+    _display: Display
+    _link: Link
 
     _switch: Pin
 
@@ -37,10 +35,19 @@ class Bootstrap:
         pins = Pins.create()
         self._switch = pins.switch
 
+        self._wifi = WiFi.create()
+        self._streaming = Streaming.create()
+        self._schedules = Schedules.create()
+        self._sync_schedule = SyncSchedule.create()
+        self._sync_info = SyncInfo.create()
+        self._display = Display.create()
+        self._link = Link.create()
+
+        self._display.show_boot_logo()
+
     async def _config_mode(self, stop_event: asyncio.Event) -> None:
         """Run Config Mode (BLE) until the mode switch is released."""
         self._ble = BLE.create()
-        self._display = Display.create()
         self._display.show_config_mode()
 
         if not self._ble.is_ready():
@@ -74,17 +81,6 @@ class Bootstrap:
     async def _normal_mode(self, stop_event: asyncio.Event) -> None:
         """Run Normal Mode (WiFi, Sync, Tasks) and terminate cleanly when stop_event is set."""
         _ = Config.create(force=True)
-
-        self._wifi = WiFi.create()
-        self._schedule = Schedule.create()
-        self._streaming = Streaming.create()
-        self._schedules = Schedules.create()
-        self._sync_schedule = SyncSchedule.create()
-        self._sync_info = SyncInfo.create()
-        self._display = Display.create()
-        self._link = Link.create()
-
-        self._display.show_boot_logo()
 
         retry_count, max_retries, is_connected = 0, 3, False
         while retry_count < max_retries and not stop_event.is_set():
@@ -178,6 +174,12 @@ class Bootstrap:
             self._ble.stop()
         if self._wifi:
             self._wifi.disconnect()
+
+        await self._display.stop()
+        await self._link.stop()
+        await self._sync_schedule.stop()
+        await self._streaming.stop()
+        await self._schedules.stop()
 
 
 if __name__ == "__main__":

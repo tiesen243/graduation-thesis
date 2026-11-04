@@ -18,6 +18,8 @@ class Link:
     _wifi: WiFi
     _display: Display
 
+    _current_task: asyncio.Task | None
+
     def __init__(self) -> None:
         pins = Pins.create()
 
@@ -25,6 +27,8 @@ class Link:
         self._api = Api.create()
         self._wifi = WiFi.create()
         self._display = Display.create()
+
+        self._current_task = None
 
     async def _generate(self) -> None:
         if self._display.is_link_qr_active():
@@ -51,37 +55,58 @@ class Link:
         Trigger link generation after
         press -> release.
         """
+        if self._current_task is not None:
+            return
+        self._current_task = asyncio.current_task()
 
         last_state = self._button.value()
         pressed = last_state == 0
 
         print(t("link.started"))
 
-        while True:
-            state = self._button.value()
+        try:
+            while True:
+                state = self._button.value()
 
-            if state != last_state:
-                # Debounce.
-                await asyncio.sleep(0.03)
+                if state != last_state:
+                    # Debounce.
+                    await asyncio.sleep(0.03)
 
-                stable_state = self._button.value()
+                    stable_state = self._button.value()
 
-                if stable_state != state:
-                    await asyncio.sleep(0)
-                    continue
+                    if stable_state != state:
+                        await asyncio.sleep(0)
+                        continue
 
-                last_state = stable_state
+                    last_state = stable_state
 
-                # Button pressed.
-                if stable_state == 0:
-                    pressed = True
+                    # Button pressed.
+                    if stable_state == 0:
+                        pressed = True
 
-                # Button released after press.
-                elif pressed:
-                    pressed = False
-                    await self._generate()
+                    # Button released after press.
+                    elif pressed:
+                        pressed = False
+                        await self._generate()
 
-            await asyncio.sleep(0.05)
+                await asyncio.sleep(0.05)
+
+        finally:
+            self._current_task = None
+
+    async def stop(self) -> None:
+        """Stop the link task if it is running."""
+
+        task = self._current_task
+        if task is None:
+            return
+
+        self._current_task = None
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
 
     @classmethod
     def create(cls) -> Link:

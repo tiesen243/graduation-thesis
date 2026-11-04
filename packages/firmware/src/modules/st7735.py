@@ -705,6 +705,16 @@ class ST7735:
 
         self.cs.value(1)
 
+    def deinit(self) -> None:
+        """
+        Deinitialize the display and release SPI resources.
+
+        :return: None
+        """
+        self._cmd(ST7735.SLPIN)
+        time.sleep(0.1)
+        self.cs.value(1)
+
     @classmethod
     def create(cls) -> ST7735:
         if cls.__instance is None:
