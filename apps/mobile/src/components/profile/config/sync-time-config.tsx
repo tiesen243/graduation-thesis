@@ -1,3 +1,5 @@
+// oxlint-disable react/set-state-in-effect
+
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker'
 import { Button } from '@rozumari/ui/components/button'
 import { toast } from '@rozumari/ui/components/toast'
@@ -17,29 +19,25 @@ const [{ timeZone }] = getCalendars()
 
 export function SyncTimeConfig() {
   const { t } = useTranslation('profile')
-  const { deviceInfo, isConnected, sendBleCommand, registerByteHandler } =
-    useBLE()
+  const { deviceInfo, status, lastResponse, sendCommand } = useBLE()
 
-  const [localTime, setLocalTime] = useState({
-    hours: deviceInfo?.syncTime.hours ?? 0,
-    minutes: deviceInfo?.syncTime.minutes ?? 0,
-  })
+  const [localTime, setLocalTime] = useState({ hours: 0, minutes: 0 })
 
-  useEffect(
-    () =>
-      registerByteHandler((action, status) => {
-        if (action === ACTION_CODES.SET_SYNC_TIME_RES) {
-          if (status === STATUS_CODES.SUCCESS)
-            toast.success(t('config.sync.messages.success'))
-          else toast.error(t('config.sync.messages.failed'))
-        }
-      }),
-    [registerByteHandler, t]
-  )
+  useEffect(() => {
+    if (deviceInfo) setLocalTime(deviceInfo.syncTime)
+  }, [deviceInfo])
 
-  if (!isConnected) return null
+  useEffect(() => {
+    if (!lastResponse || lastResponse.action !== ACTION_CODES.SET_SYNC_TIME_RES)
+      return
+    if (lastResponse.status === STATUS_CODES.SUCCESS)
+      toast.success(t('config.sync.messages.success'))
+    else toast.error(t('config.sync.messages.failed'))
+  }, [lastResponse, t])
 
-  const showTimePicker = () =>
+  if (status !== 'connected') return null
+
+  const showTimePicker = () => {
     DateTimePickerAndroid.open({
       value: new Date(0, 0, 0, localTime.hours, localTime.minutes),
       onValueChange: (_event, date) => {
@@ -59,12 +57,13 @@ export function SyncTimeConfig() {
           if (part.type === 'minute') minutes = Math.trunc(Number(part.value))
         }
 
-        sendBleCommand('set_sync_time', { hours, minutes })
+        void sendCommand('set_sync_time', { hours, minutes })
         setLocalTime({ hours, minutes })
       },
       mode: 'time',
       is24Hour: true,
     })
+  }
 
   return (
     <View className='gap-3'>

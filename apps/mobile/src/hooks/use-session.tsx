@@ -1,4 +1,4 @@
-import type { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
+import type { WhoAmIDto } from '@rozumari/contract/auth/dto/whoami.dto'
 
 import { toast } from '@rozumari/ui/components/toast'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -9,8 +9,8 @@ import { useRuntime } from '@/hooks/use-runtime'
 import { clearTokens } from '@/lib/secure-store'
 
 type SessionContextValue = (
-  | { status: 'loading'; user: UserSchema | null }
-  | { status: 'authenticated'; user: UserSchema }
+  | { status: 'loading'; user: WhoAmIDto.Output | null }
+  | { status: 'authenticated'; user: WhoAmIDto.Output }
   | { status: 'unauthenticated'; user: null }
 ) & { logout: () => void; refetch: () => Promise<void>; isRefetching: boolean }
 

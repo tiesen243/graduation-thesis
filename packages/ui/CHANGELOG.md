@@ -1,3 +1,44 @@
+## @rozumari/ui@0.2.5
+
+### Patch Changes
+
+- Bump deps
+- Update stepper rotate angel
+
+## @rozumari/ui@0.2.4
+
+### Patch Changes
+
+- Fix Ble
+- Optimize Ble handler
+
+## @rozumari/ui@0.2.3
+
+### Patch Changes
+
+- Bump deps
+
+## @rozumari/ui@0.2.2
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
+## @rozumari/ui@0.2.1
+
+### Patch Chanages
+
+- Bump deps
+
+## @rozumari/ui@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/ui@0.1.5
 
 ### Patch Changes

@@ -34,10 +34,6 @@ class Servo:
         config = Config.create()
         self._timeout = config.get("timeouts", {}).get("drop", 5)
 
-    def _irq_handler(self, _pin: Pin) -> None:
-        """Interrupt service routine triggered when an item drop is detected by the sensor."""
-        self._drop_detected = True
-
     async def control(self, slot: str, pulse_us: int, speed: int = 3) -> bool:
         """Control servo position with real-time drop detection check inside the step loop."""
         servo = self._servo_map.get(slot)
@@ -90,7 +86,7 @@ class Servo:
                 self._drop_detected = False
                 _ = self._sensor_pin.irq(
                     trigger=Pin.IRQ_FALLING,
-                    handler=self._irq_handler,
+                    handler=lambda pin: setattr(self, "_drop_detected", True),
                 )
 
                 start_time = time.time()

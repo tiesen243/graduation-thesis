@@ -1,3 +1,4 @@
+// oxlint-disable typescript/no-misused-promises
 import {
   Select,
   SelectContent,
@@ -48,40 +49,37 @@ export const UTC_OPTIONS = [
 
 export function UtcConfig() {
   const { t } = useTranslation('profile')
-  const { deviceInfo, isConnected, sendBleCommand, registerByteHandler } =
-    useBLE()
+  const { deviceInfo, status, lastResponse, sendCommand } = useBLE()
 
-  React.useEffect(
-    () =>
-      registerByteHandler((action, status) => {
-        if (action === ACTION_CODES.SET_UTC_RES) {
-          if (status === STATUS_CODES.SUCCESS)
-            toast.success(t('config.utc.messages.success'))
-          else toast.error(t('config.utc.messages.failed'))
-        }
-      }),
-    [registerByteHandler, t]
-  )
+  React.useEffect(() => {
+    if (!lastResponse || lastResponse.action !== ACTION_CODES.SET_UTC_RES)
+      return
+    if (lastResponse.status === STATUS_CODES.SUCCESS)
+      toast.success(t('config.utc.messages.success'))
+    else toast.error(t('config.utc.messages.failed'))
+  }, [lastResponse, t])
 
-  if (!isConnected) return null
+  if (status !== 'connected') return null
 
   return (
     <View className='gap-3'>
       <Typography className='font-semibold'>{t('config.utc.title')}</Typography>
 
-      <Select
-        defaultValue={String(deviceInfo?.utc)}
-        onValueChange={(value) =>
-          sendBleCommand('set_utc', { utc: Math.trunc(Number(value)) })
-        }
-        items={[...UTC_OPTIONS]}
-      >
+      <Select defaultValue={String(deviceInfo?.utc)} items={[...UTC_OPTIONS]}>
         <SelectTrigger>
           <SelectValue placeholder={t('config.utc.selector.placeholder')} />
         </SelectTrigger>
         <SelectContent title={t('config.utc.selector.title')}>
           {UTC_OPTIONS.map((item) => (
-            <SelectItem key={item.value} value={String(item.value)}>
+            <SelectItem
+              key={item.value}
+              value={item.value}
+              onPress={() => {
+                void sendCommand('set_utc', {
+                  utc: Math.trunc(Number(item.value)),
+                })
+              }}
+            >
               {item.label}
             </SelectItem>
           ))}

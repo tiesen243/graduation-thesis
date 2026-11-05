@@ -3,6 +3,8 @@ import { ArrowRightIcon, DownloadIcon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { Link } from 'react-router'
 
+import { env } from '@/lib/env'
+
 export function CtaSection() {
   return (
     <section id='cta' className='container pb-20 lg:pb-28'>
@@ -16,8 +18,8 @@ export function CtaSection() {
         </Typography>
 
         <Typography className='text-muted-foreground'>
-          Experience how Rozumari can transform your workflow. Start your
-          journey with us now.
+          Experience how {env.VITE_APP_NAME} can transform your workflow. Start
+          your journey with us now.
         </Typography>
 
         <div className='flex justify-center gap-4'>

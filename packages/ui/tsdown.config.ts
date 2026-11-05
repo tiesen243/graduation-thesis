@@ -7,6 +7,7 @@ export default defineConfig({
     'src/hooks/*.ts',
     'src/native/*.tsx',
   ],
+  deps: { neverBundle: ['uniwind'] },
   copy: ['src/tailwind.css'],
   outputOptions: {
     preserveModules: true,

@@ -1,3 +1,57 @@
+## @rozumari/mobile@0.2.7
+
+### Patch Changes
+
+- Bump deps
+- Update stepper rotate angel
+
+## @rozumari/mobile@0.2.6
+
+### Patch Changes
+
+- Fix Ble
+- Optimize Ble handler
+
+## @rozumari/mobile@0.2.5
+
+### Patch Changes
+
+- Bump deps
+
+## @rozumari/mobile@0.2.4
+
+### Patch Changes
+
+- Build error
+- Change password form padding
+
+## @rozumari/mobile@0.2.3
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
+## @rozumari/mobile@0.2.2
+
+### Patch Chanages
+
+- Bump deps
+
+## @rozumari/mobile@0.2.1
+
+### Bug Fixes
+
+- Fix missing environment variables in production APK builds by mapping `EXPO_PUBLIC_*` static keys in `runtimeEnv`.
+
+## @rozumari/mobile@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/mobile@0.1.29
 
 ### Patch Changes

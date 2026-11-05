@@ -8,12 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@rozumari/ui/components/card'
-import {
-  AsteriskIcon,
-  CalendarIcon,
-  ClockIcon,
-  CpuIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import { useQuery } from '@tanstack/react-query'
@@ -63,7 +58,7 @@ export default function TabsSchedulesDetailsScreen() {
         </CardHeader>
         <CardContent className='gap-1'>
           <View className='flex-row items-center gap-2'>
-            <CalendarIcon className='size-4 text-muted-foreground' />
+            <Icon name='Calendar' className='text-muted-foreground' />
 
             <Typography>
               {formatDate(date, {
@@ -74,11 +69,11 @@ export default function TabsSchedulesDetailsScreen() {
             </Typography>
           </View>
           <View className='flex-row items-center gap-2'>
-            <ClockIcon className='size-4 text-muted-foreground' />
+            <Icon name='Clock' className='text-muted-foreground' />
             <Typography>{time}</Typography>
           </View>
           <View className='flex-row items-center gap-2'>
-            <CpuIcon className='size-4 text-muted-foreground' />
+            <Icon name='Cpu' className='text-muted-foreground' />
             <Link href={`/(tabs)/pill-boxes/${device.id}`} asChild>
               <Typography>{device.name ?? device.id}</Typography>
             </Link>
@@ -105,7 +100,7 @@ export default function TabsSchedulesDetailsScreen() {
                 <CardTitle>
                   {item.medicine}
                   {item.isRequired && (
-                    <AsteriskIcon className='size-3 text-destructive' />
+                    <Icon name='Asterisk' className='size-3 text-destructive' />
                   )}
                 </CardTitle>
                 <CardDescription>

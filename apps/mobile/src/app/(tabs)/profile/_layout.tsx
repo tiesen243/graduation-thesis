@@ -1,5 +1,5 @@
 import { Button } from '@rozumari/ui/components/button'
-import { SettingsIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Stack, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 
@@ -23,7 +23,7 @@ export default function TabsProfileLayout() {
               size='icon'
               onPress={() => router.push('/(tabs)/profile/settings')}
             >
-              <SettingsIcon className='size-5 text-foreground' />
+              <Icon name='Settings' className='size-5' />
             </Button>
           ),
         }}

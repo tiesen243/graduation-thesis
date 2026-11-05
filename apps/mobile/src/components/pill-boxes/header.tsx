@@ -7,13 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@rozumari/ui/components/card'
-import {
-  CalendarIcon,
-  CpuIcon,
-  InfoIcon,
-  MapPinIcon,
-  PackageIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { formatDate } from '@rozumari/ui/lib/utils'
 import React from 'react'
@@ -32,7 +26,7 @@ export function PillBoxDetailsHeader({
   return (
     <Card>
       <CardHeader className='flex-row items-center gap-2 border-b border-border pb-4'>
-        <CpuIcon size={20} className='text-primary' />
+        <Icon name='Cpu' className='size-5 text-primary' />
         <CardTitle className='flex-1'>
           {device?.name || t('pill-box:details.device.unnamed_device')}
         </CardTitle>
@@ -42,7 +36,7 @@ export function PillBoxDetailsHeader({
 
       <CardContent className='gap-3'>
         <View className='flex-row items-center justify-between gap-1'>
-          <InfoIcon className='size-3 text-muted-foreground' />
+          <Icon name='Info' className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
             {t('status')}
           </Typography>
@@ -52,7 +46,7 @@ export function PillBoxDetailsHeader({
         </View>
 
         <View className='flex-row items-center justify-between gap-1'>
-          <PackageIcon className='size-3 text-muted-foreground' />
+          <Icon name='Package' className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
             {t('pill-box:details.device.model')}
           </Typography>
@@ -60,7 +54,7 @@ export function PillBoxDetailsHeader({
         </View>
 
         <View className='flex-row items-center justify-between gap-1'>
-          <MapPinIcon className='size-3 text-muted-foreground' />
+          <Icon name='MapPin' className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
             {t('pill-box:details.device.position')}
           </Typography>
@@ -70,7 +64,7 @@ export function PillBoxDetailsHeader({
         </View>
 
         <View className='flex-row items-center justify-between gap-1'>
-          <CalendarIcon className='size-3 text-muted-foreground' />
+          <Icon name='Calendar' className='size-3 text-muted-foreground' />
           <Typography className='flex-1 text-sm text-muted-foreground'>
             {t('pill-box:details.device.activated_at')}
           </Typography>

@@ -124,7 +124,7 @@ function matchOperator(itemValue: unknown, expr: unknown): boolean {
   }
 
   if ('like' in opObj && typeof opObj.like === 'string') {
-    const strVal = String(itemValue ?? '')
+    const strVal = JSON.stringify(itemValue ?? '')
     const pattern = opObj.like
       .replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&')
       .replaceAll('%', '.*')

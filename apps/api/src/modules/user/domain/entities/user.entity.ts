@@ -1,4 +1,7 @@
-import { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
+import {
+  UserAlreadyDeleted,
+  UserUnverified,
+} from '@rozumari/contract/user/schemas/user.error'
 import { UserSchema } from '@rozumari/contract/user/schemas/user.schema'
 import { createId } from '@rozumari/lib/create-id'
 import * as Effect from 'effect/Effect'
@@ -10,8 +13,17 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
     Schema.withConstructorDefault(Effect.sync(createId))
   ),
 }) {
-  public get isActive(): boolean {
-    return this.deletedAt === null
+  public isActive(): Effect.Effect<
+    boolean,
+    UserAlreadyDeleted | UserUnverified
+  > {
+    if (this.deletedAt !== null)
+      return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
+
+    if (this.emailVerifiedAt === null)
+      return Effect.fail(new UserUnverified({ error: { id: this.id } }))
+
+    return Effect.succeed(true)
   }
 
   public delete(now = new Date()): Effect.Effect<User, UserAlreadyDeleted> {
@@ -23,15 +35,16 @@ export class User extends Schema.TaggedClass<User>()('user/domain/User', {
   }
 
   public update(
-    data: Partial<Pick<User, 'username' | 'role' | 'image'>>
+    data: Partial<Pick<User, 'username' | 'emailVerifiedAt' | 'role' | 'image'>>
   ): Effect.Effect<User, UserAlreadyDeleted> {
-    if (!this.isActive)
+    if (this.deletedAt !== null)
       return Effect.fail(new UserAlreadyDeleted({ error: { id: this.id } }))
 
     return Effect.succeed(
       new User({
         ...structuredClone(this),
         username: data.username ?? this.username,
+        emailVerifiedAt: data.emailVerifiedAt ?? this.emailVerifiedAt,
         role: data.role ?? this.role,
         image: data.image ?? this.image,
         updatedAt: new Date(),

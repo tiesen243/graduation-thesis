@@ -1,4 +1,4 @@
-import * as Crypto from 'effect/Crypto'
+import * as SecureRandom from 'effect/crypto/SecureRandom'
 import * as Effect from 'effect/Effect'
 import * as Hex from 'effect/encoding/Hex'
 import * as Layer from 'effect/Layer'
@@ -16,7 +16,7 @@ export const ScryptPasswordService = ({
   Layer.effect(
     PasswordService,
     Effect.gen(function* make() {
-      const crypto = yield* Crypto.Crypto
+      const crypto = yield* SecureRandom.SecureRandom
 
       const textEncoder = new TextEncoder()
 
@@ -32,12 +32,12 @@ export const ScryptPasswordService = ({
         password: Uint8Array,
         salt: Uint8Array
       ): Effect.Effect<Buffer> =>
-        Effect.callback((resume) =>
+        Effect.callback((resume) => {
           scrypt(password, salt, dkLen, options, (e, derivedKey) => {
             if (e) resume(Effect.die(e))
             else resume(Effect.succeed(derivedKey))
           })
-        )
+        })
 
       const generateKey = Effect.fn(function* generateKey(
         data: string,

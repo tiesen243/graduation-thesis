@@ -95,7 +95,13 @@ class Api:
     async def post(self, endpoint: str, data: dict | None = None) -> dict:
         return await self._request("POST", endpoint, body_data=data)
 
-    async def stream(self, endpoint: str, callback, timeout: int = 30) -> None:  # pyright: ignore[reportMissingParameterType]
+    async def stream(
+        self,
+        endpoint: str,
+        callback,
+        timeout: int = 30,
+        on_connect=None,
+    ) -> None:  # pyright: ignore[reportMissingParameterType]
         url = f"{self._base_url}{endpoint}"
         proto, host, port, path = self._parse_url(url)
         ssl = {"ssl": True} if proto == "https" else {}
@@ -120,25 +126,37 @@ class Api:
             await writer.drain()
 
             first_line = await asyncio.wait_for(reader.readline(), timeout=timeout)
-            if not first_line or b"200" not in first_line:
-                return
+            if not first_line:
+                raise ConnectionError(
+                    "SSE server closed connection before HTTP response"
+                )
+
+            if b"200" not in first_line:
+                status = first_line.decode("utf-8", "replace").strip()
+                raise ConnectionError(f"SSE HTTP error: {status}")
 
             while True:
                 h_line = await reader.readline()
                 if h_line in (b"\r\n", b"\n", b""):
                     break
 
+            if on_connect is not None:
+                result = on_connect()
+                if hasattr(result, "send"):
+                    await result
+
             while True:
                 try:
                     line_bytes = await asyncio.wait_for(
                         reader.readline(), timeout=timeout
                     )
-                except Exception:
+
+                except Exception as error:
                     print(t("stream.idle_timeout"))
-                    break
+                    raise ConnectionError(f"SSE idle timeout ({timeout}s)") from error
 
                 if not line_bytes:
-                    break
+                    raise ConnectionError("SSE connection closed by server")
 
                 line = line_bytes.decode("utf-8").strip()
                 if line:
@@ -148,8 +166,11 @@ class Api:
 
                 await asyncio.sleep(0)
 
+        except asyncio.CancelledError:
+            raise
         except Exception as e:
             print(t("stream.request_error", url=url, error=e))
+            raise
 
         finally:
             if writer:

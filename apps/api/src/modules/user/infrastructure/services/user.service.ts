@@ -29,22 +29,17 @@ export const UserServiceLayer = Layer.effect(
       }),
 
       create: Effect.fn(function* create(data) {
-        const { username, email } = data
-
-        const user = User.make({ username, email, image: null })
+        const user = User.make(data)
         yield* userRepository.save(user)
 
         return user
       }),
 
       update: Effect.fn(function* update(id, data) {
-        if (!data.image) return
-
         const [user] = yield* userRepository.findMany({
           where: { id: { eq: id } },
           limit: 1,
         })
-
         if (!user)
           return yield* Effect.fail(new UserNotFound({ error: { id } }))
 

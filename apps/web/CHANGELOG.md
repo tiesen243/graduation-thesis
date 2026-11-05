@@ -1,3 +1,31 @@
+## @rozumari/web@0.2.4
+
+### Patch Changes
+
+- Bump deps
+
+## @rozumari/web@0.2.3
+
+### Patch Changes
+
+- Build error
+- Change password form padding
+
+## @rozumari/web@0.2.2
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
+## @rozumari/web@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/web@0.1.8
 
 ### Patch Changes

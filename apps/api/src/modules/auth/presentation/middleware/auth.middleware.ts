@@ -12,7 +12,7 @@ export const authMiddleware = Layer.effect(
     const authService = yield* AuthService
 
     const middlewareHandler = Effect.fn(function* handler(
-      credential: Redacted.Redacted<string>
+      credential: Redacted.Redacted
     ) {
       const token = Redacted.value(credential)
 

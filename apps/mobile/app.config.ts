@@ -2,7 +2,7 @@ import type { ConfigContext, ExpoConfig } from 'expo/config'
 
 import * as pkgJson from './package.json' with { type: 'json' }
 
-const appName = pkgJson.name.match(/^@(?<name>[^/]+)\//u)?.at(1) ?? 'mobile'
+const appName = /^@(?<name>[^/]+)\//u.exec(pkgJson.name)?.at(1) ?? 'mobile'
 
 // oxlint-disable-next-line unicorn/no-anonymous-default-export
 export default ({ config }: ConfigContext): ExpoConfig => ({
@@ -62,9 +62,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
 
   ios: {
     bundleIdentifier: `com.${appName}.mobile`,
-    associatedDomains: [
-      `applinks:${process.env.EXPO_PUBLIC_WEB_URL?.replaceAll(/^https?:\/\//gu, '')}`,
-    ],
+    associatedDomains: [`applinks:${process.env.EXPO_PUBLIC_WEB_URL}`],
     supportsTablet: true,
     icon: {
       light: './assets/icon-light.png',
@@ -79,7 +77,15 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-localization',
     'expo-router',
     'expo-web-browser',
-    'react-native-ble-manager',
+    [
+      'react-native-ble-plx',
+      {
+        isBackgroundEnabled: true,
+        modes: ['peripheral', 'central'],
+        bluetoothAlwaysPermission:
+          'Allow $(PRODUCT_NAME) to connect to bluetooth devices',
+      },
+    ],
     [
       'expo-build-properties',
       {

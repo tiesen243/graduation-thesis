@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/api",
-  "version": "0.1.7",
+  "version": "0.2.2",
   "private": false,
   "bin": "./dist/cli.mjs",
   "type": "module",
@@ -11,22 +11,21 @@
     "dev": "bun run --hot src/bootstrap.ts",
     "drizzle": "bun --bun drizzle-kit --config ./src/shared/infrastructure/persistence/drizzle/drizzle.config.ts",
     "start": "bun run dist/bootstrap.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "dependencies": {
-    "@effect/ai-openrouter": "catalog:effect",
     "@effect/platform-bun": "catalog:effect",
     "@effect/sql-pg": "catalog:effect",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
-    "drizzle-orm": "^1.0.0-rc.5-5935859",
+    "drizzle-orm": "^1.0.0-rc.5",
     "effect": "catalog:effect"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",
     "@rozumari/tsconfig": "workspace:*",
     "@types/bun": "catalog:dev",
-    "drizzle-kit": "^1.0.0-rc.5-5935859",
+    "drizzle-kit": "^1.0.0-rc.5",
     "tsdown": "catalog:dev",
     "typescript": "catalog:dev"
   }

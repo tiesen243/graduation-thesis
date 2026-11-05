@@ -4,8 +4,9 @@
     "types": ["bun"],
 
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@emails/*": ["./emails/*"]
     }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "emails/**/*.ts"]
 }

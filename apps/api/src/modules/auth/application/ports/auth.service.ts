@@ -8,7 +8,8 @@ import type {
   UserId,
   UserRole,
 } from '@rozumari/contract/user/schemas/user.schema'
-import type { Crypto } from 'effect/Crypto'
+import type { Digest } from 'effect/crypto/Digest'
+import type { SecureRandom } from 'effect/crypto/SecureRandom'
 import type * as Effect from 'effect/Effect'
 
 import * as Context from 'effect/Context'
@@ -30,10 +31,10 @@ export class AuthService extends Context.Service<
     readonly createRefreshToken: (
       userId: UserId,
       userRole: UserRole
-    ) => Effect.Effect<Token, never, Crypto>
+    ) => Effect.Effect<Token, never, Digest | SecureRandom>
 
     readonly verifyRefreshToken: (
       token: RefreshToken
-    ) => Effect.Effect<SessionUserAggregate, Unauthorized, Crypto>
+    ) => Effect.Effect<SessionUserAggregate, Unauthorized, Digest>
   }
 >()('auth/application/AuthService') {}

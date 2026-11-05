@@ -19,7 +19,7 @@ export const createMetadata = (override: Metadata = {}): MetaDescriptor[] => {
   const title = override.title ? `${override.title} | ${siteName}` : siteName
   const description =
     override.description ??
-    'Rozumari is a thoughtful technology for everyday care, designed to help families and caregivers manage routines with ease and privacy.'
+    `${env.VITE_APP_NAME} is a thoughtful technology for everyday care, designed to help families and caregivers manage routines with ease and privacy.`
   const url = override.openGraph?.url
     ? `${baseUrl}${override.openGraph.url}`
     : baseUrl
@@ -34,7 +34,7 @@ export const createMetadata = (override: Metadata = {}): MetaDescriptor[] => {
       name: 'keywords',
       content: [
         // Brand & Core Product
-        'Rozumari',
+        env.VITE_APP_NAME,
         'smart pillbox',
         'smart pill organizer',
         'IoT medicine dispenser',
@@ -56,7 +56,7 @@ export const createMetadata = (override: Metadata = {}): MetaDescriptor[] => {
         'senior health IoT',
 
         // High-Intent / Long-Tail Search
-        'Rozumari smart pillbox',
+        `${env.VITE_APP_NAME} smart pillbox`,
         'connected health devices for seniors',
         'smart pillbox with app notification',
       ].join(', '),

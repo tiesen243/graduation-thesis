@@ -1,5 +1,7 @@
 import { Typography } from '@rozumari/ui/components/typography'
 
+import { env } from '@/lib/env'
+
 export function StoriesSection() {
   return (
     <section id='stories' className='container py-24 lg:py-32'>
@@ -16,11 +18,11 @@ export function StoriesSection() {
         <div className='flex flex-col justify-between gap-8 lg:pl-12'>
           <Typography className='text-xl text-muted-foreground'>
             “My dad wants his independence, and I want to know he is okay.
-            Rozumari finds the middle ground — it supports him without making
-            every reminder feel like a check-in.”
+            {env.VITE_APP_NAME} finds the middle ground — it supports him
+            without making every reminder feel like a check-in.”
           </Typography>
           <Typography className='text-sm font-semibold'>
-            Elena, early Rozumari family
+            Elena, early {env.VITE_APP_NAME} family
           </Typography>
         </div>
       </div>

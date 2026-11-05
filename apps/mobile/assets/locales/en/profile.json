@@ -120,6 +120,8 @@
       "save": "Save"
     },
     "actions": {
+      "scan": "Scan",
+      "scanning": "Scanning...",
       "connect": "Connect",
       "connecting": "Connecting...",
       "disconnect": "Disconnect"

@@ -10,7 +10,7 @@ import {
 import { Button } from '@rozumari/ui/components/button'
 import { CardContent, CardTitle } from '@rozumari/ui/components/card'
 import { FieldSet } from '@rozumari/ui/components/field'
-import { PencilIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import { toast } from '@rozumari/ui/components/toast'
 import { useMutation } from '@tanstack/react-query'
@@ -41,12 +41,12 @@ export const Username: React.FC = () => {
   if (status !== 'authenticated') return null
 
   return (
-    <BottomSheet open={isOpen} onOpenChange={setIsOpen}>
+    <BottomSheet snapPoints={[0.67, 1]} open={isOpen} onOpenChange={setIsOpen}>
       <CardContent className='flex-row items-center justify-center gap-2'>
         <CardTitle>{user.username}</CardTitle>
 
         <BottomSheetTrigger variant='ghost' size='icon-xs'>
-          <PencilIcon className='size-3 shrink-0 text-foreground' />
+          <Icon name='Pencil' className='size-3' />
         </BottomSheetTrigger>
       </CardContent>
 

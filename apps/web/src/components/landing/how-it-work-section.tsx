@@ -1,8 +1,10 @@
 import { Typography } from '@rozumari/ui/components/typography'
 
+import { env } from '@/lib/env'
+
 const steps = [
   'Load the compartments once a week.',
-  'Set a schedule in the Rozumari app.',
+  `Set a schedule in the ${env.VITE_APP_NAME} app.`,
   'Let the box and your care circle handle the rest.',
 ]
 

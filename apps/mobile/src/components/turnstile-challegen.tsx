@@ -5,6 +5,8 @@ import { View } from 'react-native'
 import { WebView } from 'react-native-webview'
 import { useUniwind } from 'uniwind'
 
+import { env } from '@/lib/env'
+
 export function TurnstileChallenge({
   setToken,
 }: Readonly<{ setToken: (challengeToken: string) => void }>) {
@@ -12,7 +14,7 @@ export function TurnstileChallenge({
   const { theme } = useUniwind()
 
   const htmlContent = /* HTML */ `
-    <!DOCTYPE html>
+    <!doctype html>
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +34,7 @@ export function TurnstileChallenge({
       <body>
         <div
           class="cf-turnstile"
-          data-sitekey="${process.env.EXPO_PUBLIC_TURNSTILE_KEY}"
+          data-sitekey="${env.EXPO_PUBLIC_TURNSTILE_KEY}"
           data-theme="${theme}"
           data-callback="onSuccess"
           data-error-callback="onError"
@@ -62,12 +64,15 @@ export function TurnstileChallenge({
 
   const handleMessage = (event: WebViewMessageEvent) => {
     try {
-      const data = JSON.parse(event.nativeEvent.data)
-      if (data.type === 'SUCCESS') setToken(data.token)
+      const data = JSON.parse(event.nativeEvent.data) as {
+        type: 'SUCCESS' | 'ERROR' | 'EXPIRE'
+        token?: string
+      }
+      if (data.type === 'SUCCESS') setToken(data.token ?? '')
       else if (data.type === 'ERROR') setToken('')
       else if (data.type === 'EXPIRE') setToken('')
-    } catch (error) {
-      console.error('Error parsing Turnstile message:', error)
+    } catch {
+      // noop
     }
   }
 
@@ -76,7 +81,10 @@ export function TurnstileChallenge({
       <WebView
         ref={webViewRef}
         originWhitelist={['*']}
-        source={{ html: htmlContent, baseUrl: process.env.EXPO_PUBLIC_WEB_URL }}
+        source={{
+          html: htmlContent,
+          baseUrl: `https://${env.EXPO_PUBLIC_WEB_URL}`,
+        }}
         style={{ backgroundColor: 'transparent' }}
         onMessage={handleMessage}
         scrollEnabled={false}

@@ -4,16 +4,20 @@ import type {
   ProviderError,
 } from '@rozumari/contract/auth/schemas/auth.error'
 import type { Token } from '@rozumari/contract/auth/schemas/token.schema'
-import type { UserNotFound } from '@rozumari/contract/user/schemas/user.error'
+import type {
+  UserAlreadyDeleted,
+  UserUnverified,
+} from '@rozumari/contract/user/schemas/user.error'
 import type {
   UserId,
   UserRole,
 } from '@rozumari/contract/user/schemas/user.schema'
+import type { Digest } from 'effect/crypto/Digest'
 import type { HttpClient } from 'effect/http/HttpClient'
 
-import { UserAlreadyDeleted } from '@rozumari/contract/user/schemas/user.error'
+import { WelcomeEmail } from '@emails/welcome'
 import * as Context from 'effect/Context'
-import { Crypto } from 'effect/Crypto'
+import * as SecureRandom from 'effect/crypto/SecureRandom'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
 
@@ -23,6 +27,7 @@ import { OAuthService } from '@/modules/auth/application/ports/oauth.service'
 import { Account } from '@/modules/auth/domain/entities/account.entity'
 import { UserService } from '@/modules/user/application/ports/user.service'
 import { ResendService } from '@/shared/application/services/resend.service'
+import { env } from '@/shared/env'
 import { withTransaction } from '@/shared/utils'
 
 export class OAuthUseCase extends Context.Service<
@@ -32,7 +37,7 @@ export class OAuthUseCase extends Context.Service<
       provider: AccountProvider,
       state: string,
       code: string
-    ) => Effect.Effect<URL, ProviderError, OAuthService | Crypto>
+    ) => Effect.Effect<URL, ProviderError, OAuthService | Digest>
 
     callback: (
       provider: AccountProvider,
@@ -40,13 +45,13 @@ export class OAuthUseCase extends Context.Service<
       storedCode: string
     ) => Effect.Effect<
       Token,
-      ProviderError | UserNotFound | UserAlreadyDeleted,
-      OAuthService | Crypto | HttpClient
+      ProviderError | UserAlreadyDeleted | UserUnverified,
+      OAuthService | Digest | SecureRandom.SecureRandom | HttpClient
     >
 
     exchange: (
       token: Token['refreshToken']
-    ) => Effect.Effect<Token, Unauthorized, Crypto>
+    ) => Effect.Effect<Token, Unauthorized, Digest>
   }
 >()('auth/application/OAuthUseCase', {
   make: Effect.gen(function* make() {
@@ -63,7 +68,7 @@ export class OAuthUseCase extends Context.Service<
       }),
 
       callback: Effect.fn(function* callback(_provider, code, storedCode) {
-        const crypto = yield* Crypto
+        const crypto = yield* SecureRandom.SecureRandom
 
         const provider = yield* OAuthService.forProvider(_provider)
 
@@ -82,71 +87,79 @@ export class OAuthUseCase extends Context.Service<
           userService.findByIdentifier({ email }),
         ])
 
-        const { isNewUser, ...result } = yield* Effect.gen(function* tx() {
-          let _isNewUser = false,
-            userId: UserId,
-            userRole: UserRole
+        const { isNewUser, username, ...result } = yield* Effect.gen(
+          function* tx() {
+            let _isNewUser = false,
+              _username = '',
+              userId: UserId,
+              userRole: UserRole
 
-          if (account && user) {
-            if (!user.isActive)
-              return yield* Effect.fail(
-                new UserAlreadyDeleted({ error: { id: user.id } })
-              )
+            if (account && user) {
+              yield* user.isActive()
 
-            ;({ userId } = account)
-            userRole = user?.role ?? 'user'
-
-            if ((!user.image || user.image.includes('gravatar.com')) && image)
-              yield* userService.update(user.id, { image })
-          } else {
-            if (user) {
-              if (!user.isActive)
-                return yield* Effect.fail(
-                  new UserAlreadyDeleted({ error: { id: user.id } })
-                )
-
-              userId = user.id
-              userRole = user.role
+              ;({ userId } = account)
+              _username = user.username
+              userRole = user?.role ?? 'user'
 
               if ((!user.image || user.image.includes('gravatar.com')) && image)
-                yield* userService.update(user.id, { image })
+                yield* userService.update(user.id, { image }).pipe(Effect.orDie)
             } else {
-              const [username = ''] = (yield* crypto.randomUUIDv7.pipe(
-                Effect.orDie
-              )).split('-')
+              if (user) {
+                yield* user.isActive()
 
-              const newUser = yield* userService.create({
-                username: username ?? '',
-                email,
-                image,
+                _username = user.username
+                userId = user.id
+                userRole = user.role
+
+                if (
+                  (!user.image || user.image.includes('gravatar.com')) &&
+                  image
+                )
+                  yield* userService
+                    .update(user.id, { image })
+                    .pipe(Effect.orDie)
+              } else {
+                ;[_username = ''] = (yield* crypto
+                  .uuidV7()
+                  .pipe(Effect.orDie)).split('-')
+
+                const newUser = yield* userService.create({
+                  username: _username,
+                  email,
+                  emailVerifiedAt: new Date(),
+                  image,
+                })
+
+                userId = newUser.id
+                userRole = newUser.role
+                _isNewUser = true
+              }
+
+              const newAccount = Account.make({
+                provider: _provider,
+                providerId: id,
+                userId,
               })
-
-              userId = newUser.id
-              userRole = newUser.role
-              _isNewUser = true
+              yield* accountRepository.save(newAccount)
             }
 
-            const newAccount = Account.make({
-              provider: _provider,
-              providerId: id,
+            const _result = yield* authService.createRefreshToken(
               userId,
-            })
-            yield* accountRepository.save(newAccount)
+              userRole
+            )
+
+            return { ..._result, isNewUser: _isNewUser, username: _username }
           }
-
-          const _result = yield* authService.createRefreshToken(
-            userId,
-            userRole
-          )
-
-          return { ..._result, isNewUser: _isNewUser }
-        }).pipe(withTransaction)
+        ).pipe(withTransaction)
 
         if (isNewUser && resendService._tag === 'Some')
           yield* resendService.value.sendEmail({
             to: [email],
             subject: 'Welcome to Rozumari!',
-            html: `<p>Welcome to Rozumari! Your account has been created successfully.</p>`,
+            html: WelcomeEmail({
+              username,
+              appLink: `${env.CORS_ORIGIN[0]}/login`,
+            }),
           })
 
         return result

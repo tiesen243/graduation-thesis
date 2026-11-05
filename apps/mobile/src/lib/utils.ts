@@ -1,6 +1,8 @@
 import Constants from 'expo-constants'
 import { getCalendars } from 'expo-localization'
 
+import { env } from '@/lib/env'
+
 /**
  * Extend this function when going to production by
  * setting the baseUrl to your production API URL.
@@ -19,11 +21,7 @@ export const getBaseUrl = () => {
 
   if (localhost) return `http://${localhost}:3000`
 
-  if (process.env.EXPO_PUBLIC_API_URL) return process.env.EXPO_PUBLIC_API_URL
-
-  throw new Error(
-    'Could not determine the base URL. Please set the EXPO_PUBLIC_API_URL environment variable.'
-  )
+  return env.EXPO_PUBLIC_API_URL
 }
 
 const timeZone = getCalendars()[0].timeZone ?? 'UTC'

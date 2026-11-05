@@ -18,9 +18,11 @@ export class FacebookProvider extends BaseProvider {
     super('facebook', clientId, clientSecret, redirectUri)
   }
 
-  private authorizationEndpoint = 'https://www.facebook.com/v23.0/dialog/oauth'
-  private tokenEndpoint = 'https://graph.facebook.com/v23.0/oauth/access_token'
-  private apiEndpoint = 'https://graph.facebook.com/me'
+  private readonly authorizationEndpoint =
+    'https://www.facebook.com/v23.0/dialog/oauth'
+  private readonly tokenEndpoint =
+    'https://graph.facebook.com/v23.0/oauth/access_token'
+  private readonly apiEndpoint = 'https://graph.facebook.com/me'
 
   public override createAuthorizationUrl = (
     state: string,

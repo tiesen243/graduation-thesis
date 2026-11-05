@@ -2,6 +2,7 @@ import type { ForgotPasswordDto } from '@rozumari/contract/auth/dto/forgot-passw
 import type { Forbidden } from '@rozumari/contract/auth/schemas/auth.error'
 import type * as HttpClient from 'effect/http/HttpClient'
 
+import { ForgotPasswordEmail } from '@emails/forgot-password'
 import * as Context from 'effect/Context'
 import * as Effect from 'effect/Effect'
 import * as Layer from 'effect/Layer'
@@ -47,12 +48,10 @@ export class ForgotPasswordUseCase extends Context.Service<
         yield* resendService.value.sendEmail({
           to: [user.email],
           subject: 'Reset your password',
-          html: /* HTML */ `
-            <p>Click the link below to reset your password:</p>
-            <a href="${env.CORS_ORIGIN[0]}/forgot-password/reset?token=${token}"
-              >Reset Password</a
-            >
-          `,
+          html: ForgotPasswordEmail({
+            username: user.username,
+            resetLink: `${env.CORS_ORIGIN[0]}/forgot-password/reset?token=${token}`,
+          }),
         })
 
         return null

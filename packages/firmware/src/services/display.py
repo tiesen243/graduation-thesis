@@ -30,6 +30,8 @@ class Display:
     _last_dialog_remaining: int
     _link_qr_until: int
 
+    _current_task: asyncio.Task | None
+
     def __init__(self) -> None:
         self._lcd = ST7735.create()
         self._lcd.init()
@@ -51,6 +53,8 @@ class Display:
         self._last_dialog_remaining = 0
 
         self._link_qr_until = 0
+
+        self._current_task = None
 
         self.show_boot_logo()
 
@@ -124,6 +128,31 @@ class Display:
             time.ticks_ms(),
             duration_ms,
         )
+
+    def show_stream_status(
+        self,
+        status: str,
+        attempt: int = 0,
+        error: str = "",
+    ) -> None:
+        """Show persistent SSE connection status until it is cleared."""
+        self._dialog = {
+            "type": "stream",
+            "status": status,
+            "attempt": attempt,
+            "error": error,
+        }
+        self._dialog_until = 0
+        self._main_drawn = False
+        self._last_render = ""
+
+    def clear_stream_status(self) -> None:
+        """Clear the persistent SSE connection status dialog."""
+        if self._dialog is not None and self._dialog.get("type") == "stream":
+            self._dialog = None
+            self._dialog_until = 0
+            self._main_drawn = False
+            self._last_render = ""
 
     def is_link_qr_active(self) -> bool:
         """Return True while the temporary link QR screen is active."""
@@ -460,6 +489,10 @@ class Display:
             self._draw_schedule_dialog(remaining)
             return
 
+        if dialog_type == "stream":
+            self._draw_stream_dialog()
+            return
+
         box_x1, box_y1 = 20, 34
         box_x2, box_y2 = (
             width - 20,
@@ -524,6 +557,48 @@ class Display:
             countdown,
             self._lcd.WHITE,
         )
+
+    def _draw_stream_dialog(self) -> None:
+        if self._dialog is None:
+            return
+
+        width, height = self._lcd.size()
+        status = self._dialog.get("status", "reconnecting")
+        attempt = int(self._dialog.get("attempt", 0))
+
+        box_x1, box_y1 = 10, 24
+        box_x2, box_y2 = width - 10, height - 24
+
+        if status == "disconnected":
+            title = "Connection Lost"
+            body = "Reconnecting..."
+            accent = self._lcd.RED
+        else:
+            title = "Reconnecting"
+            body = "Please wait..."
+            accent = self._lcd.YELLOW
+
+        self._lcd.fill(self._lcd.BLACK)
+        self._lcd.rect(
+            (box_x1, box_y1),
+            (box_x2 - box_x1 + 1, box_y2 - box_y1 + 1),
+            accent,
+        )
+
+        title_x = max(box_x1 + 4, (width - len(title) * 6) // 2)
+        self._lcd.text((title_x, box_y1 + 12), title, accent)
+
+        body_x = max(box_x1 + 4, (width - len(body) * 6) // 2)
+        self._lcd.text((body_x, box_y1 + 32), body, self._lcd.WHITE)
+
+        attempt_text = f"Attempt: {attempt}"
+        attempt_x = max(box_x1 + 4, (width - len(attempt_text) * 6) // 2)
+        self._lcd.text((attempt_x, box_y1 + 51), attempt_text, self._lcd.GRAY)
+
+        error = str(self._dialog.get("error", ""))[:24]
+        if error:
+            error_x = max(box_x1 + 4, (width - len(error) * 6) // 2)
+            self._lcd.text((error_x, box_y2 - 14), error, self._lcd.GRAY)
 
     def _draw_schedule_dialog(
         self,
@@ -760,82 +835,116 @@ class Display:
         self._last_schedule_snapshot = ()
 
     async def start(self) -> None:
+        if self._current_task is not None:
+            return
+        self._current_task = asyncio.current_task()
+
         print(t("display.started"))
 
-        while True:
-            try:
-                now_ms = time.ticks_ms()
+        try:
+            while True:
+                try:
+                    now_ms = time.ticks_ms()
 
-                # Boot screen / QR screen.
-                if (
-                    time.ticks_diff(
-                        self._boot_until,
-                        now_ms,
-                    )
-                    > 0
-                    or time.ticks_diff(
-                        self._link_qr_until,
-                        now_ms,
-                    )
-                    > 0
-                ):
-                    pass
+                    # Boot screen / QR screen.
+                    if (
+                        time.ticks_diff(
+                            self._boot_until,
+                            now_ms,
+                        )
+                        > 0
+                        or time.ticks_diff(
+                            self._link_qr_until,
+                            now_ms,
+                        )
+                        > 0
+                    ):
+                        pass
 
-                # QR expired -> return normal UI.
-                elif self._link_qr_until:
-                    self._link_qr_until = 0
-                    self._dialog = None
-                    self._main_drawn = False
-
-                    self._update_main()
-
-                # Dialog active.
-                elif (
-                    self._dialog is not None
-                    and time.ticks_diff(
-                        self._dialog_until,
-                        now_ms,
-                    )
-                    > 0
-                ):
-                    remaining_ms = time.ticks_diff(
-                        self._dialog_until,
-                        now_ms,
-                    )
-
-                    remaining = max(
-                        1,
-                        (remaining_ms + 999) // 1000,
-                    )
-
-                    if self._last_render != "dialog":
-                        self._draw_dialog(remaining)
-
-                        self._last_dialog_remaining = remaining
-                        self._last_render = "dialog"
-
-                    elif remaining != self._last_dialog_remaining:
-                        self._update_dialog(remaining)
-
-                        self._last_dialog_remaining = remaining
-
-                # Normal UI.
-                else:
-                    if self._dialog is not None:
+                    # QR expired -> return normal UI.
+                    elif self._link_qr_until:
+                        self._link_qr_until = 0
                         self._dialog = None
                         self._main_drawn = False
 
-                    self._update_main()
+                        self._update_main()
 
-            except Exception as error:
-                print(
-                    t(
-                        "display.error",
-                        error=error,
+                    # Persistent stream connection dialog.
+                    elif (
+                        self._dialog is not None
+                        and self._dialog.get("type") == "stream"
+                    ):
+                        if self._last_render != "stream_dialog":
+                            self._draw_dialog()
+                            self._last_render = "stream_dialog"
+
+                    # Timed dialog active.
+                    elif (
+                        self._dialog is not None
+                        and time.ticks_diff(
+                            self._dialog_until,
+                            now_ms,
+                        )
+                        > 0
+                    ):
+                        remaining_ms = time.ticks_diff(
+                            self._dialog_until,
+                            now_ms,
+                        )
+
+                        remaining = max(
+                            1,
+                            (remaining_ms + 999) // 1000,
+                        )
+
+                        if self._last_render != "dialog":
+                            self._draw_dialog(remaining)
+
+                            self._last_dialog_remaining = remaining
+                            self._last_render = "dialog"
+
+                        elif remaining != self._last_dialog_remaining:
+                            self._update_dialog(remaining)
+
+                            self._last_dialog_remaining = remaining
+
+                    # Normal UI.
+                    else:
+                        if self._dialog is not None:
+                            self._dialog = None
+                            self._main_drawn = False
+
+                        self._update_main()
+
+                except Exception as error:
+                    print(
+                        t(
+                            "display.error",
+                            error=error,
+                        )
                     )
-                )
 
-            await asyncio.sleep(0.100)
+                await asyncio.sleep(0.100)
+
+        finally:
+            self._current_task = None
+
+    async def stop(self) -> None:
+        """Stop the display task if it is running."""
+
+        task = self._current_task
+        if task is None:
+            return
+
+        self._current_task = None
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            pass
+
+        self._lcd.fill(self._lcd.BLACK)
+        self._lcd.deinit()
 
     @classmethod
     def create(cls) -> Display:

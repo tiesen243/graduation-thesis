@@ -16,10 +16,9 @@ export const scheduleIoTController = HttpApiBuilder.group(
         CurrentDevice.pipe(
           Effect.flatMap((deviceId) =>
             ListSchedulesUseCase.use((s) => {
-              let today = query.date
-
-              if (!today)
-                today = Intl.DateTimeFormat('en-CA', {
+              const today =
+                query.date ??
+                Intl.DateTimeFormat('en-CA', {
                   year: 'numeric',
                   month: '2-digit',
                   day: '2-digit',

@@ -20,6 +20,7 @@ import { Linking, View } from 'react-native'
 import { OAuthButtons } from '@/components/oauth-buttons'
 import { TurnstileChallenge } from '@/components/turnstile-challegen'
 import { useRuntime } from '@/hooks/use-runtime'
+import { env } from '@/lib/env'
 import { setTokens } from '@/lib/secure-store'
 
 const loginForm = FormBuilder.empty
@@ -117,7 +118,7 @@ export default function LoginScreen() {
                     accessible={false}
                     onPress={() =>
                       Linking.openURL(
-                        `${process.env.EXPO_PUBLIC_WEB_URL}/forgot-password`
+                        `https://${env.EXPO_PUBLIC_WEB_URL}/forgot-password`
                       )
                     }
                   >

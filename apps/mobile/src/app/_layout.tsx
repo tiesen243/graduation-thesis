@@ -14,10 +14,11 @@ import { Uniwind, useCSSVariable, useUniwind } from 'uniwind'
 import { useGeistFonts } from '@/hooks/use-geist-fonts'
 import { RuntimeProvider } from '@/hooks/use-runtime'
 import { SessionProvider } from '@/hooks/use-session'
-import { requestBLEPermissions } from '@/lib/ble'
+import { requestBlePermissions } from '@/lib/ble'
 import { i18n } from '@/lib/i18n'
 import { getTheme } from '@/lib/secure-store'
 
+// oxlint-disable-next-line typescript/no-floating-promises
 SplashScreen.preventAutoHideAsync()
 const queryClient = createQueryClient()
 
@@ -33,7 +34,7 @@ function RootLayoutInner() {
       Uniwind.setTheme(theme)
 
       // check permission...
-      await requestBLEPermissions()
+      await requestBlePermissions()
       await Camera.requestCameraPermissionsAsync()
 
       setIsReady(true)

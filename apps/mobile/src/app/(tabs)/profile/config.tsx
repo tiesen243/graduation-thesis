@@ -11,14 +11,14 @@ import { UtcConfig } from '@/components/profile/config/utc-config'
 import { WifiConfig } from '@/components/profile/config/wifi-config'
 
 function ConfigContent() {
-  const { deviceInfo, isConnected, handleDisconnect } = useBLE()
+  const { deviceInfo, status, disconnect } = useBLE()
 
   useFocusEffect(
     useCallback(
       () => () => {
-        if (isConnected) void handleDisconnect()
+        if (status === 'connected') void disconnect()
       },
-      [isConnected, handleDisconnect]
+      [status, disconnect]
     )
   )
 
@@ -34,7 +34,7 @@ function ConfigContent() {
     >
       <ScrollView
         className='flex-1 p-4'
-        contentContainerClassName='gap-6 grow flex-col pb-6'
+        contentContainerClassName='grow flex-col gap-6 pb-6'
         keyboardShouldPersistTaps='handled'
       >
         <BLEConnection />

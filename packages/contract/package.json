@@ -1,6 +1,6 @@
 {
   "name": "@rozumari/contract",
-  "version": "0.1.4",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "exports": {
@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsdown",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "devDependencies": {
     "@rozumari/oxlint": "workspace:*",

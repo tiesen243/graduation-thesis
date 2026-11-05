@@ -1,8 +1,7 @@
-import * as BunHttpPlatform from '@effect/platform-bun/BunHttpPlatform'
-import * as BunServices from '@effect/platform-bun/BunServices'
+import * as BunCrypto from '@effect/platform-bun/BunCrypto'
 import * as DateTime from 'effect/DateTime'
-import * as Etag from 'effect/http/Etag'
 import * as HttpRouter from 'effect/http/HttpRouter'
+import * as HttpServer from 'effect/http/HttpServer'
 import * as Layer from 'effect/Layer'
 import * as References from 'effect/References'
 
@@ -44,17 +43,43 @@ const { handler } = HttpRouter.toWebHandler(
     }),
 
     Layer.succeed(DateTime.CurrentTimeZone, env.TIMEZONE),
-    Layer.succeed(
-      References.MinimumLogLevel,
-      env.NODE_ENV === 'development' ? 'Debug' : 'Info'
-    ),
+    Layer.succeed(References.TracerEnabled, false),
 
-    BunHttpPlatform.layer,
-    BunServices.layer,
-    Etag.layer,
-  ])
+    HttpServer.layerServices,
+    BunCrypto.layer,
+  ]),
+  { disableLogger: true }
 )
 
-export default {
-  fetch: handler,
-}
+Bun.serve<{ topic: string }>({
+  // oxlint-disable-next-line typescript/promise-function-async
+  fetch: (request, server) => {
+    const url = new URL(request.url)
+    if (url.pathname === '/ws') {
+      const topic = url.searchParams.get('topic') ?? 'default'
+      const success = server.upgrade(request, {
+        data: { topic },
+      })
+
+      if (!success)
+        return new Response('WebSocket upgrade failed', { status: 400 })
+    }
+
+    return handler(request, {} as never)
+  },
+
+  websocket: {
+    open: (ws) => {
+      const { topic } = ws.data
+      ws.subscribe(topic)
+    },
+    message: (ws, message) => {
+      const { topic } = ws.data
+      ws.publish(topic, message)
+    },
+    close: (ws, _code, _reason) => {
+      const { topic } = ws.data
+      ws.unsubscribe(topic)
+    },
+  },
+})

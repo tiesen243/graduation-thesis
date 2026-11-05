@@ -1,3 +1,24 @@
+## @rozumari/api@0.2.2
+
+### Patch Changes
+
+- Bump deps
+- Added email templates
+- Added verify email after register feature
+
+## @rozumari/api@0.2.1
+
+### Patch Chanages
+
+- Bump deps
+
+## @rozumari/api@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/api@0.1.7
 
 ### Patch Changes

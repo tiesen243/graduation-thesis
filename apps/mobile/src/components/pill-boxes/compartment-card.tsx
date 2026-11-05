@@ -3,11 +3,7 @@ import type { ShowDeviceDto } from '@rozumari/contract/device/dto/show-device.dt
 import { Badge } from '@rozumari/ui/components/badge'
 import { BottomSheetTrigger } from '@rozumari/ui/components/bottom-sheet'
 import { Card, CardContent, CardHeader } from '@rozumari/ui/components/card'
-import {
-  MoreVerticalIcon,
-  PillIcon,
-  PlusIcon,
-} from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 import { cn } from '@rozumari/ui/lib/utils'
 import * as React from 'react'
@@ -39,7 +35,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
         {hasMedicine && (
           <UpdateCompartmentButton compartment={compartment}>
             <BottomSheetTrigger size='icon-sm' variant='ghost'>
-              <MoreVerticalIcon className='size-4 shrink-0 text-muted-foreground' />
+              <Icon name='EllipsisVertical' className='text-muted-foreground' />
             </BottomSheetTrigger>
           </UpdateCompartmentButton>
         )}
@@ -48,7 +44,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
       {hasMedicine ? (
         <CardContent className='flex-1 items-center justify-center gap-1'>
           <View className='items-center justify-center rounded-md bg-primary/10 p-3'>
-            <PillIcon className='size-4 shrink-0 text-primary' />
+            <Icon name='Pill' className='text-primary' />
           </View>
 
           <Typography className='line-clamp-1 text-sm font-semibold'>
@@ -79,7 +75,7 @@ export function CompartmentCard({ compartment }: { compartment: Compartment }) {
 
           <UpdateCompartmentButton compartment={compartment} hideDelete>
             <BottomSheetTrigger size='sm' variant='outline'>
-              <PlusIcon className='size-3 shrink-0 text-muted-foreground' />
+              <Icon name='Plus' className='size-3 text-muted-foreground' />
               <Typography>
                 {t('pill-box:details.compartment.add_medicine')}
               </Typography>

@@ -16,7 +16,7 @@ import {
   FieldError,
   FieldLabel,
 } from '@rozumari/ui/components/field'
-import { PlusIcon, XIcon } from '@rozumari/ui/components/icons'
+import { Icon } from '@rozumari/ui/components/icons'
 import { Input } from '@rozumari/ui/components/input'
 import {
   Select,
@@ -95,7 +95,7 @@ export function ScheduleItems({
                       variant='destructive'
                       onPress={() => helpers.remove(index)}
                     >
-                      <XIcon className='size-3 text-destructive' />
+                      <Icon name='X' className='size-3 text-destructive' />
                     </Button>
                   </CardAction>
                 </CardHeader>
@@ -166,7 +166,7 @@ export function ScheduleItems({
                     variant='destructive'
                     onPress={() => helpers.remove(index)}
                   >
-                    <XIcon className='size-3 text-destructive' />
+                    <Icon name='X' className='size-3 text-destructive' />
                   </Button>
                 </CardAction>
               </CardHeader>
@@ -210,7 +210,7 @@ export function ScheduleItems({
           className='h-32 items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-transparent active:opacity-70'
         >
           <View className='size-9 items-center justify-center rounded-full border border-muted-foreground/25 bg-transparent'>
-            <PlusIcon className='size-4 text-primary' />
+            <Icon name='Plus' className='text-primary' />
           </View>
           <Typography className='mt-1 text-xs font-medium'>
             {t('schedule:items.add')}

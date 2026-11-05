@@ -18,9 +18,11 @@ export class GoogleProvider extends BaseProvider {
     super('google', clientId, clientSecret, redirectUri)
   }
 
-  private authorizationEndpoint = 'https://accounts.google.com/o/oauth2/v2/auth'
-  private tokenEndpoint = 'https://oauth2.googleapis.com/token'
-  private apiEndpoint = 'https://openidconnect.googleapis.com/v1/userinfo'
+  private readonly authorizationEndpoint =
+    'https://accounts.google.com/o/oauth2/v2/auth'
+  private readonly tokenEndpoint = 'https://oauth2.googleapis.com/token'
+  private readonly apiEndpoint =
+    'https://openidconnect.googleapis.com/v1/userinfo'
 
   public override createAuthorizationUrl = (
     state: string,

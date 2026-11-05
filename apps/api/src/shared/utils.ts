@@ -1,7 +1,8 @@
-import * as Crypto from 'effect/Crypto'
+import * as Digest from 'effect/crypto/Digest'
 import * as Effect from 'effect/Effect'
 import * as Hex from 'effect/encoding/Hex'
 
+import { env } from '@/shared/env'
 import { DrizzleClient } from '@/shared/infrastructure/persistence/drizzle/drizzle.client'
 
 export const withTransaction = <A, E, R>(
@@ -46,15 +47,24 @@ export const toDateString = (d: Date) => {
   return `${year}-${month}-${day}`
 }
 
+export const getBaseUrl = () => {
+  if (env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${env.VERCEL_PROJECT_PRODUCTION_URL}`
+  else if (env.VERCEL_URL) return `https://${env.VERCEL_URL}`
+  return `http://localhost:${env.PORT}`
+}
+
 export const getGravatarUrl = Effect.fn(function* getGravatarUrl(
   email: string
 ) {
-  const crypto = yield* Crypto.Crypto
+  const digest = yield* Digest.Digest
 
   const cleanedEmail = email.trim().toLowerCase()
   const encodedEmail = new TextEncoder().encode(cleanedEmail)
 
-  const hash = yield* crypto.digest('SHA-256', encodedEmail).pipe(Effect.orDie)
+  const hash = yield* digest
+    .digest(Digest.sha256, encodedEmail)
+    .pipe(Effect.orDie)
   const hexHash = Hex.encode(hash)
 
   return `https://www.gravatar.com/avatar/${hexHash}?s=512&d=identicon`

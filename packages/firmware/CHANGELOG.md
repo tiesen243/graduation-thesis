@@ -1,3 +1,27 @@
+## @rozumari/firmware@0.2.2
+
+### Patch Changes
+
+- Bump deps
+- Update stepper rotate angel
+
+### Patch Changes
+
+- Update firmware
+
+## @rozumari/firmware@0.2.1
+
+### Patch Changes
+
+- Bump deps
+
+## @rozumari/firmware@0.2.0
+
+### Minor Changes
+
+- Fix app linking
+- Fix dynamic app name
+
 ## @rozumari/firmware@0.1.12
 
 ### Patch Changes

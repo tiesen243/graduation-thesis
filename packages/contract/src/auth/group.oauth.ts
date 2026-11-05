@@ -4,7 +4,7 @@ import * as OpenApi from 'effect/http-api/OpenApi'
 
 import { ProviderError, Unauthorized } from '@/auth/schemas/auth.error'
 import { OAuthSchema } from '@/auth/schemas/oauth.schema'
-import { UserAlreadyDeleted, UserNotFound } from '@/user/schemas/user.error'
+import { UserAlreadyDeleted, UserUnverified } from '@/user/schemas/user.error'
 
 export class OAuthGroup extends HttpApiGroup.make('oauth')
 
@@ -20,7 +20,7 @@ export class OAuthGroup extends HttpApiGroup.make('oauth')
     HttpApiEndpoint.get('callback', '/:provider/callback', {
       params: OAuthSchema.Params,
       query: OAuthSchema.Query,
-      error: [ProviderError, UserNotFound, UserAlreadyDeleted],
+      error: [ProviderError, UserAlreadyDeleted, UserUnverified],
     })
   )
 

@@ -5,13 +5,14 @@ import {
 } from '@rozumari/ui/components/icons'
 import { Typography } from '@rozumari/ui/components/typography'
 
+import { env } from '@/lib/env'
+
 const benefits = [
   {
     icon: BellRingIcon,
     eyebrow: 'Right on time',
     title: 'A gentle nudge, not another alarm.',
-    description:
-      'Rozumari lights up and gives a soft reminder when it is time for the next dose.',
+    description: `${env.VITE_APP_NAME} lights up and gives a soft reminder when it is time for the next dose.`,
   },
   {
     icon: HeartPulseIcon,
