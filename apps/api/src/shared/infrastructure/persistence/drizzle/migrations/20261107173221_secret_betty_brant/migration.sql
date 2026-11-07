@@ -4,6 +4,50 @@ CREATE TYPE "schedule_status" AS ENUM('pending', 'completed', 'failed');--> stat
 CREATE TYPE "payment_status" AS ENUM('pending', 'paid', 'failed');--> statement-breakpoint
 CREATE TYPE "subscription_status" AS ENUM('pending', 'active', 'expired', 'canceled');--> statement-breakpoint
 CREATE TYPE "user_role" AS ENUM('user', 'admin');--> statement-breakpoint
+CREATE TABLE "chat_state_cache" (
+	"key_prefix" text,
+	"cache_key" text,
+	"value" text NOT NULL,
+	"expires_at" timestamp,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "chat_state_cache_pkey" PRIMARY KEY("key_prefix","cache_key")
+);
+--> statement-breakpoint
+CREATE TABLE "chat_state_lists" (
+	"key_prefix" text,
+	"list_key" text,
+	"seq" bigserial,
+	"value" text NOT NULL,
+	"expires_at" timestamp,
+	CONSTRAINT "chat_state_lists_pkey" PRIMARY KEY("key_prefix","list_key","seq")
+);
+--> statement-breakpoint
+CREATE TABLE "chat_state_locks" (
+	"key_prefix" text,
+	"thread_id" text,
+	"token" text NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "chat_state_locks_pkey" PRIMARY KEY("key_prefix","thread_id")
+);
+--> statement-breakpoint
+CREATE TABLE "chat_state_queues" (
+	"key_prefix" text,
+	"thread_id" text,
+	"seq" bigserial,
+	"value" text NOT NULL,
+	"expires_at" timestamp NOT NULL,
+	CONSTRAINT "chat_state_queues_pkey" PRIMARY KEY("key_prefix","thread_id","seq")
+);
+--> statement-breakpoint
+CREATE TABLE "chat_state_subscriptions" (
+	"key_prefix" text,
+	"thread_id" text,
+	"user_id" varchar(24),
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "chat_state_subscriptions_pkey" PRIMARY KEY("key_prefix","thread_id")
+);
+--> statement-breakpoint
 CREATE TABLE "accounts" (
 	"provider" varchar(255),
 	"provider_id" varchar(255),
@@ -125,6 +169,10 @@ CREATE TABLE "users" (
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
+CREATE INDEX "chat_state_cache_expires_idx" ON "chat_state_cache" ("expires_at");--> statement-breakpoint
+CREATE INDEX "chat_state_lists_expires_idx" ON "chat_state_lists" ("expires_at");--> statement-breakpoint
+CREATE INDEX "chat_state_locks_expires_idx" ON "chat_state_locks" ("expires_at");--> statement-breakpoint
+CREATE INDEX "chat_state_queues_expires_idx" ON "chat_state_queues" ("expires_at");--> statement-breakpoint
 CREATE INDEX "accounts_user_id_idx" ON "accounts" ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "sessions_token_uq_idx" ON "sessions" ("token");--> statement-breakpoint
 CREATE INDEX "compartments_device_id_index" ON "compartments" ("device_id");--> statement-breakpoint
@@ -148,6 +196,7 @@ CREATE INDEX "transactions_code_idx" ON "transactions" ("code");--> statement-br
 CREATE INDEX "transactions_account_number_transaction_date_idx" ON "transactions" ("account_number","transaction_date");--> statement-breakpoint
 CREATE UNIQUE INDEX "users_username_uq_idx" ON "users" ("username");--> statement-breakpoint
 CREATE UNIQUE INDEX "users_email_uq_idx" ON "users" ("email");--> statement-breakpoint
+ALTER TABLE "chat_state_subscriptions" ADD CONSTRAINT "chat_state_subscriptions_user_id_users_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;--> statement-breakpoint
 ALTER TABLE "compartments" ADD CONSTRAINT "compartments_device_id_devices_id_fkey" FOREIGN KEY ("device_id") REFERENCES "devices"("id") ON DELETE CASCADE;--> statement-breakpoint

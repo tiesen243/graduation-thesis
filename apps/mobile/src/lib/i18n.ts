@@ -49,8 +49,7 @@ async function initializeI18n() {
   const language = await getLanguage()
 
   // oxlint-disable-next-line import/no-named-as-default-member
-  i18n.use(initReactI18next).init({
-    compatibilityJSON: 'v4',
+  void i18n.use(initReactI18next).init({
     resources,
 
     lng: language,
@@ -72,7 +71,7 @@ async function initializeI18n() {
   })
 }
 
-initializeI18n()
+void initializeI18n()
 export { i18n }
 
 declare module 'i18next' {

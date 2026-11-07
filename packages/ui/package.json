@@ -34,11 +34,10 @@
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
     "date-fns": "^4.4.0",
-    "lucide-react": "^1.68.0",
-    "lucide-react-native": "^1.68.0",
+    "lucide-react": "^1.70.0",
+    "lucide-react-native": "^1.70.0",
     "react-day-picker": "^10.0.2",
     "react-native": "catalog:react",
-    "react-native-svg": "^15.16.0",
     "recharts": "3.10.1"
   },
   "devDependencies": {
@@ -55,6 +54,7 @@
     "@effect/atom-react": "catalog:effect",
     "effect": "catalog:effect",
     "react": "catalog:react",
-    "react-native-safe-area-context": "catalog:prod"
+    "react-native-safe-area-context": "catalog:prod",
+    "react-native-svg": "catalog:prod"
   }
 }

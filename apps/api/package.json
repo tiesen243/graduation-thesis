@@ -14,10 +14,15 @@
     "typecheck": "bun check"
   },
   "dependencies": {
+    "@chat-adapter/messenger": "^4.44.0",
+    "@chat-adapter/state-pg": "^4.44.0",
     "@effect/platform-bun": "catalog:effect",
     "@effect/sql-pg": "catalog:effect",
+    "@openrouter/ai-sdk-provider": "^3.1.0",
     "@rozumari/contract": "workspace:*",
     "@rozumari/lib": "workspace:*",
+    "ai": "^7.0.164",
+    "chat": "^4.44.0",
     "drizzle-orm": "^1.0.0-rc.5",
     "effect": "catalog:effect"
   },
