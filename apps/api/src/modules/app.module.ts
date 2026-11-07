@@ -7,6 +7,7 @@ import * as Layer from 'effect/Layer'
 
 import type { BaseProvider } from '@/modules/auth/infrastructure/services/providers/base.provider'
 
+import { AiModule } from '@/modules/ai/ai.module'
 import { AuthModule } from '@/modules/auth/auth.module'
 import { DashboardModule } from '@/modules/dashboard/dashboard.module'
 import { DeviceModule } from '@/modules/device/device.module'
@@ -40,6 +41,8 @@ export class AppModule {
 
     const dashboardModule = DashboardModule.create({ persistence })
 
+    const aiModule = AiModule.create()
+
     return {
       homeModule,
       deviceModule,
@@ -48,6 +51,7 @@ export class AppModule {
       userModule,
       authModule,
       dashboardModule,
+      aiModule,
     }
   }
 
@@ -63,7 +67,9 @@ export class AppModule {
       modules.userModule.controller,
       modules.authModule.controller,
 
-      modules.dashboardModule.controller
+      modules.dashboardModule.controller,
+
+      modules.aiModule.controller
     ).pipe(
       Layer.provide([
         modules.authModule.exports.middleware,

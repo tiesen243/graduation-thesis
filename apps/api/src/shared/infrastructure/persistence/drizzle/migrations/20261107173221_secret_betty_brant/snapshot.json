@@ -1,43 +1,99 @@
 {
   "version": "8",
   "dialect": "postgres",
-  "id": "251721cc-4cbe-48f9-816f-306cb45ae113",
-  "prevIds": ["00000000-0000-0000-0000-000000000000"],
+  "id": "7b74497b-8111-4bb6-ad31-89ee2c6a3898",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
   "ddl": [
     {
-      "values": ["unlinked", "linked", "suspended"],
+      "values": [
+        "unlinked",
+        "linked",
+        "suspended"
+      ],
       "name": "device_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": ["info", "warning", "error"],
+      "values": [
+        "info",
+        "warning",
+        "error"
+      ],
       "name": "notification_level",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": ["pending", "completed", "failed"],
+      "values": [
+        "pending",
+        "completed",
+        "failed"
+      ],
       "name": "schedule_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": ["pending", "paid", "failed"],
+      "values": [
+        "pending",
+        "paid",
+        "failed"
+      ],
       "name": "payment_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": ["pending", "active", "expired", "canceled"],
+      "values": [
+        "pending",
+        "active",
+        "expired",
+        "canceled"
+      ],
       "name": "subscription_status",
       "entityType": "enums",
       "schema": "public"
     },
     {
-      "values": ["user", "admin"],
+      "values": [
+        "user",
+        "admin"
+      ],
       "name": "user_role",
       "entityType": "enums",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "chat_state_cache",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "chat_state_lists",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "chat_state_locks",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "chat_state_queues",
+      "entityType": "tables",
+      "schema": "public"
+    },
+    {
+      "isRlsEnabled": false,
+      "name": "chat_state_subscriptions",
+      "entityType": "tables",
       "schema": "public"
     },
     {
@@ -111,6 +167,318 @@
       "name": "users",
       "entityType": "tables",
       "schema": "public"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "key_prefix",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "cache_key",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "key_prefix",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "list_key",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "type": "bigserial",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "seq",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "key_prefix",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "thread_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "token",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "updated_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "key_prefix",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "thread_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "type": "bigserial",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "seq",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "value",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "expires_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "key_prefix",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_subscriptions"
+    },
+    {
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "thread_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_subscriptions"
+    },
+    {
+      "type": "varchar(24)",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "name": "user_id",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_subscriptions"
+    },
+    {
+      "type": "timestamp",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "name": "created_at",
+      "entityType": "columns",
+      "schema": "public",
+      "table": "chat_state_subscriptions"
     },
     {
       "type": "varchar(255)",
@@ -1182,6 +1550,90 @@
       "nameExplicit": true,
       "columns": [
         {
+          "value": "expires_at",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "chat_state_cache_expires_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "expires_at",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "chat_state_lists_expires_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "expires_at",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "chat_state_locks_expires_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "expires_at",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "name": "chat_state_queues_expires_idx",
+      "entityType": "indexes",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "nameExplicit": true,
+      "columns": [
+        {
           "value": "user_id",
           "isExpression": false,
           "asc": true,
@@ -1705,10 +2157,31 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "name": "chat_state_subscriptions_user_id_users_id_fkey",
+      "entityType": "fks",
+      "schema": "public",
+      "table": "chat_state_subscriptions"
+    },
+    {
+      "nameExplicit": false,
+      "columns": [
+        "user_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "users",
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "accounts_user_id_users_id_fkey",
@@ -1718,10 +2191,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "sessions_user_id_users_id_fkey",
@@ -1731,10 +2208,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["device_id"],
+      "columns": [
+        "device_id"
+      ],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "compartments_device_id_devices_id_fkey",
@@ -1744,10 +2225,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "devices_user_id_users_id_fkey",
@@ -1757,10 +2242,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "notifications_user_id_users_id_fkey",
@@ -1770,10 +2259,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["device_id"],
+      "columns": [
+        "device_id"
+      ],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "notifications_device_id_devices_id_fkey",
@@ -1783,10 +2276,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["schedule_id"],
+      "columns": [
+        "schedule_id"
+      ],
       "schemaTo": "public",
       "tableTo": "schedules",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "notifications_schedule_id_schedules_id_fkey",
@@ -1796,10 +2293,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["schedule_id"],
+      "columns": [
+        "schedule_id"
+      ],
       "schemaTo": "public",
       "tableTo": "schedules",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "schedule_items_schedule_id_schedules_id_fkey",
@@ -1809,10 +2310,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "schedules_user_id_users_id_fkey",
@@ -1822,10 +2327,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["device_id"],
+      "columns": [
+        "device_id"
+      ],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "schedules_device_id_devices_id_fkey",
@@ -1835,10 +2344,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["subscription_id"],
+      "columns": [
+        "subscription_id"
+      ],
       "schemaTo": "public",
       "tableTo": "subscriptions",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "payments_subscription_id_subscriptions_id_fkey",
@@ -1848,10 +2361,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["user_id"],
+      "columns": [
+        "user_id"
+      ],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "subscriptions_user_id_users_id_fkey",
@@ -1861,10 +2378,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["device_id"],
+      "columns": [
+        "device_id"
+      ],
       "schemaTo": "public",
       "tableTo": "devices",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "subscriptions_device_id_devices_id_fkey",
@@ -1874,10 +2395,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["plan_id"],
+      "columns": [
+        "plan_id"
+      ],
       "schemaTo": "public",
       "tableTo": "plans",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "RESTRICT",
       "name": "subscriptions_plan_id_plans_id_fkey",
@@ -1887,10 +2412,14 @@
     },
     {
       "nameExplicit": false,
-      "columns": ["payment_id"],
+      "columns": [
+        "payment_id"
+      ],
       "schemaTo": "public",
       "tableTo": "payments",
-      "columnsTo": ["id"],
+      "columnsTo": [
+        "id"
+      ],
       "onUpdate": "NO ACTION",
       "onDelete": "SET NULL",
       "name": "transactions_payment_id_payments_id_fkey",
@@ -1899,7 +2428,67 @@
       "table": "transactions"
     },
     {
-      "columns": ["provider", "provider_id"],
+      "columns": [
+        "key_prefix",
+        "cache_key"
+      ],
+      "nameExplicit": false,
+      "name": "chat_state_cache_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "chat_state_cache"
+    },
+    {
+      "columns": [
+        "key_prefix",
+        "list_key",
+        "seq"
+      ],
+      "nameExplicit": false,
+      "name": "chat_state_lists_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "chat_state_lists"
+    },
+    {
+      "columns": [
+        "key_prefix",
+        "thread_id"
+      ],
+      "nameExplicit": false,
+      "name": "chat_state_locks_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "chat_state_locks"
+    },
+    {
+      "columns": [
+        "key_prefix",
+        "thread_id",
+        "seq"
+      ],
+      "nameExplicit": false,
+      "name": "chat_state_queues_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "chat_state_queues"
+    },
+    {
+      "columns": [
+        "key_prefix",
+        "thread_id"
+      ],
+      "nameExplicit": false,
+      "name": "chat_state_subscriptions_pkey",
+      "entityType": "pks",
+      "schema": "public",
+      "table": "chat_state_subscriptions"
+    },
+    {
+      "columns": [
+        "provider",
+        "provider_id"
+      ],
       "nameExplicit": false,
       "name": "accounts_pkey",
       "entityType": "pks",
@@ -1907,7 +2496,10 @@
       "table": "accounts"
     },
     {
-      "columns": ["device_id", "position"],
+      "columns": [
+        "device_id",
+        "position"
+      ],
       "nameExplicit": false,
       "name": "compartments_pkey",
       "entityType": "pks",
@@ -1915,7 +2507,10 @@
       "table": "compartments"
     },
     {
-      "columns": ["schedule_id", "slot"],
+      "columns": [
+        "schedule_id",
+        "slot"
+      ],
       "nameExplicit": false,
       "name": "schedule_items_pkey",
       "entityType": "pks",
@@ -1923,7 +2518,9 @@
       "table": "schedule_items"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "sessions_pkey",
       "schema": "public",
@@ -1931,7 +2528,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "devices_pkey",
       "schema": "public",
@@ -1939,7 +2538,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "notifications_pkey",
       "schema": "public",
@@ -1947,7 +2548,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "schedules_pkey",
       "schema": "public",
@@ -1955,7 +2558,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "payments_pkey",
       "schema": "public",
@@ -1963,7 +2568,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "plans_pkey",
       "schema": "public",
@@ -1971,7 +2578,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "subscriptions_pkey",
       "schema": "public",
@@ -1979,7 +2588,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "transactions_pkey",
       "schema": "public",
@@ -1987,7 +2598,9 @@
       "entityType": "pks"
     },
     {
-      "columns": ["id"],
+      "columns": [
+        "id"
+      ],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",
