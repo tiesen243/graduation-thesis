@@ -42,7 +42,7 @@
     "react-native-ble-plx": "^3.5.1",
     "react-native-calendars-datepicker": "~1.2.4",
     "react-native-safe-area-context": "catalog:prod",
-    "react-native-svg": "~15.16.0",
+    "react-native-svg": "catalog:prod",
     "react-native-webview": "^14.0.1"
   },
   "devDependencies": {
